@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="NavbarRoot" style="flex-grow: 1; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; background-color: rgb(76, 76, 76); flex-direction: row; align-self: stretch; justify-content: space-between; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+        <engine:VisualElement name="TitleContainer" style="flex-grow: 1; padding-right: 8px; padding-left: 8px; width: 179px; min-width: 179px; max-width: 179px; flex-direction: row; justify-content: center; align-items: center;">
+            <engine:Label text="ASTROVISIO" name="AstrovisioLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); font-size: 24px; -unity-text-align: middle-center; color: rgb(255, 103, 28); letter-spacing: 14px;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="HomeContainer" style="flex-grow: 1;" />
+        <engine:VisualElement name="ProjectContainer" style="flex-grow: 1;" />
+    </engine:VisualElement>
+</engine:UXML>
