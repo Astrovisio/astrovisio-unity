@@ -1,0 +1,49 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=6e15ac6661c8a284eb07d4b99db25eb3&amp;type=3#PrimaryButton" />
+    <engine:Template name="ProjectRawHeader" src="project://database/Assets/UI%20Toolkit/Components/ProjectRawHeader.uxml?fileID=9197481963319205126&amp;guid=8a26ec6ef83cacf48a13fadb9f9942fb&amp;type=3#ProjectRawHeader" />
+    <engine:Template name="ProjectRaw" src="project://database/Assets/UI%20Toolkit/Components/ProjectRaw.uxml?fileID=9197481963319205126&amp;guid=35320fcd82433ac4180b12dd809838a0&amp;type=3#ProjectRaw" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/Home.uss?fileID=7433441132597879392&amp;guid=2591f387589dfe245a6654ce5f01c601&amp;type=3#Home" />
+    <engine:VisualElement name="HomeRoot" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+        <engine:VisualElement name="HeaderContainer" style="flex-grow: 0; flex-direction: row; height: 77px; min-height: 77px; max-height: 77px; align-self: stretch; align-items: center;">
+            <engine:VisualElement name="LeftContainer" style="flex-grow: 1;">
+                <engine:Label text="Home&#10;" name="HomeLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); color: rgb(255, 255, 255); font-size: 24px; width: auto; min-width: auto; max-width: none; height: 17px; min-height: 17px; max-height: 17px; -unity-text-align: middle-left;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse; align-self: flex-start;">
+                <engine:Instance template="PrimaryButton" name="NewProjectButton" style="width: 147px; min-width: 147px; max-width: 147px; height: 40px; min-height: 40px; max-height: 40px;">
+                    <AttributeOverrides element-name="Label" text="New project" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="BodyContainer" style="flex-grow: 1; padding-right: 16px;">
+            <engine:VisualElement name="ProjectsHeaderContainer" style="flex-grow: 0; flex-direction: row; justify-content: space-between; padding-left: 48px; padding-top: 12px; padding-bottom: 12px; padding-right: 8px; height: 34px; min-height: 34px; max-height: 34px; border-bottom-width: 1px; border-left-color: rgb(138, 138, 128); border-right-color: rgb(138, 138, 128); border-top-color: rgb(138, 138, 128); border-bottom-color: rgb(138, 138, 128);">
+                <engine:Label text="Name" class="header-label" style="color: rgb(255, 255, 255); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left; width: 180px; min-width: 180px; max-width: 180px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
+                <engine:Label text="Files" class="header-label" style="color: rgb(255, 255, 255); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-center; height: 10px; min-height: 10px; max-height: 10px; width: 120px; min-width: 120px; max-width: 120px; background-color: rgba(255, 0, 0, 0);" />
+                <engine:Label text="Last opened" class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
+                <engine:Label text="Created" class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
+                <engine:Label class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
+            </engine:VisualElement>
+            <engine:ScrollView name="ProjectScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
+                <engine:Instance template="ProjectRawHeader" name="LastWeekHeader" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRawHeader" name="LastMonthHeader">
+                    <AttributeOverrides element-name="HeaderLabel" text="Last Month" />
+                </engine:Instance>
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRawHeader" name="OlderHeader">
+                    <AttributeOverrides element-name="HeaderLabel" text="Older" />
+                </engine:Instance>
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRaw" />
+            </engine:ScrollView>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

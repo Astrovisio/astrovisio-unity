@@ -1,0 +1,5 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="RawHeaderRoot" style="flex-grow: 1; margin-bottom: 24px; margin-top: 24px;">
+        <engine:Label text="Last week" name="HeaderLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-grow: 1; -unity-text-align: middle-left; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); font-size: 16px; color: rgb(215, 211, 203);" />
+    </engine:VisualElement>
+</engine:UXML>

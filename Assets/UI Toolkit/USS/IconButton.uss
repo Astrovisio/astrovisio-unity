@@ -1,0 +1,3 @@
+#IconButtonRoot > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/folder.svg?fileID=7388822144124034973&guid=7481ee2b4f02ba746b0f824eb88b7746&type=3#folder");
+}
