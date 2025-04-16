@@ -2,3 +2,16 @@
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
     -unity-background-image-tint-color: rgb(0, 0, 0);
 }
+
+#NewProjectRoot > #BottomContainer > #RightContainer > TemplateContainer > #ButtonRoot > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+    -unity-background-image-tint-color: rgba(0, 0, 0, 0.94);
+}
+
+#NewProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+}
+
+#NewProjectRoot > #BottomContainer > #RightContainer > #CancelButton > .btn-secondary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
+}

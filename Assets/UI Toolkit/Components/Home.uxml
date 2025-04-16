@@ -1,5 +1,5 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=6e15ac6661c8a284eb07d4b99db25eb3&amp;type=3#PrimaryButton" />
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
     <engine:Template name="ProjectRawHeader" src="project://database/Assets/UI%20Toolkit/Components/ProjectRawHeader.uxml?fileID=9197481963319205126&amp;guid=8a26ec6ef83cacf48a13fadb9f9942fb&amp;type=3#ProjectRawHeader" />
     <engine:Template name="ProjectRaw" src="project://database/Assets/UI%20Toolkit/Components/ProjectRaw.uxml?fileID=9197481963319205126&amp;guid=35320fcd82433ac4180b12dd809838a0&amp;type=3#ProjectRaw" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Home.uss?fileID=7433441132597879392&amp;guid=2591f387589dfe245a6654ce5f01c601&amp;type=3#Home" />
@@ -9,7 +9,7 @@
                 <engine:Label text="Home&#10;" name="HomeLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); color: rgb(255, 255, 255); font-size: 24px; width: auto; min-width: auto; max-width: none; height: 17px; min-height: 17px; max-height: 17px; -unity-text-align: middle-left;" />
             </engine:VisualElement>
             <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse; align-self: flex-start;">
-                <engine:Instance template="PrimaryButton" name="NewProjectButton" style="width: 147px; min-width: 147px; max-width: 147px; height: 40px; min-height: 40px; max-height: 40px;">
+                <engine:Instance template="PrimaryButton" name="NewProjectButton" style="height: 40px; min-height: 40px; max-height: 40px;">
                     <AttributeOverrides element-name="Label" text="New project" />
                 </engine:Instance>
             </engine:VisualElement>

@@ -1,9 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="InputField" src="project://database/Assets/UI%20Toolkit/Components/InputField.uxml?fileID=9197481963319205126&amp;guid=ca3699d6381b71a44a440de0a663683d&amp;type=3#InputField" />
     <engine:Template name="InputTextField" src="project://database/Assets/UI%20Toolkit/Components/InputTextField.uxml?fileID=9197481963319205126&amp;guid=ef3fb16d0bd7d4d419e8c56303624f57&amp;type=3#InputTextField" />
-    <engine:Template name="ContinueButton" src="project://database/Assets/UI%20Toolkit/Components/ContinueButton.uxml?fileID=9197481963319205126&amp;guid=dd9e231a7421d1e49873062131fda271&amp;type=3#ContinueButton" />
-    <engine:Template name="CancelButton" src="project://database/Assets/UI%20Toolkit/Components/CancelButton.uxml?fileID=9197481963319205126&amp;guid=f333130c77de6ed4e935067db361d94f&amp;type=3#CancelButton" />
     <engine:Template name="MemorySizeInfo" src="project://database/Assets/UI%20Toolkit/Components/MemorySizeInfo.uxml?fileID=9197481963319205126&amp;guid=840fec9897fe06a4284e5b06f1367c46&amp;type=3#MemorySizeInfo" />
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/NewProjectPanel.uss?fileID=7433441132597879392&amp;guid=0d28f6331f0365441be9a1c1cc1bdabd&amp;type=3#NewProjectPanel" />
     <engine:VisualElement name="NewProjectRoot" style="flex-grow: 1; background-color: rgb(46, 46, 46); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; justify-content: space-between;">
         <engine:VisualElement name="ProjectInfoContainer" style="flex-grow: 1; height: 224px; min-height: 224px; max-height: 224px; padding-bottom: 24px; justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
@@ -27,8 +27,12 @@
                 <engine:Instance template="MemorySizeInfo" name="MemorySizeInfo" style="width: 175px; min-width: 175px; max-width: 175px;" />
             </engine:VisualElement>
             <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse;">
-                <engine:Instance template="ContinueButton" name="ContinueButton" style="width: 121px; min-width: 121px; max-width: 121px; margin-left: 8px;" />
-                <engine:Instance template="CancelButton" name="CancelButton" />
+                <engine:Instance template="PrimaryButton" name="ContinueButton" style="margin-left: 8px;">
+                    <AttributeOverrides element-name="Label" text="Continue" />
+                </engine:Instance>
+                <engine:Instance template="SecondaryButton" name="CancelButton">
+                    <AttributeOverrides element-name="Label" text="Cancel" />
+                </engine:Instance>
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

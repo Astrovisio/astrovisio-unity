@@ -1,20 +1,25 @@
 using UnityEngine;
 using UnityEditor;
 
-public class DebugAPIManager : MonoBehaviour
+namespace Astrovisio
 {
-    public APIManager apiManager;
 
-    public void FetchProjectsDebug()
+    public class DebugAPIManager : MonoBehaviour
     {
-        if (apiManager == null)
-        {
-            Debug.LogError("APIManager non assegnato!");
-            return;
-        }
+        public APIManager apiManager;
 
-        Debug.Log("Chiamata API: Get Projects");
-        
-        apiManager.FetchProjects();
+        public void FetchProjectsDebug()
+        {
+            if (apiManager == null)
+            {
+                Debug.LogError("APIManager non assegnato!");
+                return;
+            }
+
+            Debug.Log("Chiamata API: Get Projects");
+
+            apiManager.FetchProjects();
+        }
     }
+
 }

@@ -2,7 +2,6 @@
     <engine:Template name="Navbar" src="project://database/Assets/UI%20Toolkit/Components/Navbar.uxml?fileID=9197481963319205126&amp;guid=7bb125ee270bca141be6679de4957541&amp;type=3#Navbar" />
     <engine:Template name="Sidebar" src="project://database/Assets/UI%20Toolkit/Components/Sidebar.uxml?fileID=9197481963319205126&amp;guid=be7a59423a7e0cd41ad0133f66c01576&amp;type=3#Sidebar" />
     <engine:Template name="Home" src="project://database/Assets/UI%20Toolkit/Components/Home.uxml?fileID=9197481963319205126&amp;guid=085c37c519bac4a4bbcca89b8ed17b03&amp;type=3#Home" />
-    <engine:Template name="NewProjectPanel" src="project://database/Assets/UI%20Toolkit/Components/NewProjectPanel.uxml?fileID=9197481963319205126&amp;guid=bfa20f0c30537044e95b065b3e265b7e&amp;type=3#NewProjectPanel" />
     <engine:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.5);">
         <engine:VisualElement name="Header" style="flex-grow: 1; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; height: 96px; min-height: 96px; max-height: 96px; justify-content: space-between; align-self: stretch; align-items: stretch;">
             <engine:Instance template="Navbar" name="Navbar" style="align-self: stretch; flex-grow: 1;" />
@@ -12,8 +11,7 @@
                 <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1;" />
             </engine:VisualElement>
             <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
-                <engine:Instance template="Home" name="Home" style="flex-grow: 1; display: none;" />
-                <engine:Instance template="NewProjectPanel" name="NewProjectPanel" style="width: 640px; height: 758px; min-height: 758px; max-height: 758px; min-width: 640px; max-width: 640px; top: 0; bottom: 0; left: 0; right: 0;" />
+                <engine:Instance template="Home" name="Home" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

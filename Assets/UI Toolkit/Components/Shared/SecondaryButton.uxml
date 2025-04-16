@@ -1,0 +1,7 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/SecondaryButton.uss?fileID=7433441132597879392&amp;guid=fdd4cf3797228ea40aac04f9c291734c&amp;type=3#SecondaryButton" />
+    <engine:Button class="btn-secondary">
+        <engine:VisualElement name="Icon" />
+        <engine:Label text="Button" name="Label" />
+    </engine:Button>
+</engine:UXML>

@@ -134,7 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activateDebugMode: 1
   dataFileName: random_sphere.csv
-  maxDataPoints: 10000
+  maxDataPoints: 100
   thresholdMin1: 0.0002
   thresholdMax1: 1
   colorMapIndex: 1

@@ -1,0 +1,66 @@
+.disable {
+    opacity: 0.5;
+}
+
+.btn-icon {
+    color: rgb(31, 31, 28);
+    background-color: rgb(76, 76, 76);
+    padding-top: 4px;
+    padding-right: 12px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    flex-grow: 1;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(95, 95, 89);
+    border-right-color: rgb(95, 95, 89);
+    border-top-color: rgb(95, 95, 89);
+    border-bottom-color: rgb(95, 95, 89);
+    flex-direction: row;
+    align-items: center;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.btn-tertiary:hover {
+    color: rgb(31, 31, 28);
+    background-color: rgb(46, 46, 46);
+    border-left-color: rgb(76, 76, 76);
+    border-right-color: rgb(76, 76, 76);
+    border-top-color: rgb(76, 76, 76);
+    border-bottom-color: rgb(76, 76, 76);
+}
+
+.btn-tertiary > #Icon {
+    margin-right: 3px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+}
+
+.btn-tertiary > #Label {
+    color: rgb(246, 245, 243);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    font-size: 12px;
+    -unity-text-align: middle-left;
+}

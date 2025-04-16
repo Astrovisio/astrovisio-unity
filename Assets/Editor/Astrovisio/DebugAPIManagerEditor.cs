@@ -2,23 +2,28 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(DebugAPIManager))]
-public class DebugAPIManagerEditor : Editor
+
+namespace Astrovisio
 {
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(DebugAPIManager))]
+    public class DebugAPIManagerEditor : Editor
     {
-        DrawDefaultInspector();
-
-        DebugAPIManager debugAPIManager = (DebugAPIManager)target;
-        InitGetProjects(debugAPIManager);
-    }
-
-    private void InitGetProjects(DebugAPIManager debugAPIManager)
-    {
-        if (GUILayout.Button("GET Projects"))
+        public override void OnInspectorGUI()
         {
-            debugAPIManager.FetchProjectsDebug();
+            DrawDefaultInspector();
+
+            DebugAPIManager debugAPIManager = (DebugAPIManager)target;
+            InitGetProjects(debugAPIManager);
+        }
+
+        private void InitGetProjects(DebugAPIManager debugAPIManager)
+        {
+            if (GUILayout.Button("GET Projects"))
+            {
+                debugAPIManager.FetchProjectsDebug();
+            }
         }
     }
-}
 #endif
+
+}

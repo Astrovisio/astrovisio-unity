@@ -1,0 +1,13 @@
+#Root {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 0;
+}
+
+#Root.active {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 1;
+}
