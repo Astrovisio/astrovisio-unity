@@ -9,14 +9,21 @@ namespace Astrovisio
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private UIDocument mainViewUIDocument;
 
-        [SerializeField] private GameObject newProjectView;
 
+        private NewProjectViewController newProjectController;
         private Button newProjectButton;
 
 
         private void Start()
         {
-            Debug.Log("NewProjectPanel");
+            if (projectManager)
+            {
+                newProjectController = new NewProjectViewController(projectManager);
+            }
+            else
+            {
+                Debug.LogError("ProjectManager is missing on MainView.");
+            }
         }
 
         private void OnEnable()
@@ -49,8 +56,15 @@ namespace Astrovisio
 
         private void OnNewProjectClicked(ClickEvent evt)
         {
-            Debug.Log("OnNewProjectClicked");
-            newProjectView.SetActive(true);
+            VisualElement root = mainViewUIDocument.rootVisualElement;
+            VisualElement newProjectViewInstance = root.Q<VisualElement>("NewProjectView");
+
+            if (newProjectViewInstance != null)
+            {
+                newProjectViewInstance.style.display = DisplayStyle.Flex;
+                newProjectController?.Dispose();
+                newProjectController.Initialize(newProjectViewInstance);
+            }
         }
 
 

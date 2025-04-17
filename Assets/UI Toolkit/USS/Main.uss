@@ -1,0 +1,12 @@
+#NewProjectView {
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+    display: none;
+    left: 0;
+    top: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
