@@ -14,7 +14,7 @@
             </engine:VisualElement>
             <engine:VisualElement name="ProjectDescriptionContainer" style="height: 82px; min-height: 82px; max-height: 82px; justify-content: space-between;">
                 <engine:Label text="Project description" name="ProjectDescriptionLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); height: 10px; min-height: 10px; max-height: 10px; -unity-text-align: middle-left;" />
-                <engine:Instance template="InputTextField" name="ProjectDescriptionInputTextField" style="height: 64px; min-height: 64px; max-height: 64px;" />
+                <engine:Instance template="InputTextField" name="ProjectDescriptionInputField" style="height: 64px; min-height: 64px; max-height: 64px;" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="UploadYourFilesContainer" style="flex-grow: 1; height: 396px; min-height: 396px; max-height: 396px; justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">

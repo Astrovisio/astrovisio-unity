@@ -28,5 +28,13 @@ namespace Astrovisio
         [JsonProperty("config_process")]
         public ConfigProcess ConfigProcess { get; set; }
 
+        public Project(string name, string description, bool favourite = false, string[] paths = null)
+        {
+            Name = name;
+            Description = description;
+            Favourite = favourite;
+            Paths = paths ?? new string[0];
+        }
+
     }
 }
