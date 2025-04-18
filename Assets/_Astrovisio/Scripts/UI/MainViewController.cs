@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -5,12 +8,14 @@ namespace Astrovisio
 {
     public class MainViewController : MonoBehaviour
     {
-
+        [Header("Dependencies")]
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private UIDocument mainViewUIDocument;
 
+        [Header("UI Templates")]
         [SerializeField] private VisualTreeAsset projectRawHeaderTemplate;
         [SerializeField] private VisualTreeAsset projectRawTemplate;
+
 
         private HomeViewController homeProjectViewController;
         private NewProjectViewController newProjectController;
@@ -33,11 +38,19 @@ namespace Astrovisio
 
         private void OnEnable()
         {
+            projectManager.ProjectsFetched += OnProjectsFetched;
+            projectManager.ApiError += OnApiError;
+            projectManager.FetchAllProjects();
+
             EnableNewProjectButton();
         }
 
         private void OnDisable()
         {
+
+            projectManager.ProjectsFetched -= OnProjectsFetched;
+            projectManager.ApiError -= OnApiError;
+
             DisableNewProjectButton();
         }
 
@@ -50,7 +63,6 @@ namespace Astrovisio
 
             if (newProjectButton != null)
             {
-                // Debug.Log("Button trovato");
                 newProjectButton.RegisterCallback<ClickEvent>(OnNewProjectClicked);
             }
             else
@@ -74,12 +86,24 @@ namespace Astrovisio
 
             if (newProjectViewInstance != null)
             {
-                // newProjectViewInstance.style.display = DisplayStyle.Flex;
                 newProjectViewInstance.AddToClassList("active");
                 newProjectController?.Dispose();
                 newProjectController.Initialize(newProjectViewInstance);
             }
         }
+
+        private void OnProjectsFetched(List<Project> projects)
+        {
+            // Now you can access the fetched list of projects
+            // Debug.Log("Projects fetched: " + projects.Count);
+        }
+
+        private void OnApiError(string error)
+        {
+            Debug.LogError($"[MainViewController] API error: {error}");
+            // Optionally show an error message in UI
+        }
+
 
         public string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
 
@@ -90,50 +114,72 @@ namespace Astrovisio
             VisualElement projectScrollView = homeViewInstance.Q<ScrollView>("ProjectScrollView");
             projectScrollView.Clear();
 
-            projectManager.FetchAllProjects();
 
-            if (true) // Last week
-            {
-                VisualElement projectRawHeaderInstance = projectRawHeaderTemplate.CloneTree();
-                Label headerLabel = projectRawHeaderInstance.Q<Label>("HeaderLabel");
-                headerLabel.text = periodHeaderLabel[0];
-                projectScrollView.Add(projectRawHeaderInstance);
-                for (int i = 0; i < 3; i++)
+            DateTime now = DateTime.UtcNow;
+            var projectList = projectManager.GetProjectList();
+            // projectList = projectManager.GetFakeProjectList();
+
+
+            var lastWeekProjectList = projectList
+                .Where(p => p.LastOpened.HasValue && (now - p.LastOpened.Value).TotalDays <= 7)
+                .ToList();
+
+            var lastMonthProjectList = projectList
+                .Where(p => p.LastOpened.HasValue)
+                .Where(p =>
                 {
-                    VisualElement projectRawInstance = projectRawTemplate.CloneTree();
-                    projectScrollView.Add(projectRawInstance);
+                    var daysAgo = (now - p.LastOpened.Value).TotalDays;
+                    return daysAgo > 7 && daysAgo <= 30;
+                })
+                .ToList();
+
+            var olderProjectList = projectList
+                .Where(p => p.LastOpened.HasValue && (now - p.LastOpened.Value).TotalDays > 30)
+                .ToList();
+
+
+            // Debug.Log("Last week " + lastWeekProjectList.Count);
+            if (lastWeekProjectList.Any())
+            {
+                var header = projectRawHeaderTemplate.CloneTree();
+                header.Q<Label>("HeaderLabel").text = periodHeaderLabel[0];
+                projectScrollView.Add(header);
+                foreach (var project in lastWeekProjectList)
+                {
+                    var item = projectRawTemplate.CloneTree();
+                    item.Q<Label>("ProjectNameLabel").text = project.Name;
+                    projectScrollView.Add(item);
                 }
             }
 
-            if (true) // Last month
+            // Debug.Log("Last month " + lastMonthProjectList.Count);
+            if (lastMonthProjectList.Any())
             {
-                VisualElement projectRawHeaderInstance = projectRawHeaderTemplate.CloneTree();
-                Label headerLabel = projectRawHeaderInstance.Q<Label>("HeaderLabel");
-                headerLabel.text = periodHeaderLabel[1];
-                projectScrollView.Add(projectRawHeaderInstance);
-                for (int i = 0; i < 3; i++)
+                var header = projectRawHeaderTemplate.CloneTree();
+                header.Q<Label>("HeaderLabel").text = periodHeaderLabel[1];
+                projectScrollView.Add(header);
+                foreach (var project in lastMonthProjectList)
                 {
-                    VisualElement projectRawInstance = projectRawTemplate.CloneTree();
-                    projectScrollView.Add(projectRawInstance);
+                    var item = projectRawTemplate.CloneTree();
+                    item.Q<Label>("ProjectNameLabel").text = project.Name;
+                    projectScrollView.Add(item);
                 }
             }
 
-            if (true) // Older
+            // Debug.Log("Older " + olderProjectList.Count);
+            if (olderProjectList.Any())
             {
-                VisualElement projectRawHeaderInstance = projectRawHeaderTemplate.CloneTree();
-                Label headerLabel = projectRawHeaderInstance.Q<Label>("HeaderLabel");
-                headerLabel.text = periodHeaderLabel[2];
-                projectScrollView.Add(projectRawHeaderInstance);
-                for (int i = 0; i < 20; i++)
+                var header = projectRawHeaderTemplate.CloneTree();
+                header.Q<Label>("HeaderLabel").text = periodHeaderLabel[2];
+                projectScrollView.Add(header);
+                foreach (var project in olderProjectList)
                 {
-                    VisualElement projectRawInstance = projectRawTemplate.CloneTree();
-                    projectScrollView.Add(projectRawInstance);
+                    var item = projectRawTemplate.CloneTree();
+                    item.Q<Label>("ProjectNameLabel").text = project.Name;
+                    projectScrollView.Add(item);
                 }
             }
 
         }
-
-
     }
-
 }

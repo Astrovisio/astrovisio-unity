@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace Astrovisio
@@ -17,10 +18,10 @@ namespace Astrovisio
         public int Id { get; set; }
 
         [JsonProperty("created")]
-        public string Created { get; set; }
+        public DateTime? Created { get; set; }
 
         [JsonProperty("last_opened")]
-        public string LastOpened { get; set; }
+        public DateTime? LastOpened { get; set; }
 
         [JsonProperty("paths")]
         public string[] Paths { get; set; }

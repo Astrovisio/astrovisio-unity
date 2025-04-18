@@ -31,7 +31,10 @@ namespace Astrovisio
         /// <summary>
         /// Reads a single project by ID.
         /// </summary>
-        public IEnumerator ReadProject(int id, Action<Project> onSuccess, Action<string> onError = null)
+        public IEnumerator ReadProject(
+            int id,
+            Action<Project> onSuccess,
+            Action<string> onError = null)
         {
             string url = APIEndpoints.GetProjectById(id);
             Debug.Log($"[APIManager] GET {url}");
@@ -62,7 +65,9 @@ namespace Astrovisio
         /// <summary>
         /// Reads all projects.
         /// </summary>
-        public IEnumerator ReadProjects(Action<List<Project>> onSuccess, Action<string> onError = null)
+        public IEnumerator ReadProjects(
+            Action<List<Project>> onSuccess,
+            Action<string> onError = null)
         {
             string url = APIEndpoints.GetAllProjects();
             using (UnityWebRequest request = UnityWebRequest.Get(url))
