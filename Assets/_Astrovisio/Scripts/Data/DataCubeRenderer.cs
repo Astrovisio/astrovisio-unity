@@ -120,7 +120,7 @@ public class DataCubeRenderer : MonoBehaviour
         }
 
         _pointCount = dataX.Count;
-        Debug.Log("Punti caricati dal CSV: " + _pointCount);
+        // Debug.Log("Punti caricati dal CSV: " + _pointCount);
 
         ReleaseBuffers();
 

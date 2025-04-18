@@ -1,0 +1,18 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="Navbar" src="project://database/Assets/UI%20Toolkit/Components/Navbar.uxml?fileID=9197481963319205126&amp;guid=7bb125ee270bca141be6679de4957541&amp;type=3#Navbar" />
+    <engine:Template name="Sidebar" src="project://database/Assets/UI%20Toolkit/Components/Sidebar.uxml?fileID=9197481963319205126&amp;guid=be7a59423a7e0cd41ad0133f66c01576&amp;type=3#Sidebar" />
+    <engine:Template name="Home" src="project://database/Assets/UI%20Toolkit/Components/HomeView.uxml?fileID=9197481963319205126&amp;guid=085c37c519bac4a4bbcca89b8ed17b03&amp;type=3#Home" />
+    <engine:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.5);">
+        <engine:VisualElement name="Header" style="flex-grow: 1; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; height: 96px; min-height: 96px; max-height: 96px; justify-content: space-between; align-self: stretch; align-items: stretch;">
+            <engine:Instance template="Navbar" name="Navbar" style="align-self: stretch; flex-grow: 1;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="Body" style="flex-grow: 1; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; flex-direction: row;">
+            <engine:VisualElement name="Sidebar" style="flex-grow: 1; width: 245px; margin-right: 40px; min-width: 245px; max-width: 245px;">
+                <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
+                <engine:Instance template="Home" name="HomeView" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

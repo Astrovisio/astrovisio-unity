@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2307568220249490968}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -67,3 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectManager: {fileID: 0}
   mainViewUIDocument: {fileID: 2823072948889059416}
+  projectRawHeaderTemplate: {fileID: 9197481963319205126, guid: 8a26ec6ef83cacf48a13fadb9f9942fb,
+    type: 3}
+  projectRawTemplate: {fileID: 9197481963319205126, guid: 35320fcd82433ac4180b12dd809838a0,
+    type: 3}

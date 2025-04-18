@@ -55,12 +55,23 @@ namespace Astrovisio
             string description = projectDescriptionField?.value ?? "<vuoto>";
             Debug.Log($"Create project: {name}, {description}");
             projectManager.CreateProject(name, description, new string[0]);
+            OnExit();
         }
 
         private void OnCancelClicked(ClickEvent evt)
         {
-            root.style.display = DisplayStyle.None;
+            OnExit();
+        }
+
+        private void OnExit()
+        {
             Dispose();
+            root.RemoveFromClassList("active");
+            root.schedule.Execute(() =>
+            {
+                projectNameField?.SetValueWithoutNotify(string.Empty);
+                projectDescriptionField?.SetValueWithoutNotify(string.Empty);
+            }).StartingIn(400);
         }
     }
 

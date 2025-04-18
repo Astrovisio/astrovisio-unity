@@ -1,0 +1,28 @@
+#Root {
+    background-color: rgba(0, 0, 0, 0.65);
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 0;
+}
+
+#Root > #Astrovisio {
+    flex-grow: 1;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    -unity-text-align: middle-center;
+    color: rgb(255, 103, 28);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 24px;
+    letter-spacing: 14px;
+}
+
+#Root.active {
+    opacity: 1;
+}

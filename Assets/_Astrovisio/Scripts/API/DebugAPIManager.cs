@@ -18,7 +18,7 @@ namespace Astrovisio
 
             Debug.Log("Chiamata API: Get Projects");
 
-            apiManager.FetchProjects();
+            // apiManager.FetchProjects();
         }
     }
 
