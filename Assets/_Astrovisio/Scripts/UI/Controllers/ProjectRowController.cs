@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class ProjectRawHeaderController
+    public class ProjectRowController
     {
-        
+
     }
 
 }

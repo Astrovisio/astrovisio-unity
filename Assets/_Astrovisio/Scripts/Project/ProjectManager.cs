@@ -1,48 +1,102 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Astrovisio
 {
-    /// <summary>
-    /// Central manager for project CRUD operations.
-    /// Exposes events for created, fetched, updated, and deleted projects.
-    /// </summary>
-    public class ProjectManager : MonoBehaviour
-    {
-        [Header("Dependencies")]
-        [SerializeField] private APIManager apiManager;
 
-        private List<Project> projectList = new List<Project>();
+	public class ProjectManager : MonoBehaviour
+	{
+		[Header("Dependencies")]
+		[SerializeField] private APIManager apiManager;
 
-        // --- Events ---
-        public event Action<List<Project>> ProjectsFetched;
-        public event Action<Project> ProjectFetched;
-        public event Action<Project> ProjectCreated;
-        public event Action<Project> ProjectUpdated;
-        public event Action<int> ProjectDeleted;
-        public event Action<string> ApiError;
+		private List<Project> projectList = new List<Project>();
+		private List<Project> openedProjectList = new List<Project>();
+		private Project currentProject;
 
-        private void Awake()
-        {
-            if (apiManager == null)
-            {
-                Debug.LogError("[ProjectManager] APIManager reference is missing.");
-                enabled = false;
-            }
-        }
+		// --- Events ---
+		public event Action<List<Project>> ProjectsFetched;
+		public event Action<Project> ProjectOpened;
+		public event Action<Project> ProjectCreated;
+		public event Action<Project> ProjectUpdated;
+		public event Action<Project> ProjectClosed;
+		public event Action ProjectUnselected;
+		public event Action<int> ProjectDeleted;
+		public event Action<string> ApiError;
 
-        public List<Project> GetProjectList()
-        {
-            return projectList;
-        }
+		private void Awake()
+		{
+			if (apiManager == null)
+			{
+				Debug.LogError("[ProjectManager] APIManager reference is missing.");
+				enabled = false;
+			}
+		}
 
-        public List<Project> GetFakeProjectList()
-        {
-            
-            string jsonResponse = @"
+		public bool IsProjectOpened(int id)
+		{
+			return openedProjectList.Any(p => p.Id == id);
+		}
+
+		public Project GetCurrentProject()
+		{
+			return currentProject;
+		}
+
+		public Project GetOpenedProject(int id)
+		{
+			return openedProjectList.Find(p => p.Id == id);
+		}
+
+		public void CloseProject(int id)
+		{
+			var projectToRemove = openedProjectList.Find(p => p.Id == id);
+			if (projectToRemove != null)
+			{
+				openedProjectList.Remove(projectToRemove);
+				Debug.Log($"[ProjectManager] Progetto con ID {id} chiuso e rimosso dalla lista aperti.");
+
+				if (currentProject != null && currentProject.Id == id)
+				{
+					currentProject = null;
+					Debug.Log("[ProjectManager] Progetto corrente azzerato.");
+				}
+
+				ProjectClosed?.Invoke(projectToRemove);
+			}
+			else
+			{
+				Debug.LogWarning($"[ProjectManager] Nessun progetto aperto trovato con ID {id} da chiudere.");
+			}
+		}
+
+		public void UnselectProject()
+		{
+			if (currentProject != null)
+			{
+				Debug.Log($"[ProjectManager] Progetto con ID {currentProject.Id} deselezionato.");
+				currentProject = null;
+				ProjectUnselected?.Invoke();
+			}
+			else
+			{
+				Debug.LogWarning("[ProjectManager] Nessun progetto selezionato da deselezionare.");
+			}
+		}
+
+
+		public List<Project> GetProjectList()
+		{
+			return projectList;
+		}
+
+		public List<Project> GetFakeProjectList()
+		{
+
+			string jsonResponse = @"
                 [
                   {
                     ""name"": ""string"",
@@ -215,131 +269,138 @@ namespace Astrovisio
                   }
                 ]";
 
-            try
-            {
-                return JsonConvert.DeserializeObject<List<Project>>(jsonResponse);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GetFakeProjects] Deserialization error: {ex.Message}");
-                return new List<Project>();
-            }
-        }
+			try
+			{
+				return JsonConvert.DeserializeObject<List<Project>>(jsonResponse);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError($"[GetFakeProjects] Deserialization error: {ex.Message}");
+				return new List<Project>();
+			}
+		}
 
 
-        /// <summary>
-        /// Fetches all projects from the server.
-        /// </summary>
-        public void FetchAllProjects()
-        {
-            StartCoroutine(FetchAllProjectsCoroutine());
-        }
+		public void FetchAllProjects()
+		{
+			StartCoroutine(FetchAllProjectsCoroutine());
+		}
 
-        private IEnumerator FetchAllProjectsCoroutine()
-        {
-            yield return apiManager.ReadProjects(
-                onSuccess: fetched =>
-                {
-                    // Check for null in case of bad responses
-                    projectList = fetched ?? new List<Project>();
-                    ProjectsFetched?.Invoke(projectList);
-                    // Debug.Log($"[ProjectManager] Fetched {projectList.Count} projects");
-                },
-                onError: err => ApiError?.Invoke(err)
-            );
-        }
+		private IEnumerator FetchAllProjectsCoroutine()
+		{
+			yield return apiManager.ReadProjects(
+			  onSuccess: fetched =>
+			  {
+				  // Check for null in case of bad responses
+				  projectList = fetched ?? new List<Project>();
+				  ProjectsFetched?.Invoke(projectList);
+				  // Debug.Log($"[ProjectManager] Fetched {projectList.Count} projects");
+			  },
+			  onError: err => ApiError?.Invoke(err)
+			);
+		}
 
 
-        /// <summary>
-        /// Fetches a single project by its ID.
-        /// </summary>
-        public void FetchProjectById(int id)
-        {
-            StartCoroutine(FetchProjectByIdCoroutine(id));
-        }
+		public void OpenProject(int id)
+		{
+			Debug.Log("Opening project: " + id);
 
-        private IEnumerator FetchProjectByIdCoroutine(int id)
-        {
-            yield return apiManager.ReadProject(
-                id,
-                onSuccess: project => ProjectFetched?.Invoke(project),
-                onError: err => ApiError?.Invoke(err)
-            );
-        }
+			Project alreadyOpened = openedProjectList.Find(p => p.Id == id);
+			if (alreadyOpened != null)
+			{
+				Debug.Log("[ProjectManager] Project already opened, skipping API call.");
+				currentProject = alreadyOpened;
+				ProjectOpened?.Invoke(alreadyOpened);
+				return;
+			}
 
+			StartCoroutine(OpenProjectCoroutine(id));
+		}
 
-        /// <summary>
-        /// Creates a new project with the given parameters.
-        /// </summary>
-        public void CreateProject(string name, string description, string[] paths)
-        {
-            var request = new CreateProjectRequest
-            {
-                Name = name,
-                Description = description,
-                Favourite = false,
-                Paths = paths
-            };
-            StartCoroutine(CreateProjectCoroutine(request));
-        }
+		private IEnumerator OpenProjectCoroutine(int id)
+		{
+			yield return apiManager.ReadProject(
+				id,
+				onSuccess: project =>
+				{
+					currentProject = project;
 
-        private IEnumerator CreateProjectCoroutine(CreateProjectRequest request)
-        {
-            yield return apiManager.CreateNewProject(
-                request,
-                onSuccess: created => ProjectCreated?.Invoke(created),
-                onError: err => ApiError?.Invoke(err)
-            );
-        }
+					if (!openedProjectList.Any(p => p.Id == project.Id))
+					{
+						openedProjectList.Add(project);
+					}
+
+					ProjectOpened?.Invoke(project);
+				},
+				onError: err => ApiError?.Invoke(err)
+			);
+		}
 
 
-        /// <summary>
-        /// Updates an existing project.
-        /// </summary>
-        public void UpdateProject(int id, UpdateProjectRequest updatedData)
-        {
-            StartCoroutine(UpdateProjectCoroutine(id, updatedData));
-        }
+		public void CreateProject(string name, string description, string[] paths)
+		{
+			var request = new CreateProjectRequest
+			{
+				Name = name,
+				Description = description,
+				Favourite = false,
+				Paths = paths
+			};
+			StartCoroutine(CreateProjectCoroutine(request));
+		}
 
-        private IEnumerator UpdateProjectCoroutine(int id, UpdateProjectRequest updatedData)
-        {
-            yield return apiManager.UpdateProject(
-                id,
-                updatedData,
-                onSuccess: updated => ProjectUpdated?.Invoke(updated),
-                onError: err => ApiError?.Invoke(err)
-            );
-        }
-
-
-        /// <summary>
-        /// Deletes a project by its ID.
-        /// </summary>
-        public void DeleteProject(int id)
-        {
-            StartCoroutine(DeleteProjectCoroutine(id));
-        }
-
-        private IEnumerator DeleteProjectCoroutine(int id)
-        {
-            yield return apiManager.DeleteProject(
-                id,
-                onSuccess: () => ProjectDeleted?.Invoke(id),
-                onError: err => ApiError?.Invoke(err)
-            );
-        }
+		private IEnumerator CreateProjectCoroutine(CreateProjectRequest request)
+		{
+			yield return apiManager.CreateNewProject(
+			  request,
+			  onSuccess: created => ProjectCreated?.Invoke(created),
+			  onError: err => ApiError?.Invoke(err)
+			);
+		}
 
 
-        // Clean up subscriptions when the object is disabled
-        private void OnDisable()
-        {
-            ProjectsFetched = null;
-            ProjectFetched = null;
-            ProjectCreated = null;
-            ProjectUpdated = null;
-            ProjectDeleted = null;
-            ApiError = null;
-        }
+		public void UpdateProject(int id, UpdateProjectRequest updatedData)
+		{
+			StartCoroutine(UpdateProjectCoroutine(id, updatedData));
+		}
 
-    }
+		private IEnumerator UpdateProjectCoroutine(int id, UpdateProjectRequest updatedData)
+		{
+			yield return apiManager.UpdateProject(
+			  id,
+			  updatedData,
+			  onSuccess: updated => ProjectUpdated?.Invoke(updated),
+			  onError: err => ApiError?.Invoke(err)
+			);
+		}
+
+
+		public void DeleteProject(int id)
+		{
+			StartCoroutine(DeleteProjectCoroutine(id));
+		}
+
+		private IEnumerator DeleteProjectCoroutine(int id)
+		{
+			yield return apiManager.DeleteProject(
+			  id,
+			  onSuccess: () => ProjectDeleted?.Invoke(id),
+			  onError: err => ApiError?.Invoke(err)
+			);
+		}
+
+
+		private void OnDisable()
+		{
+			ProjectsFetched = null;
+			ProjectOpened = null;
+			ProjectCreated = null;
+			ProjectUpdated = null;
+			ProjectDeleted = null;
+			ApiError = null;
+		}
+
+
+	}
+
 }

@@ -1,0 +1,264 @@
+#Root > #LeftContainer > #FilesContainer {
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    background-color: rgb(46, 46, 46);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    margin-bottom: 40px;
+}
+
+#Root > #RightContainer > #InfoContainer {
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    background-color: rgb(46, 46, 46);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    margin-bottom: 24px;
+}
+
+#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #DescriptionLabel {
+    height: 138px;
+    min-height: 138px;
+    max-height: 138px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: rgb(215, 211, 203);
+    text-overflow: ellipsis;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    white-space: normal;
+    overflow: hidden;
+    -unity-text-align: upper-left;
+    flex-wrap: nowrap;
+    font-size: 14px;
+    align-self: stretch;
+    align-items: stretch;
+}
+
+#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #BottomContainer > #ReadMoreButton {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 103, 28);
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+}
+
+#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #BottomContainer {
+    margin-top: 10px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+#Root > #RightContainer > #InfoContainer > #DescriptionContainer {
+    height: 156px;
+    min-height: 156px;
+    max-height: 156px;
+}
+
+#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ProjectNameLabel {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: rgb(251, 251, 251);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    -unity-text-align: middle-left;
+}
+
+#Root > #RightContainer > #InfoContainer > #HeaderContainer {
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    margin-bottom: 16px;
+}
+
+#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #FavouriteButton {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #MoreButton {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 6px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/more_horiz.svg?fileID=7388822144124034973&guid=6a727c40db254c641bfcf81c566ea58a&type=3#more_horiz");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+}
+
+#Root > #RightContainer > #VRReelsContainer {
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background-color: rgb(46, 46, 46);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#Root > #RightContainer > #VRReelsContainer > #Label {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    color: rgb(251, 251, 251);
+    height: 11px;
+    width: 82px;
+    min-width: 82px;
+    max-width: 82px;
+    min-height: 11px;
+    max-height: 11px;
+}
+
+#Root > #RightContainer > #VRReelsContainer > #CreateButton > .btn-tertiary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
+}
+
+#Root > #LeftContainer > #LabelContainer {
+    margin-bottom: 24px;
+    height: 29px;
+    min-height: 29px;
+    max-height: 29px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+#Root > #LeftContainer > #ParamsContainer {
+}
+
+#Root > #LeftContainer > #LabelContainer > #TitleLable {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: rgb(251, 251, 251);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    -unity-text-align: middle-left;
+}
+
+#Root > #LeftContainer > #LabelContainer > #SubtitleLable {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: rgb(215, 211, 203);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    -unity-text-align: middle-left;
+}

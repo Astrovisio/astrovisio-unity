@@ -1,0 +1,37 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="TertiaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/TertiaryButton.uxml?fileID=9197481963319205126&amp;guid=8de8481b16f7dc640933949828d63915&amp;type=3#TertiaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/Project.uss?fileID=7433441132597879392&amp;guid=deec784016811ab44986b898b4af8339&amp;type=3#Project" />
+    <engine:VisualElement name="Root" style="flex-direction: row; flex-grow: 1;">
+        <engine:VisualElement name="LeftContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="FilesContainer" />
+            <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
+                <engine:Label text="Import Values" name="TitleLable" />
+                <engine:Label text="Select the values you want to render" name="SubtitleLable" />
+            </engine:VisualElement>
+            <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="RightContainer" style="flex-grow: 1; width: 215px; min-width: 215px; max-width: 215px; margin-left: 40px;">
+            <engine:VisualElement name="InfoContainer" style="flex-grow: 1;">
+                <engine:VisualElement name="HeaderContainer" style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center;">
+                    <engine:Label text="Project Serra" name="ProjectNameLabel" />
+                    <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center;">
+                        <engine:Button name="FavouriteButton" />
+                        <engine:Button name="MoreButton" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement name="DescriptionContainer" style="flex-grow: 1;">
+                    <engine:Label name="DescriptionLabel" text="We introduce SERRA, a suite of zoom-in high-resolution (∼10pc) cosmological simulations including non-equilibrium chemistry and on-the-fly radiative transfer. The outputs are post-processed to derive galaxy UV+FIR continuum and emission line properties. " />
+                    <engine:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
+                        <engine:Button text="Read more" name="ReadMoreButton" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="VRReelsContainer" style="flex-grow: 1; justify-content: space-between; flex-direction: row; align-items: center;">
+                <engine:Label text="VR Reels" name="Label" />
+                <engine:Instance template="TertiaryButton" name="CreateButton">
+                    <AttributeOverrides element-name="Label" text="Create" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

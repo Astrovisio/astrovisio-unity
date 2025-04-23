@@ -1,0 +1,11 @@
+#NavbarRoot > #HomeContainer {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 8px;
+}
+
+#NavbarRoot > #ProjectContainer {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+}

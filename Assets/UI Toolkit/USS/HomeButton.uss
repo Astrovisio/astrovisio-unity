@@ -1,0 +1,34 @@
+.unity-button {
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgb(138, 138, 128);
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.active {
+    background-color: rgb(0, 0, 0);
+}
+
+.unity-button:hover {
+    background-color: rgb(95, 95, 89);
+}
+
+.unity-button:hover.active {
+    background-color: rgb(0, 0, 0);
+}

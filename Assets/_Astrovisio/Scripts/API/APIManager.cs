@@ -37,7 +37,7 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProjectById(id);
-            Debug.Log($"[APIManager] GET {url}");
+            // Debug.Log($"[APIManager] GET {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {

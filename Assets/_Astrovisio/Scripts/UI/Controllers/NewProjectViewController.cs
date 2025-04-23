@@ -71,6 +71,7 @@ namespace Astrovisio
             {
                 projectNameField?.SetValueWithoutNotify(string.Empty);
                 projectDescriptionField?.SetValueWithoutNotify(string.Empty);
+                projectManager.FetchAllProjects();
             }).StartingIn(400);
         }
     }

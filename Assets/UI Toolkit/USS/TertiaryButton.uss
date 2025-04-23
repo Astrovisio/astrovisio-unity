@@ -30,6 +30,33 @@
     border-bottom-left-radius: 4px;
 }
 
+.btn-tertiary {
+    flex-direction: row;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 4px;
+    padding-right: 12px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    flex-grow: 1;
+    border-left-color: rgb(95, 95, 89);
+    border-right-color: rgb(95, 95, 89);
+    border-top-color: rgb(95, 95, 89);
+    border-bottom-color: rgb(95, 95, 89);
+    background-color: rgb(76, 76, 76);
+    align-items: center;
+}
+
 .btn-tertiary:hover {
     color: rgb(31, 31, 28);
     background-color: rgb(46, 46, 46);
@@ -41,13 +68,14 @@
 
 .btn-tertiary > #Icon {
     margin-right: 3px;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
     width: 16px;
     height: 16px;
     min-height: 16px;
     max-height: 16px;
     max-width: 16px;
     min-width: 16px;
+    -unity-background-image-tint-color: rgb(246, 245, 243);
 }
 
 .btn-tertiary > #Label {
@@ -62,5 +90,5 @@
     padding-bottom: 0;
     padding-left: 0;
     font-size: 12px;
-    -unity-text-align: middle-left;
+    -unity-text-align: upper-left;
 }

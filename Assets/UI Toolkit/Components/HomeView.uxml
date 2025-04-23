@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
-    <engine:Template name="ProjectRawHeader" src="project://database/Assets/UI%20Toolkit/Components/ProjectRawHeader.uxml?fileID=9197481963319205126&amp;guid=8a26ec6ef83cacf48a13fadb9f9942fb&amp;type=3#ProjectRawHeader" />
-    <engine:Template name="ProjectRaw" src="project://database/Assets/UI%20Toolkit/Components/ProjectRaw.uxml?fileID=9197481963319205126&amp;guid=35320fcd82433ac4180b12dd809838a0&amp;type=3#ProjectRaw" />
+    <engine:Template name="ProjectRowHeader" src="project://database/Assets/UI%20Toolkit/Components/ProjectRowHeader.uxml?fileID=9197481963319205126&amp;guid=8a26ec6ef83cacf48a13fadb9f9942fb&amp;type=3#ProjectRowHeader" />
+    <engine:Template name="ProjectRow" src="project://database/Assets/UI%20Toolkit/Components/ProjectRow.uxml?fileID=9197481963319205126&amp;guid=35320fcd82433ac4180b12dd809838a0&amp;type=3#ProjectRow" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Home.uss?fileID=7433441132597879392&amp;guid=2591f387589dfe245a6654ce5f01c601&amp;type=3#Home" />
     <engine:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
         <engine:VisualElement name="HeaderContainer" style="flex-grow: 0; flex-direction: row; height: 77px; min-height: 77px; max-height: 77px; align-self: stretch; align-items: center;">
@@ -23,22 +23,22 @@
                 <engine:Label class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
             </engine:VisualElement>
             <engine:ScrollView name="ProjectScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
-                <engine:Instance template="ProjectRawHeader" name="LastWeekHeader" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRawHeader" name="LastMonthHeader">
+                <engine:Instance template="ProjectRowHeader" name="LastWeekHeader" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRowHeader" name="LastMonthHeader">
                     <AttributeOverrides element-name="HeaderLabel" text="Last month" />
                 </engine:Instance>
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRawHeader" name="OlderHeader">
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRowHeader" name="OlderHeader">
                     <AttributeOverrides element-name="HeaderLabel" text="Older" />
                 </engine:Instance>
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
-                <engine:Instance template="ProjectRaw" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" />
             </engine:ScrollView>
         </engine:VisualElement>
     </engine:VisualElement>
