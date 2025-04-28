@@ -8,7 +8,7 @@
         <engine:Instance template="IconButton" name="DuplicateButton">
             <AttributeOverrides element-name="Label" text="Duplicate" />
         </engine:Instance>
-        <engine:Instance template="IconButton" name="DeleteButton" data-source="project://database/Assets/UI%20Toolkit/Components/IconButton.asset?fileID=11400000&amp;guid=7b76c4a256afc3a4b9fade5bd0e4d815&amp;type=2#IconButton">
+        <engine:Instance template="IconButton" name="DeleteButton">
             <AttributeOverrides element-name="Label" text="Delete" />
         </engine:Instance>
     </engine:VisualElement>

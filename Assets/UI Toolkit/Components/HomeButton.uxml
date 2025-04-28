@@ -2,5 +2,8 @@
     <Style src="project://database/Assets/UI%20Toolkit/USS/HomeButton.uss?fileID=7433441132597879392&amp;guid=fb8f1776ca1393944a47b08d8e51bfd7&amp;type=3#HomeButton" />
     <engine:Button class="active">
         <engine:VisualElement name="Icon" style="flex-grow: 1; height: 16px; width: 16px; min-width: 16px; min-height: 16px; max-height: 16px; max-width: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/Home.svg?fileID=7388822144124034973&amp;guid=fc6d970e17c293a46981a7928f29935e&amp;type=3#Home&quot;);" />
+        <engine:VisualElement name="Bar" style="flex-grow: 1;" />
+        <engine:VisualElement name="LeftCorner" style="flex-grow: 1;" />
+        <engine:VisualElement name="RightCorner" style="flex-grow: 1;" />
     </engine:Button>
 </engine:UXML>

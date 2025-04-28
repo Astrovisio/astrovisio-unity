@@ -21,11 +21,11 @@
     margin-left: 0;
     flex-direction: row;
     align-items: center;
-    background-color: rgb(255, 103, 28);
+    background-color: var(--accent-100);
 }
 
 .btn-primary:hover {
-    background-color: rgb(215, 63, 0);
+    background-color: var(--accent-200);
 }
 
 .btn-primary > #Icon {
@@ -37,7 +37,7 @@
     width: 16px;
     margin-right: 4px;
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
-    -unity-background-image-tint-color: rgb(31, 31, 28);
+    -unity-background-image-tint-color: var(--grey-100);
 }
 
 .btn-primary > #Label {
@@ -50,6 +50,6 @@
     padding-bottom: 0;
     padding-left: 0;
     -unity-text-align: middle-left;
-    color: rgb(31, 31, 28);
+    color: var(--grey-100);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
 }

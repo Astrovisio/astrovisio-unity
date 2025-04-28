@@ -324,6 +324,7 @@ namespace Astrovisio
 				onSuccess: project =>
 				{
 					currentProject = project;
+					Debug.Log("Current project updated to: " + currentProject.Id);
 
 					if (!openedProjectList.Any(p => p.Id == project.Id))
 					{

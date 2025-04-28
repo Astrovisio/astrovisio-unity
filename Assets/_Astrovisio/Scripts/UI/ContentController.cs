@@ -22,7 +22,7 @@ namespace Astrovisio
         // === Controllers ===
         private NewProjectViewController newProjectController;
         private HomeViewController homeViewController;
-        private List<ProjectViewController> projectViewControllerList = new List<ProjectViewController>();
+        private Dictionary<int, ProjectViewController> projectViewControllerDictionary = new();
 
         // === Containers ===
         private VisualElement contentContainer;
@@ -49,12 +49,17 @@ namespace Astrovisio
             EnableHomeView();
 
             projectManager.ProjectOpened += OnProjectOpened;
+            projectManager.ProjectClosed += OnProjectClosed;
             projectManager.ProjectUnselected += OnProjectUnselected;
         }
 
         private void OnDisable()
         {
             DisableNewProjectButton();
+
+            projectManager.ProjectOpened -= OnProjectOpened;
+            projectManager.ProjectClosed -= OnProjectClosed;
+            projectManager.ProjectUnselected -= OnProjectUnselected;
         }
 
         private void EnableNewProjectButton()
@@ -105,39 +110,47 @@ namespace Astrovisio
         private void OnProjectOpened(Project project)
         {
             homeViewContainer.style.display = DisplayStyle.None;
+            foreach (var controller in projectViewControllerDictionary.Values)
+            {
+                controller.Root.style.display = DisplayStyle.None;
+            }
 
-            // Verifica se esiste già una view per questo progetto
-            // var existingController = projectViewControllerList.FirstOrDefault(c => c.GetProject().Id == project.Id);
-            // if (existingController != null)
-            // {
-            //     foreach (var view in projectViewContainerList)
-            //         view.style.display = DisplayStyle.None;
+            if (projectViewControllerDictionary.TryGetValue(project.Id, out var existingController))
+            {
+                existingController.Root.style.display = DisplayStyle.Flex;
+                return;
+            }
 
-            //     existingController.Root.style.display = DisplayStyle.Flex;
-            //     return;
-            // }
-
-            // Altrimenti crea e aggiunge
             VisualElement projectViewInstance = projectViewTemplate.CloneTree();
             contentContainer.Add(projectViewInstance);
 
-            var controller = new ProjectViewController(projectManager, project);
-            controller.Initialize(projectViewInstance);
-            // controller.Root = projectViewInstance;
-
-            projectViewControllerList.Add(controller);
-            projectViewContainerList.Add(projectViewInstance);
+            var newProjectViewController = new ProjectViewController(projectManager, project, projectViewInstance);
+            projectViewControllerDictionary[project.Id] = newProjectViewController;
         }
 
         private void OnProjectUnselected()
         {
             homeViewContainer.style.display = DisplayStyle.Flex;
 
-            foreach (var view in projectViewContainerList)
+            foreach (var controller in projectViewControllerDictionary.Values)
             {
-                view.style.display = DisplayStyle.None;
+                controller.Root.style.display = DisplayStyle.None;
             }
         }
-        
+
+        private void OnProjectClosed(Project project)
+        {
+            Debug.Log("OnProjectClosed");
+            foreach (var controller in projectViewControllerDictionary.Values)
+            {
+                controller.Root.style.display = DisplayStyle.None;
+            }
+            homeViewContainer.style.display = DisplayStyle.Flex;
+
+            projectViewControllerDictionary.Remove(project.Id);
+        }
+
+
+
     }
 }

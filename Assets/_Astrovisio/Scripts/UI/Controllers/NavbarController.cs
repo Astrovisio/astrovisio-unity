@@ -7,25 +7,29 @@ namespace Astrovisio
 {
     public class NavbarController
     {
+        // === Dependencies ===
         private readonly ProjectManager projectManager;
         private readonly VisualTreeAsset projectButtonTemplate;
+        private readonly VisualElement root;
 
-        private VisualElement root;
+        // === Local ===
         private VisualElement homeContainer;
-        private VisualElement projectContainer;
+        private VisualElement projectTabContainer;
         private Button homeButton;
-        private readonly List<Project> openProjects = new List<Project>();
 
-        public NavbarController(ProjectManager projectManager, VisualTreeAsset projectButtonTemplate)
+        private readonly Dictionary<int, ProjectTabInfo> projectTabDictionary = new();
+
+        public NavbarController(ProjectManager projectManager, VisualTreeAsset projectButtonTemplate, VisualElement root)
         {
             this.projectManager = projectManager;
             this.projectButtonTemplate = projectButtonTemplate;
-        }
-
-        public void Initialize(VisualElement root)
-        {
             this.root = root;
 
+            InitializeUI();
+        }
+
+        public void InitializeUI()
+        {
             homeContainer = root.Q<VisualElement>("HomeContainer");
             homeButton = homeContainer.Q<Button>();
             if (homeButton != null)
@@ -38,9 +42,9 @@ namespace Astrovisio
                 homeButton.AddToClassList("active");
             }
 
-            projectContainer = root.Q<VisualElement>("ProjectContainer");
-            projectContainer.Clear();
-            openProjects.Clear();
+            projectTabContainer = root.Q<VisualElement>("ProjectContainer");
+            projectTabContainer.Clear();
+            projectTabDictionary.Clear();
 
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -48,15 +52,19 @@ namespace Astrovisio
 
         private void OnProjectOpened(Project project)
         {
-            if (openProjects.Any(p => p.Id == project.Id))
+            if (projectTabDictionary.ContainsKey(project.Id))
             {
                 SetActiveTab(project.Id);
                 return;
             }
 
-            openProjects.Add(project);
-            AddProjectButton(root.Q<VisualElement>("ProjectContainer"), project);
+            var tabElement = CreateProjectTab(project);
+            var tabInfo = new ProjectTabInfo(project, tabElement);
+            projectTabDictionary[project.Id] = tabInfo;
+
+            projectTabContainer.Add(tabElement);
             SetActiveTab(project.Id);
+            UpdateTabMargins();
         }
 
         private void OnProjectDeleted(int projectId)
@@ -64,56 +72,70 @@ namespace Astrovisio
             RemoveProjectTab(projectId);
         }
 
-        private void AddProjectButton(VisualElement container, Project project)
+        private VisualElement CreateProjectTab(Project project)
         {
-            var tab = projectButtonTemplate.CloneTree();
-            tab.name = $"ProjectTab_{project.Id}";
-            tab.Q<Label>("Label").text = project.Name;
+            var projectTab = projectButtonTemplate.CloneTree();
+            projectTab.name = $"ProjectTab_{project.Id}";
+            projectTab.Q<Label>("Label").text = project.Name;
 
-            var mainBtn = tab.Q<Button>();
-
-            mainBtn.RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>().RegisterCallback<ClickEvent>(_ =>
             {
                 SetActiveTab(project.Id);
                 projectManager.OpenProject(project.Id);
             });
 
-            var closeBtn = tab.Q<Button>("CloseButton");
-            closeBtn.RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(_ =>
             {
                 RemoveProjectTab(project.Id);
             });
 
-            container.Add(tab);
-            UpdateTabMargins(container);
+            return projectTab;
         }
 
         private void RemoveProjectTab(int projectId)
         {
-            openProjects.RemoveAll(p => p.Id == projectId);
-
-            var container = root.Q<VisualElement>("ProjectContainer");
-            var tab = container.Q<VisualElement>($"ProjectTab_{projectId}");
-            if (tab != null)
+            if (!projectTabDictionary.TryGetValue(projectId, out var tabInfo))
             {
-                bool wasActive = tab.Q<Button>().ClassListContains("active");
-                tab.RemoveFromHierarchy();
-
-                if (wasActive)
-                {
-                    if (openProjects.Any())
-                        SetActiveTab(openProjects.Last().Id);
-                    else
-                        SetActiveHome();
-                }
+                return;
             }
 
-            UpdateTabMargins(container);
+            bool wasActive = tabInfo.TabElement.Q<Button>().ClassListContains("active");
+
+            var before = projectTabContainer.Children().ToList();
+            int removedIndex = before.IndexOf(tabInfo.TabElement);
+
+            tabInfo.TabElement.RemoveFromHierarchy();
+            projectTabDictionary.Remove(projectId);
+
+            UpdateTabMargins();
+
+            if (!wasActive)
+            {
+                return;
+            }
+
+            var after = projectTabContainer.Children().ToList();
+            if (after.Any())
+            {
+                int newIndex = removedIndex > 0 ? removedIndex - 1 : 0;
+                var newTab = after.ElementAt(newIndex);
+                int newProjectId = projectTabDictionary
+                    .First(kvp => kvp.Value.TabElement == newTab)
+                    .Key;
+
+                SetActiveTab(newProjectId);
+                projectManager.OpenProject(newProjectId);
+            }
+            else
+            {
+                SetActiveHome();
+                projectManager.UnselectProject();
+            }
         }
 
-        private void UpdateTabMargins(VisualElement container)
+        private void UpdateTabMargins()
         {
-            var children = container.Children().ToList();
+            var children = projectTabContainer.Children().ToList();
             for (int i = 0; i < children.Count; i++)
             {
                 children[i].style.marginRight = (i < children.Count - 1) ? 8 : 0;
@@ -122,33 +144,29 @@ namespace Astrovisio
 
         private void SetActiveTab(int projectId)
         {
-            var container = root.Q<VisualElement>("ProjectContainer");
-
-            // Disattiva il pulsante home
             homeButton?.RemoveFromClassList("active");
 
-            foreach (var tab in container.Children())
+            foreach (var tab in projectTabContainer.Children())
             {
                 var button = tab.Q<Button>();
                 if (tab.name == $"ProjectTab_{projectId}")
+                {
                     button.AddToClassList("active");
+                }
                 else
+                {
                     button.RemoveFromClassList("active");
+                }
             }
         }
 
         private void SetActiveHome()
         {
-            var container = root.Q<VisualElement>("ProjectContainer");
-
-            // Disattiva tutti i project button
-            foreach (var tab in container.Children())
+            foreach (var tab in projectTabContainer.Children())
             {
-                var button = tab.Q<Button>();
-                button.RemoveFromClassList("active");
+                tab.Q<Button>().RemoveFromClassList("active");
             }
 
-            // Attiva il pulsante home
             homeButton?.AddToClassList("active");
         }
 
@@ -157,5 +175,7 @@ namespace Astrovisio
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectDeleted -= OnProjectDeleted;
         }
+
+
     }
 }

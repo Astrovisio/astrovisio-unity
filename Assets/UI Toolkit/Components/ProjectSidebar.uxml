@@ -1,0 +1,28 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ProjectSidebar.uss?fileID=7433441132597879392&amp;guid=2fd8b6039993c0e49b039d0a52b7702f&amp;type=3#ProjectSidebar" />
+    <engine:VisualElement name="ProjectSidebarRoot">
+        <engine:VisualElement name="DataSettingsContainer" class="active">
+            <engine:Button name="AccordionHeader">
+                <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
+                    <engine:VisualElement name="Icon" />
+                    <engine:Label text="Data Settings" name="Label" />
+                </engine:VisualElement>
+                <engine:VisualElement name="Toggle" style="flex-grow: 1;" />
+            </engine:Button>
+            <engine:VisualElement name="AccordionContent" style="flex-grow: 1;">
+                <engine:Label text="Values ready to import" name="Title" />
+                <engine:VisualElement style="flex-grow: 1; height: auto; min-height: auto; max-height: none; background-color: rgba(0, 255, 167, 0.4);" />
+                <engine:VisualElement style="flex-grow: 1; height: 200px; min-height: 200px; max-height: 200px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="RenderSettingsContainer" style="visibility: visible; display: none;">
+            <engine:Button name="AccordionHeader">
+                <engine:Label text="Header" />
+            </engine:Button>
+            <engine:VisualElement name="AccordionHeader" style="flex-grow: 1;">
+                <engine:Label text="Label" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:Button text="Button" name="GoToVRButton" style="visibility: visible; display: none;" />
+    </engine:VisualElement>
+</engine:UXML>

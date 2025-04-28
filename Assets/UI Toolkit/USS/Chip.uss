@@ -2,28 +2,25 @@
     opacity: 0.5;
 }
 
-.btn-icon {
-    color: var(--grey-700);
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
+.btn-chip {
+    background-color: var(--grey-150);
     flex-grow: 1;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: var(--grey-200);
+    border-right-color: var(--grey-200);
+    border-top-color: var(--grey-200);
+    border-bottom-color: var(--grey-200);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
+    -unity-text-align: middle-center;
 }
 
-.btn-icon:hover {
+.btn-chip:hover {
     background-color: var(--bg-10);
     border-left-color: var(--grey-200);
     border-right-color: var(--grey-200);
@@ -35,7 +32,7 @@
     border-bottom-left-radius: 4px;
 }
 
-.btn-icon > #Icon {
+.btn-chip > #Label {
     flex-grow: 1;
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/folder.svg?fileID=7388822144124034973&guid=7481ee2b4f02ba746b0f824eb88b7746&type=3#folder");
     -unity-background-image-tint-color: var(--grey-700);
@@ -48,17 +45,7 @@
     min-height: 16px;
 }
 
-.btn-icon:active > #Icon {
+.btn-chip:active > #Label {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite_full.svg?fileID=7388822144124034973&guid=290cba493649053489ffc68402790639&type=3#favourite_full");
     -unity-background-image-tint-color: var(--accent-100);
-}
-
-.active > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite_full.svg?fileID=7388822144124034973&guid=290cba493649053489ffc68402790639&type=3#favourite_full");
-    -unity-background-image-tint-color: var(--accent-100);
-}
-
-.active:active > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
-    -unity-background-image-tint-color: var(--grey-700);
 }

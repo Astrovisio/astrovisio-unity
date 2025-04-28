@@ -1,4 +1,4 @@
-@import url("unity-theme://default");
+@import url("unity-theme://dark");
 
 :root {
   --grey-100: rgba(31, 31, 28, 1);

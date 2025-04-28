@@ -8,25 +8,20 @@ namespace Astrovisio
 
         // === Dependencies ===
         private readonly ProjectManager projectManager;
-        private readonly Project project;
 
         // === Local ===
-        private VisualElement root;
+        public Project Project { get; }
+        public VisualElement Root { get; }
 
-        public ProjectViewController(ProjectManager projectManager, Project project)
+        public ProjectViewController(ProjectManager projectManager, Project project, VisualElement root)
         {
             this.projectManager = projectManager;
-            this.project = project;
-        }
+            Project = project;
+            Root = root;
 
-        public void Initialize(VisualElement root)
-        {
-            this.root = root;
-
-            var projectNameLabel = this.root.Q<Label>("ProjectNameLabel");
+            var projectNameLabel = Root.Q<Label>("ProjectNameLabel");
             projectNameLabel.text = project.Name;
         }
-
 
     }
 }

@@ -1,0 +1,137 @@
+#ProjectSidebarRoot {
+    flex-grow: 1;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer {
+    background-color: var(--grey-150);
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    flex-grow: 1;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader {
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--transparent);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader > #LabelContainer {
+    flex-direction: row;
+    align-items: center;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader > #LabelContainer > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/database.svg?fileID=7388822144124034973&guid=083f2aec258052346a4ea1f1d683d6a1&type=3#database");
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    -unity-background-image-tint-color: var(--grey-800);
+    margin-right: 8px;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader > #LabelContainer > #Label {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    -unity-text-align: middle-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    color: var(--grey-800);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader > #Toggle {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/CircleInactive.svg?fileID=7388822144124034973&guid=0a0a83b5e28b9214789c993c8e39aaf2&type=3#CircleInactive");
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    -unity-background-image-tint-color: var(--grey-500);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent {
+    border-top-width: 24px;
+    border-left-width: 16px;
+    border-right-width: 16px;
+    border-bottom-width: 8px;
+    display: none;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #Title {
+    color: var(--black);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionContent {
+    display: flex;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionHeader > #LabelContainer > #Icon {
+    -unity-background-image-tint-color: var(--grey-100);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionHeader > #LabelContainer > #Label {
+    color: var(--grey-100);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionHeader > #Toggle {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/CircleActive.svg?fileID=7388822144124034973&guid=21305b1e566142e458f73ce0ba36fdca&type=3#CircleActive");
+    -unity-background-image-tint-color: var(--grey-100);
+    background-color: var(--transparent);
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionHeader {
+    background-color: var(--grey-800);
+    color: var(--grey-100);
+}

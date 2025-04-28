@@ -1,3 +1,7 @@
+#MainView {
+    flex-grow: 1;
+}
+
 #NewProjectView {
     opacity: 0;
     transition-property: opacity, visibility;

@@ -1,16 +1,16 @@
-#MorePanelRoot > #DeleteButton > .unity-button > #Label {
-    color: rgb(25, 105, 36);
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    flex-grow: 1;
-    -unity-font-style: normal;
-    font-size: 14px;
-    -unity-text-align: upper-left;
-    background-image: none;
+#MorePanelRoot > #EditButton > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/edit.svg?fileID=7388822144124034973&guid=40407f72016e1ea4cb4e5d50f7d53206&type=3#edit");
 }
 
-#MorePanelRoot > #DeleteButton > .unity-button > #Icon {
-    background-color: rgb(105, 255, 78);
+#MorePanelRoot > #DuplicateButton > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/folder_copy.svg?fileID=7388822144124034973&guid=b63d60edad0505f44a7ea4c867c79314&type=3#folder_copy");
+}
+
+#MorePanelRoot > #DeleteButton > #Button > #Icon {
+    -unity-background-image-tint-color: var(--red);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete_forever.svg?fileID=7388822144124034973&guid=1531116fb0bc97a45b728ed7e3ecefb4&type=3#delete_forever");
+}
+
+#MorePanelRoot > #DeleteButton > #Button > #Label {
+    color: var(--red);
 }

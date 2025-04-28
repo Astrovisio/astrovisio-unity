@@ -3,8 +3,8 @@
 }
 
 .btn-icon {
-    color: rgb(31, 31, 28);
-    background-color: rgb(76, 76, 76);
+    color: var(--grey-100);
+    background-color: var(--grey-200);
     padding-top: 4px;
     padding-right: 12px;
     padding-bottom: 4px;
@@ -18,10 +18,10 @@
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-left-color: rgb(95, 95, 89);
-    border-right-color: rgb(95, 95, 89);
-    border-top-color: rgb(95, 95, 89);
-    border-bottom-color: rgb(95, 95, 89);
+    border-left-color: var(--grey-300);
+    border-right-color: var(--grey-300);
+    border-top-color: var(--grey-300);
+    border-bottom-color: var(--grey-300);
     flex-direction: row;
     align-items: center;
     border-top-left-radius: 4px;
@@ -49,21 +49,21 @@
     border-bottom-width: 1px;
     border-left-width: 1px;
     flex-grow: 1;
-    border-left-color: rgb(95, 95, 89);
-    border-right-color: rgb(95, 95, 89);
-    border-top-color: rgb(95, 95, 89);
-    border-bottom-color: rgb(95, 95, 89);
-    background-color: rgb(76, 76, 76);
+    border-left-color: var(--grey-300);
+    border-right-color: var(--grey-300);
+    border-top-color: var(--grey-300);
+    border-bottom-color: var(--grey-300);
+    background-color: var(--grey-200);
     align-items: center;
 }
 
 .btn-tertiary:hover {
-    color: rgb(31, 31, 28);
-    background-color: rgb(46, 46, 46);
-    border-left-color: rgb(76, 76, 76);
-    border-right-color: rgb(76, 76, 76);
-    border-top-color: rgb(76, 76, 76);
-    border-bottom-color: rgb(76, 76, 76);
+    color: var(--grey-100);
+    background-color: var(--grey-150);
+    border-left-color: var(--grey-200);
+    border-right-color: var(--grey-200);
+    border-top-color: var(--grey-200);
+    border-bottom-color: var(--grey-200);
 }
 
 .btn-tertiary > #Icon {
@@ -75,11 +75,11 @@
     max-height: 16px;
     max-width: 16px;
     min-width: 16px;
-    -unity-background-image-tint-color: rgb(246, 245, 243);
+    -unity-background-image-tint-color: var(--grey-700);
 }
 
 .btn-tertiary > #Label {
-    color: rgb(246, 245, 243);
+    color: var(--grey-700);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     margin-top: 0;
     margin-right: 0;

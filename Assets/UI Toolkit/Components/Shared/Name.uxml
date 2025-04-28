@@ -1,7 +1,0 @@
-<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/USS/TertiaryButton.uss?fileID=7433441132597879392&amp;guid=3bf82f557c6eff54b9763a984ae4099a&amp;type=3#TertiaryButton" />
-    <engine:Button class="btn-tertiary">
-        <engine:VisualElement name="Icon" />
-        <engine:Label text="Button" name="Label" />
-    </engine:Button>
-</engine:UXML>

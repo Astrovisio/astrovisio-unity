@@ -34,34 +34,25 @@ namespace Astrovisio
         private void OnEnable()
         {
             EnableNavbar();
-
-            projectManager.ProjectOpened += OnProjectOpened;
-            projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void OnDisable()
         {
-            projectManager.ProjectOpened -= OnProjectOpened;
-            projectManager.ProjectDeleted -= OnProjectDeleted;
-        }
-
-        private void OnProjectOpened(Project project)
-        {
-            Debug.Log($"[NavbarController] Progetto aggiunto alla navbar: ID {project.Id}");
-            throw new NotImplementedException();
-        }
-
-        private void OnProjectDeleted(int projectId)
-        {
-            Console.WriteLine($"[NavbarController] Progetto rimosso dalla navbar: ID {projectId}");
+            DisableNavbar();
         }
 
         private void EnableNavbar()
         {
-            navbarController = new NavbarController(projectManager, projectButtonTemplate);
-            var headerRoot = uiDocument.rootVisualElement.Q<VisualElement>("Header");
-            Debug.Log("EnableNavbar");
-            navbarController.Initialize(headerRoot);
+            var navbarRoot = uiDocument.rootVisualElement.Q<VisualElement>("NavbarRoot");
+            navbarController = new NavbarController(projectManager, projectButtonTemplate, navbarRoot);
+        }
+
+        private void DisableNavbar()
+        {
+            if (navbarController != null)
+            {
+                navbarController.Dispose();
+            }
         }
 
     }

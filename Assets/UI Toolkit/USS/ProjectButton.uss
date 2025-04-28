@@ -1,25 +1,34 @@
 .unity-button {
-    background-color: rgb(138, 138, 128);
+    background-color: var(--grey-400);
+    overflow: visible;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
-.active {
-    background-color: rgb(0, 0, 0);
+.unity-button.active {
+    background-color: var(--white);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .unity-button:active {
-    background-color: rgb(0, 0, 0);
+    background-color: var(--white);
 }
 
 .unity-button:hover {
-    background-color: rgb(95, 95, 89);
+    background-color: var(--grey-300);
 }
 
 .unity-button:hover.active {
-    background-color: rgb(0, 0, 0);
+    background-color: var(--white);
 }
 
 .unity-button > #RightContainer > #CloseButton {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: var(--transparent);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -39,9 +48,66 @@
 }
 
 .unity-button > #RightContainer > #CloseButton:hover {
-    background-color: rgb(138, 138, 128);
+    background-color: var(--grey-400);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
+}
+
+.unity-button > #BgActiveTab {
+    flex-grow: 1;
+    position: absolute;
+    flex-direction: row;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    translate: 0 100%;
+    display: none;
+}
+
+.unity-button > #LeftCorner {
+    height: 15px;
+    width: 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/active-tab-bg-left.svg?fileID=7388822144124034973&guid=733cdde6bd55a405da95af8ed6895575&type=3#active-tab-bg-left");
+    -unity-background-image-tint-color: var(--white);
+    position: absolute;
+    bottom: -8px;
+    left: -16px;
+    display: none;
+}
+
+.unity-button > #Bar {
+    flex-grow: 1;
+    height: 15px;
+    background-color: var(--white);
+    width: 100%;
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
+.unity-button > #RightCorner {
+    height: 15px;
+    width: 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/active-tab-bg-right.svg?fileID=7388822144124034973&guid=b8159378d780f4e6bb848f936f8326d6&type=3#active-tab-bg-right");
+    -unity-background-image-tint-color: var(--white);
+    position: absolute;
+    right: -16px;
+    bottom: -8px;
+    display: none;
+}
+
+.unity-button.active > #Bar {
+    display: flex;
+}
+
+.unity-button.active > #LeftCorner {
+    display: flex;
+}
+
+.unity-button.active > #RightCorner {
+    display: flex;
 }

@@ -1,6 +1,6 @@
 #NewProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > #ButtonRoot > .unity-button > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
-    -unity-background-image-tint-color: rgb(0, 0, 0);
+    -unity-background-image-tint-color: var(--white);
 }
 
 #NewProjectRoot > #BottomContainer > #RightContainer > TemplateContainer > #ButtonRoot > #Button > #Icon {
