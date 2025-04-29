@@ -47,7 +47,7 @@ namespace Astrovisio
             var projectList = projectManager.GetProjectList();
             // projectList = projectManager.GetFakeProjectList();
 
-            UnityEngine.Debug.Log(projectList.Count);
+            // UnityEngine.Debug.Log(projectList.Count);
 
             var lastWeekProjectList = projectList
                 .Where(p => (p.LastOpened.HasValue && (now - p.LastOpened.Value).TotalDays <= 7) || (p.Created.HasValue && (now - p.Created.Value).TotalDays <= 7))

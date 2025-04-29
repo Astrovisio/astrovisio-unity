@@ -1,0 +1,95 @@
+#Root {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    border-left-width: 0;
+    border-left-color: var(--grey-400);
+    border-right-color: var(--grey-400);
+    border-top-color: var(--grey-400);
+    border-bottom-color: var(--grey-400);
+}
+
+#Root > #Name {
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+    -unity-text-align: middle-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 14px;
+    color: var(--grey-700);
+}
+
+#Root > #XYZAxis {
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 14px;
+    color: var(--grey-700);
+    width: 136px;
+    min-width: 136px;
+    max-width: 136px;
+}
+
+#Root > #Thresholds {
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+    -unity-text-align: middle-center;
+    color: var(--grey-700);
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+}
+
+#Root > #AllCheck {
+    width: 64px;
+    min-width: 64px;
+    max-width: 64px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    background-color: var(--grey-200);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: var(--grey-300);
+    border-right-color: var(--grey-300);
+    border-top-color: var(--grey-300);
+    border-bottom-color: var(--grey-300);
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#Root > #AllCheck > #LeftContainer {
+    flex-direction: row-reverse;
+    align-items: center;
+    padding-right: 4px;
+}
+
+#Root > #AllCheck > #LeftContainer > #Label {
+    color: var(--grey-700);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 14px;
+    -unity-text-align: middle-right;
+}
+
+#Root > #AllCheck > #RightContainer {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 4px;
+}
+
+#Root > #AllCheck > #RightContainer > #Checkbox {
+}

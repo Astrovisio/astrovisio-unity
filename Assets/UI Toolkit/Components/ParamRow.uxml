@@ -1,0 +1,39 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="Chip" src="project://database/Assets/UI%20Toolkit/Components/Shared/Chip.uxml?fileID=9197481963319205126&amp;guid=22e927bf1e871d648aed0fb34ab68ded&amp;type=3#Chip" />
+    <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ParamRow.uss?fileID=7433441132597879392&amp;guid=b755465ecc032a04e8405c1a52994b4c&amp;type=3#ParamRow" />
+    <engine:Button name="RootButton">
+        <engine:VisualElement name="NameContainer" style="flex-grow: 1;">
+            <engine:Label text="Temperature&#10;" name="Label" />
+            <engine:VisualElement name="FilesContainer">
+                <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+                <engine:Label text="1" name="Label" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="XYZAxisContainer" style="flex-grow: 1;">
+            <engine:Instance template="Chip" name="ChipX" class="btn-chip" style="width: 40px; height: 24px; min-width: 40px; max-width: 40px; min-height: 24px; max-height: 24px;" />
+            <engine:Instance template="Chip" name="ChipY" class="btn-chip" style="width: 40px; min-width: 40px; max-width: 40px; height: 24px; min-height: 24px; max-height: 24px;">
+                <AttributeOverrides element-name="ChipRoot" text="Y" />
+            </engine:Instance>
+            <engine:Instance template="Chip" name="ChipZ" class="btn-chip" style="width: 40px; min-width: 40px; max-width: 40px; height: 24px; min-height: 24px;">
+                <AttributeOverrides element-name="ChipRoot" text="Z" />
+            </engine:Instance>
+        </engine:VisualElement>
+        <engine:VisualElement name="ThresholdContainer" style="flex-grow: 1; width: 240px; min-width: 240px; max-width: 240px; height: 49px; min-height: 49px; max-height: 49px;">
+            <engine:VisualElement name="MinContainer" class="threshold-container" style="flex-grow: 1;">
+                <engine:Label text="Min" name="MinLabel" class="threshold-label" />
+                <engine:FloatField value="10000" name="MinInputField" hide-placeholder-on-focus="true" class="threshold-input-field" />
+                <engine:Label text="Value too low" name="MinErrorLabel" class="threshold-error-label" />
+            </engine:VisualElement>
+            <engine:VisualElement name="MaxContainer" class="threshold-container" style="flex-grow: 1;">
+                <engine:Label text="Max" name="MaxLabel" class="threshold-label" />
+                <engine:FloatField value="10000" name="MaxInputField" placeholder-text="10000.00" class="threshold-input-field" />
+                <engine:Label text="Value too low" name="MaxErrorLabel" class="threshold-error-label" />
+            </engine:VisualElement>
+            <engine:Button name="ResetButton" />
+        </engine:VisualElement>
+        <engine:VisualElement name="CheckboxContainer">
+            <engine:Instance template="CheckboxSimple" name="Checkbox" />
+        </engine:VisualElement>
+    </engine:Button>
+</engine:UXML>

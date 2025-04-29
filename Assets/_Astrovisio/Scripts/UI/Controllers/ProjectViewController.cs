@@ -13,6 +13,8 @@ namespace Astrovisio
         public Project Project { get; }
         public VisualElement Root { get; }
 
+        private ScrollView paramScrollView;
+
         public ProjectViewController(ProjectManager projectManager, Project project, VisualElement root)
         {
             this.projectManager = projectManager;

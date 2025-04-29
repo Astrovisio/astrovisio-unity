@@ -1,0 +1,20 @@
+#CheckboxRoot {
+    flex-grow: 1;
+}
+
+#CheckboxRoot > .unity-toggle__input > #unity-checkmark {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check-square-general-uncheck.svg?fileID=7388822144124034973&guid=7959d66afbfd6bb4d92938e40c4b7038&type=3#check-square-general-uncheck");
+    flex-grow: 1;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    width: 16px;
+    -unity-background-image-tint-color: var(--grey-600);
+}
+
+#CheckboxRoot:checked > .unity-toggle__input > #unity-checkmark {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check-square-general-check.svg?fileID=7388822144124034973&guid=576f86640cf190e41a319f2df0431d92&type=3#check-square-general-check");
+    -unity-background-image-tint-color: var(--accent-100);
+}

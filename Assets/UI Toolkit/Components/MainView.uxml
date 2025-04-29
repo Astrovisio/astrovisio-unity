@@ -3,6 +3,7 @@
     <engine:Template name="Sidebar" src="project://database/Assets/UI%20Toolkit/Components/Sidebar.uxml?fileID=9197481963319205126&amp;guid=be7a59423a7e0cd41ad0133f66c01576&amp;type=3#Sidebar" />
     <engine:Template name="ProjectSidebar" src="project://database/Assets/UI%20Toolkit/Components/ProjectSidebar.uxml?fileID=9197481963319205126&amp;guid=0f81f4c46e0c640418c9b40678b28b0a&amp;type=3#ProjectSidebar" />
     <engine:Template name="Home" src="project://database/Assets/UI%20Toolkit/Components/HomeView.uxml?fileID=9197481963319205126&amp;guid=085c37c519bac4a4bbcca89b8ed17b03&amp;type=3#HomeView" />
+    <engine:Template name="ProjectView" src="project://database/Assets/UI%20Toolkit/Components/ProjectView.uxml?fileID=9197481963319205126&amp;guid=5d8609a87d4f32b4186bfff69ad0a849&amp;type=3#ProjectView" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/MainView.uss?fileID=7433441132597879392&amp;guid=f459acdc270be664693f813c03150c26&amp;type=3#MainView" />
     <engine:VisualElement name="Root">
         <engine:VisualElement name="Header" style="flex-grow: 1; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; height: 96px; min-height: 96px; max-height: 96px; justify-content: space-between; align-self: stretch; align-items: stretch;">
@@ -11,10 +12,11 @@
         <engine:VisualElement name="Body" style="flex-grow: 1; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; flex-direction: row;">
             <engine:VisualElement name="Side" style="flex-grow: 1; width: 245px; margin-right: 40px; min-width: 245px; max-width: 245px;">
                 <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1; display: none; overflow: hidden;" />
-                <engine:Instance template="ProjectSidebar" style="flex-grow: 1;" />
+                <engine:Instance template="ProjectSidebar" name="ProjectSidebar" style="flex-grow: 1;" />
             </engine:VisualElement>
             <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
-                <engine:Instance template="Home" name="HomeView" />
+                <engine:Instance template="Home" name="HomeView" style="display: none;" />
+                <engine:Instance template="ProjectView" name="ProjectView" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

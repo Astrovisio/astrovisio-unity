@@ -1,6 +1,10 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/SidebarParamRow.uss?fileID=7433441132597879392&amp;guid=60550b288b7a61948b91620fef9a72da&amp;type=3#SidebarParamRow" />
-    <engine:Button name="RowButton">
-        <engine:Label text="Temperature" name="Label" />
-    </engine:Button>
+    <engine:VisualElement name="ParamRowRoot">
+        <engine:VisualElement name="LabelContainer">
+            <engine:Label text="Temperature di un tipo specifico molto molto molto molto lungo" name="LabelParam" />
+            <engine:Instance template="Label" name="LabelChip" />
+        </engine:VisualElement>
+    </engine:VisualElement>
 </engine:UXML>

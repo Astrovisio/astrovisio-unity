@@ -1,0 +1,58 @@
+#GoToVRButton {
+    background-color: var(--accent-100);
+    flex-grow: 1;
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    align-items: center;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+#GoToVRButton > #LabelContainer {
+    flex-direction: row;
+    align-items: center;
+}
+
+#GoToVRButton > #LabelContainer > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/head_mounted_device.svg?fileID=7388822144124034973&guid=b0c580ecf95b2444b9ba71f6f212ae88&type=3#head_mounted_device");
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    margin-right: 8px;
+    -unity-background-image-tint-color: var(--grey-100);
+}
+
+#GoToVRButton > #LabelContainer > #Label {
+    color: var(--grey-100);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 14px;
+    -unity-text-align: middle-left;
+}
+
+#GoToVRButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/arrow_right_alt.svg?fileID=7388822144124034973&guid=36fa180ce9ff67d43b16e1dc9b1d5d48&type=3#arrow_right_alt");
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    min-height: 16px;
+    -unity-background-image-tint-color: var(--grey-100);
+}

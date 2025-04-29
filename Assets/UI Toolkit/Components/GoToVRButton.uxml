@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/GoToVRButton.uss?fileID=7433441132597879392&amp;guid=38d6c4ab3eb151b4083fde21fd15b854&amp;type=3#GoToVRButton" />
+    <engine:Button name="GoToVRButton">
+        <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+            <engine:Label text="Go To VR" name="Label" />
+        </engine:VisualElement>
+        <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+    </engine:Button>
+</engine:UXML>

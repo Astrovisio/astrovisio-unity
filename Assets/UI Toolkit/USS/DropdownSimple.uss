@@ -1,0 +1,13 @@
+#Root {
+    flex-grow: 1;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    justify-content: center;
+    align-self: auto;
+}
+
+#Root > #DropdownField {
+    color: var(--black);
+}

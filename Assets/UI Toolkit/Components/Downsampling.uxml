@@ -1,0 +1,18 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="DropdownSimple" src="project://database/Assets/UI%20Toolkit/Components/DropdownSimple.uxml?fileID=9197481963319205126&amp;guid=8ab5ade032c81ed45911a48ecd2265d5&amp;type=3#DropdownSimple" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/Downsampling.uss?fileID=7433441132597879392&amp;guid=d330c84d4a4136d47a2f7489ed23c75f&amp;type=3#Downsampling" />
+    <engine:VisualElement name="DownsamplingRoot">
+        <engine:VisualElement name="TotalContainer" style="flex-direction: row;">
+            <engine:Label text="Total" name="Label" />
+            <engine:VisualElement name="SizeContainer" style="flex-grow: 1;">
+                <engine:Label text="12" name="ActualSize" />
+                <engine:Label text="/ 5GB" name="TotalSize" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="DownsamplingContainer">
+            <engine:Label text="Downsampling" name="Label" />
+            <engine:Instance template="DropdownSimple" name="DropdownSimple" />
+        </engine:VisualElement>
+        <engine:Button text="Process Data" name="ProcessDataButton" />
+    </engine:VisualElement>
+</engine:UXML>

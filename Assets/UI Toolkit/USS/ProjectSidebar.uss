@@ -10,6 +10,7 @@
     border-bottom-right-radius: 12px;
     border-bottom-left-radius: 12px;
     flex-grow: 1;
+    margin-bottom: 12px;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader {
@@ -64,6 +65,9 @@
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
     font-size: 16px;
     color: var(--grey-800);
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionHeader > #Toggle {
@@ -94,15 +98,11 @@
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent {
-    border-top-width: 24px;
-    border-left-width: 16px;
-    border-right-width: 16px;
-    border-bottom-width: 8px;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
     display: none;
-}
-
-#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #Title {
-    color: var(--black);
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -111,6 +111,38 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer {
+    padding-top: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #Title {
+    color: var(--black);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 16px;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #Warning {
+    color: rgb(255, 93, 93);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 10px;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #DownsamplingContainer {
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    flex-shrink: 0;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionContent {
@@ -134,4 +166,185 @@
 #ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionHeader {
     background-color: var(--grey-800);
     color: var(--grey-100);
+}
+
+#ProjectSidebarRoot {
+    flex-grow: 1;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer {
+    background-color: var(--grey-150);
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    flex-grow: 1;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    margin-bottom: 12px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader {
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--transparent);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer {
+    flex-direction: row;
+    align-items: center;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/deployed_code.svg?fileID=7388822144124034973&guid=4483f3370dbaa7a46be282655440a25d&type=3#deployed_code");
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    -unity-background-image-tint-color: var(--grey-800);
+    margin-right: 8px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer > #Label {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    -unity-text-align: middle-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    color: var(--grey-800);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #Toggle {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/CircleInactive.svg?fileID=7388822144124034973&guid=0a0a83b5e28b9214789c993c8e39aaf2&type=3#CircleInactive");
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    -unity-background-image-tint-color: var(--grey-500);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent {
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    display: none;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer {
+    padding-top: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer > #Title {
+    color: var(--black);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 16px;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer > #Warning {
+    color: rgb(255, 93, 93);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 10px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #DownsamplingContainer {
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    flex-shrink: 0;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent {
+    display: flex;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader > #LabelContainer > #Icon {
+    -unity-background-image-tint-color: var(--grey-100);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/deployed_code_full.svg?fileID=7388822144124034973&guid=c8f230ed9ef024a4ba08588e7fbb5302&type=3#deployed_code_full");
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader > #LabelContainer > #Label {
+    color: var(--grey-100);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader > #Toggle {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/CircleActive.svg?fileID=7388822144124034973&guid=21305b1e566142e458f73ce0ba36fdca&type=3#CircleActive");
+    -unity-background-image-tint-color: var(--grey-100);
+    background-color: var(--transparent);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader {
+    background-color: var(--grey-800);
+    color: var(--grey-100);
+}
+
+#ProjectSidebarRoot > #GoToVRButton {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
 }

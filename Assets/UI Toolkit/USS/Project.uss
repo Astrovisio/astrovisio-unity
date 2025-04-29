@@ -234,6 +234,15 @@
 #Root > #LeftContainer > #ParamsContainer {
 }
 
+#Root > #LeftContainer > #ParamsContainer > #ParamRowHeader {
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+}
+
 #Root > #LeftContainer > #LabelContainer > #TitleLable {
     margin-top: 0;
     margin-right: 0;

@@ -1,20 +1,48 @@
-#RowButton {
-    height: 22px;
-    min-height: 22px;
-    max-height: 22px;
+#ParamRowRoot {
     border-bottom-width: 1px;
     border-left-color: var(--grey-300);
     border-right-color: var(--grey-300);
     border-top-color: var(--grey-300);
     border-bottom-color: var(--grey-300);
+    flex-direction: row;
+    padding-bottom: 8px;
+    margin-top: 16px;
+    align-items: center;
 }
 
-#RowButton:hover {
-    background-color: var(--bg-10);
+#ParamRowRoot > #LabelContainer {
+    flex-direction: row;
+    align-items: center;
+    max-width: 100%;
+    align-self: auto;
+    align-content: auto;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
 }
 
-#RowButton > #Label {
+#ParamRowRoot > #LabelContainer > #LabelParam {
     color: var(--grey-800);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
     font-size: 14px;
+    margin-right: 0;
+    -unity-text-align: middle-left;
+    overflow: visible;
+    white-space: normal;
+    padding-top: 0px;
+    padding-right: 8px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    flex-shrink: 1;
+
+}
+
+#ParamRowRoot > #LabelContainer > #LabelChip {
+    align-items: auto;
+    justify-content: flex-start;
+    align-self: auto;
+    align-content: auto;
 }
