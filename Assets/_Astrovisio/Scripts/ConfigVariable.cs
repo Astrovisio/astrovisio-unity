@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Astrovisio
 {
-    public class ConfigVariable
+    public class ConfigParam
     {
         [JsonProperty("thr_min")]
         public int ThrMin { get; set; }

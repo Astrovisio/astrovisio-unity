@@ -11,12 +11,12 @@
         </engine:VisualElement>
         <engine:VisualElement name="Body" style="flex-grow: 1; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; flex-direction: row;">
             <engine:VisualElement name="Side" style="flex-grow: 1; width: 245px; margin-right: 40px; min-width: 245px; max-width: 245px;">
-                <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1; display: none; overflow: hidden;" />
-                <engine:Instance template="ProjectSidebar" name="ProjectSidebar" style="flex-grow: 1;" />
+                <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1; display: flex; overflow: hidden;" />
+                <engine:Instance template="ProjectSidebar" name="ProjectSidebar" style="flex-grow: 1; display: none;" />
             </engine:VisualElement>
             <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
-                <engine:Instance template="Home" name="HomeView" style="display: none;" />
-                <engine:Instance template="ProjectView" name="ProjectView" />
+                <engine:Instance template="Home" name="HomeView" style="display: flex;" />
+                <engine:Instance template="ProjectView" name="ProjectView" style="display: none;" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

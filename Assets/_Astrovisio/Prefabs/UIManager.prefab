@@ -159,7 +159,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca67990a3a4769b408cb9301c6e6ca37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  favouriteButtonTemplate: {fileID: 0}
+  toDo: {fileID: 0}
+  projectSidebarTemplate: {fileID: 9197481963319205126, guid: 0f81f4c46e0c640418c9b40678b28b0a,
+    type: 3}
+  sidebarParamRowTemplate: {fileID: 9197481963319205126, guid: 52b9839a12932d44499b3960b752ac68,
+    type: 3}
 --- !u!1 &5065705941003720119
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,4 +213,6 @@ MonoBehaviour:
   projectRowTemplate: {fileID: 9197481963319205126, guid: 35320fcd82433ac4180b12dd809838a0,
     type: 3}
   projectViewTemplate: {fileID: 9197481963319205126, guid: 5d8609a87d4f32b4186bfff69ad0a849,
+    type: 3}
+  paramRowTemplate: {fileID: 9197481963319205126, guid: 24f95cd415ccaa64c812f528b1447b09,
     type: 3}

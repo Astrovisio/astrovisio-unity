@@ -15,21 +15,16 @@ namespace Astrovisio
         private readonly VisualTreeAsset projectRowTemplate;
 
         // === Local ===
-        private VisualElement root;
+        public VisualElement Root { get; }
         private readonly string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
 
-        public HomeViewController(ProjectManager projectManager, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
+        public HomeViewController(ProjectManager projectManager, VisualElement root, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
         {
             this.projectManager = projectManager;
+            Root = root;
             this.projectRowHeaderTemplate = projectRowHeaderTemplate;
             this.projectRowTemplate = projectRowTemplate;
-        }
-
-        public void Initialize(VisualElement root)
-        {
-            this.root = root;
             UpdateHomeView();
-
             projectManager.ProjectsFetched += OnProjectsFetched;
         }
 
@@ -40,7 +35,7 @@ namespace Astrovisio
 
         private void UpdateHomeView()
         {
-            VisualElement projectScrollView = root.Q<ScrollView>("ProjectScrollView");
+            VisualElement projectScrollView = Root.Q<ScrollView>("ProjectScrollView");
             projectScrollView.Clear();
 
             DateTime now = DateTime.UtcNow;
@@ -82,7 +77,6 @@ namespace Astrovisio
             }
         }
 
-
         private void AddProjectRows(VisualElement target, List<Project> projectList, string projectHeader)
         {
             var header = projectRowHeaderTemplate.CloneTree();
@@ -106,5 +100,4 @@ namespace Astrovisio
         }
 
     }
-
 }

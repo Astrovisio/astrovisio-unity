@@ -6,7 +6,9 @@ namespace Astrovisio
 {
     public class ProjectSidebarController
     {
-        private VisualElement root;
+        // === Dependencies ===
+        private readonly ProjectManager projectManager;
+        private readonly VisualTreeAsset sidebarParamRowTemplate;
 
         // --- Data Settings
         private Button dataSettingsButton;
@@ -23,28 +25,32 @@ namespace Astrovisio
         // --- Go To VR
         private Button goToVRButton;
 
+        // === Local ===
+        public Project Project { get; }
+        public VisualElement Root { get; }
 
-        private List<ConfigVariable> configVariable;
-        private List<ConfigProcess> configProcess;
 
-
-        public ProjectSidebarController(VisualElement root, List<ConfigVariable> configVariable, List<ConfigProcess> configProcess)
+        public ProjectSidebarController(ProjectManager projectManager, VisualTreeAsset sidebarParamRowTemplate, Project project, VisualElement root)
         {
-            this.root = root;
-            this.configVariable = configVariable;
-            this.configProcess = configProcess;
+            this.projectManager = projectManager;
+            this.sidebarParamRowTemplate = sidebarParamRowTemplate;
+            Project = project;
+            Root = root;
 
             InitializeUI();
-            CheckAll();
+            // CheckAll();
+
+            warningLabel.text = project.Name; // TODO: Remove
         }
 
         private void InitializeUI()
         {
-            var dataSettingsContainer = root.Q<VisualElement>("DataSettingsContainer");
-            var renderSettingsContainer = root.Q<VisualElement>("RenderSettingsContainer");
+            var dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
+            var renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
 
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
+
             paramScrollView = dataSettingsContainer.Q<ScrollView>("ParamsScrollView");
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
@@ -52,7 +58,36 @@ namespace Astrovisio
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
             downsamplingDropdown = renderSettingsContainer.Q<DropdownField>("DownsamplingDropdown"); // TODO
 
-            goToVRButton = root.Q<Button>("GoToVRButton");
+            goToVRButton = Root.Q<Button>("GoToVRButton");
+
+            PopulateScrollView();
+        }
+
+        private void PopulateScrollView()
+        {
+            paramScrollView.contentContainer.Clear();
+
+            if (Project.ConfigProcess?.Params == null)
+            {
+                Debug.LogWarning("No variables to display.");
+                return;
+            }
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                var paramName = kvp.Key;
+                var param = kvp.Value;
+
+                var row = sidebarParamRowTemplate.CloneTree();
+
+                var nameContainer = row.Q<VisualElement>("LabelContainer");
+                nameContainer.Q<Label>("LabelParam").text = paramName;
+
+                var labelChip = row.Q<VisualElement>("LabelChip");
+                labelChip.style.display = DisplayStyle.None;
+
+                paramScrollView.Add(row);
+            }
         }
 
         private void CheckAll()
@@ -68,7 +103,6 @@ namespace Astrovisio
 
             Debug.Log(goToVRButton);
         }
-
 
     }
 }

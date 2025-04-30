@@ -78,12 +78,24 @@ namespace Astrovisio
             projectTab.name = $"ProjectTab_{project.Id}";
             projectTab.Q<Label>("Label").text = project.Name;
 
+            // Left Click
             projectTab.Q<Button>().RegisterCallback<ClickEvent>(_ =>
             {
                 SetActiveTab(project.Id);
                 projectManager.OpenProject(project.Id);
             });
 
+            // MiddleMouse Click
+            projectTab.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.button == (int)MouseButton.MiddleMouse)
+                {
+                    RemoveProjectTab(project.Id);
+                    evt.StopPropagation();
+                }
+            });
+
+            // Close Button
             projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(_ =>
             {
                 RemoveProjectTab(project.Id);
@@ -91,6 +103,7 @@ namespace Astrovisio
 
             return projectTab;
         }
+
 
         private void RemoveProjectTab(int projectId)
         {
@@ -117,7 +130,7 @@ namespace Astrovisio
             var after = projectTabContainer.Children().ToList();
             if (after.Any())
             {
-                int newIndex = removedIndex > 0 ? removedIndex - 1 : 0;
+                int newIndex = removedIndex < after.Count ? removedIndex : after.Count - 1;
                 var newTab = after.ElementAt(newIndex);
                 int newProjectId = projectTabDictionary
                     .First(kvp => kvp.Value.TabElement == newTab)

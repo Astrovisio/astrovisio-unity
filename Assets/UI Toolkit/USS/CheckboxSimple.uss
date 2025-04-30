@@ -12,9 +12,16 @@
     min-width: 16px;
     width: 16px;
     -unity-background-image-tint-color: var(--grey-600);
+
 }
 
 #CheckboxRoot:checked > .unity-toggle__input > #unity-checkmark {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/check-square-general-check.svg?fileID=7388822144124034973&guid=576f86640cf190e41a319f2df0431d92&type=3#check-square-general-check");
     -unity-background-image-tint-color: var(--accent-100);
+}
+#CheckboxRoot:checked:hover > .unity-toggle__input > #unity-checkmark{
+ -unity-background-image-tint-color: var(--accent-200);
+}
+#CheckboxRoot:hover > .unity-toggle__input > #unity-checkmark {
+    -unity-background-image-tint-color: var(--grey-800);
 }

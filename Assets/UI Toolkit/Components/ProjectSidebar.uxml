@@ -37,7 +37,7 @@
                         <engine:Instance template="SidebarParamRow" />
                     </engine:ScrollView>
                 </engine:VisualElement>
-                <engine:VisualElement name="DownsamplingContainer" style="flex-grow: 1;">
+                <engine:VisualElement name="DownsamplingContainer">
                     <engine:Instance template="Downsampling" style="flex-shrink: 0;" />
                 </engine:VisualElement>
             </engine:VisualElement>

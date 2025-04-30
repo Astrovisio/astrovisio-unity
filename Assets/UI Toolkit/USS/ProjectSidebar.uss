@@ -111,12 +111,15 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
+    justify-content: space-between;
+    flex-grow: 1;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer {
     padding-top: 24px;
     padding-left: 16px;
     padding-right: 16px;
+    flex-grow: 1;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #Title {
@@ -143,6 +146,9 @@
     padding-bottom: 8px;
     padding-left: 8px;
     flex-shrink: 0;
+    flex-grow: 0;
+    align-items: stretch;
+    justify-content: flex-end;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer.active > #AccordionContent {

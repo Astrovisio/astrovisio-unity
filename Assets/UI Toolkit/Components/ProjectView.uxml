@@ -7,8 +7,8 @@
         <engine:VisualElement name="LeftContainer" style="flex-grow: 1;">
             <engine:VisualElement name="FilesContainer" />
             <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
-                <engine:Label text="Import Values" name="TitleLable" />
-                <engine:Label text="Select the values you want to render" name="SubtitleLable" />
+                <engine:Label text="Import Values" name="TitleLabel" />
+                <engine:Label text="Select the values you want to render" name="SubtitleLabel" />
             </engine:VisualElement>
             <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;">
                 <engine:Instance template="ParamRowHeader" name="ParamRowHeader" />

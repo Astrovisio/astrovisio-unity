@@ -32638,11 +32638,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: UIManager
       objectReference: {fileID: 0}
-    - target: {fileID: 2307568220249490968, guid: e41872235d2732946965b653b9ae13e9,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4973116314143365544, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
       propertyPath: projectManager

@@ -243,7 +243,7 @@
     max-height: 48px;
 }
 
-#Root > #LeftContainer > #LabelContainer > #TitleLable {
+#Root > #LeftContainer > #LabelContainer > #TitleLabel {
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -258,7 +258,7 @@
     -unity-text-align: middle-left;
 }
 
-#Root > #LeftContainer > #LabelContainer > #SubtitleLable {
+#Root > #LeftContainer > #LabelContainer > #SubtitleLabel {
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;

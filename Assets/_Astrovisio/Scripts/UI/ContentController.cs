@@ -9,9 +9,14 @@ namespace Astrovisio
     public class ContentController : MonoBehaviour
     {
         [Header("UI Templates")]
+
+        [Space(3)][Header("Home")]
         [SerializeField] private VisualTreeAsset projectRowHeaderTemplate;
         [SerializeField] private VisualTreeAsset projectRowTemplate;
+
+        [Space(3)][Header("Project")]
         [SerializeField] private VisualTreeAsset projectViewTemplate;
+        [SerializeField] private VisualTreeAsset paramRowTemplate;
 
         // === References ===
         private UIDocument uiDocument;
@@ -49,8 +54,8 @@ namespace Astrovisio
             EnableHomeView();
 
             projectManager.ProjectOpened += OnProjectOpened;
-            projectManager.ProjectClosed += OnProjectClosed;
             projectManager.ProjectUnselected += OnProjectUnselected;
+            projectManager.ProjectClosed += OnProjectClosed;
         }
 
         private void OnDisable()
@@ -58,8 +63,8 @@ namespace Astrovisio
             DisableNewProjectButton();
 
             projectManager.ProjectOpened -= OnProjectOpened;
-            projectManager.ProjectClosed -= OnProjectClosed;
             projectManager.ProjectUnselected -= OnProjectUnselected;
+            projectManager.ProjectClosed -= OnProjectClosed;
         }
 
         private void EnableNewProjectButton()
@@ -102,8 +107,7 @@ namespace Astrovisio
 
         private void EnableHomeView()
         {
-            homeViewController = new HomeViewController(projectManager, projectRowHeaderTemplate, projectRowTemplate);
-            homeViewController.Initialize(contentContainer);
+            homeViewController = new HomeViewController(projectManager, contentContainer, projectRowHeaderTemplate, projectRowTemplate);
             homeViewContainer = contentContainer.Q<VisualElement>("HomeView");
         }
 
@@ -124,7 +128,8 @@ namespace Astrovisio
             VisualElement projectViewInstance = projectViewTemplate.CloneTree();
             contentContainer.Add(projectViewInstance);
 
-            var newProjectViewController = new ProjectViewController(projectManager, project, projectViewInstance);
+            // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, paramRowTemplate);
+            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), paramRowTemplate);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
         }
 
@@ -140,7 +145,6 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            Debug.Log("OnProjectClosed");
             foreach (var controller in projectViewControllerDictionary.Values)
             {
                 controller.Root.style.display = DisplayStyle.None;
