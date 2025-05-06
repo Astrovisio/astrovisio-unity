@@ -33,7 +33,9 @@
             <engine:Button name="ResetButton" />
         </engine:VisualElement>
         <engine:VisualElement name="CheckboxContainer">
-            <engine:Instance template="CheckboxSimple" name="Checkbox" />
+            <engine:Instance template="CheckboxSimple" name="Checkbox">
+                <AttributeOverrides element-name="CheckboxRoot" value="true" />
+            </engine:Instance>
         </engine:VisualElement>
     </engine:Button>
 </engine:UXML>

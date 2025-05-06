@@ -93,6 +93,82 @@ namespace Astrovisio
 			return projectList;
 		}
 
+
+		private Project fakeProject;	
+		private Project InitFakeProject()
+		{
+			var configParams = new Dictionary<string, ConfigParam>
+			{
+				{
+					"Temperature",
+					new ConfigParam
+					{
+						Unit = "°C",
+						Selected = true,
+						ThrMin = 0,
+						ThrMinSel = 10,
+						ThrMax = 100,
+						ThrMaxSel = 90,
+						XAxis = true,
+						YAxis = false,
+						ZAxis = false,
+						Files = new[] { "data1.csv" }
+					}
+				},
+				{
+					"Pressure",
+					new ConfigParam
+					{
+						Unit = "Pa",
+						Selected = false,
+						ThrMin = 100,
+						ThrMinSel = 200,
+						ThrMax = 1000,
+						ThrMaxSel = 800,
+						XAxis = false,
+						YAxis = false,
+						ZAxis = true,
+						Files = new[] { "data2.csv" }
+					}
+				},
+				{
+					"Velocity",
+					new ConfigParam
+					{
+						Unit = "m/s",
+						Selected = true,
+						ThrMin = 0,
+						ThrMinSel = 5,
+						ThrMax = 50,
+						ThrMaxSel = 40,
+						XAxis = false,
+						YAxis = true,
+						ZAxis = false,
+						Files = new[] { "data3.csv" }
+					}
+				}
+			};
+
+			var configProcess = new ConfigProcess
+			{
+				Downsampling = 1.0f,
+				Params = configParams
+			};
+
+			fakeProject = new Project("Fake Project", "A test project", false, new string[] { "/fake/path" })
+			{
+				Id = -1,
+				Created = DateTime.Now,
+				LastOpened = DateTime.Now,
+				ConfigProcess = configProcess
+			};
+
+			return fakeProject;
+		}	
+		public Project GetFakeProject()
+		{
+			return fakeProject is null ? InitFakeProject() : fakeProject;
+		}
 		public List<Project> GetFakeProjectList()
 		{
 
@@ -278,75 +354,6 @@ namespace Astrovisio
 				Debug.LogError($"[GetFakeProjects] Deserialization error: {ex.Message}");
 				return new List<Project>();
 			}
-		}
-
-		public Project GetFakeProject()
-		{
-			var variables = new Dictionary<string, ConfigParam>
-			{
-				{
-					"Temperature",
-					new ConfigParam
-					{
-						Unit = "°C",
-						Selected = true,
-						ThrMin = 0,
-						ThrMinSel = 10,
-						ThrMax = 100,
-						ThrMaxSel = 90,
-						XAxis = true,
-						YAxis = false,
-						ZAxis = false,
-						Files = new[] { "data1.csv" }
-					}
-				},
-				{
-					"Pressure",
-					new ConfigParam
-					{
-						Unit = "Pa",
-						Selected = false,
-						ThrMin = 100,
-						ThrMinSel = 200,
-						ThrMax = 1000,
-						ThrMaxSel = 800,
-						XAxis = false,
-						YAxis = true,
-						ZAxis = false,
-						Files = new[] { "data2.csv" }
-					}
-				},
-				{
-					"Velocity",
-					new ConfigParam
-					{
-						Unit = "m/s",
-						Selected = true,
-						ThrMin = 0,
-						ThrMinSel = 5,
-						ThrMax = 50,
-						ThrMaxSel = 40,
-						XAxis = false,
-						YAxis = false,
-						ZAxis = true,
-						Files = new[] { "data3.csv" }
-					}
-				}
-			};
-
-			var configProcess = new ConfigProcess
-			{
-				Downsampling = 1.0f,
-				Params = variables
-			};
-
-			return new Project("Fake Project", "A test project", false, new string[] { "/fake/path" })
-			{
-				Id = -1,
-				Created = System.DateTime.Now,
-				LastOpened = System.DateTime.Now,
-				ConfigProcess = configProcess
-			};
 		}
 
 

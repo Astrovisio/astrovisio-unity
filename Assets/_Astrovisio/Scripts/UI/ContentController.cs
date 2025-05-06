@@ -128,8 +128,8 @@ namespace Astrovisio
             VisualElement projectViewInstance = projectViewTemplate.CloneTree();
             contentContainer.Add(projectViewInstance);
 
-            // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, paramRowTemplate);
-            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), paramRowTemplate);
+            // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), paramRowTemplate);
+            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, paramRowTemplate);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
         }
 

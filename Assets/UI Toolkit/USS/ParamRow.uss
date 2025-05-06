@@ -123,6 +123,15 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
+    border-radius: 50%;
+}
+
+#RootButton > #ThresholdContainer > #ResetButton:hover {
+    background-color: var(--grey-150);
+}
+
+#RootButton > #ThresholdContainer > #ResetButton:active {
+    background-color: var(--grey-200);
 }
 
 #RootButton > #ThresholdContainer > .threshold-container {

@@ -1,16 +1,20 @@
 using Newtonsoft.Json;
 
-public class CreateProjectRequest
+
+namespace Astrovisio
 {
-  [JsonProperty("name")]
-  public string Name { get; set; }
+  public class CreateProjectRequest
+  {
+    [JsonProperty("name")]
+    public string Name { get; set; }
 
-  [JsonProperty("favourite")]
-  public bool Favourite { get; set; }
+    [JsonProperty("favourite")]
+    public bool Favourite { get; set; }
 
-  [JsonProperty("description")]
-  public string Description { get; set; }
+    [JsonProperty("description")]
+    public string Description { get; set; }
 
-  [JsonProperty("paths")]
-  public string[] Paths { get; set; }
+    [JsonProperty("paths")]
+    public string[] Paths { get; set; }
+  }
 }

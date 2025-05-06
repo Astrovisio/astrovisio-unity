@@ -92,10 +92,10 @@ namespace Astrovisio
 
             foreach (var project in projectList)
             {
-                var item = projectRowTemplate.CloneTree();
-                item.Q<Label>("ProjectNameLabel").text = project.Name;
-                item.RegisterCallback<ClickEvent>(_ => projectManager.OpenProject(project.Id));
-                target.Add(item);
+                var projectRow = projectRowTemplate.CloneTree();
+                projectRow.Q<Label>("ProjectNameLabel").text = project.Name;
+                projectRow.RegisterCallback<ClickEvent>(_ => projectManager.OpenProject(project.Id));
+                target.Add(projectRow);
             }
         }
 

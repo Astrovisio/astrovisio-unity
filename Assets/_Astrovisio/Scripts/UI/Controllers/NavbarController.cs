@@ -25,10 +25,10 @@ namespace Astrovisio
             this.projectButtonTemplate = projectButtonTemplate;
             this.root = root;
 
-            InitializeUI();
+            Init();
         }
 
-        public void InitializeUI()
+        public void Init()
         {
             homeContainer = root.Q<VisualElement>("HomeContainer");
             homeButton = homeContainer.Q<Button>();

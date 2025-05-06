@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,7 +19,6 @@ namespace Astrovisio
         private Label actualSizeLabel;
         private Button processDataButton;
 
-
         // --- Render Settings
         private Button renderSettingsButton;
         private DropdownField downsamplingDropdown;
@@ -28,6 +29,7 @@ namespace Astrovisio
         // === Local ===
         public Project Project { get; }
         public VisualElement Root { get; }
+        private Dictionary<string, VisualElement> paramRowVisualElement = new();
 
 
         public ProjectSidebarController(ProjectManager projectManager, VisualTreeAsset sidebarParamRowTemplate, Project project, VisualElement root)
@@ -37,13 +39,22 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            InitializeUI();
-            // CheckAll();
+            Init();
 
-            warningLabel.text = project.Name; // TODO: Remove
+            warningLabel.text = Project.Name; // TODO: Remove
+
+            // foreach (var kvp in Project.ConfigProcess.Params)
+            // {
+            //     string paramName = kvp.Key;
+            //     ConfigParam param = kvp.Value;
+
+            //     Debug.Log($"Param: {paramName}, XAxis: {param.XAxis}, Hash: {param.GetHashCode()}");
+            //     Debug.Log($"Param: {paramName}, YAxis: {param.YAxis}, Hash: {param.GetHashCode()}");
+            //     Debug.Log($"Param: {paramName}, ZAxis: {param.ZAxis}, Hash: {param.GetHashCode()}");
+            // }
         }
 
-        private void InitializeUI()
+        private void Init()
         {
             var dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
             var renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
@@ -66,6 +77,7 @@ namespace Astrovisio
         private void PopulateScrollView()
         {
             paramScrollView.contentContainer.Clear();
+            paramRowVisualElement.Clear();
 
             if (Project.ConfigProcess?.Params == null)
             {
@@ -78,30 +90,78 @@ namespace Astrovisio
                 var paramName = kvp.Key;
                 var param = kvp.Value;
 
-                var row = sidebarParamRowTemplate.CloneTree();
+                var paramRow = sidebarParamRowTemplate.CloneTree();
 
-                var nameContainer = row.Q<VisualElement>("LabelContainer");
+                var nameContainer = paramRow.Q<VisualElement>("LabelContainer");
                 nameContainer.Q<Label>("LabelParam").text = paramName;
 
-                var labelChip = row.Q<VisualElement>("LabelChip");
+                var labelChip = paramRow.Q<VisualElement>("LabelChip");
                 labelChip.style.display = DisplayStyle.None;
+                var labelChipLetter = labelChip.Q<Label>("Letter");
 
-                paramScrollView.Add(row);
+
+                param.PropertyChanged += OnPropertyChanged;
+
+                paramRowVisualElement.Add(paramName, paramRow);
+                paramScrollView.Add(paramRow);
+            }
+
+            UpdateChipLabel();
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            UpdateChipLabel();
+        }
+
+        private void UpdateChipLabel()
+        {
+            ClearChipLabel();
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                string paramName = kvp.Key;
+                ConfigParam param = kvp.Value;
+
+                if (!paramRowVisualElement.TryGetValue(paramName, out VisualElement row))
+                {
+                    Debug.LogWarning($"Row not found for param: {paramName}");
+                    continue;
+                }
+
+                var labelChip = row.Q<VisualElement>("LabelChip");
+                var labelChipLetter = labelChip.Q<Label>("Letter");
+
+                if (param.XAxis)
+                {
+                    labelChip.style.display = DisplayStyle.Flex;
+                    labelChipLetter.text = "X";
+                }
+                else if (param.YAxis)
+                {
+                    labelChip.style.display = DisplayStyle.Flex;
+                    labelChipLetter.text = "Y";
+                }
+                else if (param.ZAxis)
+                {
+                    labelChip.style.display = DisplayStyle.Flex;
+                    labelChipLetter.text = "Z";
+                }
+
+                // Debug.Log($"Param: {paramName}, X: {param.XAxis}, Y: {param.YAxis}, Z: {param.ZAxis}");
             }
         }
 
-        private void CheckAll()
+        private void ClearChipLabel()
         {
-            Debug.Log(dataSettingsButton);
-            Debug.Log(warningLabel);
-            Debug.Log(paramScrollView);
-            Debug.Log(actualSizeLabel);
-            Debug.Log(processDataButton);
+            foreach (var kvp in paramRowVisualElement)
+            {
+                // string paramName = kvp.Key;
+                VisualElement row = kvp.Value;
 
-            Debug.Log(renderSettingsButton);
-            Debug.Log(downsamplingDropdown);
-
-            Debug.Log(goToVRButton);
+                var labelChip = row.Q<VisualElement>("LabelChip");
+                labelChip.style.display = DisplayStyle.None;
+            }
         }
 
     }

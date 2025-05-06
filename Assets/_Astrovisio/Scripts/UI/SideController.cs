@@ -89,8 +89,8 @@ namespace Astrovisio
             VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
             sideContainer.Add(projectSidebarInstance);
 
-            // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, project, projectSidebarInstance);
-            var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
+            // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
+            var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, project, projectSidebarInstance);
             projectSidebarControllerDictionary[project.Id] = newProjectViewController;
         }
 

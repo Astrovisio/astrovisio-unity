@@ -36,6 +36,10 @@
     background-color: var(--black);
 }
 
+.disabled {
+    opacity: 0.5;
+}
+
 .active {
     color: var(--accent-100);
     border-left-color: var(--grey-800);
@@ -45,6 +49,12 @@
     background-color: var(--black);
 }
 
-.disabled {
-    opacity: 0.5;
+.btn-chip.active:hover {
+    color: var(--accent-100);
+    border-left-color: var(--grey-800);
+    border-right-color: var(--grey-800);
+    border-top-color: var(--grey-800);
+    border-bottom-color: var(--grey-800);
+    background-color: var(--black);
 }
+
