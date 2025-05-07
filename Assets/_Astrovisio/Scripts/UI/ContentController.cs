@@ -18,6 +18,9 @@ namespace Astrovisio
         [SerializeField] private VisualTreeAsset projectViewTemplate;
         [SerializeField] private VisualTreeAsset paramRowTemplate;
 
+        [Space(3)][Header("New Project")]
+        [SerializeField] private VisualTreeAsset listItemFileTemplate;
+
         // === References ===
         private UIDocument uiDocument;
         private UIController uiController;
@@ -69,7 +72,7 @@ namespace Astrovisio
 
         private void EnableNewProjectButton()
         {
-            newProjectController = new NewProjectViewController(projectManager);
+            newProjectController = new NewProjectViewController(projectManager, listItemFileTemplate);
             VisualElement root = uiDocument.rootVisualElement;
             VisualElement newProjectButtonInstance = root.Q<VisualElement>("NewProjectButton");
             newProjectButton = newProjectButtonInstance?.Q<Button>();

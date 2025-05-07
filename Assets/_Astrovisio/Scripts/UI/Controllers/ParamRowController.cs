@@ -95,20 +95,10 @@ namespace Astrovisio
             checkbox?.RegisterValueChangedCallback(evt =>
             {
                 Param.Selected = evt.newValue;
-                Debug.Log($"Checkbox toggled for {ParamName}: {Param.Selected}");
-
-                if (rootButton != null)
-                {
-                    rootButton.style.opacity = Param.Selected ? 1f : 0.5f;
-                }
-
-                nameContainer.SetEnabled(Param.Selected);
-                xyzAxisContainer.SetEnabled(Param.Selected);
-                thresholdContainer.SetEnabled(Param.Selected);
-
-                OnStateChanged?.Invoke();
+                // Debug.Log($"Checkbox toggled for {ParamName}: {Param.Selected}");
+                SetSelected(Param.Selected);
             });
-            InitSelected();
+            SetSelected(Param.Selected);
 
         }
 
@@ -236,9 +226,22 @@ namespace Astrovisio
             Param.ThrMaxSel = Param.ThrMax;
         }
 
-        private void InitSelected()
+        public void SetSelected(bool value)
         {
-            checkbox.value = Param.Selected;
+            checkbox.value = value;
+            Param.Selected = value;
+
+            if (rootButton != null)
+            {
+                rootButton.style.opacity = value ? 1f : 0.5f;
+            }
+
+            nameContainer.SetEnabled(value);
+            xyzAxisContainer.SetEnabled(value);
+            thresholdContainer.SetEnabled(value);
+
+            OnStateChanged?.Invoke();
+            // Debug.Log(ParamName + " " + value);
         }
 
     }

@@ -2,12 +2,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using System;
 
 namespace Astrovisio
 {
 
     public class ProjectViewController
     {
+
         // === Dependencies ===
         private readonly ProjectManager projectManager;
         private readonly VisualTreeAsset paramRowTemplate;
@@ -16,12 +18,14 @@ namespace Astrovisio
         public Project Project { get; }
         public VisualElement Root { get; }
 
-        private readonly Dictionary<Axis, ParamRowController> selectedAxis = new Dictionary<Axis, ParamRowController>();
-
+        // === UI ===
         private ScrollView paramScrollView;
         private Label projectNameLabel;
+        private Toggle checkAllToggle;
 
-        private Dictionary<string, ParamRowController> paramControllers = new();
+        // === Local ===
+        private readonly Dictionary<Axis, ParamRowController> selectedAxis = new Dictionary<Axis, ParamRowController>();
+        private readonly Dictionary<string, ParamRowController> paramControllers = new();
 
         public ProjectViewController(ProjectManager projectManager, VisualElement root, Project project, VisualTreeAsset paramRowTemplate)
         {
@@ -44,7 +48,26 @@ namespace Astrovisio
             projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
             projectNameLabel.text = Project.Name;
 
+            checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
+            if (checkAllToggle != null)
+            {
+                checkAllToggle.RegisterValueChangedCallback(evt =>
+                {
+                    bool isChecked = evt.newValue;
+                    OnCheckAllToggled(isChecked);
+                });
+            }
+
             PopulateScrollView();
+            InitCheckAllToggle();
+        }
+
+        private void OnCheckAllToggled(bool isChecked)
+        {
+            foreach (var kvp in paramControllers.ToList())
+            {
+                kvp.Value.SetSelected(isChecked);
+            }
         }
 
         private void PopulateScrollView()
@@ -206,6 +229,25 @@ namespace Astrovisio
             // }
 
             // projectManager.UpdateProject(Project.Id, updateProjectRequest);
+        }
+
+        private void InitCheckAllToggle()
+        {
+
+            bool areAllSelected = true;
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                var paramName = kvp.Key;
+                var param = kvp.Value;
+
+                if (param.Selected == false)
+                {
+                    areAllSelected = false;
+                }
+                // Debug.Log($"{paramName} - {param.Selected}");
+            }
+
+            checkAllToggle.value = areAllSelected;
         }
 
     }

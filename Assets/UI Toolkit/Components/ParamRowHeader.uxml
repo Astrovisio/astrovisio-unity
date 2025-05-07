@@ -10,7 +10,7 @@
                 <engine:Label text="All" name="Label" />
             </engine:VisualElement>
             <engine:VisualElement name="RightContainer" style="flex-grow: 1;">
-                <engine:Instance template="CheckboxSimple" name="Checkbox" />
+                <engine:Instance template="CheckboxSimple" name="AllCheckbox" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

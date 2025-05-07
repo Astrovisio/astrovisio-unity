@@ -1,6 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="InputField" src="project://database/Assets/UI%20Toolkit/Components/InputField.uxml?fileID=9197481963319205126&amp;guid=ca3699d6381b71a44a440de0a663683d&amp;type=3#InputField" />
     <engine:Template name="InputTextField" src="project://database/Assets/UI%20Toolkit/Components/InputTextField.uxml?fileID=9197481963319205126&amp;guid=ef3fb16d0bd7d4d419e8c56303624f57&amp;type=3#InputTextField" />
+    <engine:Template name="TertiaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/TertiaryButton.uxml?fileID=9197481963319205126&amp;guid=8de8481b16f7dc640933949828d63915&amp;type=3#TertiaryButton" />
+    <engine:Template name="ListiItemFile" src="project://database/Assets/UI%20Toolkit/Components/ListiItemFile.uxml?fileID=9197481963319205126&amp;guid=09d9e3075be01024491ea8a3ee5bb0ef&amp;type=3#ListiItemFile" />
     <engine:Template name="MemorySizeInfo" src="project://database/Assets/UI%20Toolkit/Components/MemorySizeInfo.uxml?fileID=9197481963319205126&amp;guid=840fec9897fe06a4284e5b06f1367c46&amp;type=3#MemorySizeInfo" />
     <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
     <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
@@ -19,7 +21,32 @@
         </engine:VisualElement>
         <engine:VisualElement name="UploadYourFilesContainer" style="flex-grow: 1; height: 396px; min-height: 396px; max-height: 396px; justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
             <engine:Label text="Upload your files" name="UploadYourFilesLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(251, 251, 251); -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); font-size: 16px; -unity-text-align: middle-left;" />
-            <engine:VisualElement name="FilesContainer" style="flex-grow: 1; background-color: rgb(31, 31, 28); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; height: 304px; min-height: 304px; max-height: 304px;" />
+            <engine:VisualElement name="FilesContainer">
+                <engine:VisualElement name="AddFilesContainer">
+                    <engine:Instance template="TertiaryButton" name="AddFileButton">
+                        <AttributeOverrides element-name="Label" text="Add a file" />
+                    </engine:Instance>
+                </engine:VisualElement>
+                <engine:VisualElement name="ViewFilesContainer" style="flex-grow: 1; padding-top: 0; padding-left: 8px; padding-bottom: 0;">
+                    <engine:ScrollView name="FilesScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible">
+                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between;">
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                            <engine:Instance template="ListiItemFile" />
+                        </engine:VisualElement>
+                    </engine:ScrollView>
+                </engine:VisualElement>
+            </engine:VisualElement>
             <engine:VisualElement name="Spacer" style="flex-grow: 1; height: 35px; min-height: 35px; max-height: 35px; justify-content: space-between; flex-direction: row; border-bottom-width: 0; border-left-color: rgba(76, 76, 76, 0); border-right-color: rgba(76, 76, 76, 0); border-top-color: rgba(76, 76, 76, 0); border-bottom-color: rgba(76, 76, 76, 0); border-top-width: 0; border-right-width: 0; border-left-width: 0;" />
         </engine:VisualElement>
         <engine:VisualElement name="BottomContainer" style="flex-grow: 1; height: 40px; min-height: 40px; max-height: 40px; flex-direction: row;">

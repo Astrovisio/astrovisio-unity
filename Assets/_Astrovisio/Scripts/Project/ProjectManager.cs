@@ -77,7 +77,7 @@ namespace Astrovisio
 		{
 			if (currentProject != null)
 			{
-				Debug.Log($"[ProjectManager] Progetto con ID {currentProject.Id} deselezionato.");
+				// Debug.Log($"[ProjectManager] Progetto con ID {currentProject.Id} deselezionato.");
 				currentProject = null;
 				ProjectUnselected?.Invoke();
 			}

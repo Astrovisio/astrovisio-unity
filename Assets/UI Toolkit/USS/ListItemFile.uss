@@ -1,0 +1,60 @@
+#RootListiItemFile {
+    padding: 8px;
+    background-color: var(--bg-10);
+    border-radius: 8px;
+    color: var(--grey-800);
+    flex-direction: row;
+    margin-right: 8px;
+    width: 176px;
+}
+
+#Icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background-size: 16px 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/home_storage.svg?fileID=7388822144124034973&guid=1c5ff924fd1d043c6ac24a5884c10360&type=3#home_storage");
+    background-position: center center;
+    background-color: var(--grey-300);
+    margin-right: 8px;
+}
+
+#RootListiItemFile > #ContainerInfo {
+    height: 24px;
+}
+
+#RootListiItemFile > #ContainerInfo > #NameLabel {
+    margin: 0;
+    padding: 0;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+}
+
+#RootListiItemFile > #ContainerInfo > #SizeLabel {
+    margin: 0;
+    padding: 0;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+}
+
+#RootListiItemFile > #CloseButton {
+    opacity: 0;
+    border-radius: 50%;
+    background-size: 8px 8px;
+    background-image: url("project://database/Assets/_Astrovisio/UI/Sprites/Icons/Close.png?fileID=2800000&guid=1189c808d72583445a0713c47d558f27&type=3#Close");
+    width: 16px;
+    height: 16px;
+    -unity-background-image-tint-color: var(--grey-700);
+    background-color: var(--grey-200);
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    border-width: 3px;
+    border-color: var(--grey-100);
+    transition: opacity 0.3s linear;
+    pointer-events: none;
+}
+
+#RootListiItemFile:hover #CloseButton {
+    pointer-events: auto;
+    opacity: 1;
+    cursor: pointer;
+}
