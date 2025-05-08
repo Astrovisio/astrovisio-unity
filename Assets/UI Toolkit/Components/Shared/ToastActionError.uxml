@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ToastActionError.uss?fileID=7433441132597879392&amp;guid=13fd7f3a0c8a14dd096df817645ae8fb&amp;type=3#ToastActionError" />
+    <engine:VisualElement name="RootToastError">
+        <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+        <engine:VisualElement name="ContainerLabel" style="flex-grow: 1;">
+            <engine:Label text="Cannot save video due to insufficient storage&#10;" name="TitleLabel" />
+            <engine:Label text="&#10;" name="DescriptionLabel" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

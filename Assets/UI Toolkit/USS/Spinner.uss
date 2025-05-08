@@ -1,0 +1,8 @@
+#Spinner {
+    width: 26px;
+    height: 26px;
+    min-height: 26px;
+    min-width: 26px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/spinner.svg?fileID=7388822144124034973&guid=46d984e810296ef4fa839a432ea6bf8d&type=3#spinner");
+    rotate: 0;
+}

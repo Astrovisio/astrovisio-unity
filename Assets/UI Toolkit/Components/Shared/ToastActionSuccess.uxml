@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ToastActionSuccess.uss?fileID=7433441132597879392&amp;guid=a61ba633fa0fc4fde80c2069f0314b70&amp;type=3#ToastActionSuccess" />
+    <engine:VisualElement name="RootToastSuccess">
+        <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+        <engine:VisualElement name="ContainerLabel" style="flex-grow: 1;">
+            <engine:Label text="Video saved in" name="TitleLabel" />
+            <engine:Label text="Video saved in" name="DescriptionLabel" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

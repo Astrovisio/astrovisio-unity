@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="SidebarParamRow" src="project://database/Assets/UI%20Toolkit/Components/SidebarParamRow.uxml?fileID=9197481963319205126&amp;guid=52b9839a12932d44499b3960b752ac68&amp;type=3#SidebarParamRow" />
-    <engine:Template name="Downsampling" src="project://database/Assets/UI%20Toolkit/Components/Downsampling.uxml?fileID=9197481963319205126&amp;guid=34fcbd8083bb80441a3f1c505b1892c9&amp;type=3#Downsampling" />
     <engine:Template name="GoToVRButton" src="project://database/Assets/UI%20Toolkit/Components/GoToVRButton.uxml?fileID=9197481963319205126&amp;guid=d7b4828cc0c7c704c81e8572c5d04c6e&amp;type=3#GoToVRButton" />
+    <engine:Template name="Downsampling" src="project://database/Assets/UI%20Toolkit/Components/Downsampling.uxml?fileID=9197481963319205126&amp;guid=34fcbd8083bb80441a3f1c505b1892c9&amp;type=3#Downsampling" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/ProjectSidebar.uss?fileID=7433441132597879392&amp;guid=2fd8b6039993c0e49b039d0a52b7702f&amp;type=3#ProjectSidebar" />
     <engine:VisualElement name="ProjectSidebarRoot">
         <engine:VisualElement name="DataSettingsContainer" class="active">
@@ -38,19 +38,26 @@
                     </engine:ScrollView>
                 </engine:VisualElement>
                 <engine:VisualElement name="DownsamplingContainer">
-                    <engine:Instance template="Downsampling" style="flex-shrink: 0;" />
+                    <engine:Instance template="Downsampling" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="RenderSettingsContainer">
             <engine:Button name="AccordionHeader">
                 <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
-                    <engine:VisualElement name="Icon" />
-                    <engine:Label text="Render Settings" name="Label" />
+                    <engine:VisualElement name="TopContainer" style="flex-grow: 1;">
+                        <engine:VisualElement name="Icon" />
+                        <engine:Label text="Render Settings" name="Label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement name="BottonContainer" style="flex-grow: 1; margin-top: 4px;">
+                        <engine:Label text="5,2MB" name="ActualSizeLabel" />
+                        <engine:Label text="/3GB" name="LimitSizeLabel" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
                 <engine:VisualElement name="Toggle" style="flex-grow: 1;" />
             </engine:Button>
             <engine:VisualElement name="AccordionContent">
+                <engine:VisualElement name="CubeRatioContainer" style="flex-grow: 1;" />
                 <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;">
                     <engine:Label text="Values ready to import" name="Title" />
                     <engine:Label text="Select the X axis" name="Warning" />
@@ -74,9 +81,6 @@
                         <engine:Instance template="SidebarParamRow" />
                         <engine:Instance template="SidebarParamRow" />
                     </engine:ScrollView>
-                </engine:VisualElement>
-                <engine:VisualElement name="DownsamplingContainer" style="flex-grow: 1;">
-                    <engine:Instance template="Downsampling" style="flex-shrink: 0;" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

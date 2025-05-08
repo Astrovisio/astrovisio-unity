@@ -14,11 +14,24 @@
     border-bottom-left-radius: 16px;
     align-self: auto;
     justify-content: space-around;
+    max-width: 270px;
+    flex-grow: 0;
+    flex-shrink: 1;
 }
 
 #RootToastMessage > #Label {
     margin-right: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    white-space: normal;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: auto;
+    align-content: auto;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    flex-shrink: 1;
+    padding-right: 0;
 }
 
 #RootToastMessage > #Buttons {
@@ -47,7 +60,6 @@
 
 #RootToastMessage > #Buttons > #Undo:hover {
     background-color: var(--grey-200);
-    cursor: url("project://database/Assets/UI%20Toolkit/Graphics/CursorPointer64.png?fileID=2800000&guid=79f76bf5a0e3cc646aec158b9c626168&type=3#CursorPointer64");
 }
 
 #RootToastMessage > #Buttons > #Close {
@@ -64,5 +76,4 @@
 
 #RootToastMessage > #Buttons > #Close:hover {
     background-color: var(--grey-200);
-    cursor: url("project://database/Assets/UI%20Toolkit/Graphics/CursorPointer64.png?fileID=2800000&guid=79f76bf5a0e3cc646aec158b9c626168&type=3#CursorPointer64");
 }

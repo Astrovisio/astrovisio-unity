@@ -17,8 +17,168 @@
   --black: rgba(255, 255, 255, 1);
   --transparent: rgba(0, 0, 0, 0);
   --bg-10: rgba(255, 255, 255, 0.1);
+  --bg-50: rgba(255, 255, 255, 0.5);
   --success: rgba(14, 81, 33, 1);
   --error: rgba(254, 51, 51, 1);
   --cursor: rgba(180, 180, 180, 1);
   --red: rgba(255, 93, 93, 1);
+}
+
+.unity-base-field,
+.unity-label,
+.unity-button,
+.unity-popup-field,
+.unity-popup-field__label,
+.unity-popup-field__input,
+.unity-popup-field__text,
+.unity-popup-field__arrow,
+.unity-base-dropdown_container-outer,
+.unity-base-dropdown_container-inner {
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  padding-top: 0px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+}
+
+.unity-popup-field {
+  padding: 0px
+}
+
+.unity-popup-field__input {
+  border-radius: 8px;
+  padding: 14px 12px 14px 12px;
+  min-width: none;
+  border-width: 1px;
+  border-width: 1px;
+  border-width: 1px;
+  border-width: 1px;
+  border-color: var(--grey-100);
+  width: 100%;
+}
+
+.dropdown-small .unity-popup-field__input {
+  border-radius: 5px;
+  padding: 8px 8px 8px 12px;
+}
+
+.unity-popup-field__input.unity-base-popup-field__input,
+.unity-popup-field:hover .unity-popup-field__input.unity-base-popup-field__input,
+.unity-popup-field:focus .unity-popup-field__input.unity-base-popup-field__input,
+.unity-popup-field:active .unity-popup-field__input.unity-base-popup-field__input {
+  background-color: var(--grey-100);
+}
+
+.unity-popup-field:hover .unity-popup-field__input.unity-base-popup-field__input,
+.unity-popup-field:focus .unity-popup-field__input.unity-base-popup-field__input,
+.unity-popup-field:active .unity-popup-field__input.unity-base-popup-field__input {
+  border-color: var(--grey-450);
+}
+
+.unity-base-popup-field__text {
+  margin-right: 0px;
+  margin-left: 0px;
+  color: var(--black);
+}
+
+.unity-base-popup-field__arrow {
+  width: 14px;
+  height: 14px;
+  background-image: url("project://database/Assets/UI Toolkit/Icons/arrow_down.svg");
+  -unity-background-image-tint-color: var(--grey-700);
+}
+
+.unity-base-dropdown__container-outer {
+  margin-top: 7px;
+  padding: 0px;
+  border-width: 0px;
+  border-color: var(--transparent);
+}
+
+.unity-base-dropdown__container-outer .unity-base-dropdown__container-inner {
+  padding: 0px;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-bottom: 8px;
+  padding-right: 12px;
+  border-radius: 8px;
+  background-color: var(--grey-100);
+}
+
+.unity-base-dropdown__container-outer .unity-base-dropdown__container-inner .unity-base-dropdown__item {
+  /* padding: 8px; */
+  padding: 4px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  background-color: var(--transparent);
+  color: var(--grey-700);
+  border-width: 0px;
+  border-color: var(--transparent);
+}
+
+.unity-base-dropdown__item:hover,
+.unity-base-dropdown__item:focus {
+  background-color: var(--grey-150);
+}
+
+.unity-base-dropdown .unity-base-dropdown__item:checked {
+  background-color: var(--grey-150);
+}
+
+.unity-base-dropdown__item .unity-base-dropdown__checkmark,
+.unity-base-dropdown__item:checked .unity-base-dropdown__checkmark {
+  display: none;
+}
+
+.unity-toggle__checkmark {
+  border-width: 0px;
+  background-color: var(--transparent);
+}
+
+.unity-base-text-field__input {
+  background-color: var(--grey-100);
+}
+
+.unity-base-text-field__input {
+  padding-top: 5px;
+  padding-left: 12px;
+  padding-bottom: 5px;
+  padding-right: 12px;
+  --unity-cursor-color: var(--cursor);
+}
+
+.unity-text-element--inner-input-field-component {
+  padding-left: 0px;
+  padding-right: 0px
+}
+
+.unity-base-text-field {
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-color: var(--grey-300);
+}
+
+.unity-base-text-field .unity-base-text-field__input {
+  color: var(--grey-600);
+}
+
+.unity-base-text-field .unity-base-text-field__input--placeholder {
+  color: var(--grey-400);
+}
+
+
+.unity-base-text-field:focus,
+.unity-base-text-field:hover {
+  border-color: var(--grey-450);
+}
+
+.unity-base-text-field .unity-base-text-field__input,
+.unity-base-text-field:focus .unity-base-text-field__input,
+.unity-base-text-field:hover .unity-base-text-field__input {
+  border-width: 0px !important;
 }

@@ -119,4 +119,5 @@
     border-bottom-left-radius: 8px;
     font-size: 16px;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    opacity: 0.5;
 }

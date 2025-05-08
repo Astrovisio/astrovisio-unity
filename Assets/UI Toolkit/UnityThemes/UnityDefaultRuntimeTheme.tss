@@ -17,6 +17,7 @@
   --black: rgba(255, 255, 255, 1);
   --transparent: rgba(0, 0, 0, 0);
   --bg-10: rgba(255, 255, 255, 0.1);
+  --bg-50: rgba(255, 255, 255, 0.5);
   --success: rgba(14, 81, 33, 1);
   --error: rgba(254, 51, 51, 1);
   --cursor: rgba(180, 180, 180, 1);

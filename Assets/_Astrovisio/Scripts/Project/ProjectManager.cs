@@ -13,11 +13,7 @@ namespace Astrovisio
 		[Header("Dependencies")]
 		[SerializeField] private APIManager apiManager;
 
-		private List<Project> projectList = new List<Project>();
-		private List<Project> openedProjectList = new List<Project>();
-		private Project currentProject;
-
-		// --- Events ---
+		// === Events ===
 		public event Action<List<Project>> ProjectsFetched;
 		public event Action<Project> ProjectOpened;
 		public event Action<Project> ProjectCreated;
@@ -26,6 +22,12 @@ namespace Astrovisio
 		public event Action ProjectUnselected;
 		public event Action<int> ProjectDeleted;
 		public event Action<string> ApiError;
+
+		// === Local ===
+		private List<Project> projectList = new List<Project>();
+		private List<Project> openedProjectList = new List<Project>();
+		private Project currentProject;
+
 
 		private void Awake()
 		{
@@ -94,7 +96,7 @@ namespace Astrovisio
 		}
 
 
-		private Project fakeProject;	
+		private Project fakeProject;
 		private Project InitFakeProject()
 		{
 			var configParams = new Dictionary<string, ConfigParam>
@@ -164,7 +166,7 @@ namespace Astrovisio
 			};
 
 			return fakeProject;
-		}	
+		}
 		public Project GetFakeProject()
 		{
 			return fakeProject is null ? InitFakeProject() : fakeProject;

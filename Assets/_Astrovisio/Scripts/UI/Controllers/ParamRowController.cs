@@ -240,6 +240,13 @@ namespace Astrovisio
             xyzAxisContainer.SetEnabled(value);
             thresholdContainer.SetEnabled(value);
 
+            if (value == false)
+            {
+                DeselectAxis(Axis.X);
+                DeselectAxis(Axis.Y);
+                DeselectAxis(Axis.Z);
+            }
+
             OnStateChanged?.Invoke();
             // Debug.Log(ParamName + " " + value);
         }

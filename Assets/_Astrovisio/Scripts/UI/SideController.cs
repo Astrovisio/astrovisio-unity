@@ -73,8 +73,8 @@ namespace Astrovisio
 
         private void OnProjectOpened(Project project)
         {
-            // Debug.Log("OnProjectOpened");
             sidebarContainer.style.display = DisplayStyle.None;
+
             foreach (var controller in projectSidebarControllerDictionary.Values)
             {
                 controller.Root.style.display = DisplayStyle.None;

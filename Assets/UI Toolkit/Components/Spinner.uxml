@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Spinner" class="spinner-container" style="flex-grow: 1; width: 26px; min-width: 26px; min-height: 26px; height: 26px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/spinner.svg?fileID=7388822144124034973&amp;guid=46d984e810296ef4fa839a432ea6bf8d&amp;type=3#spinner&quot;);" />
+</ui:UXML>

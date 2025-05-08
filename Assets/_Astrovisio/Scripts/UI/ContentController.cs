@@ -117,6 +117,7 @@ namespace Astrovisio
         private void OnProjectOpened(Project project)
         {
             homeViewContainer.style.display = DisplayStyle.None;
+
             foreach (var controller in projectViewControllerDictionary.Values)
             {
                 controller.Root.style.display = DisplayStyle.None;
