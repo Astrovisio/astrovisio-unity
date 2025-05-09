@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Astrovisio
 {
@@ -200,5 +201,59 @@ namespace Astrovisio
                 }
             }
         }
+
+        /// <summary>
+        /// Process a project by ID, sending configuration as payload.
+        /// </summary>
+        public IEnumerator ProcessProject(
+            int id,
+            ProcessProjectRequest req,
+            Action<Project> onSuccess,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.ProcessProject(id);
+            Debug.Log($"[APIManager] POST {url}");
+
+            string jsonPayload = JsonConvert.SerializeObject(req, Formatting.None,
+                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include });
+
+            Debug.Log(jsonPayload);
+
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
+
+            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+            {
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error POST: {request.error}");
+                    onError?.Invoke(request.downloadHandler.text);
+                }
+                else
+                {
+                    Debug.Log($"[APIManager] Success POST");
+                    try
+                    {
+                        var processed = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        onSuccess?.Invoke(processed);
+                        Debug.Log($"[APIManager] Success DeserializeObject");
+                    }
+                    catch (Exception ex)
+                    {
+                        onError?.Invoke(ex.Message);
+                    }
+
+
+                }
+            }
+        }
+
+
     }
+
 }

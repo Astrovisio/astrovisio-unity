@@ -3,7 +3,7 @@
     -unity-background-image-tint-color: var(--white);
 }
 
-#NewProjectRoot > #BottomContainer > #RightContainer > TemplateContainer > #ButtonRoot > #Button > #Icon {
+#NewProjectRoot > #BottomContainer > #RightContainer > #Row > #ButtonRoot > #Button > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
     -unity-background-image-tint-color: rgba(0, 0, 0, 0.94);
 }
@@ -80,4 +80,17 @@
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView > #unity-content-and-vertical-scroll-container > .unity-scroll-view__vertical-scroller {
     background-color: var(--black);
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.ColListItem {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 33.333%;
+    min-width: 33.333%;
+    max-width: 33.333%;
 }

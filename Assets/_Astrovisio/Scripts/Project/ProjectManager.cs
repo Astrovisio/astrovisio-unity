@@ -19,6 +19,7 @@ namespace Astrovisio
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
+		public event Action<Project> ProjectProcessed;
 		public event Action ProjectUnselected;
 		public event Action<int> ProjectDeleted;
 		public event Action<string> ApiError;
@@ -428,26 +429,34 @@ namespace Astrovisio
 			StartCoroutine(CreateProjectCoroutine(request));
 		}
 
-		private IEnumerator CreateProjectCoroutine(CreateProjectRequest request)
+		private IEnumerator CreateProjectCoroutine(CreateProjectRequest createProjectRequest)
 		{
 			yield return apiManager.CreateNewProject(
-			  request,
+			  createProjectRequest,
 			  onSuccess: created => ProjectCreated?.Invoke(created),
 			  onError: err => ApiError?.Invoke(err)
 			);
 		}
 
 
-		public void UpdateProject(int id, UpdateProjectRequest updatedData)
+		public void UpdateProject(int id, Project project)
 		{
-			StartCoroutine(UpdateProjectCoroutine(id, updatedData));
+			var request = new UpdateProjectRequest
+			{
+				Name = project.Name,
+				Favourite = project.Favourite,
+				Description = project.Description,
+				Paths = project.Paths,
+				ConfigProcess = project.ConfigProcess
+			};
+			StartCoroutine(UpdateProjectCoroutine(id, request));
 		}
 
-		private IEnumerator UpdateProjectCoroutine(int id, UpdateProjectRequest updatedData)
+		private IEnumerator UpdateProjectCoroutine(int id, UpdateProjectRequest updateProjectRequest)
 		{
 			yield return apiManager.UpdateProject(
 			  id,
-			  updatedData,
+			  updateProjectRequest,
 			  onSuccess: updated => ProjectUpdated?.Invoke(updated),
 			  onError: err => ApiError?.Invoke(err)
 			);
@@ -469,6 +478,27 @@ namespace Astrovisio
 		}
 
 
+		public void ProcessProject(int id, ConfigProcess configProcess)
+		{
+			var request = new ProcessProjectRequest
+			{
+				Downsampling = configProcess.Downsampling,
+				ConfigParam = configProcess.Params
+			};
+			StartCoroutine(ProcessProjectCoroutine(id, request));
+		}
+
+		private IEnumerator ProcessProjectCoroutine(int id, ProcessProjectRequest processProjectRequest)
+		{
+			yield return apiManager.ProcessProject(
+				id,
+				processProjectRequest,
+				onSuccess: processed => ProjectProcessed?.Invoke(processed),
+				onError: err => ApiError?.Invoke(err)
+			);
+		}
+
+
 		private void OnDisable()
 		{
 			ProjectsFetched = null;
@@ -476,6 +506,7 @@ namespace Astrovisio
 			ProjectCreated = null;
 			ProjectUpdated = null;
 			ProjectDeleted = null;
+			ProjectProcessed = null;
 			ApiError = null;
 		}
 

@@ -1,11 +1,16 @@
 #RootListiItemFile {
+    margin-top: 8px;
     padding: 8px;
-    background-color: var(--bg-10);
     border-radius: 8px;
     color: var(--grey-800);
     flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
     margin-right: 8px;
-    width: 176px;
+}
+
+#RootListiItemFile:hover {
+    background-color: var(--bg-10);
 }
 
 #Icon {
@@ -17,22 +22,34 @@
     background-position: center center;
     background-color: var(--grey-300);
     margin-right: 8px;
+    min-width: 32px;
+    max-width: 32px;
+    min-height: 32px;
+    max-height: 32px;
 }
 
 #RootListiItemFile > #ContainerInfo {
-    height: 24px;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 #RootListiItemFile > #ContainerInfo > #NameLabel {
     margin: 0;
     padding: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    overflow: hidden;
+    background: red;
+    margin-top: -3px;
+    text-overflow: ellipsis;
 }
 
 #RootListiItemFile > #ContainerInfo > #SizeLabel {
     margin: 0;
     padding: 0;
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    margin-top: -1px;
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Assets/_Astrovisio/Fonts/SpaceMono-Regular.ttf?fileID=12800000&guid=f7940a46bc2c48347a9df98e3e05c8db&type=3#SpaceMono-Regular");
+    color: var(--grey-500);
 }
 
 #RootListiItemFile > #CloseButton {
@@ -52,6 +69,7 @@
     transition: opacity 0.3s linear;
     pointer-events: none;
 }
+
 
 #RootListiItemFile:hover #CloseButton {
     pointer-events: auto;

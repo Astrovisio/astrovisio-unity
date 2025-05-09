@@ -127,20 +127,17 @@
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #Title {
     color: var(--black);
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 16px;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #Warning {
     color: rgb(255, 93, 93);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
     font-size: 10px;
+    margin-top: 16px;
+}
+
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #ParamsScrollView{
+    margin-top:16px;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #DownsamplingContainer {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -49,18 +48,6 @@ namespace Astrovisio
             Root = root;
 
             Init();
-
-            warningLabel.text = Project.Name; // TODO: Remove
-
-            // foreach (var kvp in Project.ConfigProcess.Params)
-            // {
-            //     string paramName = kvp.Key;
-            //     ConfigParam param = kvp.Value;
-
-            //     Debug.Log($"Param: {paramName}, XAxis: {param.XAxis}, Hash: {param.GetHashCode()}");
-            //     Debug.Log($"Param: {paramName}, YAxis: {param.YAxis}, Hash: {param.GetHashCode()}");
-            //     Debug.Log($"Param: {paramName}, ZAxis: {param.ZAxis}, Hash: {param.GetHashCode()}");
-            // }
         }
 
         private void Init()
@@ -73,10 +60,31 @@ namespace Astrovisio
 
             paramScrollView = dataSettingsContainer.Q<ScrollView>("ParamsScrollView");
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
+            downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
+            downsamplingDropdown.choices.Clear();
+            downsamplingDropdown.choices.Add("1000");
+            downsamplingDropdown.choices.Add("2000");
+            downsamplingDropdown.choices.Add("3000");
+            downsamplingDropdown.choices.Add("4000");
+            downsamplingDropdown?.RegisterValueChangedCallback(evt =>
+            {
+                string percentageText = evt.newValue.Replace("%", "");
+                if (float.TryParse(percentageText, out float percentage))
+                {
+                    float value = percentage / 100f;
+                    // Debug.Log($"Converted value: {value}");
+                    Project.ConfigProcess.Downsampling = percentage;
+                }
+                else
+                {
+                    Debug.LogWarning("Invalid percentage format.");
+                }
+            });
+
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
+            processDataButton.clicked += OnProcessDataClicked;
 
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
-            downsamplingDropdown = renderSettingsContainer.Q<DropdownField>("DownsamplingDropdown"); // TODO
 
             goToVRButton = Root.Q<Button>("GoToVRButton");
 
@@ -218,7 +226,7 @@ namespace Astrovisio
             if (chipLabelCounter >= 3)
             {
                 SetProcessData(true);
-                warningLabel.style.visibility = Visibility.Hidden;
+                warningLabel.style.display = DisplayStyle.None;
                 return;
             }
             SetProcessData(false);
@@ -269,10 +277,10 @@ namespace Astrovisio
             }
 
             // 6) Show the warning if needed
-            warningLabel.style.visibility =
+            warningLabel.style.display =
                 string.IsNullOrEmpty(warningLabel.text)
-                    ? Visibility.Hidden
-                    : Visibility.Visible;
+                    ? DisplayStyle.None
+                    : DisplayStyle.Flex;
         }
 
         private void SetProcessData(bool state)
@@ -291,6 +299,11 @@ namespace Astrovisio
             }
 
             isReadyToProcessData = state;
+        }
+
+        private void OnProcessDataClicked()
+        {
+            projectManager.ProcessProject(Project.Id, Project.ConfigProcess);
         }
 
     }

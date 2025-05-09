@@ -6,8 +6,9 @@
     border-bottom-color: var(--grey-300);
     flex-direction: row;
     padding-bottom: 8px;
-    margin-top: 16px;
+    margin-top: 0;
     align-items: center;
+    margin-bottom: 16px;
 }
 
 #ParamRowRoot > #LabelContainer {

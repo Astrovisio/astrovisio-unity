@@ -138,20 +138,20 @@ namespace Astrovisio
         {
             filesScrollView.Clear();
 
-            const int maxPerRow = 3;
-            int count = 0;
+            // const int maxPerRow = 3;
+            // int count = 0;
 
-            VisualElement rowContainer = null;
+            // VisualElement rowContainer = null;
 
             for (int i = 0; i < selectedFiles.Count; i++)
             {
-                if (count == 0)
-                {
-                    rowContainer = new VisualElement();
-                    rowContainer.style.flexDirection = FlexDirection.Row;
-                    rowContainer.style.marginBottom = 8;
-                    filesScrollView.Add(rowContainer);
-                }
+                // if (count == 0)
+                // {
+                //     rowContainer = new VisualElement();
+                //     rowContainer.style.flexDirection = FlexDirection.Row;
+                //     rowContainer.style.marginBottom = 8;
+                //     filesScrollView.Add(rowContainer);
+                // }
 
                 var file = selectedFiles[i];
                 var fileItem = listItemFileTemplate.CloneTree();
@@ -170,20 +170,21 @@ namespace Astrovisio
                     sizeLabel.text = FormatFileSize(file.size);
                 }
 
-                rowContainer.Add(fileItem);
-                count++;
+                fileItem.AddToClassList("ColListItem");
+                filesScrollView.Add(fileItem);
+                // count++;
 
-                if (count == maxPerRow)
-                {
-                    count = 0;
-                }
+                // if (count == maxPerRow)
+                // {
+                //     count = 0;
+                // }
             }
 
             // Remove margin-bottom to the last row
-            if (filesScrollView.childCount > 0)
-            {
-                filesScrollView.ElementAt(filesScrollView.childCount - 1).style.marginBottom = 0;
-            }
+            // if (filesScrollView.childCount > 0)
+            // {
+            //     filesScrollView.ElementAt(filesScrollView.childCount - 1).style.marginBottom = 0;
+            // }
         }
 
         private string FormatFileSize(long sizeInBytes)

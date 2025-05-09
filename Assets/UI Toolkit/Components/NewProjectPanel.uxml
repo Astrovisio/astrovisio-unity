@@ -29,21 +29,15 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="ViewFilesContainer" style="flex-grow: 1; padding-top: 0; padding-left: 8px; padding-bottom: 0;">
                     <engine:ScrollView name="FilesScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible">
-                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                        </engine:VisualElement>
-                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                        </engine:VisualElement>
-                        <engine:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between;">
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                            <engine:Instance template="ListiItemFile" />
-                        </engine:VisualElement>
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" class="ColListItem" />
                     </engine:ScrollView>
                 </engine:VisualElement>
             </engine:VisualElement>

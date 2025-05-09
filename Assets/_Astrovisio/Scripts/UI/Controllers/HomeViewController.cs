@@ -17,6 +17,7 @@ namespace Astrovisio
         // === Local ===
         public VisualElement Root { get; }
         private readonly string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
+        private readonly Dictionary<string, ProjectRowController> projectControllers = new();
 
         public HomeViewController(ProjectManager projectManager, VisualElement root, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
         {
@@ -93,7 +94,11 @@ namespace Astrovisio
             foreach (var project in projectList)
             {
                 var projectRow = projectRowTemplate.CloneTree();
-                projectRow.Q<Label>("ProjectNameLabel").text = project.Name;
+
+                var controller = new ProjectRowController(projectRow, project.Name, project);
+                projectControllers[project.Name] = controller;
+
+                projectRow.Q<Label>("ProjectNameLabel").text = project.Name; // TODO: remove
                 projectRow.RegisterCallback<ClickEvent>(_ => projectManager.OpenProject(project.Id));
                 target.Add(projectRow);
             }
