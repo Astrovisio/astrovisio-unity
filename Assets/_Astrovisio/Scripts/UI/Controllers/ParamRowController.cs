@@ -30,8 +30,8 @@ namespace Astrovisio
         private Button yChipButton;
         private Button zChipButton;
         private VisualElement thresholdContainer;
-        private FloatField minInputField;
-        private FloatField maxInputField;
+        private DoubleField minInputField;
+        private DoubleField maxInputField;
         private Label minErrorLabel;
         private Label maxErrorLabel;
         private Button resetButton;
@@ -72,8 +72,8 @@ namespace Astrovisio
 
             // Threshold
             thresholdContainer = paramRow.Q<VisualElement>("ThresholdContainer");
-            minInputField = thresholdContainer.Q<FloatField>("MinInputField");
-            maxInputField = thresholdContainer.Q<FloatField>("MaxInputField");
+            minInputField = thresholdContainer.Q<DoubleField>("MinInputField");
+            maxInputField = thresholdContainer.Q<DoubleField>("MaxInputField");
             minErrorLabel = thresholdContainer.Q<Label>("MinErrorLabel");
             maxErrorLabel = thresholdContainer.Q<Label>("MaxErrorLabel");
             minInputField.RegisterValueChangedCallback(evt =>

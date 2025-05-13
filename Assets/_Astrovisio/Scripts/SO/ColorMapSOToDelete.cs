@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ColorMapSO", menuName = "Scriptable Objects/ColorMapSO")]
-public class ColorMapSO : ScriptableObject
+// [CreateAssetMenu(fileName = "ColorMapSO", menuName = "Scriptable Objects/ColorMapSO")]
+public class ColorMapSOToDelete : ScriptableObject
 {
     [Header("Color Map Info")]
     public int colorMapID;

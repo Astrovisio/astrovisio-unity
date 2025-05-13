@@ -1,5 +1,3 @@
-using UnityEngine;
-
 
 namespace Astrovisio
 {
@@ -15,5 +13,6 @@ namespace Astrovisio
             this.name = name;
             this.size = size;
         }
+        
     }
 }

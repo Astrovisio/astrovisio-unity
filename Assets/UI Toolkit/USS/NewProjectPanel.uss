@@ -1,3 +1,39 @@
+#NewProjectRoot {
+    max-height: 80%;
+    overflow: hidden;
+    min-height: 760px;
+}
+
+#NewProjectRoot > #ProjectInfoContainer {
+    padding-bottom: 24px;
+}
+
+#NewProjectRoot > #ProjectInfoContainer > #TitleLabel {
+    margin-bottom: 24px;
+}
+
+#NewProjectRoot > #ProjectInfoContainer > #ProjectNameContainer {
+    margin-bottom: 24px;
+}
+
+#NewProjectRoot > #ProjectInfoContainer > #ProjectNameContainer > #ProjectNameLabel {
+    margin-bottom: 8px;
+}
+
+#NewProjectRoot > #ProjectInfoContainer > #ProjectDescriptionContainer {
+}
+
+#NewProjectRoot > #ProjectInfoContainer > #ProjectDescriptionContainer > #ProjectDescriptionLabel {
+    margin-bottom: 8px;
+}
+
+#NewProjectRoot > #BottomContainer {
+    margin-top: 24px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+}
+
 #NewProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > #ButtonRoot > .unity-button > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
     -unity-background-image-tint-color: var(--white);
@@ -14,6 +50,15 @@
 
 #NewProjectRoot > #BottomContainer > #RightContainer > #CancelButton > .btn-secondary > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
+}
+
+#NewProjectRoot > #UploadYourFilesContainer {
+    padding-top: 20px;
+    padding-bottom: 24px;
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #UploadYourFilesLabel {
+    margin-bottom: 20px;
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer > #AddFileButton > .btn-tertiary > #Icon {
@@ -78,10 +123,6 @@
     margin-top: 0;
 }
 
-#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView > #unity-content-and-vertical-scroll-container > .unity-scroll-view__vertical-scroller {
-    background-color: var(--black);
-}
-
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
     flex-direction: row;
     flex-wrap: wrap;
@@ -93,4 +134,8 @@
     width: 33.333%;
     min-width: 33.333%;
     max-width: 33.333%;
+}
+
+#NewProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
 }

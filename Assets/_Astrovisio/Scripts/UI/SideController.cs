@@ -8,14 +8,9 @@ namespace Astrovisio
     public class SideController : MonoBehaviour
     {
 
-        [Header("UI Templates")]
+        [Header("Data")]
+        [SerializeField] private SideContextSO sideContextSO;
 
-        [Space(3)][Header("Home")]
-        [SerializeField] private VisualTreeAsset toDo;
-
-        [Space(3)][Header("Project")]
-        [SerializeField] private VisualTreeAsset projectSidebarTemplate;
-        [SerializeField] private VisualTreeAsset sidebarParamRowTemplate;
 
         // === References ===
         private UIDocument uiDocument;
@@ -86,11 +81,12 @@ namespace Astrovisio
                 return;
             }
 
-            VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
+            // VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
+            VisualElement projectSidebarInstance = sideContextSO.projectSidebarTemplate.CloneTree();
             sideContainer.Add(projectSidebarInstance);
 
             // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
-            var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, project, projectSidebarInstance);
+            var newProjectViewController = new ProjectSidebarController(projectManager, sideContextSO, project, projectSidebarInstance);
             projectSidebarControllerDictionary[project.Id] = newProjectViewController;
         }
 

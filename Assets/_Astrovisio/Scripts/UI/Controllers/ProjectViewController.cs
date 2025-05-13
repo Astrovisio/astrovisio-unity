@@ -24,7 +24,7 @@ namespace Astrovisio
         private Toggle checkAllToggle;
 
         // === Local ===
-        private readonly Dictionary<Axis, ParamRowController> selectedAxis = new Dictionary<Axis, ParamRowController>();
+        private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly Dictionary<string, ParamRowController> paramControllers = new();
 
         public ProjectViewController(ProjectManager projectManager, VisualElement root, Project project, VisualTreeAsset paramRowTemplate)

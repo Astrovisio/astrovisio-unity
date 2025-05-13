@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3e3b68d4410c584cbdc53b0157dd3c9, type: 3}
+  m_Name: SideContextSO
+  m_EditorClassIdentifier: 
+  projectSidebarTemplate: {fileID: 9197481963319205126, guid: 0f81f4c46e0c640418c9b40678b28b0a,
+    type: 3}
+  sidebarParamRowTemplate: {fileID: 9197481963319205126, guid: 52b9839a12932d44499b3960b752ac68,
+    type: 3}
+  paramRowSettingsTemplate: {fileID: 9197481963319205126, guid: 8d8fba102f4b8354eb735e1f87607b16,
+    type: 3}
+  colorMapSO: {fileID: 11400000, guid: e90be6bd2a4d2f2468717279728127e7, type: 2}

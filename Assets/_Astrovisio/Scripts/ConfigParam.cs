@@ -5,10 +5,10 @@ namespace Astrovisio
 {
     public class ConfigParam : INotifyPropertyChanged
     {
-        private float thrMin;
-        private float? thrMinSel;
-        private float thrMax;
-        private float? thrMaxSel;
+        private double thrMin;
+        private double? thrMinSel;
+        private double thrMax;
+        private double? thrMaxSel;
         private bool selected;
         private string unit;
         private bool xAxis;
@@ -17,7 +17,7 @@ namespace Astrovisio
         private string[] files;
 
         [JsonProperty("thr_min")]
-        public float ThrMin
+        public double ThrMin
         {
             get => thrMin;
             set
@@ -31,7 +31,7 @@ namespace Astrovisio
         }
 
         [JsonProperty("thr_min_sel")]
-        public float? ThrMinSel
+        public double? ThrMinSel
         {
             get => thrMinSel;
             set
@@ -45,7 +45,7 @@ namespace Astrovisio
         }
 
         [JsonProperty("thr_max")]
-        public float ThrMax
+        public double ThrMax
         {
             get => thrMax;
             set
@@ -59,7 +59,7 @@ namespace Astrovisio
         }
 
         [JsonProperty("thr_max_sel")]
-        public float? ThrMaxSel
+        public double? ThrMaxSel
         {
             get => thrMaxSel;
             set

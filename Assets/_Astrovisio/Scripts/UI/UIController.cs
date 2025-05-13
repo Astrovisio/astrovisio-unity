@@ -6,6 +6,7 @@ namespace Astrovisio
     {
         [Header("Dependencies")]
         [SerializeField] private ProjectManager projectManager;
+        [SerializeField] private RenderManager renderManager;
 
         private void Start()
         {
@@ -16,6 +17,13 @@ namespace Astrovisio
         {
             return projectManager;
         }
+
+        public RenderManager GetRenderManager()
+        {
+            return renderManager;
+        }
+
+
 
     }
 }

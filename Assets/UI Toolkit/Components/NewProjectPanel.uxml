@@ -7,20 +7,20 @@
     <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
     <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/NewProjectPanel.uss?fileID=7433441132597879392&amp;guid=0d28f6331f0365441be9a1c1cc1bdabd&amp;type=3#NewProjectPanel" />
-    <engine:VisualElement name="NewProjectRoot" style="flex-grow: 1; background-color: rgb(46, 46, 46); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; justify-content: space-between;">
-        <engine:VisualElement name="ProjectInfoContainer" style="flex-grow: 1; height: 224px; min-height: 224px; max-height: 224px; padding-bottom: 24px; justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
-            <engine:Label text="Create a new project" name="TitleLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&amp;guid=98c36e2b9365b974e845c4058050e5fc&amp;type=3#SpaceMono-Bold&quot;); font-size: 20px; -unity-text-align: middle-left; color: rgb(251, 251, 251);" />
-            <engine:VisualElement name="ProjectNameContainer" style="height: 56px; min-height: 56px; max-height: 56px; justify-content: space-between;">
-                <engine:Label text="Project name" name="ProjectNameLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); height: 10px; min-height: 10px; max-height: 10px; -unity-text-align: middle-left;" />
-                <engine:Instance template="InputField" name="ProjectNameInputField" style="height: 38px; min-height: 38px; max-height: 38px; flex-grow: 0;" />
+    <engine:VisualElement name="NewProjectRoot" style="flex-grow: 1; background-color: rgb(46, 46, 46); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; justify-content: space-between; max-height: 80%;">
+        <engine:VisualElement name="ProjectInfoContainer" style="justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
+            <engine:Label text="Create a new project" name="TitleLabel" style="-unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&amp;guid=98c36e2b9365b974e845c4058050e5fc&amp;type=3#SpaceMono-Bold&quot;); font-size: 20px; -unity-text-align: middle-left; color: rgb(251, 251, 251);" />
+            <engine:VisualElement name="ProjectNameContainer" style="justify-content: space-between;">
+                <engine:Label text="Project name" name="ProjectNameLabel" style="-unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); -unity-text-align: middle-left;" />
+                <engine:Instance template="InputField" name="ProjectNameInputField" style="flex-grow: 0;" />
             </engine:VisualElement>
-            <engine:VisualElement name="ProjectDescriptionContainer" style="height: 82px; min-height: 82px; max-height: 82px; justify-content: space-between;">
-                <engine:Label text="Project description" name="ProjectDescriptionLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); height: 10px; min-height: 10px; max-height: 10px; -unity-text-align: middle-left;" />
+            <engine:VisualElement name="ProjectDescriptionContainer" style="justify-content: space-between;">
+                <engine:Label text="Project description" name="ProjectDescriptionLabel" style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); -unity-text-align: middle-left;" />
                 <engine:Instance template="InputTextField" name="ProjectDescriptionInputField" style="height: 64px; min-height: 64px; max-height: 64px;" />
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:VisualElement name="UploadYourFilesContainer" style="flex-grow: 1; height: 396px; min-height: 396px; max-height: 396px; justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
-            <engine:Label text="Upload your files" name="UploadYourFilesLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(251, 251, 251); -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); font-size: 16px; -unity-text-align: middle-left;" />
+        <engine:VisualElement name="UploadYourFilesContainer" style="flex-grow: 1; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
+            <engine:Label text="Upload your files" name="UploadYourFilesLabel" style="color: rgb(251, 251, 251); -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); font-size: 16px; -unity-text-align: middle-left;" />
             <engine:VisualElement name="FilesContainer">
                 <engine:VisualElement name="AddFilesContainer">
                     <engine:Instance template="TertiaryButton" name="AddFileButton">
@@ -35,20 +35,19 @@
                         <engine:Instance template="ListiItemFile" class="ColListItem" />
                         <engine:Instance template="ListiItemFile" class="ColListItem" />
                         <engine:Instance template="ListiItemFile" class="ColListItem" />
-                        <engine:Instance template="ListiItemFile" class="ColListItem" />
+                        <engine:Instance template="ListiItemFile" name="TemplateContainer" class="ColListItem" />
                         <engine:Instance template="ListiItemFile" class="ColListItem" />
                         <engine:Instance template="ListiItemFile" class="ColListItem" />
                     </engine:ScrollView>
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:VisualElement name="Spacer" style="flex-grow: 1; height: 35px; min-height: 35px; max-height: 35px; justify-content: space-between; flex-direction: row; border-bottom-width: 0; border-left-color: rgba(76, 76, 76, 0); border-right-color: rgba(76, 76, 76, 0); border-top-color: rgba(76, 76, 76, 0); border-bottom-color: rgba(76, 76, 76, 0); border-top-width: 0; border-right-width: 0; border-left-width: 0;" />
         </engine:VisualElement>
-        <engine:VisualElement name="BottomContainer" style="flex-grow: 1; height: 40px; min-height: 40px; max-height: 40px; flex-direction: row;">
+        <engine:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
             <engine:VisualElement name="LeftContainer" style="flex-grow: 1;">
-                <engine:Instance template="MemorySizeInfo" name="MemorySizeInfo" style="width: 175px; min-width: 175px; max-width: 175px;" />
+                <engine:Instance template="MemorySizeInfo" name="MemorySizeInfo" style="width: 175px; min-width: 175px; max-width: 175px; flex-grow: 1;" />
             </engine:VisualElement>
             <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse;">
-                <engine:Instance template="PrimaryButton" name="ContinueButton" style="margin-left: 8px;">
+                <engine:Instance template="PrimaryButton" name="ContinueButton" style="margin-left: 8px; height: 40px;">
                     <AttributeOverrides element-name="Label" text="Continue" />
                 </engine:Instance>
                 <engine:Instance template="SecondaryButton" name="CancelButton">

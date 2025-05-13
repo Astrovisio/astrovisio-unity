@@ -136,8 +136,8 @@
     margin-top: 16px;
 }
 
-#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #ParamsScrollView{
-    margin-top:16px;
+#ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #ParamsContainer > #ParamsScrollView {
+    margin-top: 16px;
 }
 
 #ProjectSidebarRoot > #DataSettingsContainer > #AccordionContent > #DownsamplingContainer {
@@ -208,8 +208,8 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     border-top-width: 0;
@@ -325,7 +325,6 @@
     border-left-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
-    display: none;
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -334,30 +333,181 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
+    height: 0;
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer {
-    padding-top: 24px;
-    padding-left: 16px;
-    padding-right: 16px;
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer {
+    padding-top: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer > #Title {
-    color: var(--black);
-    margin-top: 0;
-    margin-right: 0;
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #CubeRatioContainer {
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 42px;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #CubeRatioContainer > #Title {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    color: var(--grey-800);
+    min-height: 10px;
+    max-height: 10px;
+    -unity-text-align: middle-left;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #CubeRatioContainer > #ChipContainer {
+    flex-direction: row;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #CubeRatioContainer > #ChipContainer > #XYZChip {
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    margin-right: 8px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #CubeRatioContainer > #ChipContainer > #XYChip {
+    width: 55px;
+    height: 24px;
+    min-width: 55px;
+    min-height: 24px;
+    max-height: 24px;
+    max-width: 55px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #LineSpacer {
+    height: 1px;
+    min-height: 1px;
+    max-height: 1px;
+    background-color: var(--grey-300);
+    margin-top: 16px;
     margin-bottom: 16px;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
     padding-left: 0;
+    padding-right: 0;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ParamsContainer > #Warning {
-    color: rgb(255, 93, 93);
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #RestContainer {
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    flex-direction: row;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    justify-content: space-between;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #InitialPositionContainer {
+    height: 79px;
+    min-height: 79px;
+    max-height: 79px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #InitialPositionContainer > #TitleContainer {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #InitialPositionContainer > #TitleContainer > #Title {
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #InitialPositionContainer > #XYZContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #FirstContainer > #AxisContainer {
+    flex-direction: row;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.AxisContainer {
+    color: var(--grey-800);
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 16px;
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.AxisFloatField {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
-    font-size: 10px;
+    font-size: 12px;
+    color: var(--grey-600);
+}
+
+.AxisLabel {
+    flex-direction: row;
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    align-items: center;
+}
+
+.ChipLabel {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    align-items: flex-start;
+}
+
+.ParamLabel {
+    color: var(--grey-700);
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #SettingsPanel {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    min-height: 100%;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    right: 0;
+    translate: 8px 0;
+    background-color: var(--grey-200);
+    display: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active {
@@ -367,8 +517,21 @@
     max-height: none;
 }
 
+#ProjectSidebarRoot > #RenderSettingsContainer.active {
+    flex-grow: 1;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader {
+    background-color: var(--grey-800);
+    color: var(--grey-100);
+}
+
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent {
     display: flex;
+    flex-grow: 1;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader > #LabelContainer > #TopContainer > #Icon {
@@ -390,9 +553,12 @@
     background-color: var(--transparent);
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader {
-    background-color: var(--grey-800);
-    color: var(--grey-100);
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent > #SettingsPanel {
+    display: none;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent > #SettingsPanel.active {
+    display: flex;
 }
 
 #ProjectSidebarRoot > #GoToVRButton {
@@ -404,3 +570,23 @@
     padding-bottom: 0;
     padding-left: 0;
 }
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #ParamSettingsScrollView {
+    flex-grow: 1;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #ParamSettingsScrollView > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/*
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #ParamSettingsScrollView > #unity-content-and-vertical-scroll-container > .unity-scroll-view__vertical-scroller {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    translate: -10px 0;
+    zIndex: -1;
+}
+*/

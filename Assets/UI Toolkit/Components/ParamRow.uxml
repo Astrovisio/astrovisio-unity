@@ -22,12 +22,12 @@
         <engine:VisualElement name="ThresholdContainer" style="flex-grow: 1; width: 240px; min-width: 240px; max-width: 240px; height: 49px; min-height: 49px; max-height: 49px;">
             <engine:VisualElement name="MinContainer" class="threshold-container" style="flex-grow: 1;">
                 <engine:Label text="Min" name="MinLabel" class="threshold-label" />
-                <engine:FloatField value="10000" name="MinInputField" hide-placeholder-on-focus="true" class="threshold-input-field" />
+                <engine:DoubleField value="10000" name="MinInputField" class="threshold-input-field" />
                 <engine:Label text="Value too low" name="MinErrorLabel" class="threshold-error-label" />
             </engine:VisualElement>
             <engine:VisualElement name="MaxContainer" class="threshold-container" style="flex-grow: 1;">
                 <engine:Label text="Max" name="MaxLabel" class="threshold-label" />
-                <engine:FloatField value="10000" name="MaxInputField" placeholder-text="10000.00" class="threshold-input-field" />
+                <engine:DoubleField value="10000" name="MaxInputField" max-length="1000" class="threshold-input-field" />
                 <engine:Label text="Value too low" name="MaxErrorLabel" class="threshold-error-label" />
             </engine:VisualElement>
             <engine:Button name="ResetButton" />

@@ -239,7 +239,10 @@ namespace Astrovisio
                     Debug.Log($"[APIManager] Success POST");
                     try
                     {
+                        Debug.Log("Testing 1...");
+                        Debug.Log(request.downloadHandler.text);
                         var processed = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        Debug.Log("Testing 2...");
                         onSuccess?.Invoke(processed);
                         Debug.Log($"[APIManager] Success DeserializeObject");
                     }

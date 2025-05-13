@@ -10,10 +10,6 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
-    border-left-color: var(--transparent);
-    border-right-color: var(--transparent);
-    border-top-color: var(--transparent);
-    border-bottom-color: var(--transparent);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -30,7 +26,6 @@ VisualElement > .input {
 }
 
 VisualElement > .input > #unity-text-input {
-    background-color: var(--transparent);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
     font-size: 14px;
     border-top-left-radius: 0;
@@ -66,5 +61,4 @@ VisualElement > .input > #unity-text-input {
     flex-direction: row;
     flex-shrink: 0;
     font-size: 14px;
-    color: var(--grey-400);
 }

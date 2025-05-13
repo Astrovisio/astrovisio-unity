@@ -26,7 +26,7 @@ public class DataCubeRenderer : MonoBehaviour
 
     [Header("Color Map")]
     [SerializeField][Range(0, 5)] private int colorMapIndex = 0;
-    [SerializeField] private ColorMapSO[] colorMapSOArray;
+    [SerializeField] private ColorMapSOToDelete[] colorMapSOArray;
 
 #if UNITY_EDITOR
     private void Start()

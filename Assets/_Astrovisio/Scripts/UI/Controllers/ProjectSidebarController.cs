@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,8 +7,17 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
+    public struct ParamSettingsData
+    {
+        public VisualElement VisualElement { get; set; }
+        public ParamRowSettingsController ParamRowSettingsController { get; set; }
+    }
 
-    public enum ProjectSidebarStep { Data, Render }
+    public enum ProjectSidebarStep
+    {
+        Data,
+        Render
+    }
 
     public class ProjectSidebarController
     {
@@ -15,35 +25,38 @@ namespace Astrovisio
         private readonly ProjectManager projectManager;
         private readonly VisualTreeAsset sidebarParamRowTemplate;
 
-        // --- Data Settings
+        // @@@ Data Settings
         private VisualElement dataSettingsContainer;
         private Button dataSettingsButton;
         private Label warningLabel;
         private ScrollView paramScrollView;
+        private DropdownField downsamplingDropdown;
         private Label actualSizeLabel;
         private Button processDataButton;
+        private int chipLabelCounter;
+        private bool isReadyToProcessData;
+        private Dictionary<string, VisualElement> paramRowVisualElement = new();
 
-        // --- Render Settings
+        // @@@ Render Settings
         private VisualElement renderSettingsContainer;
         private Button renderSettingsButton;
-        private DropdownField downsamplingDropdown;
+        private ScrollView paramSettingsScrollView;
+        private Dictionary<string, ParamSettingsData> paramSettingsDatas = new();
 
-        // --- Go To VR
+        // @@@ Go To VR
         private Button goToVRButton;
 
         // === Local ===
         private ProjectSidebarStep projectSidebarStep = ProjectSidebarStep.Data;
         public Project Project { get; }
         public VisualElement Root { get; }
-        private Dictionary<string, VisualElement> paramRowVisualElement = new();
-        private int chipLabelCounter;
-        private bool isReadyToProcessData;
+        public SideContextSO SideContextSO { get; }
 
 
-        public ProjectSidebarController(ProjectManager projectManager, VisualTreeAsset sidebarParamRowTemplate, Project project, VisualElement root)
+        public ProjectSidebarController(ProjectManager projectManager, SideContextSO sideContextSO, Project project, VisualElement root)
         {
             this.projectManager = projectManager;
-            this.sidebarParamRowTemplate = sidebarParamRowTemplate;
+            SideContextSO = sideContextSO;
             Project = project;
             Root = root;
 
@@ -52,8 +65,8 @@ namespace Astrovisio
 
         private void Init()
         {
+            // @@@ Data
             dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
-            renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
 
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
@@ -62,10 +75,11 @@ namespace Astrovisio
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
             downsamplingDropdown.choices.Clear();
-            downsamplingDropdown.choices.Add("1000");
-            downsamplingDropdown.choices.Add("2000");
-            downsamplingDropdown.choices.Add("3000");
-            downsamplingDropdown.choices.Add("4000");
+            downsamplingDropdown.choices.Add("10%");
+            downsamplingDropdown.choices.Add("20%");
+            downsamplingDropdown.choices.Add("30%");
+            downsamplingDropdown.choices.Add("40%");
+            downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string percentageText = evt.newValue.Replace("%", "");
@@ -83,15 +97,71 @@ namespace Astrovisio
 
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
             processDataButton.clicked += OnProcessDataClicked;
+            dataSettingsButton.clicked += OnDataSettingsButtonClicked;
+
+            // @@@ Render
+            renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
+            paramSettingsScrollView = Root.Q<ScrollView>("ParamSettingsScrollView");
+            paramSettingsScrollView.Clear();
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                var paramName = kvp.Key;
+                var configVariable = kvp.Value;
+
+                if (configVariable.XAxis || configVariable.YAxis || configVariable.ZAxis)
+                {
+                    continue;
+                }
+
+                VisualElement paramRowSettings = SideContextSO.paramRowSettingsTemplate.CloneTree();
+
+                var nameLabel = paramRowSettings.Q<Label>("ParamLabel");
+                if (nameLabel != null)
+                {
+                    nameLabel.text = paramName;
+                }
+
+                var button = paramRowSettings.Q<Button>("Root");
+                button.RemoveFromClassList("active");
+                paramRowSettings.style.marginBottom = 8;
+                button.clicked += () =>
+                {
+                    if (button.ClassListContains("active"))
+                    {
+                        UnselectAllParamSettingButton();
+                    }
+                    else
+                    {
+                        UnselectAllParamSettingButton();
+                        button.ToggleInClassList("active");
+                    }
+                };
+                // paramRowSettingsVisualElement.Add(paramName, paramRowSettings);
+                // paramSettingsControllers.Add(paramName, new ParamRowSettingsController(Project, paramName, SideContextSO));
+
+                ParamSettingsData paramSettingsData = new ParamSettingsData
+                {
+                    VisualElement = paramRowSettings,
+                    ParamRowSettingsController = new ParamRowSettingsController(Project, paramName, SideContextSO)
+                };
+                paramSettingsDatas.Add(paramName, paramSettingsData);
+
+                paramSettingsScrollView.Add(paramRowSettings);
+            }
 
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
-
-            goToVRButton = Root.Q<Button>("GoToVRButton");
-
-            dataSettingsButton.clicked += OnDataSettingsButtonClicked;
             renderSettingsButton.clicked += OnRenderSettingsButtonClicked;
 
+            // @@@ VR
+            goToVRButton = Root.Q<Button>("GoToVRButton");
+            goToVRButton.clicked += OnGoToVRButtonClicked;
+
             PopulateScrollView();
+        }
+
+        private void OnGoToVRButtonClicked()
+        {
+            Debug.Log("OnGoToVRButtonClicked");
         }
 
         private void OnRenderSettingsButtonClicked()
@@ -135,7 +205,7 @@ namespace Astrovisio
                 var paramName = kvp.Key;
                 var param = kvp.Value;
 
-                var paramRow = sidebarParamRowTemplate.CloneTree();
+                var paramRow = SideContextSO.sidebarParamRowTemplate.CloneTree();
 
                 var nameContainer = paramRow.Q<VisualElement>("LabelContainer");
                 nameContainer.Q<Label>("LabelParam").text = paramName;
@@ -304,6 +374,18 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             projectManager.ProcessProject(Project.Id, Project.ConfigProcess);
+        }
+
+        private void UnselectAllParamSettingButton()
+        {
+            foreach (var paramSettingsData in paramSettingsDatas.Values)
+            {
+                var button = paramSettingsData.VisualElement.Q<Button>("Root");
+                if (button != null)
+                {
+                    button.RemoveFromClassList("active");
+                }
+            }
         }
 
     }

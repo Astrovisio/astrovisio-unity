@@ -228,11 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca67990a3a4769b408cb9301c6e6ca37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toDo: {fileID: 0}
-  projectSidebarTemplate: {fileID: 9197481963319205126, guid: 0f81f4c46e0c640418c9b40678b28b0a,
-    type: 3}
-  sidebarParamRowTemplate: {fileID: 9197481963319205126, guid: 52b9839a12932d44499b3960b752ac68,
-    type: 3}
+  sideContextSO: {fileID: 11400000, guid: f707df4f9b0210d4ea79ba0623605ab2, type: 2}
 --- !u!1 &5065705941003720119
 GameObject:
   m_ObjectHideFlags: 0

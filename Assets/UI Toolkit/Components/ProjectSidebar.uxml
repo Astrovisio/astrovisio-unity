@@ -1,6 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Template name="SidebarParamRow" src="project://database/Assets/UI%20Toolkit/Components/SidebarParamRow.uxml?fileID=9197481963319205126&amp;guid=52b9839a12932d44499b3960b752ac68&amp;type=3#SidebarParamRow" />
     <engine:Template name="Downsampling" src="project://database/Assets/UI%20Toolkit/Components/Downsampling.uxml?fileID=9197481963319205126&amp;guid=34fcbd8083bb80441a3f1c505b1892c9&amp;type=3#Downsampling" />
+    <engine:Template name="Chip" src="project://database/Assets/UI%20Toolkit/Components/Shared/Chip.uxml?fileID=9197481963319205126&amp;guid=22e927bf1e871d648aed0fb34ab68ded&amp;type=3#Chip" />
+    <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
+    <engine:Template name="ParamRowSettings" src="project://database/Assets/UI%20Toolkit/Components/ParamRowSettings.uxml?fileID=9197481963319205126&amp;guid=8d8fba102f4b8354eb735e1f87607b16&amp;type=3#ParamRowSettings" />
     <engine:Template name="GoToVRButton" src="project://database/Assets/UI%20Toolkit/Components/GoToVRButton.uxml?fileID=9197481963319205126&amp;guid=d7b4828cc0c7c704c81e8572c5d04c6e&amp;type=3#GoToVRButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/ProjectSidebar.uss?fileID=7433441132597879392&amp;guid=2fd8b6039993c0e49b039d0a52b7702f&amp;type=3#ProjectSidebar" />
     <engine:VisualElement name="ProjectSidebarRoot">
@@ -16,33 +18,14 @@
                 <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;">
                     <engine:Label text="Values ready to import" name="Title" />
                     <engine:Label text="Select the X axis" name="Warning" />
-                    <engine:ScrollView name="ParamsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                    </engine:ScrollView>
+                    <engine:ScrollView name="ParamsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" />
                 </engine:VisualElement>
                 <engine:VisualElement name="DownsamplingContainer">
                     <engine:Instance template="Downsampling" name="Downsampling" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:VisualElement name="RenderSettingsContainer">
+        <engine:VisualElement name="RenderSettingsContainer" style="overflow: visible;">
             <engine:Button name="AccordionHeader">
                 <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
                     <engine:VisualElement name="TopContainer" style="flex-grow: 1;">
@@ -56,32 +39,89 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="Toggle" style="flex-grow: 1;" />
             </engine:Button>
-            <engine:VisualElement name="AccordionContent">
-                <engine:VisualElement name="CubeRatioContainer" style="flex-grow: 1;" />
-                <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;">
-                    <engine:Label text="Values ready to import" name="Title" />
-                    <engine:Label text="Select the X axis" name="Warning" />
-                    <engine:ScrollView name="ParamsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
-                        <engine:Instance template="SidebarParamRow" />
+            <engine:VisualElement name="AccordionContent" style="overflow: hidden;">
+                <engine:VisualElement name="ContentContainer" style="flex-grow: 1;">
+                    <engine:VisualElement name="FirstContainer">
+                        <engine:VisualElement name="CubeRatioContainer">
+                            <engine:Label text="Cube ratio" name="Title" />
+                            <engine:VisualElement name="ChipContainer" style="flex-grow: 1;">
+                                <engine:Instance template="Chip" name="XYZChip">
+                                    <AttributeOverrides element-name="ChipRoot" text="X=Y=Z" />
+                                </engine:Instance>
+                                <engine:Instance template="Chip" name="XYChip">
+                                    <AttributeOverrides element-name="ChipRoot" text="X=Y" />
+                                </engine:Instance>
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="LineSpacer" />
+                        <engine:VisualElement name="RestContainer" style="flex-grow: 1;">
+                            <engine:Label text="Rest Frequency" style="-unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); color: rgb(251, 251, 251);" />
+                            <engine:VisualElement style="flex-grow: 1; height: 16px; width: 16px; min-width: 16px; max-width: 16px; min-height: 16px; max-height: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/discover_tune.svg?fileID=7388822144124034973&amp;guid=a4dac9e51e7976a40aab94282b71bfb1&amp;type=3#discover_tune&quot;);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="LineSpacer" />
+                        <engine:VisualElement name="InitialPositionContainer" style="flex-grow: 1;">
+                            <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
+                                <engine:Label text="Initial positioning" name="Title" />
+                                <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="XYZContainer" style="flex-grow: 1;">
+                                <engine:VisualElement name="XContainer" class="AxisContainer">
+                                    <engine:Label text="X" name="XLabel" />
+                                    <engine:FloatField value="0" name="XFloatField" placeholder-text="0.00" class="AxisFloatField" />
+                                </engine:VisualElement>
+                                <engine:VisualElement name="YContainer" class="AxisContainer" style="flex-grow: 1;">
+                                    <engine:Label text="Y" name="YLabel" />
+                                    <engine:FloatField value="0" name="YFloatField" placeholder-text="0.00" class="AxisFloatField" />
+                                </engine:VisualElement>
+                                <engine:VisualElement name="ZContainer" class="AxisContainer" style="flex-grow: 1;">
+                                    <engine:Label text="Z" name="ZLabel" />
+                                    <engine:FloatField value="0" name="ZFloatField" placeholder-text="0.00" class="AxisFloatField" />
+                                </engine:VisualElement>
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="LineSpacer" />
+                        <engine:VisualElement name="AxisContainer" style="flex-grow: 0; flex-direction: column; justify-content: space-between;">
+                            <engine:VisualElement name="XLabel" class="AxisLabel" style="flex-grow: 1;">
+                                <engine:Instance template="Label" name="XLabel" class="ChipLabel">
+                                    <AttributeOverrides element-name="Letter" text="X" />
+                                </engine:Instance>
+                                <engine:Label text="Label" name="XParamLabel" class="ParamLabel" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="YLabel" class="AxisLabel" style="flex-grow: 1;">
+                                <engine:Instance template="Label" name="YLabel" class="ChipLabel">
+                                    <AttributeOverrides element-name="Letter" text="Y" />
+                                </engine:Instance>
+                                <engine:Label text="Label" name="YParamLabel" class="ParamLabel" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="ZLabel" class="AxisLabel" style="flex-grow: 1;">
+                                <engine:Instance template="Label" name="ZLabel" class="ChipLabel" />
+                                <engine:Label text="Label" name="ZParamLabel" class="ParamLabel" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 0; display: none; flex-shrink: 0;">
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                    </engine:VisualElement>
+                    <engine:ScrollView name="ParamSettingsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible">
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
+                            <AttributeOverrides element-name="ParamLabel" text="1" />
+                        </engine:Instance>
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
+                            <AttributeOverrides element-name="ParamLabel" text="2" />
+                        </engine:Instance>
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
+                            <AttributeOverrides element-name="ParamLabel" text="3" />
+                        </engine:Instance>
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 0;">
+                            <AttributeOverrides element-name="ParamLabel" text="Last" />
+                        </engine:Instance>
                     </engine:ScrollView>
                 </engine:VisualElement>
+                <engine:VisualElement name="SettingsPanel" class="active" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:Instance template="GoToVRButton" name="GoToVRButton" />

@@ -82,7 +82,6 @@
   margin-right: 0px;
   margin-left: 0px;
   color: var(--black);
-  -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
 }
 
 .unity-base-popup-field__arrow {
@@ -118,7 +117,6 @@
   color: var(--grey-700);
   border-width: 0px;
   border-color: var(--transparent);
-  -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
 }
 
 .unity-base-dropdown__item:hover,
@@ -169,8 +167,11 @@
   color: var(--grey-600);
 }
 
-.unity-base-text-field .unity-base-text-field__input--placeholder {
+.unity-base-text-field .unity-base-text-field__input--placeholder .unity-text-element--inner-input-field-component {
   color: var(--grey-400);
+}
+.unity-base-text-field .unity-text-element--inner-input-field-component{
+  color: var(--black);
 }
 
 
@@ -184,3 +185,39 @@
 .unity-base-text-field:hover .unity-base-text-field__input {
   border-width: 0px !important;
 }
+
+.unity-scroller.unity-scroller--vertical .unity-base-slider--vertical, .unity-scroller.unity-scroller--vertical .unity-base-slider--vertical .unity-base-slider__dragger{ 
+  width: 4px;
+  min-width: 4px;
+}
+
+.unity-scroller.unity-scroller--vertical, .unity-scroller.unity-scroller--vertical .unity-base-slider--vertical{
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.unity-scroller.unity-scroller--vertical{
+  width: 6px;
+  min-width: 6px;
+}
+.unity-scroller.unity-scroller--vertical .unity-base-slider--vertical{
+  margin-left: 2px;
+}
+
+.unity-scroller .unity-base-slider .unity-slider__input .unity-base-slider__drag-container .unity-base-slider__tracker{
+  background-color: var(--transparent);
+  border-width: 0px;
+  border-color:var(--transparent);
+}
+.unity-scroller .unity-base-slider__dragger{
+  background-color: var(--bg-10);
+  border-radius: 2px;
+  border-width: 0px;
+  left: 0px;
+}
+
+.unity-scroller .unity-base-slider__drag-container:hover .unity-base-slider__dragger:hover {
+  background-color: var(--bg-50)!important;
+}
+
+.unity-scroller .unity-repeat-button{ display: none;}
