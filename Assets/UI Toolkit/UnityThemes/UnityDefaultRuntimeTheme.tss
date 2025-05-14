@@ -221,3 +221,8 @@
 }
 
 .unity-scroller .unity-repeat-button{ display: none;}
+
+*:disabled {
+  opacity: 0.5;
+  /* background-color: var(--red)!important; */
+}

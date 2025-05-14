@@ -3,10 +3,11 @@
     <engine:Template name="Chip" src="project://database/Assets/UI%20Toolkit/Components/Shared/Chip.uxml?fileID=9197481963319205126&amp;guid=22e927bf1e871d648aed0fb34ab68ded&amp;type=3#Chip" />
     <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
     <engine:Template name="ParamRowSettings" src="project://database/Assets/UI%20Toolkit/Components/ParamRowSettings.uxml?fileID=9197481963319205126&amp;guid=8d8fba102f4b8354eb735e1f87607b16&amp;type=3#ParamRowSettings" />
+    <engine:Template name="SettingsPanel" src="project://database/Assets/UI%20Toolkit/Components/SettingsPanel.uxml?fileID=9197481963319205126&amp;guid=94ff22f4db2321348877e1aacc58566e&amp;type=3#SettingsPanel" />
     <engine:Template name="GoToVRButton" src="project://database/Assets/UI%20Toolkit/Components/GoToVRButton.uxml?fileID=9197481963319205126&amp;guid=d7b4828cc0c7c704c81e8572c5d04c6e&amp;type=3#GoToVRButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/ProjectSidebar.uss?fileID=7433441132597879392&amp;guid=2fd8b6039993c0e49b039d0a52b7702f&amp;type=3#ProjectSidebar" />
     <engine:VisualElement name="ProjectSidebarRoot">
-        <engine:VisualElement name="DataSettingsContainer" class="active">
+        <engine:VisualElement name="DataSettingsContainer">
             <engine:Button name="AccordionHeader">
                 <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
                     <engine:VisualElement name="Icon" />
@@ -25,7 +26,7 @@
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:VisualElement name="RenderSettingsContainer" style="overflow: visible;">
+        <engine:VisualElement name="RenderSettingsContainer" class="active" style="overflow: visible;">
             <engine:Button name="AccordionHeader">
                 <engine:VisualElement name="LabelContainer" style="flex-grow: 1;">
                     <engine:VisualElement name="TopContainer" style="flex-grow: 1;">
@@ -39,7 +40,7 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="Toggle" style="flex-grow: 1;" />
             </engine:Button>
-            <engine:VisualElement name="AccordionContent" style="overflow: hidden;">
+            <engine:VisualElement name="AccordionContent">
                 <engine:VisualElement name="ContentContainer" style="flex-grow: 1;">
                     <engine:VisualElement name="FirstContainer">
                         <engine:VisualElement name="CubeRatioContainer">
@@ -121,7 +122,7 @@
                         </engine:Instance>
                     </engine:ScrollView>
                 </engine:VisualElement>
-                <engine:VisualElement name="SettingsPanel" class="active" />
+                <engine:Instance template="SettingsPanel" name="SettingsPanel" class="active" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:Instance template="GoToVRButton" name="GoToVRButton" />

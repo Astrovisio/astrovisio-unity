@@ -1,0 +1,64 @@
+#VRReelsRoot {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background-color: var(--grey-150);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+#VRReelsRoot > #HeaderVRReels {
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1;
+    align-self: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+#VRReelsRoot > #HeaderVRReels > #Label {
+    margin-top: 0;
+    margin-right: 8px;
+    margin-bottom: 0;
+    margin-left: 8px;
+    -unity-text-align: middle-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    color: var(--grey-800);
+    align-self: center;
+}
+
+#VRReelsRoot > #HeaderVRReels > #CreateButton > .btn-tertiary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
+}
+
+#VRReelsRoot > #ContentVrReels {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: var(--grey-100);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    margin-top: 8px;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 100%;
+    max-width: 100%;
+    align-self: flex-start;
+}
+
+#VRReelsRoot > #ContentVrReels > #ScrollVrReels {
+    padding-top: 0;
+    padding-right: 8px;
+    padding-bottom: 0;
+    padding-left: 8px;
+    max-height: 170px;
+}

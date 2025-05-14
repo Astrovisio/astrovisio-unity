@@ -1,4 +1,4 @@
-#Root {
+#DropdownRoot {
     flex-grow: 1;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -8,6 +8,6 @@
     align-self: auto;
 }
 
-#Root > #DropdownField {
+#DropdownRoot > #DropdownField {
     color: var(--black);
 }

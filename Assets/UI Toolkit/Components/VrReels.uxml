@@ -1,0 +1,21 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="TertiaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/TertiaryButton.uxml?fileID=9197481963319205126&amp;guid=8de8481b16f7dc640933949828d63915&amp;type=3#TertiaryButton" />
+    <engine:Template name="ListiItemVrReels" src="project://database/Assets/UI%20Toolkit/Components/ListiItemVrReels.uxml?fileID=9197481963319205126&amp;guid=6ea3df700ca0ea24db6996c1c6d6b496&amp;type=3#ListiItemVrReels" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/VrReels.uss?fileID=7433441132597879392&amp;guid=2a2eb31466803bd489dea7bf12e516c0&amp;type=3#VrReels" />
+    <engine:VisualElement name="VRReelsRoot" style="padding-bottom: 8px;">
+        <engine:VisualElement name="HeaderVRReels">
+            <engine:Label text="VR Reels" name="Label" />
+            <engine:Instance template="TertiaryButton" name="CreateButton">
+                <AttributeOverrides element-name="Label" text="Create" />
+            </engine:Instance>
+        </engine:VisualElement>
+        <engine:VisualElement name="ContentVrReels">
+            <engine:ScrollView name="ScrollVrReels" horizontal-scroller-visibility="Hidden">
+                <engine:Instance template="ListiItemVrReels" />
+                <engine:Instance template="ListiItemVrReels" />
+                <engine:Instance template="ListiItemVrReels" />
+                <engine:Instance template="ListiItemVrReels" />
+            </engine:ScrollView>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

@@ -1,4 +1,4 @@
-#RootListiItemFile {
+#ListItemVRReelsRoot {
     margin-top: 8px;
     padding: 8px;
     border-radius: 8px;
@@ -9,7 +9,7 @@
     margin-right: 8px;
 }
 
-#RootListiItemFile:hover {
+#ListItemVRReelsRoot:hover {
     background-color: var(--bg-10);
 }
 
@@ -18,7 +18,7 @@
     height: 32px;
     border-radius: 4px;
     background-size: 16px 16px;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/home_storage.svg?fileID=7388822144124034973&guid=1c5ff924fd1d043c6ac24a5884c10360&type=3#home_storage");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/transition_slide.svg?fileID=7388822144124034973&guid=bb7a7efd8bacb444784581398a331131&type=3#transition_slide");
     background-position: center center;
     background-color: var(--grey-300);
     margin-right: 8px;
@@ -28,22 +28,21 @@
     max-height: 32px;
 }
 
-#RootListiItemFile > #ContainerInfo {
-    flex-direction: column;
-    flex-wrap: nowrap;
+#ListItemVRReelsRoot > #ContainerInfo {
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
-#RootListiItemFile > #ContainerInfo > #NameLabel {
+#ListItemVRReelsRoot > #ContainerInfo > #NameLabel {
     margin: 0;
     padding: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     overflow: hidden;
-    background: red;
     margin-top: -3px;
     text-overflow: ellipsis;
 }
 
-#RootListiItemFile > #ContainerInfo > #SizeLabel {
+#ListItemVRReelsRoot > #ContainerInfo > #OrderLabel {
     margin: 0;
     padding: 0;
     margin-top: -1px;
@@ -52,7 +51,7 @@
     color: var(--grey-500);
 }
 
-#RootListiItemFile > #CloseButton {
+#ListItemVRReelsRoot > #CloseButton {
     opacity: 0;
     border-radius: 50%;
     background-size: 8px 8px;
@@ -69,6 +68,6 @@
     transition: opacity 0.3s linear;
 }
 
-#RootListiItemFile:hover #CloseButton {
+#ListItemVRReelsRoot:hover #CloseButton {
     opacity: 1;
 }

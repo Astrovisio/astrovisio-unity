@@ -2,11 +2,6 @@
     height: 220px;
     min-height: 220px;
     max-height: 220px;
-    background-color: var(--grey-150);
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
-    border-bottom-left-radius: 16px;
     margin-bottom: 40px;
 }
 
@@ -178,48 +173,6 @@
     height: 16px;
     min-height: 16px;
     max-height: 16px;
-}
-
-#Root > #RightContainer > #VRReelsContainer {
-    height: 56px;
-    min-height: 56px;
-    max-height: 56px;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    background-color: var(--grey-150);
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
-    border-bottom-left-radius: 16px;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-#Root > #RightContainer > #VRReelsContainer > #Label {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    -unity-text-align: middle-center;
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
-    font-size: 16px;
-    color: var(--grey-800);
-    height: 11px;
-    width: 82px;
-    min-width: 82px;
-    max-width: 82px;
-    min-height: 11px;
-    max-height: 11px;
-}
-
-#Root > #RightContainer > #VRReelsContainer > #CreateButton > .btn-tertiary > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/add.svg?fileID=7388822144124034973&guid=7b0efb193d0dbb34f9b6d6b3dfa77b44&type=3#add");
 }
 
 #Root > #LeftContainer > #LabelContainer {

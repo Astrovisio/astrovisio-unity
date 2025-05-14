@@ -1,0 +1,11 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ListItemVrReels.uss?fileID=7433441132597879392&amp;guid=da831db9db1fb6b42943322ef0c93327&amp;type=3#ListItemVrReels" />
+    <engine:VisualElement name="ListItemVRReelsRoot">
+        <engine:VisualElement name="Icon" style="flex-grow: 0;" />
+        <engine:VisualElement name="ContainerInfo" style="flex-grow: 0; flex-direction: column;">
+            <engine:Label text="Time" name="NameLabel" />
+            <engine:Label text="Custom order" name="OrderLabel" style="margin-top: 0;" />
+        </engine:VisualElement>
+        <engine:Button text="&#10;" name="CloseButton" />
+    </engine:VisualElement>
+</engine:UXML>

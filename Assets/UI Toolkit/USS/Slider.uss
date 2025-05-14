@@ -1,0 +1,101 @@
+#RootSlider > #Label {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    margin-bottom: 4px;
+    color: var(--grey-700);
+}
+
+#RootSlider > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__min-thumb {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/circle.svg?fileID=7388822144124034973&guid=5988f21993ac6dc4db7f0e7e716748dd&type=3#circle");
+    background-color: var(--transparent);
+    height: 16px;
+    width: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 2px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    justify-content: center;
+    align-items: auto;
+    align-content: auto;
+    border-left-color: var(--transparent);
+    border-right-color: var(--transparent);
+    border-top-color: var(--transparent);
+    border-bottom-color: var(--transparent);
+    -unity-background-image-tint-color: var(--grey-800);
+    display: none;
+}
+
+#RootSlider > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__max-thumb {
+    height: 16px;
+    width: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    min-height: 16px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/circle.svg?fileID=7388822144124034973&guid=5988f21993ac6dc4db7f0e7e716748dd&type=3#circle");
+    background-color: var(--transparent);
+    -unity-background-image-tint-color: var(--grey-800);
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+#RootSlider > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger {
+    -unity-text-align: middle-left;
+    justify-content: center;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 3px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-left-color: var(--transparent);
+    border-right-color: var(--transparent);
+    border-top-color: var(--transparent);
+    border-bottom-color: var(--transparent);
+}
+
+#RootSlider > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__tracker {
+    -unity-background-image-tint-color: var(--grey-300);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    background-color: var(--grey-300);
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+#RootSlider > #MinMaxSlider {
+    margin-right: -2px;
+    margin-left: 0;
+    margin-bottom: 8px;
+}

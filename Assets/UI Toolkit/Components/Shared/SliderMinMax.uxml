@@ -1,0 +1,11 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/SliderMinMax.uss?fileID=7433441132597879392&amp;guid=af0b58668d9e02a42985c8d0d164118a&amp;type=3#SliderMinMax" />
+    <engine:VisualElement name="SliderMinMaxRoot">
+        <engine:Label text="Thresholds" name="Label" />
+        <engine:MinMaxSlider value="0,100" low-limit="0" high-limit="100" name="MinMaxSlider" style="height: 16px; min-height: 16px; max-height: 16px;" />
+        <engine:VisualElement name="FloatFieldsElement">
+            <engine:DoubleField name="MinFloatField" placeholder-text="0" class="min-max-slider-input" />
+            <engine:DoubleField name="MaxFloatField" placeholder-text="100" class="min-max-slider-input" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
