@@ -47,6 +47,13 @@ namespace Astrovisio
             {
                 Debug.LogError("ProjectManager not found.");
             }
+
+            projectManager.ProjectProcessed += OnProjectProcessed;
+        }
+
+        private void OnProjectProcessed(ProcessedData data)
+        {
+            contentContainer.style.visibility = Visibility.Hidden;
         }
 
         private void OnEnable()

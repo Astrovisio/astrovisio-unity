@@ -1,5 +1,8 @@
-#Root {
+#MainViewRoot {
     flex-grow: 1;
+}
+
+#MainViewRoot.active {
     background-color: var(--white);
 }
 

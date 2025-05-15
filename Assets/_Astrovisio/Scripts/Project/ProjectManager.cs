@@ -19,7 +19,7 @@ namespace Astrovisio
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<Project> ProjectProcessed;
+		public event Action<ProcessedData> ProjectProcessed;
 		public event Action ProjectUnselected;
 		public event Action<int> ProjectDeleted;
 		public event Action<string> ApiError;

@@ -42,6 +42,7 @@ namespace Astrovisio
         private Button renderSettingsButton;
         private ScrollView paramSettingsScrollView;
         private Dictionary<string, ParamSettingsData> paramSettingsDatas = new();
+        // public Action OnRenderSettingsButtonActive;
 
         // @@@ Go To VR
         private Button goToVRButton;
@@ -60,7 +61,14 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
+            projectManager.ProjectProcessed += OnProjectProcessed;
+
             Init();
+        }
+
+        private void OnProjectProcessed(ProcessedData data)
+        {
+            // Debug.Log("OnProjectProcessed: " + data.Columns.Length + " " + data.Rows.Length);
         }
 
         private void Init()

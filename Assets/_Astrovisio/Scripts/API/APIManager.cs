@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Text;
+using MessagePack;
+using System.Linq;
 
 namespace Astrovisio
 {
@@ -202,13 +204,14 @@ namespace Astrovisio
             }
         }
 
+
         /// <summary>
         /// Process a project by ID, sending configuration as payload.
         /// </summary>
         public IEnumerator ProcessProject(
             int id,
             ProcessProjectRequest req,
-            Action<Project> onSuccess,
+            Action<ProcessedData> onSuccess,
             Action<string> onError = null)
         {
             string url = APIEndpoints.ProcessProject(id);
@@ -216,9 +219,6 @@ namespace Astrovisio
 
             string jsonPayload = JsonConvert.SerializeObject(req, Formatting.None,
                 new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include });
-
-            Debug.Log(jsonPayload);
-
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
 
             using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
@@ -233,28 +233,26 @@ namespace Astrovisio
                 {
                     Debug.LogError($"[APIManager] Error POST: {request.error}");
                     onError?.Invoke(request.downloadHandler.text);
+                    yield break;
                 }
-                else
+
+                try
                 {
-                    Debug.Log($"[APIManager] Success POST");
-                    try
-                    {
-                        Debug.Log("Testing 1...");
-                        Debug.Log(request.downloadHandler.text);
-                        var processed = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
-                        Debug.Log("Testing 2...");
-                        onSuccess?.Invoke(processed);
-                        Debug.Log($"[APIManager] Success DeserializeObject");
-                    }
-                    catch (Exception ex)
-                    {
-                        onError?.Invoke(ex.Message);
-                    }
+                    byte[] rawBytes = request.downloadHandler.data;
+                    var processedData = MessagePackSerializer.Deserialize<ProcessedData>(rawBytes);
+                    Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
 
-
+                    onSuccess?.Invoke(processedData);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[APIManager] Deserialization failed: {ex.Message}");
+                    onError?.Invoke("Deserialization failed: " + ex.Message);
                 }
             }
         }
+
+
 
 
     }

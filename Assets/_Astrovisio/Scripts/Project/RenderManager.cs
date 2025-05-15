@@ -15,15 +15,12 @@ namespace Astrovisio
 
         private void Start()
         {
-            Debug.Log("RenderManager");
-
             projectManager.ProjectProcessed += OnProjectProcessed;
         }
 
-        private void OnProjectProcessed(Project project)
+        private void OnProjectProcessed(ProcessedData data)
         {
-            Debug.Log("OnProjectProcessed");
-            Instantiate(cubePrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
+            // Instantiate(cubePrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
         }
 
     }

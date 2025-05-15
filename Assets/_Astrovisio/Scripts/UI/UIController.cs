@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
@@ -8,9 +10,26 @@ namespace Astrovisio
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private RenderManager renderManager;
 
+        // --- Local
+        private UIDocument uiDocument;
+        private MainViewController mainViewController;
+
         private void Start()
         {
+            uiDocument = GetComponent<UIDocument>();
+
+            var mainViewRoot = uiDocument.rootVisualElement.Q<VisualElement>("MainView");
+            mainViewController = new MainViewController(mainViewRoot);
+
             projectManager.FetchAllProjects();
+
+
+            projectManager.ProjectProcessed += OnProjectProcessed;
+        }
+
+        private void OnProjectProcessed(ProcessedData data)
+        {
+            mainViewController.SetBackground(false);
         }
 
         public ProjectManager GetProjectManager()
