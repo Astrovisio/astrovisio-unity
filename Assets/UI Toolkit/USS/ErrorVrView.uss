@@ -1,0 +1,91 @@
+#Root {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 0;
+    align-items: center;
+    align-self: center;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+#Root.active {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 1;
+}
+
+#Root > #Background {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#Root > #PanelContainer {
+    width: 420px;
+    background-color: var(--black);
+    align-items: auto;
+    min-width: 420px;
+    max-width: 420px;
+    padding-top: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    padding-left: 24px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    flex-wrap: wrap;
+}
+
+#Root > #PanelContainer > #CloseButton {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Close.svg?fileID=7388822144124034973&guid=8edc35042da8fba46be3b10c3f76bb6a&type=3#Close");
+    -unity-background-image-tint-color: var(--white);
+    background-color: var(--transparent);
+}
+
+#Root > #PanelContainer > #CloseButton:hover {
+    background-color: var(--grey-600);
+}
+
+#Root > #PanelContainer > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/head_mounted_device.svg?fileID=7388822144124034973&guid=b0c580ecf95b2444b9ba71f6f212ae88&type=3#head_mounted_device");
+    -unity-background-image-tint-color: var(--white-10);
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+}
+
+#Root > #PanelContainer > #TitleLabel {
+    font-size: 16px;
+    color: var(--white-10);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    border-bottom-width: 16px;
+}
+
+#Root > #PanelContainer > #DescriptionLabel {
+    -unity-text-align: upper-center;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    margin-bottom: 16px;
+}
+
+#Root > #PanelContainer > #DownloadButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/download.svg?fileID=7388822144124034973&guid=591875e52636b5c4da25c203ead0be5c&type=3#download");
+}

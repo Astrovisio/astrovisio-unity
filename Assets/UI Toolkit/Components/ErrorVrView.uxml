@@ -1,0 +1,16 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ErrorVrView.uss?fileID=7433441132597879392&amp;guid=d853b41b45f9173428f95ebd6ae561c1&amp;type=3#ErrorVrView" />
+    <engine:VisualElement name="Root" class="active" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex;">
+        <engine:VisualElement name="Background" />
+        <engine:VisualElement name="PanelContainer" style="flex-grow: 0; align-self: center; align-items: center;">
+            <engine:Button text="&#10;" name="CloseButton" />
+            <engine:VisualElement name="Icon" />
+            <engine:Label text="Meta Quest Link app not found!&#10;" name="TitleLabel" enable-rich-text="true" />
+            <engine:Label text="Astrovisio can’t find Meta Quest Link on this computer. Be sure to download and install the latest version." name="DescriptionLabel" />
+            <engine:Instance template="PrimaryButton" name="DownloadButton">
+                <AttributeOverrides element-name="Label" text="Download Meta Quest Link" />
+            </engine:Instance>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

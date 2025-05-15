@@ -1,14 +1,14 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="MainView" src="project://database/Assets/UI%20Toolkit/Components/MainView.uxml?fileID=9197481963319205126&amp;guid=7af15c91bf8a8724fb9f9caf50c5ad05&amp;type=3#MainView" />
-    <engine:Template name="NewProjectView" src="project://database/Assets/UI%20Toolkit/Components/NewProjectView.uxml?fileID=9197481963319205126&amp;guid=a912d3b1e93c5f74ebf59f4afe640585&amp;type=3#NewProjectView" />
     <engine:Template name="SplashView" src="project://database/Assets/UI%20Toolkit/Components/SplashView.uxml?fileID=9197481963319205126&amp;guid=013ed5ddf731fd24a9af73fff629232d&amp;type=3#SplashView" />
+    <engine:Template name="NewProjectView" src="project://database/Assets/UI%20Toolkit/Components/NewProjectView.uxml?fileID=9197481963319205126&amp;guid=a912d3b1e93c5f74ebf59f4afe640585&amp;type=3#NewProjectView" />
     <engine:Template name="LoaderView" src="project://database/Assets/UI%20Toolkit/Components/LoaderView.uxml?fileID=9197481963319205126&amp;guid=955d4140f7101e448b809591e53c683e&amp;type=3#LoaderView" />
     <engine:Template name="LoaderVrView" src="project://database/Assets/UI%20Toolkit/Components/LoaderVrView.uxml?fileID=9197481963319205126&amp;guid=94606b99286061a498c253aa4aa0cf3b&amp;type=3#LoaderVrView" />
     <engine:Template name="ErrorVrView" src="project://database/Assets/UI%20Toolkit/Components/ErrorVrView.uxml?fileID=9197481963319205126&amp;guid=9ad820f1e95d5f240b4415adf814d96f&amp;type=3#ErrorVrView" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Main.uss?fileID=7433441132597879392&amp;guid=49037bf78035c6543944fe6235bf4690&amp;type=3#Main" />
     <engine:Instance template="MainView" name="MainView" />
-    <engine:Instance template="NewProjectView" name="NewProjectView" />
     <engine:Instance template="SplashView" name="SplashView" />
+    <engine:Instance template="NewProjectView" name="NewProjectView" />
     <engine:Instance template="LoaderView" name="LoaderView" />
     <engine:Instance template="LoaderVrView" name="LoaderVrView" />
     <engine:Instance template="ErrorVrView" name="ErrorVrView" />

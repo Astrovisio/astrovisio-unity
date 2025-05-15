@@ -1,0 +1,54 @@
+#Root {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 0;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+}
+
+#Root.active {
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.4s;
+    opacity: 1;
+}
+
+#Root > #Background {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/loading-ar-star.svg?fileID=7388822144124034973&guid=e6dfbf31aeb9d41099ca6ce8d100d41a&type=3#loading-ar-star");
+    -unity-background-scale-mode: scale-and-crop;
+    position: absolute;
+}
+
+#Root > #ContainerMessage {
+    width: 222px;
+    min-width: 222px;
+    max-width: 222px;
+    flex-wrap: nowrap;
+    background-color: rgba(238, 8, 8, 0);
+    align-self: center;
+    align-items: center;
+}
+
+#Root > #ContainerMessage > #Icon {
+    width: 208px;
+    min-width: 208px;
+    max-width: 208px;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/loading-vr-icon.svg?fileID=7388822144124034973&guid=9be03f3285cf14d5393b02427377156c&type=3#loading-vr-icon");
+    margin-bottom: 32px;
+}
+
+#Root > #ContainerMessage > #Label {
+    font-size: 24px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+    color: var(--black);
+    -unity-text-align: upper-center;
+}

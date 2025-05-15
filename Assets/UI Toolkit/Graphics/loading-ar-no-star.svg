@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: $$$/GeneralStr/196=Adobe Illustrator 27.6.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1440px" height="1024px" viewBox="0 0 1440 1024" style="enable-background:new 0 0 1440 1024;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:url(#SVGID_00000003103382228473275900000014971127495135394433_);fill-opacity:0.2;}
+	.st2{fill-opacity:0.2;}
+</style>
+<radialGradient id="SVGID_1_" cx="927" cy="1.2889" r="1" gradientTransform="matrix(3.135096e-14 512 -720 4.408729e-14 1648 -474112)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#160C38"/>
+	<stop  offset="1" style="stop-color:#1A082F"/>
+</radialGradient>
+<rect class="st0" width="1440" height="1024"/>
+<linearGradient id="SVGID_00000063606476816373051620000015064581709691327163_" gradientUnits="userSpaceOnUse" x1="566.548" y1="-499.1064" x2="864.0775" y2="468.6155" gradientTransform="matrix(1 0 0 1 0 512)">
+	<stop  offset="0" style="stop-color:#130A8B;stop-opacity:0"/>
+	<stop  offset="1" style="stop-color:#33243F"/>
+</linearGradient>
+<rect style="fill:url(#SVGID_00000063606476816373051620000015064581709691327163_);fill-opacity:0.2;" width="1440" height="1024"/>
+<rect class="st2" width="1440" height="1024"/>
+</svg>

@@ -334,6 +334,7 @@
     padding-bottom: 0;
     padding-left: 0;
     height: 0;
+    overflow: hidden;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer {
@@ -537,13 +538,6 @@
     max-height: none;
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer.active {
-    flex-grow: 1;
-    height: auto;
-    min-height: auto;
-    max-height: none;
-}
-
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader {
     background-color: var(--grey-800);
     color: var(--grey-100);
@@ -552,6 +546,7 @@
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent {
     display: flex;
     flex-grow: 1;
+    overflow: visible;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionHeader > #LabelContainer > #TopContainer > #Icon {

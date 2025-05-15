@@ -68,3 +68,51 @@
     transition-timing-function: ease, ease-in-out;
     transition-delay: 0s, 0s;
 }
+
+#LoaderVrView {
+    opacity: 0;
+    transition-property: opacity, visibility;
+    transition-duration: 0.4s, 0s;
+    transition-timing-function: ease-in-out, ease;
+    display: flex;
+    left: 0;
+    top: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    visibility: hidden;
+    transition-delay: 0s, 0.4s;
+}
+
+#LoaderVrView.active {
+    opacity: 1;
+    visibility: visible;
+    transition-property: visibility, opacity;
+    transition-duration: 0s, 0.4s;
+    transition-timing-function: ease, ease-in-out;
+    transition-delay: 0s, 0s;
+}
+
+#ErrorVrView {
+    opacity: 0;
+    transition-property: opacity, visibility;
+    transition-duration: 0.4s, 0s;
+    transition-timing-function: ease-in-out, ease;
+    display: flex;
+    left: 0;
+    top: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    visibility: hidden;
+    transition-delay: 0s, 0.4s;
+}
+
+#ErrorVrView.active {
+    opacity: 1;
+    visibility: visible;
+    transition-property: visibility, opacity;
+    transition-duration: 0s, 0.4s;
+    transition-timing-function: ease, ease-in-out;
+    transition-delay: 0s, 0s;
+}
