@@ -1,0 +1,59 @@
+#DeleteProjectRoot {
+    max-height: 80%;
+    overflow: hidden;
+    height: 226px;
+    max-width: 320px;
+}
+
+#DeleteProjectRoot > #ProjectInfoContainer {
+    padding-bottom: 24px;
+}
+
+#DeleteProjectRoot > #ProjectInfoContainer > #TitleLabel {
+    margin-bottom: 24px;
+    color: var(--grey-800);
+    font-size: 20px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+}
+
+#DeleteProjectRoot > #ProjectInfoContainer > #DescriptionLabel {
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+}
+
+#DeleteProjectRoot > #BottomContainer {
+    margin-top: 24px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > #ButtonRoot > .unity-button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+    -unity-background-image-tint-color: var(--white);
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #Row > #ButtonRoot > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+    -unity-background-image-tint-color: rgba(0, 0, 0, 0.94);
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #CancelButton > .btn-secondary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete_forever.svg?fileID=7388822144124034973&guid=1531116fb0bc97a45b728ed7e3ecefb4&type=3#delete_forever");
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary {
+    background-color: var(--red);
+}
+
+#DeleteProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary:hover {
+    background-color: var(--red-h);
+}

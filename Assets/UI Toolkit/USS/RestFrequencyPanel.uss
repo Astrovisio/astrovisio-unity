@@ -1,0 +1,80 @@
+#RestFrequencyPanelRoot {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background-color: var(--grey-200);
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    flex-shrink: 0;
+}
+
+#RestFrequencyPanelRoot > #RestFrequencyDropdown {
+}
+
+#RestFrequencyPanelRoot > #RestFrequencyDropdown > #DropdownRoot {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    margin-bottom: 8px;
+}
+
+#RestFrequencyPanelRoot > #ButtonContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    flex-shrink: 0;
+}
+
+#RestFrequencyPanelRoot > #ButtonContainer > #ApplyButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+}
+
+#RestFrequencyPanelRoot > #ButtonContainer > .button {
+    width: 118px;
+    min-width: 118px;
+    max-width: 118px;
+}
+
+#RestFrequencyPanelRoot > #ButtonContainer > #CancelButton > .btn-secondary {
+    flex-direction: row;
+    justify-content: center;
+}
+
+#RestFrequencyPanelRoot > #ButtonContainer > #ApplyButton > .btn-primary {
+    flex-direction: row;
+    justify-content: center;
+}
+
+#RestFrequencyPanelRoot > #DoubleFieldContainer {
+    margin-bottom: 24px;
+}
+
+#RestFrequencyPanelRoot > #DoubleFieldContainer > #DoubleField {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+#RestFrequencyPanelRoot > #DoubleFieldContainer > #DoubleField > #unity-text-input {
+    padding-right: 45px;
+}
+
+#RestFrequencyPanelRoot > #DoubleFieldContainer > #DoubleField > #unity-text-input > .unity-text-element--inner-input-field-component {
+    font-size: 12px;
+}
+
+#RestFrequencyPanelRoot > #DoubleFieldContainer > #Suffix {
+    position: absolute;
+    color: var(--grey-400);
+    top: 50%;
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    translate: 0 -50%;
+    right: 12px;
+}

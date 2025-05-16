@@ -1,0 +1,62 @@
+#EditProjectRoot {
+    max-height: 80%;
+    overflow: hidden;
+    height: 376px;
+    min-height: 376px;
+    max-width: 640px;
+}
+
+#EditProjectRoot > #ProjectInfoContainer {
+    padding-bottom: 24px;
+}
+
+#EditProjectRoot > #ProjectInfoContainer > #TitleLabel {
+    margin-bottom: 24px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+    color: var(--grey-800);
+    font-size: 20px;
+}
+
+#EditProjectRoot > #ProjectInfoContainer > #ProjectNameContainer {
+    margin-bottom: 24px;
+}
+
+#EditProjectRoot > #ProjectInfoContainer > #ProjectNameContainer > #ProjectNameLabel {
+    margin-bottom: 8px;
+}
+
+#EditProjectRoot > #ProjectInfoContainer > #ProjectDescriptionContainer {
+}
+
+#EditProjectRoot > #ProjectInfoContainer > #ProjectDescriptionContainer > #ProjectDescriptionLabel {
+    margin-bottom: 8px;
+}
+
+#EditProjectRoot > #BottomContainer {
+    margin-top: 24px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+}
+
+#EditProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > #ButtonRoot > .unity-button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+    -unity-background-image-tint-color: var(--white);
+}
+
+#EditProjectRoot > #BottomContainer > #RightContainer > #Row > #ButtonRoot > #Button > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+    -unity-background-image-tint-color: rgba(0, 0, 0, 0.94);
+}
+
+#EditProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+}
+
+#EditProjectRoot > #BottomContainer > #RightContainer > #CancelButton > .btn-secondary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
+}
+
+#EditProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+}

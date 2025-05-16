@@ -1,0 +1,34 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="InputField" src="project://database/Assets/UI%20Toolkit/Components/InputField.uxml?fileID=9197481963319205126&amp;guid=ca3699d6381b71a44a440de0a663683d&amp;type=3#InputField" />
+    <engine:Template name="InputTextField" src="project://database/Assets/UI%20Toolkit/Components/InputTextField.uxml?fileID=9197481963319205126&amp;guid=ef3fb16d0bd7d4d419e8c56303624f57&amp;type=3#InputTextField" />
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/EditProjectPanel.uss?fileID=7433441132597879392&amp;guid=4b0f6d62459454b7d9f4caa46574035c&amp;type=3#EditProjectPanel" />
+    <engine:VisualElement name="EditProjectRoot" style="background-color: rgb(46, 46, 46); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; justify-content: space-between;">
+        <engine:VisualElement name="ProjectInfoContainer" style="justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
+            <engine:Label text="Edit title and description" name="TitleLabel" />
+            <engine:VisualElement name="ProjectNameContainer" style="justify-content: space-between;">
+                <engine:Label text="Project name" name="ProjectNameLabel" style="-unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); -unity-text-align: middle-left;" />
+                <engine:Instance template="InputField" name="ProjectNameInputField" style="flex-grow: 0;">
+                    <AttributeOverrides element-name="InputField" placeholder-text="Choose project name" />
+                </engine:Instance>
+            </engine:VisualElement>
+            <engine:VisualElement name="ProjectDescriptionContainer" style="justify-content: space-between;">
+                <engine:Label text="Project description" name="ProjectDescriptionLabel" style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&amp;guid=b29888e73935b11449868e7cb5f7ae4f&amp;type=3#SpaceGrotesk-Regular&quot;); color: rgb(251, 251, 251); -unity-text-align: middle-left;" />
+                <engine:Instance template="InputTextField" name="ProjectDescriptionInputField" style="height: 64px; min-height: 64px; max-height: 64px;">
+                    <AttributeOverrides element-name="InputField" placeholder-text="Choose project description" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
+            <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse;">
+                <engine:Instance template="PrimaryButton" name="ContinueButton" style="margin-left: 8px; height: 40px;">
+                    <AttributeOverrides element-name="Label" text="Confirm" />
+                </engine:Instance>
+                <engine:Instance template="SecondaryButton" name="CancelButton">
+                    <AttributeOverrides element-name="Label" text="Cancel" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

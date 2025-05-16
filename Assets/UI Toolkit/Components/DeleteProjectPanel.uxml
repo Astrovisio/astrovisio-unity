@@ -1,0 +1,21 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/DeleteProjectPanel.uss?fileID=7433441132597879392&amp;guid=0f336038d8e4046689b45af38bd8f4de&amp;type=3#DeleteProjectPanel[UNSUPPORTED_IN_UI_BUILDER]" />
+    <engine:VisualElement name="DeleteProjectRoot" style="background-color: rgb(46, 46, 46); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-bottom-left-radius: 16px; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; justify-content: space-between;">
+        <engine:VisualElement name="ProjectInfoContainer" style="justify-content: space-between; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);">
+            <engine:Label text="Delete project&#10;" name="TitleLabel" />
+            <engine:Label text="This project wil be permanently deleted. Do you want to proceed?" name="DescriptionLabel" parse-escape-sequences="true" />
+        </engine:VisualElement>
+        <engine:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
+            <engine:VisualElement name="RightContainer" style="flex-grow: 1; flex-direction: row-reverse;">
+                <engine:Instance template="PrimaryButton" name="ContinueButton" style="margin-left: 8px; height: 40px;">
+                    <AttributeOverrides element-name="Label" text="Delete" />
+                </engine:Instance>
+                <engine:Instance template="SecondaryButton" name="CancelButton">
+                    <AttributeOverrides element-name="Label" text="Cancel" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

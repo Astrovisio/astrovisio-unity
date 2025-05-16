@@ -1,0 +1,23 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="DropdownSimple" src="project://database/Assets/UI%20Toolkit/Components/DropdownSimple.uxml?fileID=9197481963319205126&amp;guid=8ab5ade032c81ed45911a48ecd2265d5&amp;type=3#DropdownSimple" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/RestFrequencyPanel.uss?fileID=7433441132597879392&amp;guid=d3ee08ae6afb745ab9219f6a134eb119&amp;type=3#RestFrequencyPanel" />
+    <engine:VisualElement name="RestFrequencyPanelRoot" class="active">
+        <engine:Instance template="DropdownSimple" name="RestFrequencyDropdown">
+            <AttributeOverrides element-name="DropdownField" choices="Hydrogen,Oxigen" index="0" />
+        </engine:Instance>
+        <engine:VisualElement name="DoubleFieldContainer" style="flex-grow: 1;">
+            <engine:DoubleField name="DoubleField" placeholder-text="0" />
+            <engine:Label text="GHZ" name="Suffix" />
+        </engine:VisualElement>
+        <engine:VisualElement name="ButtonContainer" style="flex-grow: 1;">
+            <engine:Instance template="SecondaryButton" name="CancelButton" class="button">
+                <AttributeOverrides element-name="Label" text="Cancel" />
+            </engine:Instance>
+            <engine:Instance template="PrimaryButton" name="ApplyButton" class="button">
+                <AttributeOverrides element-name="Label" text="Apply" />
+            </engine:Instance>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

@@ -1,6 +1,6 @@
-#RootToastMessage {
+#ToastMessageRoot {
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
     padding-top: 16px;
     padding-right: 16px;
     padding-bottom: 16px;
@@ -13,13 +13,23 @@
     border-bottom-right-radius: 16px;
     border-bottom-left-radius: 16px;
     align-self: auto;
-    justify-content: space-around;
-    max-width: 270px;
+    justify-content: flex-start;
+    max-width: 325px;
     flex-grow: 0;
     flex-shrink: 1;
+    flex-wrap: nowrap;
+    margin-bottom: 24px;
+    margin-left: 24px;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+    align-content: flex-start;
 }
 
-#RootToastMessage > #Label {
+#ToastMessageRoot.active {
+    translate: 0 0;
+}
+
+#ToastMessageRoot > #Label {
     margin-right: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
     white-space: normal;
@@ -31,20 +41,21 @@
     flex-wrap: nowrap;
     flex-direction: column;
     flex-shrink: 1;
-    padding-right: 0;
+    max-width: 216px;
 }
 
-#RootToastMessage > #Buttons {
+#ToastMessageRoot > #Buttons {
     flex-direction: row;
     flex-shrink: 1;
-    flex-grow: 0;
     align-items: center;
     align-self: center;
     justify-content: flex-end;
     align-content: auto;
+    width: 85px;
+    min-width: 85px;
 }
 
-#RootToastMessage > #Buttons > #Undo {
+#ToastMessageRoot > #Buttons > #Undo {
     margin-left: 8px;
     margin-right: 8px;
     padding-top: 8px;
@@ -58,11 +69,11 @@
     transition: background-color 0.3s linear;
 }
 
-#RootToastMessage > #Buttons > #Undo:hover {
+#ToastMessageRoot > #Buttons > #Undo:hover {
     background-color: var(--grey-200);
 }
 
-#RootToastMessage > #Buttons > #Close {
+#ToastMessageRoot > #Buttons > #Close {
     width: 14px;
     height: 14px;
     background-color: var(--transparent);
@@ -74,6 +85,6 @@
     background-position: center center;
 }
 
-#RootToastMessage > #Buttons > #Close:hover {
+#ToastMessageRoot > #Buttons > #Close:hover {
     background-color: var(--grey-200);
 }

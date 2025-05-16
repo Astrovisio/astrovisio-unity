@@ -1,4 +1,4 @@
-#RootToastError {
+#ToastErrorRoot {
     flex-direction: row;
     align-items: center;
     padding-top: 16px;
@@ -17,9 +17,16 @@
     background-color: var(--error);
     flex-grow: 0;
     flex-shrink: 0;
+    margin-bottom: 24px;
+    margin-left: 24px;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+}
+#ToastErrorRoot.active {
+    translate: 0 0;
 }
 
-#RootToastError > #Icon {
+#ToastErrorRoot > #Icon {
     width: 24px;
     height: 24px;
     flex-grow: 1;
@@ -32,7 +39,7 @@
     background-image: url("project://database/Assets/_Astrovisio/UI/Sprites/Icons/Close.png?fileID=2800000&guid=1189c808d72583445a0713c47d558f27&type=3#Close");
 }
 
-#RootToastError > #ContainerLabel > #TitleLabel {
+#ToastErrorRoot > #ContainerLabel > #TitleLabel {
     margin-right: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
     margin-top: 0;
@@ -45,7 +52,7 @@
     white-space: normal;
 }
 
-#RootToastError > #ContainerLabel > #DescriptionLabel {
+#ToastErrorRoot > #ContainerLabel > #DescriptionLabel {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
     white-space: normal;
 }

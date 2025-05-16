@@ -17,6 +17,13 @@
     background-color: var(--success);
     flex-grow: 0;
     flex-shrink: 0;
+    margin-left: 24px;
+    margin-bottom: 24px;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+}
+#RootToastSuccess.active {
+    translate: 0 0;
 }
 
 #RootToastSuccess > #Icon {

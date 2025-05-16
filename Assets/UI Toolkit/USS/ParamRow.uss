@@ -3,7 +3,7 @@
     padding-right: 16px;
     padding-top: 8px;
     padding-bottom: 12px;
-    flex-direction: row;
+    flex-direction: row-reverse;
     justify-content: space-between;
     flex-grow: 1;
     border-bottom-width: 1px;
@@ -20,6 +20,7 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
+    overflow: visible;
 }
 
 #RootButton > #NameContainer {
@@ -199,4 +200,57 @@
 
 #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+}
+
+#RootButton > #NameContainer > #FilesContainer > #TooltipFiles {
+    width: 129px;
+    position: absolute;
+    background-color: var(--grey-200);
+    top: 16px;
+    left: 26px;
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    color: var(--black);
+    -unity-text-align: upper-left;
+    visibility: hidden;
+    transition-delay: 0s, 0.4s;
+    opacity: 0;
+    transition-property: opacity, visibility;
+    transition-duration: 0.4s, 0s;
+    transition-timing-function: ease-in-out, ease;
+}
+
+#RootButton > #NameContainer > #FilesContainer:hover > #TooltipFiles {
+    opacity: 1;
+    visibility: visible;
+    transition-property: visibility, opacity;
+    transition-duration: 0s, 0.4s;
+    transition-timing-function: ease, ease-in-out;
+    transition-delay: 0s, 0s;
+}
+
+#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #NameTooltipLabel {
+    -unity-text-align: upper-left;
+    margin-bottom: 4px;
+}
+
+#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #DescriptionTooltipLabel {
+    font-size: 10px;
+    -unity-text-align: upper-left;
+    color: var(--grey-400);
+    margin-bottom: 8px;
+}
+
+#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #FilesTooltipLabel {
+    -unity-paragraph-spacing: 12px;
+}
+
+#ErrorVrView.active {
 }
