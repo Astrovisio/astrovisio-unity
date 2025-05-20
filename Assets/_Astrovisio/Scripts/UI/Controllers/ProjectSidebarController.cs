@@ -22,6 +22,7 @@ namespace Astrovisio
     public class ProjectSidebarController
     {
         // === Dependencies ===
+        private readonly UIManager uiManager;
         private readonly ProjectManager projectManager;
         private readonly VisualTreeAsset sidebarParamRowTemplate;
 
@@ -41,8 +42,8 @@ namespace Astrovisio
         private VisualElement renderSettingsContainer;
         private Button renderSettingsButton;
         private ScrollView paramSettingsScrollView;
+        private VisualElement settingsPanel;
         private Dictionary<string, ParamSettingsData> paramSettingsDatas = new();
-        // public Action OnRenderSettingsButtonActive;
 
         // @@@ Go To VR
         private Button goToVRButton;
@@ -51,24 +52,21 @@ namespace Astrovisio
         private ProjectSidebarStep projectSidebarStep = ProjectSidebarStep.Data;
         public Project Project { get; }
         public VisualElement Root { get; }
-        public SideContextSO SideContextSO { get; }
+        public UIContextSO UIContextSO { get; }
 
 
-        public ProjectSidebarController(ProjectManager projectManager, SideContextSO sideContextSO, Project project, VisualElement root)
+        public ProjectSidebarController(UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
         {
+            this.uiManager = uiManager;
             this.projectManager = projectManager;
-            SideContextSO = sideContextSO;
+            UIContextSO = uiContextSO;
             Project = project;
             Root = root;
 
             projectManager.ProjectProcessed += OnProjectProcessed;
+            projectManager.ProjectOpened += OnProjectOpened;
 
             Init();
-        }
-
-        private void OnProjectProcessed(ProcessedData data)
-        {
-            // Debug.Log("OnProjectProcessed: " + data.Columns.Length + " " + data.Rows.Length);
         }
 
         private void Init()
@@ -107,64 +105,40 @@ namespace Astrovisio
             processDataButton.clicked += OnProcessDataClicked;
             dataSettingsButton.clicked += OnDataSettingsButtonClicked;
 
+
             // @@@ Render
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
-            paramSettingsScrollView = Root.Q<ScrollView>("ParamSettingsScrollView");
+
+            var restFrequencyButton = renderSettingsContainer.Q<Button>("RestFrequencyButton");
+            restFrequencyButton.RemoveFromClassList("active");
+            var restFrequencyPanel = renderSettingsContainer.Q<VisualElement>("RestFrequencyPanel");
+            restFrequencyPanel.RemoveFromClassList("active");
+
+            var xLabel = renderSettingsContainer.Q<Label>("XParamLabel");
+            var yLabel = renderSettingsContainer.Q<Label>("YParamLabel");
+            var zLabel = renderSettingsContainer.Q<Label>("ZParamLabel");
+            xLabel.text = "";
+            yLabel.text = "";
+            zLabel.text = "";
+
+            settingsPanel = renderSettingsContainer.Q<VisualElement>("SettingsPanel");
+            settingsPanel.RemoveFromClassList("active");
+
+            paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
             paramSettingsScrollView.Clear();
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                var paramName = kvp.Key;
-                var configVariable = kvp.Value;
-
-                if (configVariable.XAxis || configVariable.YAxis || configVariable.ZAxis)
-                {
-                    continue;
-                }
-
-                VisualElement paramRowSettings = SideContextSO.paramRowSettingsTemplate.CloneTree();
-
-                var nameLabel = paramRowSettings.Q<Label>("ParamLabel");
-                if (nameLabel != null)
-                {
-                    nameLabel.text = paramName;
-                }
-
-                var button = paramRowSettings.Q<Button>("Root");
-                button.RemoveFromClassList("active");
-                paramRowSettings.style.marginBottom = 8;
-                button.clicked += () =>
-                {
-                    if (button.ClassListContains("active"))
-                    {
-                        UnselectAllParamSettingButton();
-                    }
-                    else
-                    {
-                        UnselectAllParamSettingButton();
-                        button.ToggleInClassList("active");
-                    }
-                };
-                // paramRowSettingsVisualElement.Add(paramName, paramRowSettings);
-                // paramSettingsControllers.Add(paramName, new ParamRowSettingsController(Project, paramName, SideContextSO));
-
-                ParamSettingsData paramSettingsData = new ParamSettingsData
-                {
-                    VisualElement = paramRowSettings,
-                    ParamRowSettingsController = new ParamRowSettingsController(Project, paramName, SideContextSO)
-                };
-                paramSettingsDatas.Add(paramName, paramSettingsData);
-
-                paramSettingsScrollView.Add(paramRowSettings);
-            }
 
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
+            renderSettingsButton.SetEnabled(false);
             renderSettingsButton.clicked += OnRenderSettingsButtonClicked;
 
             // @@@ VR
             goToVRButton = Root.Q<Button>("GoToVRButton");
+            goToVRButton.SetEnabled(false);
             goToVRButton.clicked += OnGoToVRButtonClicked;
 
             PopulateScrollView();
+
+            SetActiveStep(ProjectSidebarStep.Data);
         }
 
         private void OnGoToVRButtonClicked()
@@ -189,10 +163,12 @@ namespace Astrovisio
                 case ProjectSidebarStep.Data:
                     renderSettingsContainer.RemoveFromClassList("active");
                     dataSettingsContainer.AddToClassList("active");
+                    uiManager.SetSceneVisibility(true);
                     break;
                 case ProjectSidebarStep.Render:
                     dataSettingsContainer.RemoveFromClassList("active");
                     renderSettingsContainer.AddToClassList("active");
+                    uiManager.SetSceneVisibility(false);
                     break;
             }
         }
@@ -213,7 +189,7 @@ namespace Astrovisio
                 var paramName = kvp.Key;
                 var param = kvp.Value;
 
-                var paramRow = SideContextSO.sidebarParamRowTemplate.CloneTree();
+                var paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
 
                 var nameContainer = paramRow.Q<VisualElement>("LabelContainer");
                 nameContainer.Q<Label>("LabelParam").text = paramName;
@@ -303,11 +279,13 @@ namespace Astrovisio
             // 3) If at least 3 parameters are active → OK, otherwise show warning
             if (chipLabelCounter >= 3)
             {
-                SetProcessData(true);
+                isReadyToProcessData = true;
+                SetProcessDataButton(true);
                 warningLabel.style.display = DisplayStyle.None;
                 return;
             }
-            SetProcessData(false);
+            isReadyToProcessData = false;
+            SetProcessDataButton(false);
 
             // 4) Count how many distinct axes have been selected
             int axesCount = (xAxis ? 1 : 0) + (yAxis ? 1 : 0) + (zAxis ? 1 : 0);
@@ -361,27 +339,54 @@ namespace Astrovisio
                     : DisplayStyle.Flex;
         }
 
-        private void SetProcessData(bool state)
+        private void SetProcessDataButton(bool state)
         {
             processDataButton.SetEnabled(state);
 
             if (state)
             {
                 processDataButton.style.opacity = 1.0f;
-                // Debug.Log("ready to process data");
             }
             else
             {
                 processDataButton.style.opacity = 0.5f;
-                // Debug.Log("NOT ready to process data");
+                SetNextStepButtons(false);
             }
+        }
 
-            isReadyToProcessData = state;
+        private void SetNextStepButtons(bool state)
+        {
+            renderSettingsButton.SetEnabled(state);
+            goToVRButton.SetEnabled(state);
+
+            if (state)
+            {
+                renderSettingsButton.style.opacity = 1.0f;
+                goToVRButton.style.opacity = 1.0f;
+            }
+            else
+            {
+                renderSettingsButton.style.opacity = 0.5f;
+                goToVRButton.style.opacity = 0.5f;
+            }
         }
 
         private void OnProcessDataClicked()
         {
+            SetProcessDataButton(false);
             projectManager.ProcessProject(Project.Id, Project.ConfigProcess);
+            UpdateRenderingParams();
+        }
+
+        private void OnProjectProcessed(ProcessedData data)
+        {
+            SetProcessDataButton(true);
+            SetNextStepButtons(true);
+        }
+
+        private void OnProjectOpened(Project project)
+        {
+            SetActiveStep(ProjectSidebarStep.Data);
         }
 
         private void UnselectAllParamSettingButton()
@@ -392,9 +397,78 @@ namespace Astrovisio
                 if (button != null)
                 {
                     button.RemoveFromClassList("active");
+                    settingsPanel.RemoveFromClassList("active");
                 }
             }
         }
 
+        private void UpdateSettingsPanel(ParamRowSettingsController paramRowSettingsController)
+        {
+            Debug.Log(paramRowSettingsController.ParamName);
+        }
+
+        private void UpdateRenderingParams()
+        {
+            // Labels
+            var xLabel = renderSettingsContainer.Q<Label>("XParamLabel");
+            var yLabel = renderSettingsContainer.Q<Label>("YParamLabel");
+            var zLabel = renderSettingsContainer.Q<Label>("ZParamLabel");
+            xLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.XAxis).Key ?? "";
+            yLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.YAxis).Key ?? "";
+            zLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.ZAxis).Key ?? "";
+
+            // ScrollView
+            paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
+            paramSettingsScrollView.Clear();
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                var paramName = kvp.Key;
+                var configVariable = kvp.Value;
+
+
+                if (!configVariable.Selected || configVariable.XAxis || configVariable.YAxis || configVariable.ZAxis)
+                {
+                    continue;
+                }
+
+                VisualElement paramRowSettings = UIContextSO.paramRowSettingsTemplate.CloneTree();
+
+                var nameLabel = paramRowSettings.Q<Label>("ParamLabel");
+                if (nameLabel != null)
+                {
+                    nameLabel.text = paramName;
+                }
+
+                ParamSettingsData paramSettingsData = new ParamSettingsData
+                {
+                    VisualElement = paramRowSettings,
+                    ParamRowSettingsController = new ParamRowSettingsController(Project, paramName, UIContextSO)
+                };
+
+                var button = paramRowSettings.Q<Button>("Root");
+                button.RemoveFromClassList("active");
+                paramRowSettings.style.marginBottom = 8;
+                button.clicked += () =>
+                {
+                    if (button.ClassListContains("active"))
+                    {
+                        UnselectAllParamSettingButton();
+                    }
+                    else
+                    {
+                        UnselectAllParamSettingButton();
+                        button.ToggleInClassList("active");
+                        settingsPanel.ToggleInClassList("active");
+                        UpdateSettingsPanel(paramSettingsData.ParamRowSettingsController);
+                    }
+                };
+
+                paramSettingsDatas.Add(paramName, paramSettingsData);
+                paramSettingsScrollView.Add(paramRowSettings);
+            }
+
+        }
+
     }
+
 }

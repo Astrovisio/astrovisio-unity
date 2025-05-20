@@ -8,23 +8,14 @@ namespace Astrovisio
 {
     public class ContentController : MonoBehaviour
     {
-        [Header("UI Templates")]
 
-        [Space(3)][Header("Home")]
-        [SerializeField] private VisualTreeAsset projectRowHeaderTemplate;
-        [SerializeField] private VisualTreeAsset projectRowTemplate;
-
-        [Space(3)][Header("Project")]
-        [SerializeField] private VisualTreeAsset projectViewTemplate;
-        [SerializeField] private VisualTreeAsset paramRowTemplate;
-
-        [Space(3)][Header("New Project")]
-        [SerializeField] private VisualTreeAsset listItemFileTemplate;
+        // === Dependencies ===
+        private UIDocument uiDocument;
+        private UIManager uiManager;
 
         // === References ===
-        private UIDocument uiDocument;
-        private UIController uiController;
         private ProjectManager projectManager;
+        private UIContextSO uiContextSO;
         private Button newProjectButton;
 
         // === Controllers ===
@@ -40,20 +31,17 @@ namespace Astrovisio
         private void Awake()
         {
             uiDocument = GetComponentInParent<UIDocument>();
-            uiController = GetComponentInParent<UIController>();
-            projectManager = uiController.GetProjectManager();
+            uiManager = GetComponentInParent<UIManager>();
 
-            if (projectManager == null)
-            {
-                Debug.LogError("ProjectManager not found.");
-            }
+            projectManager = uiManager.GetProjectManager();
+            uiContextSO = uiManager.getUIContext();
 
             projectManager.ProjectProcessed += OnProjectProcessed;
         }
 
         private void OnProjectProcessed(ProcessedData data)
         {
-            contentContainer.style.visibility = Visibility.Hidden;
+            // contentContainer.style.visibility = Visibility.Hidden;
         }
 
         private void OnEnable()
@@ -79,7 +67,7 @@ namespace Astrovisio
 
         private void EnableNewProjectButton()
         {
-            newProjectController = new NewProjectViewController(projectManager, listItemFileTemplate);
+            newProjectController = new NewProjectViewController(projectManager, uiContextSO.listItemFileTemplate);
             VisualElement root = uiDocument.rootVisualElement;
             VisualElement newProjectButtonInstance = root.Q<VisualElement>("NewProjectButton");
             newProjectButton = newProjectButtonInstance?.Q<Button>();
@@ -117,7 +105,7 @@ namespace Astrovisio
 
         private void EnableHomeView()
         {
-            homeViewController = new HomeViewController(projectManager, contentContainer, projectRowHeaderTemplate, projectRowTemplate);
+            homeViewController = new HomeViewController(projectManager, contentContainer, uiContextSO.projectRowHeaderTemplate, uiContextSO.projectRowTemplate);
             homeViewContainer = contentContainer.Q<VisualElement>("HomeView");
         }
 
@@ -136,11 +124,11 @@ namespace Astrovisio
                 return;
             }
 
-            VisualElement projectViewInstance = projectViewTemplate.CloneTree();
+            VisualElement projectViewInstance = uiContextSO.projectViewTemplate.CloneTree();
             contentContainer.Add(projectViewInstance);
 
-            // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), paramRowTemplate);
-            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, paramRowTemplate);
+            // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), uiContextSO.paramRowTemplate);
+            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, uiContextSO.paramRowTemplate);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
         }
 

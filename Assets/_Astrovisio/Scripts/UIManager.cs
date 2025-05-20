@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Astrovisio
+namespace Astrovisio.Test
 {
     
     public class UIManager : MonoBehaviour

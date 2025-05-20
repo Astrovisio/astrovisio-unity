@@ -116,6 +116,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectManager: {fileID: 0}
+  renderManager: {fileID: 0}
+  uiContextSO: {fileID: 11400000, guid: f707df4f9b0210d4ea79ba0623605ab2, type: 2}
+  mainView: {fileID: 2823072948889059416}
+  newProjectView: {fileID: 0}
 --- !u!1 &4204649268737784816
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,7 +132,7 @@ GameObject:
   - component: {fileID: 2154903225343602668}
   - component: {fileID: 4419854050902141414}
   m_Layer: 0
-  m_Name: Loader
+  m_Name: Loading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,6 +185,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6efa8ec1df380cc4c8698bb89020bf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiController: {fileID: 4973116314143365544}
+  projectManager: {fileID: 0}
   loadingSpinnerTemplate: {fileID: 9197481963319205126, guid: 6e777dec72cffee428a66cbecab63aaa,
     type: 3}
   spinnerSpeed: 180
@@ -228,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca67990a3a4769b408cb9301c6e6ca37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sideContextSO: {fileID: 11400000, guid: f707df4f9b0210d4ea79ba0623605ab2, type: 2}
+  uiContextSO: {fileID: 0}
 --- !u!1 &5065705941003720119
 GameObject:
   m_ObjectHideFlags: 0

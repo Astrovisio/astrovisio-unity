@@ -110,7 +110,7 @@ namespace Astrovisio
 
             gameObject.transform.position = new Vector3(0, 0, 0);
             gameObject.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
-            Debug.Log(gameObject.transform.localScale);
+            // Debug.Log(gameObject.transform.localScale);
 
             _dataReady = true;
         }

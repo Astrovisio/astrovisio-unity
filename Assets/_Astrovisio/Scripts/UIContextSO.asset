@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3e3b68d4410c584cbdc53b0157dd3c9, type: 3}
-  m_Name: SideContextSO
+  m_Name: UIContextSO
   m_EditorClassIdentifier: 
+  projectButtonTemplate: {fileID: 9197481963319205126, guid: db11fa552c6819f47999b9cee67e33d4,
+    type: 3}
   projectSidebarTemplate: {fileID: 9197481963319205126, guid: 0f81f4c46e0c640418c9b40678b28b0a,
     type: 3}
   sidebarParamRowTemplate: {fileID: 9197481963319205126, guid: 52b9839a12932d44499b3960b752ac68,
@@ -19,3 +21,13 @@ MonoBehaviour:
   paramRowSettingsTemplate: {fileID: 9197481963319205126, guid: 8d8fba102f4b8354eb735e1f87607b16,
     type: 3}
   colorMapSO: {fileID: 11400000, guid: e90be6bd2a4d2f2468717279728127e7, type: 2}
+  projectRowHeaderTemplate: {fileID: 9197481963319205126, guid: 8a26ec6ef83cacf48a13fadb9f9942fb,
+    type: 3}
+  projectRowTemplate: {fileID: 9197481963319205126, guid: 35320fcd82433ac4180b12dd809838a0,
+    type: 3}
+  projectViewTemplate: {fileID: 9197481963319205126, guid: 5d8609a87d4f32b4186bfff69ad0a849,
+    type: 3}
+  paramRowTemplate: {fileID: 9197481963319205126, guid: 24f95cd415ccaa64c812f528b1447b09,
+    type: 3}
+  listItemFileTemplate: {fileID: 9197481963319205126, guid: 09d9e3075be01024491ea8a3ee5bb0ef,
+    type: 3}

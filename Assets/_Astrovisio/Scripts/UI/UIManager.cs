@@ -4,13 +4,14 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    public class UIController : MonoBehaviour
+    public class UIManager : MonoBehaviour
     {
         [Header("Dependencies")]
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private RenderManager renderManager;
+        [SerializeField] private UIContextSO uiContextSO;
 
-        // --- Local
+        // === References ===
         private UIDocument uiDocument;
         private MainViewController mainViewController;
 
@@ -22,27 +23,18 @@ namespace Astrovisio
             mainViewController = new MainViewController(mainViewRoot);
 
             projectManager.FetchAllProjects();
-
-
-            projectManager.ProjectProcessed += OnProjectProcessed;
         }
 
-        private void OnProjectProcessed(ProcessedData data)
+        public ProjectManager GetProjectManager() => projectManager;
+        public RenderManager GetRenderManager() => renderManager;
+        public UIContextSO getUIContext() => uiContextSO;
+
+        public void SetSceneVisibility(bool state)
         {
-            mainViewController.SetBackground(false);
+            mainViewController.SetContentVisibility(state);
+            mainViewController.SetBackgroundVisibility(state);
         }
-
-        public ProjectManager GetProjectManager()
-        {
-            return projectManager;
-        }
-
-        public RenderManager GetRenderManager()
-        {
-            return renderManager;
-        }
-
-
-
+        
     }
+
 }

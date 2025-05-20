@@ -12,11 +12,11 @@ namespace Astrovisio
         // Local
         private ColorMapSO colorMapSO;
 
-        public ParamRowSettingsController(Project project, string paramName, SideContextSO sideContextSO)
+        public ParamRowSettingsController(Project project, string paramName, UIContextSO uiContextSO)
         {
             Project = project;
             ParamName = paramName;
-            colorMapSO = sideContextSO.colorMapSO;
+            colorMapSO = uiContextSO.colorMapSO;
 
             State = false;
 

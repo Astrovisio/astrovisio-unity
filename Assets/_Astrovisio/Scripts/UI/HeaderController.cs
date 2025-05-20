@@ -8,13 +8,13 @@ namespace Astrovisio
     public class HeaderController : MonoBehaviour
     {
 
-        [Header("UI Templates")]
-        [SerializeField] private VisualTreeAsset projectButtonTemplate;
+        // === Dependencies ===
+        private UIDocument uiDocument;
+        private UIManager uiManager;
 
         // === References ===
-        private UIDocument uiDocument;
-        private UIController uiController;
         private ProjectManager projectManager;
+        private UIContextSO uiContextSO;
 
         // === Controllers ===
         private NavbarController navbarController;
@@ -22,13 +22,10 @@ namespace Astrovisio
         private void Awake()
         {
             uiDocument = GetComponentInParent<UIDocument>();
-            uiController = GetComponentInParent<UIController>();
-            projectManager = uiController.GetProjectManager();
+            uiManager = GetComponentInParent<UIManager>();
 
-            if (projectManager == null)
-            {
-                Debug.LogError("ProjectManager not found.");
-            }
+            projectManager = uiManager.GetProjectManager();
+            uiContextSO = uiManager.getUIContext();
         }
 
         private void OnEnable()
@@ -44,7 +41,7 @@ namespace Astrovisio
         private void EnableNavbar()
         {
             var navbarRoot = uiDocument.rootVisualElement.Q<VisualElement>("NavbarRoot");
-            navbarController = new NavbarController(projectManager, projectButtonTemplate, navbarRoot);
+            navbarController = new NavbarController(uiManager, projectManager, uiContextSO.projectButtonTemplate, navbarRoot);
         }
 
         private void DisableNavbar()

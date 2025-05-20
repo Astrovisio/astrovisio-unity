@@ -8,6 +8,7 @@ namespace Astrovisio
     public class NavbarController
     {
         // === Dependencies ===
+        private readonly UIManager uiManager;
         private readonly ProjectManager projectManager;
         private readonly VisualTreeAsset projectButtonTemplate;
         private readonly VisualElement root;
@@ -19,8 +20,9 @@ namespace Astrovisio
 
         private readonly Dictionary<int, ProjectTabInfo> projectTabDictionary = new();
 
-        public NavbarController(ProjectManager projectManager, VisualTreeAsset projectButtonTemplate, VisualElement root)
+        public NavbarController(UIManager uiManager, ProjectManager projectManager, VisualTreeAsset projectButtonTemplate, VisualElement root)
         {
+            this.uiManager = uiManager;
             this.projectManager = projectManager;
             this.projectButtonTemplate = projectButtonTemplate;
             this.root = root;
@@ -181,6 +183,7 @@ namespace Astrovisio
             }
 
             homeButton?.AddToClassList("active");
+            uiManager.SetSceneVisibility(true);
         }
 
         public void Dispose()

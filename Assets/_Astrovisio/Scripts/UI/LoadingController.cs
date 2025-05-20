@@ -1,24 +1,23 @@
+using Astrovisio;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class LoadingController : MonoBehaviour
 {
+    [Header("Dependencies")]
+    [SerializeField] private UIManager uiController;
+    [SerializeField] private ProjectManager projectManager;
+
     [Header("UI Templates")]
     [SerializeField] private VisualTreeAsset loadingSpinnerTemplate;
-    [SerializeField] private float spinnerSpeed = 180f; // Gradi per secondo
+
+    [Header("Settings")]
+    [SerializeField] private float spinnerSpeed = 180f;
+
 
     private VisualElement dotSpinner;
     private VisualElement spinnerContainer;
-    private UIDocument uiDocument;
 
-    // private void Awake()
-    // {
-    //     uiDocument = GetComponent<UIDocument>();
-    //     if (uiDocument == null)
-    //     {
-    //         Debug.LogError("UIDocument non trovato!");
-    //     }
-    // }
 
     // private void OnEnable()
     // {

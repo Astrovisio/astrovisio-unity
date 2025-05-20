@@ -3,12 +3,45 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    [CreateAssetMenu(fileName = "SideContext", menuName = "Scriptable Objects/Side Context")]
-    public class SideContextSO : ScriptableObject
+    [CreateAssetMenu(fileName = "UIContext", menuName = "Astrovisio SO/UI Context")]
+    public class UIContextSO : ScriptableObject
     {
+        // [Header("Shared")]
+
+        [Header("Header")]
+        public VisualTreeAsset projectButtonTemplate;
+
+
+        [Space(3)]
+        [Header("Side")]
+        [Space(2)]
+
+        [Space(1)]
+        [Header("- Home")]
         public VisualTreeAsset projectSidebarTemplate;
+
+        [Space(1)]
+        [Header("- Project")]
         public VisualTreeAsset sidebarParamRowTemplate;
         public VisualTreeAsset paramRowSettingsTemplate;
         public ColorMapSO colorMapSO;
+
+
+        [Header("Content")]
+
+        [Space(1)]
+        [Header("- Home")]
+        public VisualTreeAsset projectRowHeaderTemplate;
+        public VisualTreeAsset projectRowTemplate;
+
+        [Space(1)]
+        [Header("- Project")]
+        public VisualTreeAsset projectViewTemplate;
+        public VisualTreeAsset paramRowTemplate;
+
+        [Space(1)]
+        [Header("- New Project")]
+        public VisualTreeAsset listItemFileTemplate;
+
     }
 }

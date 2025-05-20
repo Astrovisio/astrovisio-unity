@@ -1,6 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="Downsampling" src="project://database/Assets/UI%20Toolkit/Components/Downsampling.uxml?fileID=9197481963319205126&amp;guid=34fcbd8083bb80441a3f1c505b1892c9&amp;type=3#Downsampling" />
     <engine:Template name="Chip" src="project://database/Assets/UI%20Toolkit/Components/Shared/Chip.uxml?fileID=9197481963319205126&amp;guid=22e927bf1e871d648aed0fb34ab68ded&amp;type=3#Chip" />
+    <engine:Template name="RestFrequencyPanel" src="project://database/Assets/UI%20Toolkit/Components/RestFrequencyPanel.uxml?fileID=9197481963319205126&amp;guid=24d6d9c53dbe3564b87077d9f0536a36&amp;type=3#RestFrequencyPanel" />
     <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
     <engine:Template name="ParamRowSettings" src="project://database/Assets/UI%20Toolkit/Components/ParamRowSettings.uxml?fileID=9197481963319205126&amp;guid=8d8fba102f4b8354eb735e1f87607b16&amp;type=3#ParamRowSettings" />
     <engine:Template name="SettingsPanel" src="project://database/Assets/UI%20Toolkit/Components/SettingsPanel.uxml?fileID=9197481963319205126&amp;guid=94ff22f4db2321348877e1aacc58566e&amp;type=3#SettingsPanel" />
@@ -43,7 +44,7 @@
             <engine:VisualElement name="AccordionContent">
                 <engine:VisualElement name="ContentContainer" style="flex-grow: 1;">
                     <engine:VisualElement name="FirstContainer">
-                        <engine:VisualElement name="CubeRatioContainer">
+                        <engine:VisualElement name="CubeRatioContainer" style="display: none;">
                             <engine:Label text="Cube ratio" name="Title" />
                             <engine:VisualElement name="ChipContainer" style="flex-grow: 1;">
                                 <engine:Instance template="Chip" name="XYZChip">
@@ -54,13 +55,14 @@
                                 </engine:Instance>
                             </engine:VisualElement>
                         </engine:VisualElement>
-                        <engine:VisualElement name="LineSpacer" />
-                        <engine:VisualElement name="RestContainer" style="flex-grow: 1;">
+                        <engine:VisualElement name="LineSpacer" style="display: none;" />
+                        <engine:Button name="RestFrequencyButton" class="active" style="display: none;">
                             <engine:Label text="Rest Frequency" style="-unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&amp;guid=abd0c980011414e4286a0593c97a0824&amp;type=3#SpaceGrotesk-Bold&quot;); color: rgb(251, 251, 251);" />
                             <engine:VisualElement style="flex-grow: 1; height: 16px; width: 16px; min-width: 16px; max-width: 16px; min-height: 16px; max-height: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/discover_tune.svg?fileID=7388822144124034973&amp;guid=a4dac9e51e7976a40aab94282b71bfb1&amp;type=3#discover_tune&quot;);" />
-                        </engine:VisualElement>
-                        <engine:VisualElement name="LineSpacer" />
-                        <engine:VisualElement name="InitialPositionContainer" style="flex-grow: 1;">
+                            <engine:Instance template="RestFrequencyPanel" name="RestFrequencyPanel" class="active" />
+                        </engine:Button>
+                        <engine:VisualElement name="LineSpacer" style="display: none;" />
+                        <engine:VisualElement name="InitialPositionContainer" style="flex-grow: 1; display: none;">
                             <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
                                 <engine:Label text="Initial positioning" name="Title" />
                                 <engine:VisualElement name="Icon" style="flex-grow: 1;" />
@@ -80,7 +82,7 @@
                                 </engine:VisualElement>
                             </engine:VisualElement>
                         </engine:VisualElement>
-                        <engine:VisualElement name="LineSpacer" />
+                        <engine:VisualElement name="LineSpacer" style="display: none;" />
                         <engine:VisualElement name="AxisContainer" style="flex-grow: 0; flex-direction: column; justify-content: space-between;">
                             <engine:VisualElement name="XLabel" class="AxisLabel" style="flex-grow: 1;">
                                 <engine:Instance template="Label" name="XLabel" class="ChipLabel">

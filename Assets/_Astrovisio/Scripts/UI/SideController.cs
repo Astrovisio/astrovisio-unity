@@ -8,14 +8,13 @@ namespace Astrovisio
     public class SideController : MonoBehaviour
     {
 
-        [Header("Data")]
-        [SerializeField] private SideContextSO sideContextSO;
-
+        // === Dependencies ===
+        private UIDocument uiDocument;
+        private UIManager uiManager;
 
         // === References ===
-        private UIDocument uiDocument;
-        private UIController uiController;
         private ProjectManager projectManager;
+        private UIContextSO uiContextSO;
 
         // === Controllers ===
         private SidebarController sidebarController; // TODO ?
@@ -31,8 +30,10 @@ namespace Astrovisio
         private void Awake()
         {
             uiDocument = GetComponentInParent<UIDocument>();
-            uiController = GetComponentInParent<UIController>();
-            projectManager = uiController.GetProjectManager();
+            uiManager = GetComponentInParent<UIManager>();
+
+            projectManager = uiManager.GetProjectManager();
+            uiContextSO = uiManager.getUIContext();
 
             if (projectManager == null)
             {
@@ -82,11 +83,11 @@ namespace Astrovisio
             }
 
             // VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
-            VisualElement projectSidebarInstance = sideContextSO.projectSidebarTemplate.CloneTree();
+            VisualElement projectSidebarInstance = uiContextSO.projectSidebarTemplate.CloneTree();
             sideContainer.Add(projectSidebarInstance);
 
             // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
-            var newProjectViewController = new ProjectSidebarController(projectManager, sideContextSO, project, projectSidebarInstance);
+            var newProjectViewController = new ProjectSidebarController(uiManager, projectManager, uiContextSO, project, projectSidebarInstance);
             projectSidebarControllerDictionary[project.Id] = newProjectViewController;
         }
 
