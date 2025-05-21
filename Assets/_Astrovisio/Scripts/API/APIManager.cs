@@ -211,7 +211,7 @@ namespace Astrovisio
         public IEnumerator ProcessProject(
             int id,
             ProcessProjectRequest req,
-            Action<ProcessedData> onSuccess,
+            Action<DataPack> onSuccess,
             Action<string> onError = null)
         {
             string url = APIEndpoints.ProcessProject(id);
@@ -239,7 +239,7 @@ namespace Astrovisio
                 try
                 {
                     byte[] rawBytes = request.downloadHandler.data;
-                    var processedData = MessagePackSerializer.Deserialize<ProcessedData>(rawBytes);
+                    var processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
                     Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
 
                     onSuccess?.Invoke(processedData);

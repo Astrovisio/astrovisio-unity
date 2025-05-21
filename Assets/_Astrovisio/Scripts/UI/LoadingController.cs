@@ -1,59 +1,33 @@
-using Astrovisio;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class LoadingController : MonoBehaviour
+namespace Astrovisio
 {
-    [Header("Dependencies")]
-    [SerializeField] private UIManager uiController;
-    [SerializeField] private ProjectManager projectManager;
+    public class LoadingController : MonoBehaviour
+    {
+        [Header("Settings")]
+        [SerializeField] private float spinnerSpeed = 180f;
 
-    [Header("UI Templates")]
-    [SerializeField] private VisualTreeAsset loadingSpinnerTemplate;
+        private VisualElement spinner;
+        private float rotationAngle = 0f;
 
-    [Header("Settings")]
-    [SerializeField] private float spinnerSpeed = 180f;
+        private void Start()
+        {
+            var uiDocument = GetComponentInParent<UIDocument>();
+            var loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            spinner = loaderView.Q<VisualElement>("LoadingSpinner");
+        }
 
+        private void Update()
+        {
+            if (spinner == null)
+            {
+                return;
+            }
 
-    private VisualElement dotSpinner;
-    private VisualElement spinnerContainer;
-
-
-    // private void OnEnable()
-    // {
-    //     if (loadingSpinnerTemplate == null || uiDocument == null)
-    //     {
-    //         return;
-    //     }
-
-    //     // Clona lo spinner e aggiungilo alla root UI
-    //     spinnerContainer = loadingSpinnerTemplate.CloneTree();
-    //     // uiDocument.rootVisualElement.Add(spinnerContainer);
-
-    //     // Recupera il riferimento al dot
-    //     dotSpinner = spinnerContainer.Q<VisualElement>("Dot");
-    //     if (dotSpinner == null)
-    //     {
-    //         Debug.LogError("Elemento 'Dot' non trovato nel template");
-    //     }
-    // }
-
-    // private void Update()
-    // {
-    //     if (dotSpinner != null)
-    //     {
-    //         dotSpinner.transform.rotation *= Quaternion.Euler(0, 0, -spinnerSpeed * Time.deltaTime);
-    //     }
-    // }
-
-    // /// <summary>
-    // /// Attiva o disattiva lo spinner
-    // /// </summary>
-    // public void SetSpinner(bool active)
-    // {
-    //     if (spinnerContainer != null)
-    //     {
-    //         spinnerContainer.style.display = active ? DisplayStyle.Flex : DisplayStyle.None;
-    //     }
-    // }
+            rotationAngle += spinnerSpeed * Time.deltaTime;
+            rotationAngle %= 360f;
+            spinner.style.rotate = new Rotate(new Angle(rotationAngle, AngleUnit.Degree));
+        }
+    }
 }

@@ -39,7 +39,7 @@ namespace Astrovisio
             projectManager.ProjectProcessed += OnProjectProcessed;
         }
 
-        private void OnProjectProcessed(ProcessedData data)
+        private void OnProjectProcessed(DataPack data)
         {
             // contentContainer.style.visibility = Visibility.Hidden;
         }

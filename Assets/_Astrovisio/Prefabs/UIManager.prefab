@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 508a1b955cb029f47990b5532e4d8106, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectButtonTemplate: {fileID: 9197481963319205126, guid: db11fa552c6819f47999b9cee67e33d4,
-    type: 3}
 --- !u!1 &2307568220249490968
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,8 +116,6 @@ MonoBehaviour:
   projectManager: {fileID: 0}
   renderManager: {fileID: 0}
   uiContextSO: {fileID: 11400000, guid: f707df4f9b0210d4ea79ba0623605ab2, type: 2}
-  mainView: {fileID: 2823072948889059416}
-  newProjectView: {fileID: 0}
 --- !u!1 &4204649268737784816
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +125,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4058517347219555971}
-  - component: {fileID: 2154903225343602668}
   - component: {fileID: 4419854050902141414}
   m_Layer: 0
   m_Name: Loading
@@ -153,26 +148,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7898233453520494749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2154903225343602668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4204649268737784816}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 8cb4fd8c75e15ef4db85e8f606868778, type: 2}
-  m_ParentUI: {fileID: 2823072948889059416}
-  sourceAsset: {fileID: 9197481963319205126, guid: 6e777dec72cffee428a66cbecab63aaa,
-    type: 3}
-  m_SortingOrder: 1
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
 --- !u!114 &4419854050902141414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,7 +209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca67990a3a4769b408cb9301c6e6ca37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiContextSO: {fileID: 0}
 --- !u!1 &5065705941003720119
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,13 +253,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db752d5129f2e3b4cae374e9252add87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectRowHeaderTemplate: {fileID: 9197481963319205126, guid: 8a26ec6ef83cacf48a13fadb9f9942fb,
-    type: 3}
-  projectRowTemplate: {fileID: 9197481963319205126, guid: 35320fcd82433ac4180b12dd809838a0,
-    type: 3}
-  projectViewTemplate: {fileID: 9197481963319205126, guid: 5d8609a87d4f32b4186bfff69ad0a849,
-    type: 3}
-  paramRowTemplate: {fileID: 9197481963319205126, guid: 24f95cd415ccaa64c812f528b1447b09,
-    type: 3}
-  listItemFileTemplate: {fileID: 9197481963319205126, guid: 09d9e3075be01024491ea8a3ee5bb0ef,
-    type: 3}

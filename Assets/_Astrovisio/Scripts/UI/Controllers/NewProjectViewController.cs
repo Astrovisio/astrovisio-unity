@@ -4,6 +4,7 @@ using SFB;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace Astrovisio
 {
@@ -19,6 +20,7 @@ namespace Astrovisio
         private TextField projectDescriptionField;
         private Button addFileButton;
         private ScrollView filesScrollView;
+        private Label filesSizeLabel;
         private Button continueButton;
         private Button cancelButton;
 
@@ -38,6 +40,7 @@ namespace Astrovisio
             projectDescriptionField = root.Q<VisualElement>("ProjectDescriptionInputField")?.Q<TextField>();
             addFileButton = root.Q<VisualElement>("AddFileButton").Q<Button>();
             filesScrollView = root.Q<ScrollView>("FilesScrollView");
+            filesSizeLabel = root.Q<VisualElement>("MemorySizeInfo")?.Q<Label>("SizeLabel");
             continueButton = root.Q<VisualElement>("ContinueButton")?.Q<Button>();
             cancelButton = root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
@@ -49,6 +52,11 @@ namespace Astrovisio
             if (filesScrollView != null)
             {
                 UpdateFilesContainer();
+            }
+
+            if (filesSizeLabel != null)
+            {
+                filesSizeLabel.text = "";
             }
 
             if (continueButton != null)
@@ -103,6 +111,17 @@ namespace Astrovisio
                 }
 
                 UpdateFilesContainer();
+                UpdateFilesSizeLabel();
+            }
+        }
+
+        private void UpdateFilesSizeLabel()
+        {
+            long totalSize = selectedFiles.Sum(file => file.size);
+
+            if (filesSizeLabel != null)
+            {
+                filesSizeLabel.text = $"{FormatFileSize(totalSize)}";
             }
         }
 

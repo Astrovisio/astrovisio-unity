@@ -1,28 +1,35 @@
-
-using System;
 using UnityEngine;
 
 namespace Astrovisio
 {
     public class RenderManager : MonoBehaviour
     {
+        public static RenderManager Instance { get; private set; }
+
         [Header("Dependencies")]
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
 
-        [SerializeField] private GameObject cubePrefab;
+        [Header("Other")]
+        [SerializeField] private DataRenderer dataRendererPrefab;
 
-
-        private void Start()
+        private void Awake()
         {
-            projectManager.ProjectProcessed += OnProjectProcessed;
+            if (Instance != null && Instance != this)
+            {
+                Debug.LogWarning("Multiple instances of RenderManager found. Destroying the new one.");
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
         }
 
-        private void OnProjectProcessed(ProcessedData data)
+        public void RenderDataContainer(DataContainer dataContainer)
         {
-            // Instantiate(cubePrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
+            DataRenderer dataRenderer = Instantiate(dataRendererPrefab);
+            dataRenderer.RenderDataContainer(dataContainer);
         }
 
     }
-
 }

@@ -50,6 +50,7 @@ namespace Astrovisio
 
         // === Local ===
         private ProjectSidebarStep projectSidebarStep = ProjectSidebarStep.Data;
+        private DataContainer dataContainer;
         public Project Project { get; }
         public VisualElement Root { get; }
         public UIContextSO UIContextSO { get; }
@@ -149,6 +150,7 @@ namespace Astrovisio
         private void OnRenderSettingsButtonClicked()
         {
             SetActiveStep(ProjectSidebarStep.Render);
+            RenderManager.Instance.RenderDataContainer(dataContainer); // To remove/change
         }
 
         private void OnDataSettingsButtonClicked()
@@ -378,8 +380,9 @@ namespace Astrovisio
             UpdateRenderingParams();
         }
 
-        private void OnProjectProcessed(ProcessedData data)
+        private void OnProjectProcessed(DataPack data)
         {
+            dataContainer = new DataContainer(data);
             SetProcessDataButton(true);
             SetNextStepButtons(true);
         }

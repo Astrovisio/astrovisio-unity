@@ -34,7 +34,22 @@ namespace Astrovisio
             mainViewController.SetContentVisibility(state);
             mainViewController.SetBackgroundVisibility(state);
         }
-        
+
+        public void SetLoading(bool state)
+        {
+            var loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+
+            if (state)
+            {
+                loaderView.AddToClassList("active");
+            }
+            else
+            {
+                loaderView.RemoveFromClassList("active");
+            }
+
+        }
+
     }
 
 }

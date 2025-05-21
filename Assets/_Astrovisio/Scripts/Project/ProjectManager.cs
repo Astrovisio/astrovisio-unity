@@ -12,6 +12,7 @@ namespace Astrovisio
 	{
 		[Header("Dependencies")]
 		[SerializeField] private APIManager apiManager;
+		[SerializeField] private UIManager uiManager;
 
 		// === Events ===
 		public event Action<List<Project>> ProjectsFetched;
@@ -19,7 +20,7 @@ namespace Astrovisio
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<ProcessedData> ProjectProcessed;
+		public event Action<DataPack> ProjectProcessed;
 		public event Action ProjectUnselected;
 		public event Action<int> ProjectDeleted;
 		public event Action<string> ApiError;
@@ -490,12 +491,14 @@ namespace Astrovisio
 
 		private IEnumerator ProcessProjectCoroutine(int id, ProcessProjectRequest processProjectRequest)
 		{
+			uiManager.SetLoading(true);
 			yield return apiManager.ProcessProject(
 				id,
 				processProjectRequest,
 				onSuccess: processed => ProjectProcessed?.Invoke(processed),
 				onError: err => ApiError?.Invoke(err)
 			);
+			uiManager.SetLoading(false);
 		}
 
 

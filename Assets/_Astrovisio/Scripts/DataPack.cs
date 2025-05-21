@@ -4,7 +4,7 @@ using MessagePack;
 namespace Astrovisio
 {
     [MessagePackObject]
-    public class ProcessedData
+    public class DataPack
     {
         [Key("columns")]
         public string[] Columns { get; set; }
