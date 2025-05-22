@@ -19,8 +19,6 @@ namespace Astrovisio
         public VisualElement Root { get; }
 
         // === UI ===
-        private ScrollView paramScrollView;
-        private Label projectNameLabel;
         private Toggle checkAllToggle;
 
         // === Local ===
@@ -43,11 +41,27 @@ namespace Astrovisio
             var leftContainer = rootContainer.Children().FirstOrDefault(child => child.name == "LeftContainer");
             var rightContainer = rootContainer.Children().FirstOrDefault(child => child.name == "RightContainer");
 
-            paramScrollView = leftContainer.Q<ScrollView>("ParamScrollView");
+            // Files Scroll View
+            var filesContainer = leftContainer.Q<VisualElement>("FilesContainer");
+            var projectScrollView = filesContainer.Q<ScrollView>("ScrollFiles");
+            projectScrollView.Clear();
+            filesContainer.SetEnabled(false);
 
-            projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
+            // Project Name
+            var projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
             projectNameLabel.text = Project.Name;
 
+            // Project Description
+            var descriptionLabel = rightContainer.Q<Label>("DescriptionLabel");
+            descriptionLabel.text = Project.Description;
+
+            // VR Reels
+            var vrReels = rightContainer.Q<VisualElement>("VRReels");
+            var scrollVRReels = vrReels.Q<ScrollView>("ScrollVrReels");
+            scrollVRReels.Clear();
+            vrReels.SetEnabled(false);
+
+            // Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
             if (checkAllToggle != null)
             {
@@ -58,7 +72,7 @@ namespace Astrovisio
                 });
             }
 
-            PopulateScrollView();
+            InitScrollView();
             InitCheckAllToggle();
         }
 
@@ -70,8 +84,12 @@ namespace Astrovisio
             }
         }
 
-        private void PopulateScrollView()
+        private void InitScrollView()
         {
+            var rootContainer = Root.Children().First();
+            var leftContainer = rootContainer.Children().FirstOrDefault(child => child.name == "LeftContainer");
+
+            var paramScrollView = leftContainer.Q<ScrollView>("ParamScrollView");
             paramScrollView.contentContainer.Clear();
             paramControllers.Clear();
 
@@ -93,7 +111,8 @@ namespace Astrovisio
                 var controller = new ParamRowController(paramRow, paramName, param);
                 paramControllers[paramName] = controller;
 
-                controller.OnAxisChanged += HandleAxisSelected;
+                controller.OnAxisChanged += HandleOnAxisChanged;
+                controller.OnThresholdChanged += HandleOnThresholdChanged;
 
                 // controller.OnParamStateChanged += () => Debug.Log($"{paramName} disabled."); // TODO: update project request?
 
@@ -128,7 +147,7 @@ namespace Astrovisio
             }
         }
 
-        private void HandleAxisSelected(Axis? axis, ParamRowController newly)
+        private void HandleOnAxisChanged(Axis? axis, ParamRowController newly)
         {
             if (axis == null)
             {
@@ -210,25 +229,14 @@ namespace Astrovisio
             UpdateProject();
         }
 
+        private void HandleOnThresholdChanged(Threshold threshold, ParamRowController controller)
+        {
+            UpdateProject();
+        }
+
         private void UpdateProject()
         {
-            var updateProjectRequest = new UpdateProjectRequest
-            {
-                Name = Project.Name,
-                Favourite = Project.Favourite,
-                Description = Project.Description,
-                Paths = Project.Paths,
-                ConfigProcess = Project.ConfigProcess
-            };
-
-            // foreach (var kvp in Project.ConfigProcess.Params)
-            // {
-            //     var paramName = kvp.Key;
-            //     var param = kvp.Value;
-            //     Debug.Log($"[Param Debug] {paramName} → X: {param.XAxis}, Y: {param.YAxis}, Z: {param.ZAxis}");
-            // }
-
-            // projectManager.UpdateProject(Project.Id, updateProjectRequest);
+            projectManager.UpdateProject(Project.Id, Project);
         }
 
         private void InitCheckAllToggle()

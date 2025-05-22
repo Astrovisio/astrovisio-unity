@@ -26,11 +26,11 @@
 }
 
 #Root > #PanelContainer {
-    width: 420px;
+    width: 380px;
     background-color: var(--black);
     align-items: auto;
-    min-width: 420px;
-    max-width: 420px;
+    min-width: 380px;
+    max-width: 380px;
     padding-top: 24px;
     padding-right: 24px;
     padding-bottom: 24px;
@@ -80,10 +80,23 @@
     border-bottom-width: 16px;
 }
 
-#Root > #PanelContainer > #DescriptionLabel {
+#Root > #PanelContainer > #DescriptionLabelIntro {
     -unity-text-align: upper-center;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    margin-bottom: 16px;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+#Root > #PanelContainer > #DescriptionLabel {
+    -unity-text-align: upper-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    text-overflow: clip;
+    white-space: normal;
+}
+
+#Root > #PanelContainer > #DownloadButton {
+    margin-top: 16px;
+    display: none;
 }
 
 #Root > #PanelContainer > #DownloadButton > .btn-primary > #Icon {

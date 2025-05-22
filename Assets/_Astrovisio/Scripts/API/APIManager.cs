@@ -219,6 +219,7 @@ namespace Astrovisio
 
             string jsonPayload = JsonConvert.SerializeObject(req, Formatting.None,
                 new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include });
+            Debug.Log($"[APIManager] jsonPayload {jsonPayload}");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
 
             using (UnityWebRequest request = new UnityWebRequest(url, "POST"))

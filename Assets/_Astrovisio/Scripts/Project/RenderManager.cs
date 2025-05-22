@@ -27,6 +27,12 @@ namespace Astrovisio
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
+            DataRenderer[] allDataRenderer = FindObjectsByType<DataRenderer>(FindObjectsSortMode.None);
+            foreach (DataRenderer dR in allDataRenderer)
+            {
+                Destroy(dR.gameObject);
+            }
+
             DataRenderer dataRenderer = Instantiate(dataRendererPrefab);
             dataRenderer.RenderDataContainer(dataContainer);
         }

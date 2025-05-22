@@ -12,4 +12,7 @@
     <engine:Instance template="LoaderView" name="LoaderView" />
     <engine:Instance template="LoaderVrView" name="LoaderVrView" />
     <engine:Instance template="ErrorVrView" name="ErrorVrView" />
+    <engine:VisualElement name="ToastMessageView" style="flex-grow: 1; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <engine:Button text="Button" style="position: absolute; right: 100px; bottom: 100px; height: 135px; width: 227px;" />
+    </engine:VisualElement>
 </engine:UXML>

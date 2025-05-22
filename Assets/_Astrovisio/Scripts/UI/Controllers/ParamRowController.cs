@@ -79,11 +79,15 @@ namespace Astrovisio
             minInputField.RegisterValueChangedCallback(evt =>
             {
                 Param.ThrMinSel = evt.newValue;
+                UpdateWarningLabel(Threshold.Min);
+                OnThresholdChanged?.Invoke(Threshold.Min, this);
                 // Debug.Log($"[UI] {ParamName} → ThrMin aggiornato a {evt.newValue}");
             });
             maxInputField.RegisterValueChangedCallback(evt =>
             {
                 Param.ThrMaxSel = evt.newValue;
+                UpdateWarningLabel(Threshold.Max);
+                OnThresholdChanged?.Invoke(Threshold.Max, this);
                 // Debug.Log($"[UI] {ParamName} → ThrMax aggiornato a {evt.newValue}");
             });
             resetButton = thresholdContainer.Q<Button>("ResetButton");
@@ -210,7 +214,10 @@ namespace Astrovisio
 
         private void InitThresholds()
         {
-            ResetThresholds();
+            minInputField.value = Param.ThrMinSel ?? Param.ThrMin;
+            maxInputField.value = Param.ThrMaxSel ?? Param.ThrMax;
+            UpdateWarningLabel(Threshold.Min);
+            UpdateWarningLabel(Threshold.Max);
         }
 
         private void OnResetButtonClicked()
@@ -249,6 +256,44 @@ namespace Astrovisio
 
             OnStateChanged?.Invoke();
             // Debug.Log(ParamName + " " + value);
+        }
+
+        private void UpdateWarningLabel(Threshold threshold)
+        {
+            if (threshold == Threshold.Min)
+            {
+                if (Param.ThrMinSel < Param.ThrMin)
+                {
+                    minErrorLabel.style.visibility = Visibility.Visible;
+                    minErrorLabel.text = "Value too low";
+                }
+                else if (Param.ThrMinSel > Param.ThrMax || Param.ThrMinSel > Param.ThrMaxSel)
+                {
+                    minErrorLabel.style.visibility = Visibility.Visible;
+                    minErrorLabel.text = "Value too low";
+                }
+                else
+                {
+                    minErrorLabel.style.visibility = Visibility.Hidden;
+                }
+            }
+            else if (threshold == Threshold.Max)
+            {
+                if (Param.ThrMaxSel > Param.ThrMax)
+                {
+                    maxErrorLabel.style.visibility = Visibility.Visible;
+                    maxErrorLabel.text = "Value too high";
+                }
+                else if (Param.ThrMaxSel < Param.ThrMin || Param.ThrMaxSel < Param.ThrMinSel)
+                {
+                    maxErrorLabel.style.visibility = Visibility.Visible;
+                    maxErrorLabel.text = "Value too low";
+                }
+                else
+                {
+                    maxErrorLabel.style.visibility = Visibility.Hidden;
+                }
+            }
         }
 
     }

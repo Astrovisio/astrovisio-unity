@@ -2,7 +2,6 @@
     <engine:Template name="NewProjectPanel" src="project://database/Assets/UI%20Toolkit/Components/NewProjectPanel.uxml?fileID=9197481963319205126&amp;guid=bfa20f0c30537044e95b065b3e265b7e&amp;type=3#NewProjectPanel" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/NewProjectView.uss?fileID=7433441132597879392&amp;guid=2b7e008f8569c514e86915d070f6e23e&amp;type=3#NewProjectView" />
     <engine:VisualElement name="Root" class="active" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex;">
-        <engine:VisualElement name="Background" style="position: absolute; background-color: rgba(0, 0, 0, 0.5);" />
         <engine:Instance template="NewProjectPanel" name="NewProjectPanel" style="position: absolute; top: 50%; left: 50%; right: auto; bottom: auto; height: 758px; width: 640px; min-width: 640px; max-width: 640px; transform-origin: center; translate: -50% -50%; min-height: 758px; max-height: 758px; display: flex;" />
     </engine:VisualElement>
 </engine:UXML>

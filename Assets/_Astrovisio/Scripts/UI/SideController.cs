@@ -17,7 +17,7 @@ namespace Astrovisio
         private UIContextSO uiContextSO;
 
         // === Controllers ===
-        private SidebarController sidebarController; // TODO ?
+        private HomeSidebarController sidebarController; // TODO ?
         private Dictionary<int, ProjectSidebarController> projectSidebarControllerDictionary = new();
 
 
@@ -45,7 +45,7 @@ namespace Astrovisio
         {
             sideContainer = uiDocument.rootVisualElement.Q<VisualElement>("Side");
 
-            EnableSidebar();
+            EnableHomeSidebar();
 
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectUnselected += OnProjectUnselected;
@@ -59,12 +59,10 @@ namespace Astrovisio
             projectManager.ProjectClosed -= OnProjectClosed;
         }
 
-        private void EnableSidebar()
+        private void EnableHomeSidebar()
         {
-            // Debug.Log("EnableSidebar");
-            sidebarController = new SidebarController();
             sidebarContainer = sideContainer.Q<VisualElement>("Sidebar");
-            // Debug.Log("Sidebar is: " + sidebarContainer);
+            sidebarController = new HomeSidebarController(projectManager, sidebarContainer, uiContextSO);
         }
 
         private void OnProjectOpened(Project project)

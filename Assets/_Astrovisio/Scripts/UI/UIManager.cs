@@ -14,13 +14,20 @@ namespace Astrovisio
         // === References ===
         private UIDocument uiDocument;
         private MainViewController mainViewController;
+        private ErrorVRViewController errorVRViewController;
 
         private void Start()
         {
             uiDocument = GetComponent<UIDocument>();
 
-            var mainViewRoot = uiDocument.rootVisualElement.Q<VisualElement>("MainView");
-            mainViewController = new MainViewController(mainViewRoot);
+            var mainView = uiDocument.rootVisualElement.Q<VisualElement>("MainView");
+            mainViewController = new MainViewController(mainView);
+
+            var errorVRView = uiDocument.rootVisualElement.Q<VisualElement>("ErrorVrView");
+            errorVRViewController = new ErrorVRViewController(errorVRView);
+
+            var toastMessage = uiDocument.rootVisualElement.Q<VisualElement>("ToastMessageView");
+            var toastMessageController = new ToastMessageController(toastMessage);
 
             projectManager.FetchAllProjects();
         }
@@ -48,6 +55,18 @@ namespace Astrovisio
                 loaderView.RemoveFromClassList("active");
             }
 
+        }
+
+        public void SetErrorVR(bool state)
+        {
+            if (state)
+            {
+                errorVRViewController.Open();
+            }
+            else
+            {
+                errorVRViewController.Close();
+            }
         }
 
     }

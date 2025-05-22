@@ -2,12 +2,13 @@
     <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/ErrorVrView.uss?fileID=7433441132597879392&amp;guid=d853b41b45f9173428f95ebd6ae561c1&amp;type=3#ErrorVrView" />
     <engine:VisualElement name="Root" class="active" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex;">
-        <engine:VisualElement name="Background" />
+        <engine:VisualElement name="Background" style="top: 0; bottom: 0; right: -2px; left: 0;" />
         <engine:VisualElement name="PanelContainer" style="flex-grow: 0; align-self: center; align-items: center;">
             <engine:Button text="&#10;" name="CloseButton" />
             <engine:VisualElement name="Icon" />
-            <engine:Label text="Meta Quest Link app not found!&#10;" name="TitleLabel" enable-rich-text="true" />
-            <engine:Label text="Astrovisio can’t find Meta Quest Link on this computer. Be sure to download and install the latest version." name="DescriptionLabel" />
+            <engine:Label text="Meta Quest Link Not Available&#10;" name="TitleLabel" enable-rich-text="true" />
+            <engine:Label text="We couldn’t detect an active Quest Link session.&#10;&#10;&lt;b&gt;To connect:&lt;/b&gt;" name="DescriptionLabelIntro" parse-escape-sequences="false" />
+            <engine:Label text="&#10;• Ensure the &lt;b&gt;Meta Quest Link app&lt;/b&gt; is running on your PC.&#10;&#10;• Connect your Quest headset via USB-C or launch &lt;b&gt;Air Link&lt;/b&gt;.&#10;&#10;• In the headset, go to &lt;b&gt;Quick Settings &gt; Quest Link&lt;/b&gt; and select &lt;b&gt;Launch&lt;/b&gt;.&#10;&#10;• Accept any prompts to &lt;b&gt;Enable Link (Oculus Link)&lt;/b&gt;.&#10;&#10;• Restart your headset and PC if the issue continues." name="DescriptionLabel" parse-escape-sequences="false" />
             <engine:Instance template="PrimaryButton" name="DownloadButton">
                 <AttributeOverrides element-name="Label" text="Download Meta Quest Link" />
             </engine:Instance>

@@ -62,15 +62,9 @@ namespace Astrovisio
                 createLabel.text = FormatDateTime((DateTime)Project.Created);
             }
 
-            //  TODO: continua da qui
-
-            // Debug.Log(projectNameLabel);
-            // Debug.Log(filesLabel);
-            // Debug.Log(lastOpenedLabel);
-            // Debug.Log(createLabel);
-            // Debug.Log(favouriteButton);
-            // Debug.Log(vrButton);
-            // Debug.Log(moreButton);
+            favouriteButton.SetEnabled(false);
+            vrButton.SetEnabled(false);
+            moreButton.SetEnabled(false);
         }
 
         private string FormatDateTime(DateTime dateTime)
