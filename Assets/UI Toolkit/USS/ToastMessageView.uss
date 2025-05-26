@@ -1,0 +1,35 @@
+#ContainerSuccess {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+}
+
+#ContainerMessage {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+}
+
+#ContainerError {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    translate: 101% 0;
+    transition: translate 0.5s ease-in-out;
+}
+
+#ContainerMessage.active {
+    translate: 0 0;
+}
+
+#ContainerError.active {
+    translate: 0 0;
+}
+
+#ContainerSuccess.active {
+    translate: 0 0;
+}

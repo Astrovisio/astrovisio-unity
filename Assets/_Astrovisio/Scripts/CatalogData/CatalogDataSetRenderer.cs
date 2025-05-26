@@ -143,14 +143,17 @@ namespace CatalogData
                     },
                     new ColumnInfo(){
                         Name = "force", Type = ColumnType.Numeric, NumericIndex = 3
+                    },
+                    new ColumnInfo(){
+                        Name = "mass", Type = ColumnType.Numeric, NumericIndex = 4
                     }
                 },
                 new float[][] {
                     new float[] {0, 0.5f, 1},
                     new float[] {0, 0.5f, 1},
                     new float[] {0, 0.5f, 1},
-                    new float[] {0.2f, 0.5f, 0.8f},
-                    // new float[] {1, 1, 0, 0.3f},
+                    new float[] {0.2f, 0f, 0.8f},
+                    new float[] {1f, 1f, 0.3f},
             });
             // _catalogMaterial = new Material(Shader.Find("IDIA/CatalogPoint"));
             // _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
@@ -251,7 +254,7 @@ namespace CatalogData
                 // transform.localScale *= DataMapping.Uniforms.Scale;
                 // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
 
-                UpdateMappingColumns(true);
+                UpdateMappingColumns();
                 UpdateMappingValues();
             }
 
@@ -265,8 +268,11 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
         }
 
-        public bool UpdateMappingColumns(bool logErrors = false)
+        [ContextMenu("UpdateMappingColumns")]
+        public bool UpdateMappingColumns()
         {
+            bool logErrors = false;
+
             // Set the color map buffer if we're not using a uniform color
             if (!DataMapping.UniformColor)
             {
@@ -519,6 +525,7 @@ namespace CatalogData
             transform.localScale = _initialLocalScale;
         }
 
+        [ContextMenu("UpdateMappingValues")]
         public bool UpdateMappingValues()
         {
             if (!_catalogMaterial)

@@ -240,8 +240,11 @@ namespace Astrovisio
                 try
                 {
                     byte[] rawBytes = request.downloadHandler.data;
-                    var processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
+                    DataPack processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
                     Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
+
+                    // double[] firstRow = processedData.Rows[1];
+                    // Debug.Log("Test " + firstRow[2]);
 
                     onSuccess?.Invoke(processedData);
                 }

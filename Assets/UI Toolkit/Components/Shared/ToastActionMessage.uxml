@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/USS/ToastActionMessage.uss?fileID=7433441132597879392&amp;guid=3ebaa85a91833449b8e2840b9aa1a5b3&amp;type=3#ToastActionMessage" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ToastActionMessage.uss?fileID=7433441132597879392&amp;guid=98f081c7d34fe0d4c97ced79c1289004&amp;type=3#ToastActionMessage" />
     <engine:VisualElement name="RootToastMessage">
-        <engine:Label text=" dsadsa dsa dsad ddsa dasd sad ads dsa dsa das" name="Label" />
+        <engine:Label text="Message text Message text Message text Message text" name="Label" />
         <engine:VisualElement name="Buttons" style="flex-grow: 1;">
             <engine:Button text="Undo" name="Undo" />
             <engine:Button name="Close" />

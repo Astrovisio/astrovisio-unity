@@ -17,13 +17,10 @@
     background-color: var(--success);
     flex-grow: 0;
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-right: 24px;
     margin-bottom: 24px;
-    translate: 101% 0;
-    transition: translate 0.5s ease-in-out;
-}
-#RootToastSuccess.active {
-    translate: 0 0;
+    min-width: 270px;
+    width: 270px;
 }
 
 #RootToastSuccess > #Icon {
@@ -50,9 +47,16 @@
     padding-bottom: 0;
     padding-left: 0;
     white-space: normal;
+    -unity-text-align: middle-left;
 }
 
 #RootToastSuccess > #ContainerLabel > #DescriptionLabel {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
     white-space: normal;
+    margin-top: -4px;
+    -unity-text-align: middle-left;
+}
+
+#ContainerSucces.active {
+    translate: 0 0;
 }

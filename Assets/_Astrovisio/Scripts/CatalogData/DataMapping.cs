@@ -74,8 +74,8 @@ namespace CatalogData
                 {
                     Spherical = false,
                     RenderType = RenderType.Billboard,
-                    ColorMap = ColorMapEnum.Plasma,
-                    UniformColor = true,
+                    ColorMap = ColorMapEnum.Inferno,
+                    UniformColor = false,
                     UniformPointSize = true,
                     UniformPointShape = true,
                     UniformOpacity = true,

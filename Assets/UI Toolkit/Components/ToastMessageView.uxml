@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="ToastActionMessage" src="project://database/Assets/UI%20Toolkit/Components/Shared/ToastActionMessage.uxml?fileID=9197481963319205126&amp;guid=66a6e6aee6e797541948d133539b9dbb&amp;type=3#ToastActionMessage" />
+    <engine:Template name="ToastActionSuccess" src="project://database/Assets/UI%20Toolkit/Components/Shared/ToastActionSuccess.uxml?fileID=9197481963319205126&amp;guid=8fce9603d56ff99489e9600244f77753&amp;type=3#ToastActionSuccess" />
+    <engine:Template name="ToastActionError" src="project://database/Assets/UI%20Toolkit/Components/Shared/ToastActionError.uxml?fileID=9197481963319205126&amp;guid=87797e6eb030f364fa4b88d5192a7185&amp;type=3#ToastActionError" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ToastMessageView.uss?fileID=7433441132597879392&amp;guid=9799f44081e3fb649b5e4eb1301cb00d&amp;type=3#ToastMessageView" />
+    <engine:Instance template="ToastActionMessage" name="ContainerMessage" />
+    <engine:Instance template="ToastActionSuccess" name="ContainerSuccess" />
+    <engine:Instance template="ToastActionError" name="ContainerError" />
+</engine:UXML>

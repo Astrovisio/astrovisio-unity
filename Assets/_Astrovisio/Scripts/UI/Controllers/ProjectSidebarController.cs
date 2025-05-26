@@ -82,23 +82,29 @@ namespace Astrovisio
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
             downsamplingDropdown.choices.Clear();
-            downsamplingDropdown.choices.Add("10%");
-            downsamplingDropdown.choices.Add("20%");
-            downsamplingDropdown.choices.Add("30%");
-            downsamplingDropdown.choices.Add("40%");
+            downsamplingDropdown.choices.Add("-");
+            downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
+            downsamplingDropdown.choices.Add("75%");
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
-                string percentageText = evt.newValue.Replace("%", "");
-                if (float.TryParse(percentageText, out float percentage))
+                if (evt.newValue == "-")
                 {
-                    float value = percentage / 100f;
-                    // Debug.Log($"Converted value: {value}");
-                    Project.ConfigProcess.Downsampling = percentage;
+                    Project.ConfigProcess.Downsampling = 1;
                 }
                 else
                 {
-                    Debug.LogWarning("Invalid percentage format.");
+                    string percentageText = evt.newValue.Replace("%", "");
+                    if (float.TryParse(percentageText, out float percentage))
+                    {
+                        float value = percentage / 100f;
+                        Debug.Log($"Converted value: {value}");
+                        Project.ConfigProcess.Downsampling = percentage;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Invalid percentage format.");
+                    }
                 }
             });
 
@@ -145,7 +151,7 @@ namespace Astrovisio
         private void OnGoToVRButtonClicked()
         {
             Debug.Log("OnGoToVRButtonClicked");
-            VRManager.Instance.StartVRMode();
+            VRManager.Instance.EnterVR();
             // uiManager.SetErrorVR(true);
         }
 

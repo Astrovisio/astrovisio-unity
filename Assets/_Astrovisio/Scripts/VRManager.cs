@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Management;
 
@@ -8,27 +9,42 @@ namespace Astrovisio
     {
         public static VRManager Instance { get; private set; }
 
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private GameObject xrOrigin;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("Multiple instances of VRManager found. Destroying the new one.");
                 Destroy(gameObject);
                 return;
             }
-
             Instance = this;
-            // DontDestroyOnLoad(gameObject);
         }
 
-        public void StartVRMode()
+        private void Update()
         {
+            if (XRGeneralSettings.Instance.Manager.isInitializationComplete && Input.GetKeyDown(KeyCode.JoystickButton1))
+            {
+                Debug.Log("[VRManager] B button pressed. Exiting VR...");
+                ExitVR();
+            }
+        }
+
+
+        public void EnterVR()
+        {
+            mainCamera.gameObject.SetActive(false);
+            xrOrigin.SetActive(true);
             StartCoroutine(StartXR());
         }
 
-        public void StopVRMode()
+        public void ExitVR()
         {
+            StopCoroutine(StartXR());
             StopXR();
+            xrOrigin.SetActive(false);
+            mainCamera.gameObject.SetActive(true);
         }
 
         private IEnumerator StartXR()
@@ -42,16 +58,17 @@ namespace Astrovisio
             }
             else
             {
-                Debug.Log("[VRManager] XR Loader initialized. Starting subsystems...");
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
+                Debug.Log("[VRManager] XR started.");
             }
         }
 
         private void StopXR()
         {
-            Debug.Log("[VRManager] Stopping XR...");
             XRGeneralSettings.Instance.Manager.StopSubsystems();
             XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+            Debug.Log("[VRManager] XR stopped.");
         }
+
     }
 }

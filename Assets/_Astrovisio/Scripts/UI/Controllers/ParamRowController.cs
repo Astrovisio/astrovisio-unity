@@ -76,6 +76,8 @@ namespace Astrovisio
             maxInputField = thresholdContainer.Q<DoubleField>("MaxInputField");
             minErrorLabel = thresholdContainer.Q<Label>("MinErrorLabel");
             maxErrorLabel = thresholdContainer.Q<Label>("MaxErrorLabel");
+            Param.ThrMinSel = Param.ThrMinSel ?? Param.ThrMin;
+            Param.ThrMaxSel = Param.ThrMaxSel ?? Param.ThrMax;
             minInputField.RegisterValueChangedCallback(evt =>
             {
                 Param.ThrMinSel = evt.newValue;
