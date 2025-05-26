@@ -125,83 +125,83 @@ namespace CatalogData
 
         #endregion
 
-/*
+        /*
 
-        void Start()
-        {
-
-            _dataSet = new CatalogDataSet(
-                new ColumnInfo[] {
-                    new ColumnInfo(){
-                        Name = "X", Type = ColumnType.Numeric, NumericIndex = 0
-                    },
-                    new ColumnInfo(){
-                        Name = "Y", Type = ColumnType.Numeric, NumericIndex = 1
-                    },
-                    new ColumnInfo(){
-                        Name = "Z", Type = ColumnType.Numeric, NumericIndex = 2
-                    },
-                    new ColumnInfo(){
-                        Name = "force", Type = ColumnType.Numeric, NumericIndex = 3
-                    }
-                },
-                new float[][] {
-                    new float[] {0, 0.5f, 1},
-                    new float[] {0, 0.5f, 1},
-                    new float[] {0, 0.5f, 1},
-                    new float[] {0.2f, 0.5f, 0.8f},
-                    // new float[] {1, 1, 0, 0.3f},
-            });
-
-
-            if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
-            {
-                Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
-            }
-            else
-            {
-                int numDataColumns = _dataSet.DataColumns.Length;
-                _buffers = new ComputeBuffer[numDataColumns];
-
-                for (var i = 0; i < numDataColumns; i++)
+                void Start()
                 {
-                    _buffers[i] = new ComputeBuffer(_dataSet.N, 4);
-                    _buffers[i].SetData(_dataSet.DataColumns[i]);
+
+                    _dataSet = new CatalogDataSet(
+                        new ColumnInfo[] {
+                            new ColumnInfo(){
+                                Name = "X", Type = ColumnType.Numeric, NumericIndex = 0
+                            },
+                            new ColumnInfo(){
+                                Name = "Y", Type = ColumnType.Numeric, NumericIndex = 1
+                            },
+                            new ColumnInfo(){
+                                Name = "Z", Type = ColumnType.Numeric, NumericIndex = 2
+                            },
+                            new ColumnInfo(){
+                                Name = "force", Type = ColumnType.Numeric, NumericIndex = 3
+                            }
+                        },
+                        new float[][] {
+                            new float[] {0, 0.5f, 1},
+                            new float[] {0, 0.5f, 1},
+                            new float[] {0, 0.5f, 1},
+                            new float[] {0.2f, 0.5f, 0.8f},
+                            // new float[] {1, 1, 0, 0.3f},
+                    });
+
+
+                    if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
+                    {
+                        Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
+                    }
+                    else
+                    {
+                        int numDataColumns = _dataSet.DataColumns.Length;
+                        _buffers = new ComputeBuffer[numDataColumns];
+
+                        for (var i = 0; i < numDataColumns; i++)
+                        {
+                            _buffers[i] = new ComputeBuffer(_dataSet.N, 4);
+                            _buffers[i].SetData(_dataSet.DataColumns[i]);
+                        }
+
+                        // Load instance of the material, so that each data set can have different material parameters
+                        GetPropertyIds();
+
+                        _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
+                        _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
+                        _catalogMaterial.SetInt(_idNumSprites, 8);
+
+                        _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
+                        // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
+                        _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
+                        _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
+
+                        // Apply scaling from data set space to world space
+                        // transform.localScale *= DataMapping.Uniforms.Scale;
+                        // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
+
+                        UpdateMappingColumns(true);
+                        UpdateMappingValues();
+                    }
+
+                    if (!DataMapping.UniformColor)
+                    {
+                        SetColorMap(DataMapping.ColorMap);
+                    }
+                    _initialLocalPosition = transform.localPosition;
+                    _initialLocalRotation = transform.localRotation;
+                    _initialLocalScale = transform.localScale;
+                    _initialOpacity = DataMapping.Uniforms.Opacity;
                 }
 
-                // Load instance of the material, so that each data set can have different material parameters
-                GetPropertyIds();
+        */
 
-                _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
-                _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
-                _catalogMaterial.SetInt(_idNumSprites, 8);
-
-                _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
-                // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
-                _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
-                _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
-
-                // Apply scaling from data set space to world space
-                // transform.localScale *= DataMapping.Uniforms.Scale;
-                // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
-
-                UpdateMappingColumns(true);
-                UpdateMappingValues();
-            }
-
-            if (!DataMapping.UniformColor)
-            {
-                SetColorMap(DataMapping.ColorMap);
-            }
-            _initialLocalPosition = transform.localPosition;
-            _initialLocalRotation = transform.localRotation;
-            _initialLocalScale = transform.localScale;
-            _initialOpacity = DataMapping.Uniforms.Opacity;
-        }
-
-*/
-
-        public void SetCatalogData(float[] x, float[] y, float[] z)
+        public void SetCatalogData(float[] x, float[] y, float[] z, float[] data)
         {
 
             Debug.Log("SetCatalogData");
@@ -216,9 +216,9 @@ namespace CatalogData
                     new ColumnInfo(){
                         Name = "Z", Type = ColumnType.Numeric, NumericIndex = 2
                     },
-                    // new ColumnInfo(){
-                    //     Name = "force", Type = ColumnType.Numeric, NumericIndex = 3
-                    // },
+                    new ColumnInfo(){
+                        Name = "size", Type = ColumnType.Numeric, NumericIndex = 3
+                    },
                     // new ColumnInfo(){
                     //     Name = "mass", Type = ColumnType.Numeric, NumericIndex = 4
                     // }
@@ -227,7 +227,7 @@ namespace CatalogData
                     x,
                     y,
                     z,
-                    // new float[] {0.2f, 0f, 0.8f},
+                    data
                     // new float[] {1f, 1f, 0.3f},
             });
 
@@ -248,16 +248,9 @@ namespace CatalogData
 
                 // Load instance of the material, so that each data set can have different material parameters
                 GetPropertyIds();
-                if (DataMapping.RenderType == RenderType.Line)
-                {
-                    _catalogMaterial = new Material(Shader.Find("IDIA/CatalogLine"));
-                }
-                else
-                {
-                    _catalogMaterial = new Material(Shader.Find("IDIA/CatalogPoint"));
-                    _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
-                    _catalogMaterial.SetInt(_idNumSprites, 8);
-                }
+                _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
+                _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
+                _catalogMaterial.SetInt(_idNumSprites, 8);
 
                 _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
                 // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               

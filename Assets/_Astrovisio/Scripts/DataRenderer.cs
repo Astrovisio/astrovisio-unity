@@ -94,12 +94,14 @@ namespace Astrovisio
             float[] x = new float[rowCount];
             float[] y = new float[rowCount];
             float[] z = new float[rowCount];
+            float[] size = new float[rowCount];
             Debug.Log("A");
             for (int i = 0; i < rowCount; i++)
             {
                 x[i] = (float)dataContainer.DataPack.Rows[i][0];
                 y[i] = (float)dataContainer.DataPack.Rows[i][1];
                 z[i] = (float)dataContainer.DataPack.Rows[i][2];
+                size[i] = (float)dataContainer.DataPack.Rows[i][3];
             }
             Debug.Log("B");
 
@@ -112,7 +114,7 @@ namespace Astrovisio
             Debug.Log(x);
             Debug.Log(y);
             Debug.Log(z);
-            astrovidioDataSetRenderer.SetCatalogData(x, y, z);
+            astrovidioDataSetRenderer.SetCatalogData(x, y, z, size);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 
