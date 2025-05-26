@@ -163,6 +163,7 @@ namespace CatalogData
         public bool Clamped;
         public float MinVal;
         public float MaxVal;
+        public bool InverseMapping;
         public float Offset;
         public float Scale = 1;
         public ScalingType ScalingType = ScalingType.Linear;
@@ -173,6 +174,7 @@ namespace CatalogData
             Clamped = Clamped ? 1 : 0,
             MinVal = MinVal,
             MaxVal = MaxVal,
+            InverseMapping = InverseMapping ? 1 : 0,
             Offset = Offset,
             Scale = Scale,
             ScalingType = ScalingType.GetHashCode(),
@@ -190,6 +192,7 @@ namespace CatalogData
         public int Clamped;
         public float MinVal;
         public float MaxVal;
+        public int InverseMapping;
         public float Offset;
         public float Scale;
 

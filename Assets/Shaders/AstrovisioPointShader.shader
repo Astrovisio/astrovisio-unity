@@ -11,7 +11,8 @@ Shader "Astrovisio/PointShader"
 
             // Basic additive blending
 			ZWrite Off
-			Blend One One
+			// Blend SrcAlpha One
+            Blend SrcAlpha One
 
             CGPROGRAM
             #pragma vertex vert
@@ -30,7 +31,7 @@ Shader "Astrovisio/PointShader"
             #define Y_INDEX 1
             #define Z_INDEX 2
             #define CMAP_INDEX 3
-            // #define OPACITY_INDEX 4
+            #define OPACITY_INDEX 4
             // #define POINT_SIZE_INDEX 5
             // #define POINT_SHAPE_INDEX 6
 
@@ -45,6 +46,7 @@ Shader "Astrovisio/PointShader"
                 int Clamped;
                 float MinVal;
                 float MaxVal;
+                int InverseMapping;
                 float Offset;
                 float Scale;
                 int ScalingType;
@@ -62,6 +64,7 @@ Shader "Astrovisio/PointShader"
             StructuredBuffer<float> dataY;
             StructuredBuffer<float> dataZ;
             StructuredBuffer<float> dataCmap;
+            StructuredBuffer<float> dataOpacity;
             StructuredBuffer<MappingConfig> mappingConfigs;
             // Filtering
             uniform float cutoffMin;
@@ -86,6 +89,11 @@ Shader "Astrovisio/PointShader"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
+            
+            float map(float value, float min1, float max1, float min2, float max2) {
+                return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+            }
+
             float applyScaling(float input, MappingConfig config)
             {
                 float scaledValue;
@@ -104,36 +112,26 @@ Shader "Astrovisio/PointShader"
                         scaledValue = exp(input);
                         break;
                     default:
-                        scaledValue = input * config.Scale + config.Offset;
-                        break;                        
+                        scaledValue = input * config.Scale;
+                        break;
                 }
                 
                 if (config.Clamped)
                 {
                     scaledValue = clamp(scaledValue, config.MinVal, config.MaxVal);
                 }
-                return scaledValue;
-            }
 
-            float applyScaling(float input, int type, float scale, float offset)
-            {
-                switch (type)
-                {
-                    case LOG:
-                        return log(input);
-                    case SQRT:
-                        return sqrt(input);
-                    case SQUARED:
-                        return input * input;
-                    case EXP:
-                        return exp(input);
-                    default:
-                        return input * scale + offset;                        
+                float toMin = 0;
+                float toMax = 1;
+                if (config.InverseMapping) {
+                    toMin = 1;
+                    toMax = 0;
                 }
-            }
+                scaledValue = map(scaledValue, config.MinVal, config.MaxVal, toMin, toMax);
 
-            float map(float value, float min1, float max1, float min2, float max2) {
-                return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+                scaledValue += config.Offset;
+                
+                return scaledValue;
             }
 
             v2f vert(appdata v)
@@ -170,8 +168,8 @@ Shader "Astrovisio/PointShader"
                 o.pointSize = 15.0; // punto ben visibile (Fuziona ????)
 
                 if (!useUniformColor) {        
-                    float value = applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]); 
-                    value = clamp(map(value, mappingConfigs[CMAP_INDEX].MinVal, mappingConfigs[CMAP_INDEX].MaxVal, 0, 1), 0, 1);       
+                    float value = applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]);
+      
                     // Apply color mapping
                     float colorMapOffset = 1.0 - (0.5 + colorMapIndex) / numColorMaps;
                     o.color = tex2Dlod(colorMap, float4(value, colorMapOffset, 0, 0));
@@ -180,9 +178,12 @@ Shader "Astrovisio/PointShader"
                     o.color = color;
                 }
 
-                if (useUniformOpacity) {
-                    o.color.a *= opacity;
+                if (!useUniformOpacity) {                
+                    o.color.a = applyScaling(dataOpacity[v.vertexID], mappingConfigs[OPACITY_INDEX]);
                 }
+                else {
+                    o.color.a = opacity;
+                }    
 
                 return o;
             }
