@@ -4,13 +4,21 @@ Shader "Astrovisio/PointShader"
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        // Tags { "RenderType"="Opaque" }
+        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "True" }
         Pass
         {
+
+            // Basic additive blending
+			ZWrite Off
+			Blend One One
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.0
+
+            #include "UnityCG.cginc"
 
             #define LINEAR 0
             #define LOG 1
@@ -29,6 +37,7 @@ Shader "Astrovisio/PointShader"
             struct appdata
             {
                 uint vertexID : SV_VertexID;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct MappingConfig
@@ -47,6 +56,7 @@ Shader "Astrovisio/PointShader"
 
             // Properties variables
             uniform int useUniformColor;
+            uniform int useUniformOpacity;
             // Data buffers for positions and values
             StructuredBuffer<float> dataX;
             StructuredBuffer<float> dataY;
@@ -62,6 +72,7 @@ Shader "Astrovisio/PointShader"
             uniform int numColorMaps;
             // Uniforms
             uniform float4 color;
+            uniform float opacity;
 
             float4x4 datasetMatrix;
             float scalingFactor;
@@ -72,6 +83,7 @@ Shader "Astrovisio/PointShader"
                 float4 color : COLOR;
                 float pointSize : PSIZE;
                 float mustDiscard : TEXCOORD0;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             float applyScaling(float input, MappingConfig config)
@@ -120,33 +132,30 @@ Shader "Astrovisio/PointShader"
                 }
             }
 
+            float map(float value, float min1, float max1, float min2, float max2) {
+                return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+            }
+
             v2f vert(appdata v)
             {
                 v2f o;
 
-                if ((dataX[v.vertexID] > mappingConfigs[X_INDEX].FilterMaxVal) || (dataX[v.vertexID] < mappingConfigs[X_INDEX].FilterMinVal)) {
+                if ((dataX[v.vertexID] > mappingConfigs[X_INDEX].MaxVal) || (dataX[v.vertexID] < mappingConfigs[X_INDEX].MinVal)) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
-                if ((dataY[v.vertexID] > mappingConfigs[Y_INDEX].FilterMaxVal) || (dataY[v.vertexID] < mappingConfigs[Y_INDEX].FilterMinVal)) {
+                if ((dataY[v.vertexID] > mappingConfigs[Y_INDEX].MaxVal) || (dataY[v.vertexID] < mappingConfigs[Y_INDEX].MinVal)) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
-                if ((dataZ[v.vertexID] > mappingConfigs[Z_INDEX].FilterMaxVal) || (dataZ[v.vertexID] < mappingConfigs[Z_INDEX].FilterMinVal)) {
+                if ((dataZ[v.vertexID] > mappingConfigs[Z_INDEX].MaxVal) || (dataZ[v.vertexID] < mappingConfigs[Z_INDEX].MinVal)) {
                     o.mustDiscard = 1.0;
                     return o;
                 }               
-                if ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].FilterMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].FilterMinVal)) {
+                if ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].MaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].MinVal)) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
-
-                // if (o.mustDiscard) {
-                //     o.vertex = float4(0.0, 0.0, 0.0, 0.0);
-                //     o.color = float4(0.0, 0.0, 0.0, 0.0);
-                //     o.pointSize = 0;
-                //     return o;
-                // }
 
                 float3 pos = float3(
                     applyScaling(dataX[v.vertexID], mappingConfigs[X_INDEX]),
@@ -161,13 +170,18 @@ Shader "Astrovisio/PointShader"
                 o.pointSize = 15.0; // punto ben visibile (Fuziona ????)
 
                 if (!useUniformColor) {        
-                    float value = clamp(applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]), 0, 1);        
+                    float value = applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]); 
+                    value = clamp(map(value, mappingConfigs[CMAP_INDEX].MinVal, mappingConfigs[CMAP_INDEX].MaxVal, 0, 1), 0, 1);       
                     // Apply color mapping
                     float colorMapOffset = 1.0 - (0.5 + colorMapIndex) / numColorMaps;
                     o.color = tex2Dlod(colorMap, float4(value, colorMapOffset, 0, 0));
                 }
                 else {
                     o.color = color;
+                }
+
+                if (useUniformOpacity) {
+                    o.color.a *= opacity;
                 }
 
                 return o;
