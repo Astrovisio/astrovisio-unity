@@ -14,16 +14,16 @@
                     <AttributeOverrides element-name="DropdownField" choices="Inferno,Paradiso" index="0" />
                 </engine:Instance>
             </engine:VisualElement>
-            <engine:Instance template="Slider" name="SaturationSlider">
+            <engine:Instance template="Slider" name="SaturationSlider" style="display: none;">
                 <AttributeOverrides element-name="Label" text="Saturation" />
             </engine:Instance>
-            <engine:Instance template="Slider" name="ContrastSlider">
+            <engine:Instance template="Slider" name="ContrastSlider" style="display: none;">
                 <AttributeOverrides element-name="Label" text="Contrast" />
             </engine:Instance>
-            <engine:Instance template="Slider" name="OpacitySlider">
+            <engine:Instance template="Slider" name="OpacitySlider" style="display: none;">
                 <AttributeOverrides element-name="Label" text="Opacity" />
             </engine:Instance>
-            <engine:Instance template="Slider" name="BrightnessSlider">
+            <engine:Instance template="Slider" name="BrightnessSlider" style="display: none;">
                 <AttributeOverrides element-name="Label" text="Brightness" />
             </engine:Instance>
         </engine:VisualElement>

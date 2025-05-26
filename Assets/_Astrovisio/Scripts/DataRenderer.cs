@@ -1,4 +1,5 @@
 using System.IO;
+using CatalogData;
 using UnityEngine;
 
 namespace Astrovisio
@@ -8,6 +9,8 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private Shader pointShader;
         [SerializeField] private GameObject dataCubeContainer;
+        [SerializeField] private GameObject catalogDataSetRendererGO;
+        [SerializeField] private GameObject astrovidioDataSetRendererGO;
 
         [Header("Debug")]
         [SerializeField] private bool debugMode = false;
@@ -73,19 +76,44 @@ namespace Astrovisio
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
-            if (dataCubeContainer == null)
-            {
-                Debug.LogError("DataCubeContainer not assigned.");
-                return;
-            }
+            // if (dataCubeContainer == null)
+            // {
+            //     Debug.LogError("DataCubeContainer not assigned.");
+            //     return;
+            // }
 
-            var cubeRenderer = dataCubeContainer.GetComponent<DataCubeRenderer>();
-            if (cubeRenderer == null)
-            {
-                cubeRenderer = dataCubeContainer.AddComponent<DataCubeRenderer>();
-            }
+            // var cubeRenderer = dataCubeContainer.GetComponent<DataCubeRenderer>();
+            // if (cubeRenderer == null)
+            // {
+            //     cubeRenderer = dataCubeContainer.AddComponent<DataCubeRenderer>();
+            // }
 
-            cubeRenderer.Initialize(dataContainer, pointShader);
+            // cubeRenderer.Initialize(dataContainer, pointShader);
+
+            int rowCount = dataContainer.DataPack.Rows.Length;
+            float[] x = new float[rowCount];
+            float[] y = new float[rowCount];
+            float[] z = new float[rowCount];
+            Debug.Log("A");
+            for (int i = 0; i < rowCount; i++)
+            {
+                x[i] = (float)dataContainer.DataPack.Rows[i][0];
+                y[i] = (float)dataContainer.DataPack.Rows[i][1];
+                z[i] = (float)dataContainer.DataPack.Rows[i][2];
+            }
+            Debug.Log("B");
+
+            AstrovidioDataSetRenderer astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
+            // if (catalogDataSetRenderer == null)
+            // {
+            //     cubeRenderer = dataCubeContainer.AddComponent<DataCubeRenderer>();
+            // }
+
+            Debug.Log(x);
+            Debug.Log(y);
+            Debug.Log(z);
+            astrovidioDataSetRenderer.SetCatalogData(x, y, z);
+            astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 
     }

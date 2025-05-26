@@ -47,7 +47,7 @@ namespace CatalogData
             FileName = "";
             MetaColumns = new string[0][];
             DataColumns = data;
-            N = data.Length;
+            N = data[0].Length;
         }
 
         public int GetDataColumnIndex(string name)

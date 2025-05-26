@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class OrbitCameraController : MonoBehaviour
 {
@@ -25,6 +27,9 @@ public class OrbitCameraController : MonoBehaviour
     private float desiredDistance;
     private float currentDistance;
 
+    // UI
+    private VisualElement rootVisualElement;
+
     private void Start()
     {
         // Se non è assegnato un target, lo creiamo e lo posizioniamo in (0,0,0)
@@ -44,10 +49,21 @@ public class OrbitCameraController : MonoBehaviour
         Quaternion initialRotation = Quaternion.LookRotation(-offset);
         desiredRotation = initialRotation.eulerAngles;
         currentRotation = initialRotation.eulerAngles;
+
+        var uiDocument = FindFirstObjectByType<UIDocument>();
+        if (uiDocument != null)
+        {
+            rootVisualElement = uiDocument.rootVisualElement;
+        }
     }
 
     void LateUpdate()
     {
+        if (IsPointerOverVisibleUI())
+        {
+            return;
+        }
+
         // --- Zoom ---
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scrollInput) > 0.001f)
@@ -86,4 +102,30 @@ public class OrbitCameraController : MonoBehaviour
         transform.position = position;
         transform.rotation = rotation;
     }
+
+    private bool IsPointerOverVisibleUI()
+    {
+        if (rootVisualElement == null) return false;
+
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
+
+        VisualElement picked = rootVisualElement.panel.Pick(uiPosition);
+
+        // Se non c'è nulla sotto il mouse, siamo fuori dalla UI
+        if (picked == null) return false;
+
+        // Ignora elementi nascosti
+        while (picked != null)
+        {
+            if (picked.resolvedStyle.visibility == Visibility.Visible)
+                return true;
+
+            picked = picked.parent;
+        }
+
+        return false;
+    }
+
+
 }

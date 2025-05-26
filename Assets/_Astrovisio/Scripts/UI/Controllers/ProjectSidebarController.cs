@@ -82,29 +82,23 @@ namespace Astrovisio
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
             downsamplingDropdown.choices.Clear();
-            downsamplingDropdown.choices.Add("-");
+            downsamplingDropdown.choices.Add("0%");
             downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown.choices.Add("75%");
+            downsamplingDropdown.value = (Project.ConfigProcess.Downsampling * 100).ToString("0") + "%";
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
-                if (evt.newValue == "-")
+                string percentageText = evt.newValue.Replace("%", "");
+                if (float.TryParse(percentageText, out float percentage))
                 {
-                    Project.ConfigProcess.Downsampling = 1;
+                    float value = percentage / 100f;
+                    Project.ConfigProcess.Downsampling = value;
+                    // Debug.Log($"Converted value: {value}");
                 }
                 else
                 {
-                    string percentageText = evt.newValue.Replace("%", "");
-                    if (float.TryParse(percentageText, out float percentage))
-                    {
-                        float value = percentage / 100f;
-                        Debug.Log($"Converted value: {value}");
-                        Project.ConfigProcess.Downsampling = percentage;
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Invalid percentage format.");
-                    }
+                    Debug.LogWarning("Invalid percentage format.");
                 }
             });
 
@@ -416,6 +410,8 @@ namespace Astrovisio
         private void UpdateSettingsPanel(ParamRowSettingsController paramRowSettingsController)
         {
             Debug.Log(paramRowSettingsController.ParamName);
+            DropdownField colorMapDropdown = settingsPanel.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
+            colorMapDropdown.Clear();
         }
 
         private void UpdateRenderingParams()

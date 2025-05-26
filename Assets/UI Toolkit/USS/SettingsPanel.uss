@@ -16,7 +16,7 @@
 }
 
 #SettingsPanelRoot > #ColorMapContainer > #DropdownContainer {
-    margin-bottom: 24px;
+    margin-bottom: 0;
     flex-shrink: 0;
 }
 

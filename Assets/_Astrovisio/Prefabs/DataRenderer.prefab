@@ -31,6 +31,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 170565151389847711}
+  - {fileID: 116501208233007055}
+  - {fileID: 6528833266872925955}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1770384898517674952
@@ -47,7 +49,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointShader: {fileID: 4800000, guid: d2929255511554341bda73ef317a58fb, type: 3}
   dataCubeContainer: {fileID: 4511537503228851301}
-  fileName: random_sphere2.csv
+  catalogDataSetRendererGO: {fileID: 5917617878156919530}
+  astrovidioDataSetRendererGO: {fileID: 8520159369413343584}
+  debugMode: 0
+  fileName: gas_illustris_filtered.csv
 --- !u!1 &4511537503228851301
 GameObject:
   m_ObjectHideFlags: 0
@@ -66,7 +71,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &170565151389847711
 Transform:
   m_ObjectHideFlags: 0
@@ -94,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64d555dd5e79f2145843a4399d9c565a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointShader: {fileID: 4800000, guid: d2929255511554341bda73ef317a58fb, type: 3}
 --- !u!114 &4028964476519439331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,3 +218,359 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &5917617878156919530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 116501208233007055}
+  - component: {fileID: 7115778682538312098}
+  m_Layer: 0
+  m_Name: CatalogDataSetRenderer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &116501208233007055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917617878156919530}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5304179595479019890}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7115778682538312098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917617878156919530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6175a300d859994c8994c25ba3f35e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TableFileName: 
+  MappingFileName: 
+  DataMapping:
+    ColorMap: 33
+    Spherical: 0
+    RenderType: 0
+    UniformColor: 0
+    UniformPointSize: 1
+    UniformPointShape: 1
+    UniformOpacity: 0
+    Uniforms:
+      ColorString: 
+      Color: {r: 1, g: 0, b: 0, a: 1}
+      Scale: 0.001
+      PointSize: 0.3
+      PointShape: 1
+      Opacity: 1
+    Mapping:
+      Cmap:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 1
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: mass
+      Lat:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Lng:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Opacity:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 1
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: force
+      R:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      PointSize:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      PointShape:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      X:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: X
+      Y:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: Y
+      Z:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: Z
+      X2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Y2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Z2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+    MetaMapping:
+      Name:
+        Source: 
+  LoadMetaColumns: 1
+  ValueCutoffMin: 0
+  ValueCutoffMax: 1
+  ColorMapTexture: {fileID: 2800000, guid: 9e544ae8ea0eadb429edf5e73d7bcd2f, type: 3}
+  SpriteSheetTexture: {fileID: 0}
+  VignetteFadeStart: 0.15
+  VignetteFadeEnd: 0.4
+  VignetteIntensity: 0
+  VignetteColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!1 &8520159369413343584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6528833266872925955}
+  - component: {fileID: 9054602126277597126}
+  m_Layer: 0
+  m_Name: AstrovisioDataSetRenderer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6528833266872925955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8520159369413343584}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5304179595479019890}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9054602126277597126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8520159369413343584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f519ab9429f6beb46a7274451be286a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TableFileName: 
+  MappingFileName: 
+  DataMapping:
+    ColorMap: 33
+    Spherical: 0
+    RenderType: 0
+    UniformColor: 0
+    UniformPointSize: 1
+    UniformPointShape: 1
+    UniformOpacity: 1
+    Uniforms:
+      ColorString: 
+      Color: {r: 1, g: 0, b: 0, a: 1}
+      Scale: 0.001
+      PointSize: 0.3
+      PointShape: 1
+      Opacity: 1
+    Mapping:
+      Cmap:
+        Clamped: 0
+        MinVal: -1
+        MaxVal: 1
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: X
+      Lat:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Lng:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Opacity:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      R:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      PointSize:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      PointShape:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      X:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: X
+      Y:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: Y
+      Z:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: Z
+      X2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Y2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+      Z2:
+        Clamped: 0
+        MinVal: 0
+        MaxVal: 0
+        Offset: 0
+        Scale: 1
+        ScalingType: 0
+        Source: 
+    MetaMapping:
+      Name:
+        Source: 
+  LoadMetaColumns: 1
+  ValueCutoffMin: 0
+  ValueCutoffMax: 1
+  ColorMapTexture: {fileID: 2800000, guid: 9e544ae8ea0eadb429edf5e73d7bcd2f, type: 3}
+  SpriteSheetTexture: {fileID: 0}
+  VignetteFadeStart: 0.15
+  VignetteFadeEnd: 0.4
+  VignetteIntensity: 0
+  VignetteColor: {r: 0, g: 0, b: 0, a: 1}

@@ -22,10 +22,10 @@ namespace Astrovisio
 
             ParamSettings = new ParamSettings();
             ParamSettings.Colormap = "Inferno";
-            ParamSettings.Contrast = 1.0f;
-            ParamSettings.Saturation = 1.0f;
-            ParamSettings.Opacity = 1.0f;
-            ParamSettings.Brightness = 1.0f;
+            // ParamSettings.Contrast = 1.0f;
+            // ParamSettings.Saturation = 1.0f;
+            // ParamSettings.Opacity = 1.0f;
+            // ParamSettings.Brightness = 1.0f;
             if (project.ConfigProcess.Params.TryGetValue(paramName, out var configParam))
             {
                 ParamSettings.MinThreshold = configParam.ThrMinSel ?? configParam.ThrMin;
