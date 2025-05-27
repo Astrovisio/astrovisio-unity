@@ -100,11 +100,11 @@ Shader "Astrovisio/PointShader"
                 {
                     case LOG:
                         scaledValue = log(input);
-                        scaledValue = map(scaledValue, log(max(config.DataMinVal, 1.0)), log(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = map(scaledValue, log(max(config.DataMinVal, 1.0)), log(max(config.DataMaxVal, 1.0)), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQRT:
                         scaledValue = sqrt(input);
-                        scaledValue = map(scaledValue, sqrt(max(config.DataMinVal, 0.0)), sqrt(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = map(scaledValue, sqrt(max(config.DataMinVal, 0.0)), sqrt(max(config.DataMaxVal, 0.0)), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQUARED:
                         scaledValue = input * input;
