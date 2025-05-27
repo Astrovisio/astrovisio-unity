@@ -639,7 +639,6 @@ namespace CatalogData
         {
             // Update the object transform and point scale on the GPU
             _catalogMaterial.SetMatrix(_idDataSetMatrix, transform.localToWorldMatrix);
-            _catalogMaterial.SetFloat(_idScalingFactor, transform.localScale.x);
             // Shader defines two passes: Pass #0 uses cartesian coordinates and Pass #1 uses spherical coordinates
             _catalogMaterial.SetPass(DataMapping.Spherical ? 1 : 0);
             // Render points on the GPU using vertex pulling

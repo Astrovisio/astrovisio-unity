@@ -78,13 +78,11 @@ Shader "Astrovisio/PointShader"
             uniform float opacity;
 
             float4x4 datasetMatrix;
-            float scalingFactor;
 
             struct v2f
             {
                 float4 vertex : SV_POSITION;
                 float4 color : COLOR;
-                float pointSize : PSIZE;
                 float mustDiscard : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -102,11 +100,11 @@ Shader "Astrovisio/PointShader"
                 {
                     case LOG:
                         scaledValue = log(input);
-                        scaledValue = map(scaledValue, log(config.DataMinVal), log(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = map(scaledValue, log(max(config.DataMinVal, 1.0)), log(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQRT:
                         scaledValue = sqrt(input);
-                        scaledValue = map(scaledValue, sqrt(config.DataMinVal), sqrt(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = map(scaledValue, sqrt(max(config.DataMinVal, 0.0)), sqrt(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQUARED:
                         scaledValue = input * input;
@@ -122,14 +120,9 @@ Shader "Astrovisio/PointShader"
                         break;
                 }
 
-                // if (config.Clamped)
-                // {
-                //     input = clamp(input, config.DataMinVal, config.DataMaxVal);
+                // if (config.Clamped) {
+                //     scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
                 // }
-
-                if (config.Clamped) {
-                    scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
-                }
 
                 scaledValue += config.Offset;
                 
@@ -152,11 +145,11 @@ Shader "Astrovisio/PointShader"
                     o.mustDiscard = 1.0;
                     return o;
                 }               
-                if ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].DataMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].DataMinVal)) {
+                if ((mappingConfigs[CMAP_INDEX].Clamped) && ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].DataMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].DataMinVal))) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
-                if ((dataOpacity[v.vertexID] > mappingConfigs[OPACITY_INDEX].DataMaxVal) || (dataOpacity[v.vertexID] < mappingConfigs[OPACITY_INDEX].DataMinVal)) {
+                if ((mappingConfigs[OPACITY_INDEX].Clamped) && ((dataOpacity[v.vertexID] > mappingConfigs[OPACITY_INDEX].DataMaxVal) || (dataOpacity[v.vertexID] < mappingConfigs[OPACITY_INDEX].DataMinVal))) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
@@ -167,11 +160,8 @@ Shader "Astrovisio/PointShader"
                     applyScaling(dataZ[v.vertexID], mappingConfigs[Z_INDEX])
                 );
 
-                pos *= scalingFactor;
                 float4 worldPos = mul(datasetMatrix, float4(pos, 1.0));
                 o.vertex = UnityObjectToClipPos(worldPos);
-
-                o.pointSize = 100.0; // (NON FUNZIONA)
 
                 if (!useUniformColor) {        
                     float value = applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]);
