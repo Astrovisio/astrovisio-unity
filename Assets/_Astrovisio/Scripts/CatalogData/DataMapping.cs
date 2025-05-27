@@ -175,11 +175,11 @@ namespace CatalogData
             Clamped = Clamped ? 1 : 0,
             DataMinVal = DataMinVal,
             DataMaxVal = DataMaxVal,
+            TargetMinVal = InverseMapping ? TargetMaxVal : TargetMinVal,
+            TargetMaxVal = InverseMapping ? TargetMinVal : TargetMaxVal,
             InverseMapping = InverseMapping ? 1 : 0,
             Offset = Offset,
-            ScalingType = ScalingType.GetHashCode(),
-            TargetMinVal = TargetMinVal,
-            TargetMaxVal = TargetMaxVal
+            ScalingType = ScalingType.GetHashCode()
         };
     }
 
