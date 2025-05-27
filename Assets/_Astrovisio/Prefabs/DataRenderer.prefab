@@ -106,7 +106,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4511537503228851301}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08ee01f2ce7ed0949a8bb5ae5d824943, type: 3}
   m_Name: 
@@ -121,7 +121,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4511537503228851301}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -282,106 +282,132 @@ MonoBehaviour:
     Mapping:
       Cmap:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 1
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: mass
       Lat:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Lng:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Opacity:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 1
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: force
       R:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       PointSize:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       PointShape:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       X:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: X
       Y:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: Y
       Z:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: Z
       X2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Y2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Z2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
     MetaMapping:
@@ -443,7 +469,7 @@ MonoBehaviour:
   TableFileName: 
   MappingFileName: 
   DataMapping:
-    ColorMap: 33
+    ColorMap: 12
     Spherical: 0
     RenderType: 0
     UniformColor: 0
@@ -460,106 +486,132 @@ MonoBehaviour:
     Mapping:
       Cmap:
         Clamped: 0
-        MinVal: -1
-        MaxVal: 1
+        DataMinVal: 0
+        DataMaxVal: 2097151
+        TargetMinVal: 0
+        TargetMaxVal: 1
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
-        Source: X
+        Source: iord
       Lat:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Lng:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Opacity:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       R:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       PointSize:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       PointShape:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       X:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 74272.14
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
-        Source: X
+        Source: x
       Y:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 74272.14
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
-        Source: Y
+        Source: y
       Z:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 74272.125
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
-        Source: Z
+        Source: z
       X2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Y2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
       Z2:
         Clamped: 0
-        MinVal: 0
-        MaxVal: 0
+        DataMinVal: 0
+        DataMaxVal: 0
+        TargetMinVal: 0
+        TargetMaxVal: 0
+        InverseMapping: 0
         Offset: 0
-        Scale: 1
         ScalingType: 0
         Source: 
     MetaMapping:

@@ -9,5 +9,7 @@ public class ParamSettings
     // public float Brightness { get; set; }
     public double MinThreshold { get; set; }
     public double MaxThreshold { get; set; }
+    public double MinThresholdSelected { get; set; }
+    public double MaxThresholdSelected { get; set; }
 
 }

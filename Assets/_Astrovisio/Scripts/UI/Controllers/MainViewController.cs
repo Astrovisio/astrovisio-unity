@@ -6,6 +6,7 @@ namespace Astrovisio
     public class MainViewController
     {
         private VisualElement mainViewRoot;
+        private VisualElement body;
         private VisualElement header;
         private VisualElement side;
         private VisualElement content;
@@ -14,8 +15,14 @@ namespace Astrovisio
         {
             mainViewRoot = root.Q<VisualElement>("MainViewRoot");
             header = root.Q<VisualElement>("Header");
-            side = root.Q<VisualElement>("Side");
-            content = root.Q<VisualElement>("Content");
+            body = root.Q<VisualElement>("Body");
+            side = body.Q<VisualElement>("Side");
+            content = body.Q<VisualElement>("Content");
+
+            root.pickingMode = PickingMode.Ignore;
+            mainViewRoot.pickingMode = PickingMode.Ignore;
+            header.pickingMode = PickingMode.Position;
+            body.pickingMode = PickingMode.Ignore;
         }
 
         public void SetBackgroundVisibility(bool state)

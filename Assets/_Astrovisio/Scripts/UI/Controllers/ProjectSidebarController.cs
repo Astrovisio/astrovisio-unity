@@ -44,6 +44,18 @@ namespace Astrovisio
         private ScrollView paramSettingsScrollView;
         private VisualElement settingsPanel;
         private Dictionary<string, ParamSettingsData> paramSettingsDatas = new();
+        bool isThresholdUpdating = false;
+        private MinMaxSlider settingsPanelThresholdSlider;
+        private DoubleField settingsPanelMinFloatField;
+        private DoubleField settingsPanelMaxFloatField;
+        private Button settingsPanelCancelButton;
+        private Button settingsPanelApplyButton;
+        private EventCallback<ChangeEvent<Vector2>> settingsPanelSliderCallback;
+        private EventCallback<ChangeEvent<double>> settingsPanelMinFieldCallback;
+        private EventCallback<ChangeEvent<double>> settingsPanelMaxFieldCallback;
+        private Action settingsPanelCancelButtonCallback;
+        private Action settingsPanelApplyButtonCallback;
+
 
         // @@@ Go To VR
         private Button goToVRButton;
@@ -86,13 +98,15 @@ namespace Astrovisio
             downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.value = (Project.ConfigProcess.Downsampling * 100).ToString("0") + "%";
+            downsamplingDropdown.choices.Add("95%");
+            downsamplingDropdown.choices.Add("100%");
+            downsamplingDropdown.value = ((1 - Project.ConfigProcess.Downsampling) * 100).ToString("0") + "%";
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string percentageText = evt.newValue.Replace("%", "");
                 if (float.TryParse(percentageText, out float percentage))
                 {
-                    float value = percentage / 100f;
+                    float value = 1 - (percentage / 100f);
                     Project.ConfigProcess.Downsampling = value;
                     // Debug.Log($"Converted value: {value}");
                 }
@@ -127,6 +141,15 @@ namespace Astrovisio
 
             paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
             paramSettingsScrollView.Clear();
+
+            settingsPanelThresholdSlider = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
+            settingsPanelMinFloatField = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
+            settingsPanelMaxFloatField = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
+            settingsPanelCancelButton = settingsPanel.Q<VisualElement>("CancelButton")?.Q<Button>();
+            settingsPanelApplyButton = settingsPanel.Q<VisualElement>("ApplyButton")?.Q<Button>();
+
+            var thresholdSliderDragger = settingsPanelThresholdSlider.Q<VisualElement>("unity-dragger");
+            thresholdSliderDragger.pickingMode = PickingMode.Ignore;
 
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
             renderSettingsButton.SetEnabled(false);
@@ -384,7 +407,8 @@ namespace Astrovisio
 
         private void OnProjectProcessed(DataPack data)
         {
-            dataContainer = new DataContainer(data);
+            dataContainer = new DataContainer(data, Project);
+            Debug.Log(dataContainer.PointCount);
             SetProcessDataButton(true);
             SetNextStepButtons(true);
         }
@@ -405,17 +429,146 @@ namespace Astrovisio
                     settingsPanel.RemoveFromClassList("active");
                 }
             }
+
+            ResetParamSettingEvents();
+            CloseSettingsPanel();
+        }
+
+        private void ResetParamSettingEvents()
+        {
+            if (settingsPanelSliderCallback != null)
+            {
+                settingsPanelThresholdSlider?.UnregisterValueChangedCallback(settingsPanelSliderCallback);
+            }
+            if (settingsPanelMinFieldCallback != null)
+            {
+                settingsPanelMinFloatField?.UnregisterValueChangedCallback(settingsPanelMinFieldCallback);
+            }
+            if (settingsPanelMaxFieldCallback != null)
+            {
+                settingsPanelMaxFloatField?.UnregisterValueChangedCallback(settingsPanelMaxFieldCallback);
+            }
+            if (settingsPanelCancelButtonCallback != null)
+            {
+                settingsPanelCancelButton.clicked -= settingsPanelCancelButtonCallback;
+            }
+            if (settingsPanelApplyButtonCallback != null)
+            {
+                settingsPanelApplyButton.clicked -= settingsPanelApplyButtonCallback;
+            }
+        }
+
+        private void CloseSettingsPanel()
+        {
+            foreach (var paramSettingButton in paramSettingsScrollView.Children())
+            {
+                Button paramButton = paramSettingButton.Q<Button>();
+                paramButton.RemoveFromClassList("active");
+                paramSettingButton.RemoveFromClassList("active");
+                settingsPanel.RemoveFromClassList("active");
+            }
         }
 
         private void UpdateSettingsPanel(ParamRowSettingsController paramRowSettingsController)
         {
             Debug.Log(paramRowSettingsController.ParamName);
+
+            RenderManager.Instance.InitSettings(
+                paramRowSettingsController.ParamName,
+                paramRowSettingsController.ParamSettings.Colormap,
+                (float)paramRowSettingsController.ParamSettings.MinThreshold,
+                (float)paramRowSettingsController.ParamSettings.MaxThreshold,
+                (float)paramRowSettingsController.ParamSettings.MinThresholdSelected,
+                (float)paramRowSettingsController.ParamSettings.MaxThresholdSelected
+            );
+
             DropdownField colorMapDropdown = settingsPanel.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
-            colorMapDropdown.Clear();
+
+            colorMapDropdown.choices.Clear();
+            foreach (var colorMap in UIContextSO.colorMapSO.GetAllEntries())
+            {
+                colorMapDropdown.choices.Add(colorMap.name);
+            }
+            colorMapDropdown?.RegisterValueChangedCallback(evt =>
+            {
+                string colorMapName = evt.newValue;
+                Debug.Log(colorMapName);
+            });
+
+
+
+            if (settingsPanelThresholdSlider != null)
+            {
+                settingsPanelThresholdSlider.lowLimit = (float)paramRowSettingsController.Param.ThrMin;
+                settingsPanelThresholdSlider.highLimit = (float)paramRowSettingsController.Param.ThrMax;
+                settingsPanelThresholdSlider.minValue = (float)paramRowSettingsController.Param.ThrMinSel;
+                settingsPanelThresholdSlider.maxValue = (float)paramRowSettingsController.Param.ThrMaxSel;
+                settingsPanelMinFloatField.value = (float)paramRowSettingsController.Param.ThrMinSel;
+                settingsPanelMaxFloatField.value = (float)paramRowSettingsController.Param.ThrMaxSel;
+            }
+
+            isThresholdUpdating = false;
+
+            settingsPanelSliderCallback = evt =>
+            {
+                if (isThresholdUpdating)
+                {
+                    return;
+                }
+                isThresholdUpdating = true;
+                settingsPanelMinFloatField.value = evt.newValue.x;
+                settingsPanelMaxFloatField.value = evt.newValue.y;
+                // Debug.Log($"Slider → MinSel: {evt.newValue.x}, MaxSel: {evt.newValue.y}");
+                isThresholdUpdating = false;
+            };
+
+            settingsPanelMinFieldCallback = evt =>
+            {
+                if (isThresholdUpdating)
+                {
+                    return;
+                }
+                isThresholdUpdating = true;
+                settingsPanelThresholdSlider.minValue = (float)evt.newValue;
+                // Debug.Log($"Field → MinSel: {evt.newValue}");
+                isThresholdUpdating = false;
+            };
+
+            settingsPanelMaxFieldCallback = evt =>
+            {
+                if (isThresholdUpdating)
+                {
+                    return;
+                }
+                isThresholdUpdating = true;
+                settingsPanelThresholdSlider.maxValue = (float)evt.newValue;
+                // Debug.Log($"Field → MaxSel: {evt.newValue}");
+                isThresholdUpdating = false;
+            };
+
+            settingsPanelThresholdSlider?.RegisterValueChangedCallback(settingsPanelSliderCallback);
+            settingsPanelMinFloatField?.RegisterValueChangedCallback(settingsPanelMinFieldCallback);
+            settingsPanelMaxFloatField?.RegisterValueChangedCallback(settingsPanelMaxFieldCallback);
+
+            settingsPanelCancelButton.clicked += () =>
+            {
+                // Debug.Log("CancelButton clicked");
+                ResetParamSettingEvents();
+                CloseSettingsPanel();
+            };
+            settingsPanelApplyButton.clicked += () =>
+            {
+                // Debug.Log("ApplyButton clicked");
+                RenderManager.Instance.ApplySettings();
+                ResetParamSettingEvents();
+                CloseSettingsPanel();
+            };
         }
 
         private void UpdateRenderingParams()
         {
+            paramSettingsDatas.Clear();
+
             // Labels
             var xLabel = renderSettingsContainer.Q<Label>("XParamLabel");
             var yLabel = renderSettingsContainer.Q<Label>("YParamLabel");
@@ -429,11 +582,11 @@ namespace Astrovisio
             paramSettingsScrollView.Clear();
             foreach (var kvp in Project.ConfigProcess.Params)
             {
-                var paramName = kvp.Key;
-                var configVariable = kvp.Value;
+                string paramName = kvp.Key;
+                ConfigParam configParam = kvp.Value;
 
 
-                if (!configVariable.Selected || configVariable.XAxis || configVariable.YAxis || configVariable.ZAxis)
+                if (!configParam.Selected || configParam.XAxis || configParam.YAxis || configParam.ZAxis)
                 {
                     continue;
                 }
@@ -449,22 +602,22 @@ namespace Astrovisio
                 ParamSettingsData paramSettingsData = new ParamSettingsData
                 {
                     VisualElement = paramRowSettings,
-                    ParamRowSettingsController = new ParamRowSettingsController(Project, paramName, UIContextSO)
+                    ParamRowSettingsController = new ParamRowSettingsController(Project, configParam, paramName, UIContextSO)
                 };
 
-                var button = paramRowSettings.Q<Button>("Root");
-                button.RemoveFromClassList("active");
+                Button paramButton = paramRowSettings.Q<Button>("Root");
+                paramButton.RemoveFromClassList("active");
                 paramRowSettings.style.marginBottom = 8;
-                button.clicked += () =>
+                paramButton.clicked += () =>
                 {
-                    if (button.ClassListContains("active"))
+                    if (paramButton.ClassListContains("active"))
                     {
                         UnselectAllParamSettingButton();
                     }
                     else
                     {
                         UnselectAllParamSettingButton();
-                        button.ToggleInClassList("active");
+                        paramButton.ToggleInClassList("active");
                         settingsPanel.ToggleInClassList("active");
                         UpdateSettingsPanel(paramSettingsData.ParamRowSettingsController);
                     }

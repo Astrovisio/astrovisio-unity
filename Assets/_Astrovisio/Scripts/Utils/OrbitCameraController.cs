@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -28,6 +29,7 @@ public class OrbitCameraController : MonoBehaviour
     private float currentDistance;
 
     // UI
+    private bool isInteractingWithUI = false;
     private VisualElement rootVisualElement;
 
     private void Start()
@@ -59,7 +61,17 @@ public class OrbitCameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (IsPointerOverVisibleUI())
+        if (Input.GetMouseButtonDown(0))
+        {
+            isInteractingWithUI = IsPointerOverVisibleUI();
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isInteractingWithUI = false;
+        }
+
+        if (isInteractingWithUI)
         {
             return;
         }
@@ -105,17 +117,26 @@ public class OrbitCameraController : MonoBehaviour
 
     private bool IsPointerOverVisibleUI()
     {
-        if (rootVisualElement == null) return false;
+        if (rootVisualElement == null)
+        {
+            Debug.Log("rootVisualElement is null");
+            return false;
+        }
+
+        // LogUITreeUnderMouse();
 
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
-
         VisualElement picked = rootVisualElement.panel.Pick(uiPosition);
 
-        // Se non c'è nulla sotto il mouse, siamo fuori dalla UI
-        if (picked == null) return false;
+        if (picked == null)
+        {
+            // Debug.Log("Nessun elemento UI sotto il mouse");
+            return false;
+        }
 
-        // Ignora elementi nascosti
+        // Debug.Log($"Elemento UI sotto mouse: {picked.name}, visibility: {picked.resolvedStyle.visibility}, display: {picked.resolvedStyle.display}, pickingMode: {picked.pickingMode}");
+
         while (picked != null)
         {
             if (picked.resolvedStyle.visibility == Visibility.Visible)
@@ -124,6 +145,47 @@ public class OrbitCameraController : MonoBehaviour
             picked = picked.parent;
         }
 
+        return false;
+    }
+
+    private void LogUITreeUnderMouse()
+    {
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
+
+        Debug.Log($"Mouse Screen Position: {mousePosition}, UI Position: {uiPosition}");
+
+        var picked = rootVisualElement.panel.Pick(uiPosition);
+        if (picked == null)
+        {
+            Debug.Log("UI Pick: null");
+            return;
+        }
+
+        Debug.Log($"[Picked] name={picked.name}, class={picked.GetType().Name}, pickingMode={picked.pickingMode}, visible={picked.resolvedStyle.visibility}");
+
+        VisualElement current = picked;
+        while (current != null)
+        {
+            Debug.Log($"  > Parent: {current.name} - pickingMode: {current.pickingMode} - display: {current.resolvedStyle.display} - visible: {current.resolvedStyle.visibility}");
+            current = current.parent;
+        }
+    }
+
+    private bool IsAnyVisibleUIElementUnderMouse()
+    {
+        var mousePos = Mouse.current.position.ReadValue();
+        var panelPos = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePos);
+
+        List<VisualElement> hits = new();
+        rootVisualElement.panel.PickAll(panelPos, hits);
+
+        foreach (var el in hits)
+        {
+            Debug.Log($"[Hit] {el.name} picking: {el.pickingMode}, visible: {el.resolvedStyle.visibility}");
+            if (el.resolvedStyle.visibility == Visibility.Visible && el.pickingMode != PickingMode.Ignore)
+                return true;
+        }
         return false;
     }
 

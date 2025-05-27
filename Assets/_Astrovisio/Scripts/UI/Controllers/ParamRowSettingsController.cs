@@ -5,6 +5,7 @@ namespace Astrovisio
     public class ParamRowSettingsController
     {
         public Project Project { get; }
+        public ConfigParam Param { get; }
         public string ParamName { get; }
         public ParamSettings ParamSettings { get; set; }
         public bool State { get; set; }
@@ -12,9 +13,10 @@ namespace Astrovisio
         // Local
         private ColorMapSO colorMapSO;
 
-        public ParamRowSettingsController(Project project, string paramName, UIContextSO uiContextSO)
+        public ParamRowSettingsController(Project project, ConfigParam param, string paramName, UIContextSO uiContextSO)
         {
             Project = project;
+            Param = param;
             ParamName = paramName;
             colorMapSO = uiContextSO.colorMapSO;
 

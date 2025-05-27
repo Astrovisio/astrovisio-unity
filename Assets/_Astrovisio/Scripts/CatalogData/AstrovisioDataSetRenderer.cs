@@ -26,6 +26,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Astrovisio;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -125,35 +126,74 @@ namespace CatalogData
 
         #endregion
 
-        public void SetCatalogData(float[] x, float[] y, float[] z, float[] data)
+        public void SetCatalogData(DataContainer dataContainer)
         {
 
-            Debug.Log("SetCatalogData");
-            _dataSet = new CatalogDataSet(
-                new ColumnInfo[] {
-                    new ColumnInfo(){
-                        Name = "X", Type = ColumnType.Numeric, NumericIndex = 0
-                    },
-                    new ColumnInfo(){
-                        Name = "Y", Type = ColumnType.Numeric, NumericIndex = 1
-                    },
-                    new ColumnInfo(){
-                        Name = "Z", Type = ColumnType.Numeric, NumericIndex = 2
-                    },
-                    new ColumnInfo(){
-                        Name = "size", Type = ColumnType.Numeric, NumericIndex = 3
-                    },
-                    // new ColumnInfo(){
-                    //     Name = "mass", Type = ColumnType.Numeric, NumericIndex = 4
-                    // }
+            string[] headers = dataContainer.DataPack.Columns;
+            float[][] data = dataContainer.TransposedData;
+
+            // Dataset
+            ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
+            for (int i = 0; i < columnInfo.Length; i++)
+            {
+                columnInfo[i] = new ColumnInfo()
+                {
+                    Name = headers[i],
+                    Type = ColumnType.Numeric,
+                    NumericIndex = i
+                };
+                // Debug.Log(headers[i]);
+            }
+            _dataSet = new CatalogDataSet(columnInfo, data);
+
+            DataMapping = new DataMapping
+            {
+                Spherical = false,
+                RenderType = RenderType.Billboard,
+                UniformColor = true,
+                UniformPointSize = true,
+                UniformPointShape = true,
+                UniformOpacity = true,
+                Uniforms = new MappingUniforms
+                {
+                    Scale = 0.001f,
+                    PointSize = 0.3f,
+                    PointShape = ShapeType.Circle,
+                    Color = Color.red,
+                    Opacity = 1.0f
                 },
-                new float[][] {
-                    x,
-                    y,
-                    z,
-                    data
-                    // new float[] {1f, 1f, 0.3f},
-            });
+                Mapping = new Mapping
+                {
+                    X = new MapFloatEntry
+                    {
+                        Source = dataContainer.XAxisName,
+                        // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
+                        DataMinVal = dataContainer.XMinThreshold,
+                        DataMaxVal = dataContainer.XMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
+                    },
+                    Y = new MapFloatEntry
+                    {
+                        Source = dataContainer.YAxisName,
+                        // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
+                        DataMinVal = dataContainer.YMinThreshold,
+                        DataMaxVal = dataContainer.YMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
+                    },
+                    Z = new MapFloatEntry
+                    {
+                        Source = dataContainer.ZAxisName,
+                        // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
+                        DataMinVal = dataContainer.ZMinThreshold,
+                        DataMaxVal = dataContainer.ZMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
+                    }
+                }
+            };
+
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
             {

@@ -36,7 +36,7 @@
     min-height: 16px;
     max-height: 16px;
     margin-bottom: 8px;
-    background-color: rgb(255, 149, 0);
+    background-image: url("project://database/Assets/_Astrovisio/Sprites/allmaps.png?fileID=1404634179&guid=6c3bdb2178b4b9249ad8ff6f82e12d21&type=3#allmaps_1");
 }
 
 #SettingsPanelRoot > #ColorMapContainer > #DropdownContainer > #ColorMapDropdown > #DropdownRoot {
