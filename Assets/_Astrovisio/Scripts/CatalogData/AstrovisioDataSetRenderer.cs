@@ -178,7 +178,7 @@ namespace CatalogData
 
                 _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
                 // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
-                _mappingConfigBuffer = new ComputeBuffer(36 * 7, 36);
+                _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
                 _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
 
                 // Apply scaling from data set space to world space
@@ -530,11 +530,11 @@ namespace CatalogData
                 {
                     // Spherical coordinate input assumes degrees for XY, while the shader assumes radians
                     var latConfig = DataMapping.Mapping.Lat.GpuMappingConfig;
-                    latConfig.Scale *= Mathf.Deg2Rad;
+                    //latConfig.Scale *= Mathf.Deg2Rad;
                     latConfig.Offset *= Mathf.Deg2Rad;
 
                     var lngConfig = DataMapping.Mapping.Lng.GpuMappingConfig;
-                    lngConfig.Scale *= Mathf.Deg2Rad;
+                    //lngConfig.Scale *= Mathf.Deg2Rad;
                     lngConfig.Offset *= Mathf.Deg2Rad;
 
                     _mappingConfigs[0] = latConfig;

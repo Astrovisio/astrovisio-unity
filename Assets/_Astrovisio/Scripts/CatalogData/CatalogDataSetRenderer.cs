@@ -683,11 +683,11 @@ namespace CatalogData
                 {
                     // Spherical coordinate input assumes degrees for XY, while the shader assumes radians
                     var latConfig = DataMapping.Mapping.Lat.GpuMappingConfig;
-                    latConfig.Scale *= Mathf.Deg2Rad;
+                    //latConfig.Scale *= Mathf.Deg2Rad;
                     latConfig.Offset *= Mathf.Deg2Rad;
 
                     var lngConfig = DataMapping.Mapping.Lng.GpuMappingConfig;
-                    lngConfig.Scale *= Mathf.Deg2Rad;
+                    //lngConfig.Scale *= Mathf.Deg2Rad;
                     lngConfig.Offset *= Mathf.Deg2Rad;
 
                     _mappingConfigs[0] = latConfig;

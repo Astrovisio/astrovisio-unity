@@ -161,25 +161,25 @@ namespace CatalogData
     public class MapFloatEntry
     {
         public bool Clamped;
-        public float MinVal;
-        public float MaxVal;
+        public float DataMinVal;
+        public float DataMaxVal;
+        public float TargetMinVal;
+        public float TargetMaxVal;
         public bool InverseMapping;
         public float Offset;
-        public float Scale = 1;
         public ScalingType ScalingType = ScalingType.Linear;
         public string Source;
 
         public GPUMappingConfig GpuMappingConfig => new GPUMappingConfig
         {
             Clamped = Clamped ? 1 : 0,
-            MinVal = MinVal,
-            MaxVal = MaxVal,
+            DataMinVal = DataMinVal,
+            DataMaxVal = DataMaxVal,
             InverseMapping = InverseMapping ? 1 : 0,
             Offset = Offset,
-            Scale = Scale,
             ScalingType = ScalingType.GetHashCode(),
-            FilterMinVal = -float.MaxValue,
-            FilterMaxVal = float.MaxValue
+            TargetMinVal = TargetMinVal,
+            TargetMaxVal = TargetMaxVal
         };
     }
 
@@ -190,17 +190,16 @@ namespace CatalogData
     public struct GPUMappingConfig
     {
         public int Clamped;
-        public float MinVal;
-        public float MaxVal;
+        public float DataMinVal;
+        public float DataMaxVal;
         public int InverseMapping;
         public float Offset;
-        public float Scale;
 
         public int ScalingType;
 
         // Future use: Will filter points based on this range
-        public float FilterMinVal;
-        public float FilterMaxVal;
+        public float TargetMinVal;
+        public float TargetMaxVal;
     }
 
     [Serializable]

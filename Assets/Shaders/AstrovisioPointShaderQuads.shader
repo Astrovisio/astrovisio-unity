@@ -1,4 +1,4 @@
-Shader "Astrovisio/PointShader"
+Shader "Astrovisio/PointShaderQuads"
 {
     Properties { }
 
@@ -16,6 +16,7 @@ Shader "Astrovisio/PointShader"
 
             CGPROGRAM
             #pragma vertex vert
+            #pragma geometry geom
             #pragma fragment frag
             #pragma multi_compile_particles_point
             #pragma target 3.5
@@ -45,15 +46,16 @@ Shader "Astrovisio/PointShader"
             struct MappingConfig
             {
                 int Clamped;
-                float DataMinVal;
-                float DataMaxVal;
+                float MinVal;
+                float MaxVal;
                 int InverseMapping;
                 float Offset;
+                float Scale;
                 int ScalingType;
                 
                 // Future use: Will filter points based on this range
-                float TargetMinVal;
-                float TargetMaxVal;
+                float FilterMinVal;
+                float FilterMaxVal;
             };
 
             // Properties variables
@@ -80,12 +82,24 @@ Shader "Astrovisio/PointShader"
             float4x4 datasetMatrix;
             float scalingFactor;
 
+            // Struttura per l'output del vertex shader e input del geometry shader
+            struct v2g
+            {
+                float4 worldPos : POSITION;
+                float4 color : COLOR;
+            };
+
+            // Struttura per l'output del geometry shader e input del fragment shader
+            struct g2f
+            {
+                float4 vertex : SV_POSITION;
+                float4 color : COLOR;
+            };
+
             struct v2f
             {
                 float4 vertex : SV_POSITION;
                 float4 color : COLOR;
-                float pointSize : PSIZE;
-                float mustDiscard : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -96,70 +110,47 @@ Shader "Astrovisio/PointShader"
 
             float applyScaling(float input, MappingConfig config)
             {
-
                 float scaledValue;
                 switch (config.ScalingType)
                 {
                     case LOG:
                         scaledValue = log(input);
-                        scaledValue = map(scaledValue, log(config.DataMinVal), log(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQRT:
                         scaledValue = sqrt(input);
-                        scaledValue = map(scaledValue, sqrt(config.DataMinVal), sqrt(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQUARED:
                         scaledValue = input * input;
-                        scaledValue = map(scaledValue, config.DataMinVal * config.DataMinVal, config.DataMaxVal * config.DataMaxVal, config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case EXP:
                         scaledValue = exp(input);
-                        scaledValue = map(scaledValue, exp(config.DataMinVal), exp(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     default:
-                        scaledValue = input;
-                        scaledValue = map(scaledValue, config.DataMinVal, config.DataMaxVal, config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = input * config.Scale;
                         break;
                 }
-
-                // if (config.Clamped)
-                // {
-                //     input = clamp(input, config.DataMinVal, config.DataMaxVal);
-                // }
-
-                if (config.Clamped) {
-                    scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
+                
+                if (config.Clamped)
+                {
+                    scaledValue = clamp(scaledValue, config.MinVal, config.MaxVal);
                 }
+
+                float toMin = 0;
+                float toMax = 1;
+                if (config.InverseMapping) {
+                    toMin = 1;
+                    toMax = 0;
+                }
+                scaledValue = map(scaledValue, config.MinVal, config.MaxVal, toMin, toMax);
 
                 scaledValue += config.Offset;
                 
                 return scaledValue;
             }
 
-            v2f vert(appdata v)
+            v2g vert(appdata v)
             {
-                v2f o;
-
-                if ((dataX[v.vertexID] > mappingConfigs[X_INDEX].DataMaxVal) || (dataX[v.vertexID] < mappingConfigs[X_INDEX].DataMinVal)) {
-                    o.mustDiscard = 1.0;
-                    return o;
-                }
-                if ((dataY[v.vertexID] > mappingConfigs[Y_INDEX].DataMaxVal) || (dataY[v.vertexID] < mappingConfigs[Y_INDEX].DataMinVal)) {
-                    o.mustDiscard = 1.0;
-                    return o;
-                }
-                if ((dataZ[v.vertexID] > mappingConfigs[Z_INDEX].DataMaxVal) || (dataZ[v.vertexID] < mappingConfigs[Z_INDEX].DataMinVal)) {
-                    o.mustDiscard = 1.0;
-                    return o;
-                }               
-                if ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].DataMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].DataMinVal)) {
-                    o.mustDiscard = 1.0;
-                    return o;
-                }
-                if ((dataOpacity[v.vertexID] > mappingConfigs[OPACITY_INDEX].DataMaxVal) || (dataOpacity[v.vertexID] < mappingConfigs[OPACITY_INDEX].DataMinVal)) {
-                    o.mustDiscard = 1.0;
-                    return o;
-                }
+                v2g o;
 
                 float3 pos = float3(
                     applyScaling(dataX[v.vertexID], mappingConfigs[X_INDEX]),
@@ -169,9 +160,8 @@ Shader "Astrovisio/PointShader"
 
                 pos *= scalingFactor;
                 float4 worldPos = mul(datasetMatrix, float4(pos, 1.0));
-                o.vertex = UnityObjectToClipPos(worldPos);
-
-                o.pointSize = 100.0; // (NON FUNZIONA)
+                o.worldPos = worldPos;
+                //o.vertex = UnityObjectToClipPos(worldPos);
 
                 if (!useUniformColor) {        
                     float value = applyScaling(dataCmap[v.vertexID], mappingConfigs[CMAP_INDEX]);
@@ -190,15 +180,65 @@ Shader "Astrovisio/PointShader"
                 else {
                     o.color.a = opacity;
                 }    
-
+                
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            // Geometry shader
+            [maxvertexcount(6)]
+            void geom(point v2g input[1], inout TriangleStream<g2f> triStream)
             {
-                if(i.mustDiscard > 0.5) {
-                    discard;
-                }
+                float3 center = input[0].worldPos;
+                float4 col = input[0].color;
+
+                // Calcola i vettori per orientare il quad verso la camera
+                float3 right = normalize(_WorldSpaceCameraPos - center);
+                float3 up = float3(0, 1, 0);
+                float3 forward = normalize(cross(up, right));
+                right = normalize(cross(forward, up));
+
+                float size = 0.01; // Dimensione del quad
+
+                float3 offsetRight = right * size;
+                float3 offsetUp = up * size;
+
+                // Definisci i quattro vertici del quad
+                float3 v0 = center - offsetRight - offsetUp;
+                float3 v1 = center + offsetRight - offsetUp;
+                float3 v2 = center + offsetRight + offsetUp;
+                float3 v3 = center - offsetRight + offsetUp;
+
+                g2f o;
+
+                // Primo triangolo
+                o.vertex = UnityObjectToClipPos(float4(v0, 1.0));
+                o.color = col;
+                triStream.Append(o);
+
+                o.vertex = UnityObjectToClipPos(float4(v1, 1.0));
+                o.color = col;
+                triStream.Append(o);
+
+                o.vertex = UnityObjectToClipPos(float4(v2, 1.0));
+                o.color = col;
+                triStream.Append(o);
+
+                // Secondo triangolo
+                o.vertex = UnityObjectToClipPos(float4(v2, 1.0));
+                o.color = col;
+                triStream.Append(o);
+
+                o.vertex = UnityObjectToClipPos(float4(v3, 1.0));
+                o.color = col;
+                triStream.Append(o);
+
+                o.vertex = UnityObjectToClipPos(float4(v0, 1.0));
+                o.color = col;
+                triStream.Append(o);
+            }
+
+            fixed4 frag(g2f i) : SV_Target
+            {
                 return i.color;
             }
 
