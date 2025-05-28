@@ -15020,8 +15020,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
-  far clip plane: 150
+  near clip plane: 0.01
+  far clip plane: 500
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -15112,7 +15112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  minDistance: 0.2
+  minDistance: 0.05
   maxDistance: 15
   rotationSpeed: 5
   panSpeed: 0.25

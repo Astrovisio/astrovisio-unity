@@ -30,6 +30,8 @@ namespace Astrovisio
             Instance = this;
         }
 
+        public DataRenderer GetCurrentDataRenderer() => dataRenderer;
+
         public void RenderDataContainer(DataContainer dataContainer)
         {
             renderSettings = null;
