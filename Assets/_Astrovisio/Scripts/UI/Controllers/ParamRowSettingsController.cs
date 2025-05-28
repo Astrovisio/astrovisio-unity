@@ -24,14 +24,14 @@ namespace Astrovisio
 
             ParamSettings = new ParamSettings();
             ParamSettings.Colormap = "Inferno";
-            // ParamSettings.Contrast = 1.0f;
-            // ParamSettings.Saturation = 1.0f;
-            // ParamSettings.Opacity = 1.0f;
-            // ParamSettings.Brightness = 1.0f;
+
+
             if (project.ConfigProcess.Params.TryGetValue(paramName, out var configParam))
             {
-                ParamSettings.MinThreshold = configParam.ThrMinSel ?? configParam.ThrMin;
-                ParamSettings.MaxThreshold = configParam.ThrMaxSel ?? configParam.ThrMax;
+                ParamSettings.MinThreshold = configParam.ThrMin;
+                ParamSettings.MaxThreshold = configParam.ThrMax;
+                ParamSettings.MinThresholdSelected = configParam.ThrMinSel ?? configParam.ThrMin;
+                ParamSettings.MaxThresholdSelected = configParam.ThrMaxSel ?? configParam.ThrMax;
             }
             else
             {

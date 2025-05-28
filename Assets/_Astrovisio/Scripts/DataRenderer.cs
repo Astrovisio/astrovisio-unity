@@ -16,7 +16,10 @@ namespace Astrovisio
         [SerializeField] private bool debugMode = false;
         [SerializeField] private string fileName = "project_1_processed.csv";
 
+
         private DataContainer dataContainer;
+        private AstrovidioDataSetRenderer astrovidioDataSetRenderer;
+
 
         private void Start()
         {
@@ -94,12 +97,23 @@ namespace Astrovisio
             // cubeRenderer.Initialize(dataContainer, pointShader);
 
             // float[][] dataset = Transpose(dataContainer.DataPack.Rows);
-            AstrovidioDataSetRenderer astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
+            astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 
-        
+        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max)
+        {
+            if (astrovidioDataSetRenderer is not null)
+            {
+                astrovidioDataSetRenderer.SetColorMapAstrovisio(paramName, colorMap, min, max);
+            }
+        }
+
+        public void SetColorMapThreshold(float min, float max)
+        {
+            astrovidioDataSetRenderer.SetColorMapThresholdAstrovisio(min, max);
+        }
 
     }
 

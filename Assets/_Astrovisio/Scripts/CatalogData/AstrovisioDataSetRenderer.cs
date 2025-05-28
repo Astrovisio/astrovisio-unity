@@ -171,8 +171,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.XMinThreshold,
                             DataMaxVal = dataContainer.XMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
+                            TargetMinVal = -1f,
+                            TargetMaxVal = 1f
                         },
                         Y = new MapFloatEntry
                         {
@@ -180,8 +180,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.YMinThreshold,
                             DataMaxVal = dataContainer.YMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
+                            TargetMinVal = -1f,
+                            TargetMaxVal = 1f
                         },
                         Z = new MapFloatEntry
                         {
@@ -189,8 +189,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.ZMinThreshold,
                             DataMaxVal = dataContainer.ZMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
+                            TargetMinVal = -1f,
+                            TargetMaxVal = 1f
                         }
                     }
                 };
@@ -238,6 +238,37 @@ namespace CatalogData
             _initialLocalRotation = transform.localRotation;
             _initialLocalScale = transform.localScale;
             _initialOpacity = DataMapping.Uniforms.Opacity;
+        }
+
+        [ContextMenu("SetColorMap2")]
+        public void SetColorMap2()
+        {
+            SetColorMapAstrovisio("iord", ColorMapEnum.Inferno, 0, 2097151);
+        }
+
+        public void SetColorMapAstrovisio(string paramName, ColorMapEnum colorMap, float min, float max)
+        {
+            SetColorMap(colorMap);
+            DataMapping.UniformColor = false;
+            DataMapping.Mapping.Cmap = new MapFloatEntry
+            {
+                Source = paramName,
+                Clamped = true,
+                DataMinVal = min,
+                DataMaxVal = max,
+                TargetMinVal = 0f,
+                TargetMaxVal = 1f
+            };
+            UpdateMappingColumns();
+            UpdateMappingValues();
+        }
+
+        public void SetColorMapThresholdAstrovisio(float min, float max)
+        {
+            DataMapping.Mapping.Cmap.DataMinVal = min;
+            DataMapping.Mapping.Cmap.DataMaxVal = max;
+            UpdateMappingColumns();
+            UpdateMappingValues();
         }
 
         [ContextMenu("UpdateMappingColumns")]

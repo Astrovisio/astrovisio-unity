@@ -160,10 +160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6efa8ec1df380cc4c8698bb89020bf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiController: {fileID: 4973116314143365544}
-  projectManager: {fileID: 0}
-  loadingSpinnerTemplate: {fileID: 9197481963319205126, guid: 6e777dec72cffee428a66cbecab63aaa,
-    type: 3}
   spinnerSpeed: 180
 --- !u!1 &4480301376882524576
 GameObject:

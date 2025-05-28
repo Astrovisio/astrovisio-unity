@@ -476,6 +476,7 @@ namespace Astrovisio
             RenderManager.Instance.InitSettings(
                 paramRowSettingsController.ParamName,
                 paramRowSettingsController.ParamSettings.Colormap,
+                ColorMapEnum.Accent,
                 (float)paramRowSettingsController.ParamSettings.MinThreshold,
                 (float)paramRowSettingsController.ParamSettings.MaxThreshold,
                 (float)paramRowSettingsController.ParamSettings.MinThresholdSelected,
@@ -484,27 +485,43 @@ namespace Astrovisio
 
             DropdownField colorMapDropdown = settingsPanel.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
 
-            colorMapDropdown.choices.Clear();
-            foreach (var colorMap in UIContextSO.colorMapSO.GetAllEntries())
-            {
-                colorMapDropdown.choices.Add(colorMap.name);
-            }
+            colorMapDropdown.choices = Enum.GetNames(typeof(ColorMapEnum)).ToList();
+            colorMapDropdown.value = ColorMapEnum.Accent.ToString();
+
             colorMapDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string colorMapName = evt.newValue;
-                Debug.Log(colorMapName);
+
+                if (Enum.TryParse(colorMapName, out ColorMapEnum selectedEnum))
+                {
+                    RenderManager.Instance.SetColorMap(
+                        paramRowSettingsController.ParamName,
+                        selectedEnum,
+                        (float)paramRowSettingsController.ParamSettings.MinThresholdSelected,
+                        (float)paramRowSettingsController.ParamSettings.MaxThresholdSelected
+                    );
+
+                    Debug.Log("Selected ColorMapEnum: " + selectedEnum);
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to parse ColorMapEnum from: " + colorMapName);
+                }
             });
+
 
 
 
             if (settingsPanelThresholdSlider != null)
             {
-                settingsPanelThresholdSlider.lowLimit = (float)paramRowSettingsController.Param.ThrMin;
+                settingsPanelThresholdSlider.highLimit = float.MaxValue;
+                settingsPanelThresholdSlider.lowLimit = float.MinValue;
                 settingsPanelThresholdSlider.highLimit = (float)paramRowSettingsController.Param.ThrMax;
-                settingsPanelThresholdSlider.minValue = (float)paramRowSettingsController.Param.ThrMinSel;
+                settingsPanelThresholdSlider.lowLimit = (float)paramRowSettingsController.Param.ThrMin;
                 settingsPanelThresholdSlider.maxValue = (float)paramRowSettingsController.Param.ThrMaxSel;
-                settingsPanelMinFloatField.value = (float)paramRowSettingsController.Param.ThrMinSel;
+                settingsPanelThresholdSlider.minValue = (float)paramRowSettingsController.Param.ThrMinSel;
                 settingsPanelMaxFloatField.value = (float)paramRowSettingsController.Param.ThrMaxSel;
+                settingsPanelMinFloatField.value = (float)paramRowSettingsController.Param.ThrMinSel;
             }
 
             isThresholdUpdating = false;
@@ -518,6 +535,9 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 settingsPanelMinFloatField.value = evt.newValue.x;
                 settingsPanelMaxFloatField.value = evt.newValue.y;
+                paramRowSettingsController.Param.ThrMinSel = settingsPanelThresholdSlider.minValue;
+                paramRowSettingsController.Param.ThrMaxSel = settingsPanelThresholdSlider.maxValue;
+                RenderManager.Instance.SetColorMapThreshold((float)paramRowSettingsController.Param.ThrMinSel, (float)paramRowSettingsController.Param.ThrMaxSel);
                 // Debug.Log($"Slider → MinSel: {evt.newValue.x}, MaxSel: {evt.newValue.y}");
                 isThresholdUpdating = false;
             };
@@ -530,6 +550,8 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 settingsPanelThresholdSlider.minValue = (float)evt.newValue;
+                paramRowSettingsController.Param.ThrMinSel = settingsPanelThresholdSlider.minValue;
+                RenderManager.Instance.SetColorMapThreshold((float)paramRowSettingsController.Param.ThrMinSel, (float)paramRowSettingsController.Param.ThrMaxSel);
                 // Debug.Log($"Field → MinSel: {evt.newValue}");
                 isThresholdUpdating = false;
             };
@@ -542,6 +564,8 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 settingsPanelThresholdSlider.maxValue = (float)evt.newValue;
+                paramRowSettingsController.Param.ThrMaxSel = settingsPanelThresholdSlider.maxValue;
+                RenderManager.Instance.SetColorMapThreshold((float)paramRowSettingsController.Param.ThrMinSel, (float)paramRowSettingsController.Param.ThrMaxSel);
                 // Debug.Log($"Field → MaxSel: {evt.newValue}");
                 isThresholdUpdating = false;
             };
@@ -555,6 +579,7 @@ namespace Astrovisio
                 // Debug.Log("CancelButton clicked");
                 ResetParamSettingEvents();
                 CloseSettingsPanel();
+                RenderManager.Instance.CancelSettings();
             };
             settingsPanelApplyButton.clicked += () =>
             {
@@ -605,6 +630,11 @@ namespace Astrovisio
                     ParamRowSettingsController = new ParamRowSettingsController(Project, configParam, paramName, UIContextSO)
                 };
 
+                Debug.Log(paramSettingsData.ParamRowSettingsController.ParamSettings.MinThreshold);
+                Debug.Log(paramSettingsData.ParamRowSettingsController.ParamSettings.MaxThreshold);
+                Debug.Log(paramSettingsData.ParamRowSettingsController.ParamSettings.MinThresholdSelected);
+                Debug.Log(paramSettingsData.ParamRowSettingsController.ParamSettings.MaxThresholdSelected);
+
                 Button paramButton = paramRowSettings.Q<Button>("Root");
                 paramButton.RemoveFromClassList("active");
                 paramRowSettings.style.marginBottom = 8;
@@ -620,6 +650,12 @@ namespace Astrovisio
                         paramButton.ToggleInClassList("active");
                         settingsPanel.ToggleInClassList("active");
                         UpdateSettingsPanel(paramSettingsData.ParamRowSettingsController);
+                        RenderManager.Instance.SetColorMap(
+                            paramSettingsData.ParamRowSettingsController.ParamName,
+                            ColorMapEnum.Inferno,
+                            (float)paramSettingsData.ParamRowSettingsController.ParamSettings.MinThresholdSelected,
+                            (float)paramSettingsData.ParamRowSettingsController.ParamSettings.MaxThresholdSelected
+                        );
                     }
                 };
 
