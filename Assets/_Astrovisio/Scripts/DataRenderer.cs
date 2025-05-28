@@ -22,14 +22,14 @@ namespace Astrovisio
         {
             if (debugMode)
             {
-                // var dataPack = LoadCSV();
-                // if (dataPack == null)
-                // {
-                //     return;
-                // }
+                var dataPack = LoadCSV();
+                if (dataPack == null)
+                {
+                    return;
+                }
 
-                // dataContainer = new DataContainer(dataPack);
-                // RenderDataContainer(dataContainer);
+                dataContainer = new DataContainer(dataPack, null);
+                RenderDataContainer(dataContainer);
             }
         }
 
@@ -65,7 +65,10 @@ namespace Astrovisio
                 double[] row = new double[headers.Length];
 
                 for (int j = 0; j < headers.Length; j++)
+                {
                     row[j] = (j < values.Length && double.TryParse(values[j], out double result)) ? result : double.NaN;
+                }
+
 
                 pack.Rows[i - 1] = row;
             }
@@ -92,7 +95,7 @@ namespace Astrovisio
 
             // float[][] dataset = Transpose(dataContainer.DataPack.Rows);
             AstrovidioDataSetRenderer astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
-            astrovidioDataSetRenderer.SetCatalogData(dataContainer);
+            astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 

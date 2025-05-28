@@ -88,9 +88,9 @@ namespace CatalogData
                     },
                     Mapping = new Mapping
                     {
-                        X = new MapFloatEntry {Source = "X"},
-                        Y = new MapFloatEntry {Source = "Y"},
-                        Z = new MapFloatEntry {Source = "Z"},
+                        X = new MapFloatEntry {Source = "x"},
+                        Y = new MapFloatEntry {Source = "y"},
+                        Z = new MapFloatEntry {Source = "z"},
                     }
                 };
                 return mapping;

@@ -32,7 +32,8 @@ namespace Astrovisio
         public Vector3 MaxPoint { private set; get; }
         public Vector3 Center { private set; get; }
 
-        public DataContainer(DataPack dataPack, Project project)
+        #nullable enable
+        public DataContainer(DataPack dataPack, Project? project)
         {
             DataPack = dataPack ?? throw new ArgumentNullException(nameof(dataPack));
             Project = project;
@@ -44,31 +45,33 @@ namespace Astrovisio
 
             TransposedData = Transpose(DataPack.Rows);
         }
+        #nullable disable
 
         private void InitAxisThreshold()
         {
-            foreach (var param in Project.ConfigProcess.Params)
-            {
-                // Debug.Log(param.Key + " " + param.Value);
-                if (param.Value.Selected)
+            if (Project != null)
+                foreach (var param in Project.ConfigProcess.Params)
                 {
-                    if (param.Value.XAxis)
+                    // Debug.Log(param.Key + " " + param.Value);
+                    if (param.Value.Selected)
                     {
-                        XMinThreshold = (float)param.Value.ThrMinSel;
-                        XMaxThreshold = (float)param.Value.ThrMaxSel;
-                    }
-                    else if (param.Value.YAxis)
-                    {
-                        YMinThreshold = (float)param.Value.ThrMinSel;
-                        YMaxThreshold = (float)param.Value.ThrMaxSel;
-                    }
-                    else if (param.Value.ZAxis)
-                    {
-                        ZMinThreshold = (float)param.Value.ThrMinSel;
-                        ZMaxThreshold = (float)param.Value.ThrMaxSel;
+                        if (param.Value.XAxis)
+                        {
+                            XMinThreshold = (float)param.Value.ThrMinSel;
+                            XMaxThreshold = (float)param.Value.ThrMaxSel;
+                        }
+                        else if (param.Value.YAxis)
+                        {
+                            YMinThreshold = (float)param.Value.ThrMinSel;
+                            YMaxThreshold = (float)param.Value.ThrMaxSel;
+                        }
+                        else if (param.Value.ZAxis)
+                        {
+                            ZMinThreshold = (float)param.Value.ThrMinSel;
+                            ZMaxThreshold = (float)param.Value.ThrMaxSel;
+                        }
                     }
                 }
-            }
         }
 
         private void InitAxisIndex()
@@ -76,27 +79,28 @@ namespace Astrovisio
             string xAxisName = "";
             string yAxisName = "";
             string zAxisName = "";
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+            if (Project != null)
+                foreach (var kvp in Project.ConfigProcess.Params)
+                {
+                    string paramName = kvp.Key;
+                    ConfigParam param = kvp.Value;
 
-                // Debug.Log($"Parametro: {paramName}");
-                // Debug.Log($"Valore: {param.XAxis}");
+                    // Debug.Log($"Parametro: {paramName}");
+                    // Debug.Log($"Valore: {param.XAxis}");
 
-                if (param.XAxis)
-                {
-                    XAxisName = paramName;
+                    if (param.XAxis)
+                    {
+                        XAxisName = paramName;
+                    }
+                    else if (param.YAxis)
+                    {
+                        YAxisName = paramName;
+                    }
+                    else if (param.ZAxis)
+                    {
+                        ZAxisName = paramName;
+                    }
                 }
-                else if (param.YAxis)
-                {
-                    YAxisName = paramName;
-                }
-                else if (param.ZAxis)
-                {
-                    ZAxisName = paramName;
-                }
-            }
             // Debug.Log("xAxisName: " + xAxisName);
             // Debug.Log("yAxisName: " + yAxisName);
             // Debug.Log("zAxisName: " + zAxisName);
@@ -169,27 +173,28 @@ namespace Astrovisio
             string xAxisName = "";
             string yAxisName = "";
             string zAxisName = "";
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+            if (Project != null)
+                foreach (var kvp in Project.ConfigProcess.Params)
+                {
+                    string paramName = kvp.Key;
+                    ConfigParam param = kvp.Value;
 
-                // Debug.Log($"Parametro: {paramName}");
-                // Debug.Log($"Valore: {param.XAxis}");
+                    // Debug.Log($"Parametro: {paramName}");
+                    // Debug.Log($"Valore: {param.XAxis}");
 
-                if (param.XAxis)
-                {
-                    xAxisName = paramName;
+                    if (param.XAxis)
+                    {
+                        xAxisName = paramName;
+                    }
+                    else if (param.YAxis)
+                    {
+                        yAxisName = paramName;
+                    }
+                    else if (param.ZAxis)
+                    {
+                        zAxisName = paramName;
+                    }
                 }
-                else if (param.YAxis)
-                {
-                    yAxisName = paramName;
-                }
-                else if (param.ZAxis)
-                {
-                    zAxisName = paramName;
-                }
-            }
             // Debug.Log("xAxisName: " + xAxisName);
             // Debug.Log("yAxisName: " + yAxisName);
             // Debug.Log("zAxisName: " + zAxisName);

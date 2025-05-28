@@ -126,7 +126,7 @@ namespace CatalogData
 
         #endregion
 
-        public void SetCatalogData(DataContainer dataContainer)
+        public void SetCatalogData(DataContainer dataContainer, bool debug = false)
         {
 
             string[] headers = dataContainer.DataPack.Columns;
@@ -146,53 +146,54 @@ namespace CatalogData
             }
             _dataSet = new CatalogDataSet(columnInfo, data);
 
-            DataMapping = new DataMapping
-            {
-                Spherical = false,
-                RenderType = RenderType.Billboard,
-                UniformColor = true,
-                UniformPointSize = true,
-                UniformPointShape = true,
-                UniformOpacity = true,
-                Uniforms = new MappingUniforms
+            if (!debug)
+                DataMapping = new DataMapping
                 {
-                    Scale = 0.001f,
-                    PointSize = 0.3f,
-                    PointShape = ShapeType.Circle,
-                    Color = Color.red,
-                    Opacity = 1.0f
-                },
-                Mapping = new Mapping
-                {
-                    X = new MapFloatEntry
+                    Spherical = false,
+                    RenderType = RenderType.Billboard,
+                    UniformColor = true,
+                    UniformPointSize = true,
+                    UniformPointShape = true,
+                    UniformOpacity = true,
+                    Uniforms = new MappingUniforms
                     {
-                        Source = dataContainer.XAxisName,
-                        // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
-                        DataMinVal = dataContainer.XMinThreshold,
-                        DataMaxVal = dataContainer.XMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
+                        Scale = 0.001f,
+                        PointSize = 0.3f,
+                        PointShape = ShapeType.Circle,
+                        Color = Color.red,
+                        Opacity = 1.0f
                     },
-                    Y = new MapFloatEntry
+                    Mapping = new Mapping
                     {
-                        Source = dataContainer.YAxisName,
-                        // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
-                        DataMinVal = dataContainer.YMinThreshold,
-                        DataMaxVal = dataContainer.YMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
-                    },
-                    Z = new MapFloatEntry
-                    {
-                        Source = dataContainer.ZAxisName,
-                        // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
-                        DataMinVal = dataContainer.ZMinThreshold,
-                        DataMaxVal = dataContainer.ZMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
+                        X = new MapFloatEntry
+                        {
+                            Source = dataContainer.XAxisName,
+                            // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
+                            DataMinVal = dataContainer.XMinThreshold,
+                            DataMaxVal = dataContainer.XMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        },
+                        Y = new MapFloatEntry
+                        {
+                            Source = dataContainer.YAxisName,
+                            // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
+                            DataMinVal = dataContainer.YMinThreshold,
+                            DataMaxVal = dataContainer.YMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        },
+                        Z = new MapFloatEntry
+                        {
+                            Source = dataContainer.ZAxisName,
+                            // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
+                            DataMinVal = dataContainer.ZMinThreshold,
+                            DataMaxVal = dataContainer.ZMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        }
                     }
-                }
-            };
+                };
 
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
