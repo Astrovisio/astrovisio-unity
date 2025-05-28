@@ -31,14 +31,15 @@ namespace Astrovisio
             }
         }
 
-
+        [ContextMenu("Enter VR")]
         public void EnterVR()
         {
             mainCamera.gameObject.SetActive(false);
             xrOrigin.SetActive(true);
             StartCoroutine(StartXR());
         }
-
+        
+        [ContextMenu("Exit VR")]
         public void ExitVR()
         {
             StopCoroutine(StartXR());

@@ -17,8 +17,8 @@ Shader "Astrovisio/PointShader"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_particles_point
-            #pragma target 3.5
+            #pragma target 3.0
+            #pragma multi_compile_instancing
 
             #include "UnityCG.cginc"
 
@@ -131,7 +131,9 @@ Shader "Astrovisio/PointShader"
 
             v2f vert(appdata v)
             {
+                UNITY_SETUP_INSTANCE_ID(v);
                 v2f o;
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 if ((dataX[v.vertexID] > mappingConfigs[X_INDEX].DataMaxVal) || (dataX[v.vertexID] < mappingConfigs[X_INDEX].DataMinVal)) {
                     o.mustDiscard = 1.0;
