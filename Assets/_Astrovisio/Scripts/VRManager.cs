@@ -9,6 +9,8 @@ namespace Astrovisio
     {
         public static VRManager Instance { get; private set; }
 
+        private bool VRActive = false;
+
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameObject xrOrigin;
 
@@ -38,7 +40,7 @@ namespace Astrovisio
             xrOrigin.SetActive(true);
             StartCoroutine(StartXR());
         }
-        
+
         [ContextMenu("Exit VR")]
         public void ExitVR()
         {
@@ -61,6 +63,7 @@ namespace Astrovisio
             {
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
                 Debug.Log("[VRManager] XR started.");
+                VRActive = true;
             }
         }
 
@@ -69,6 +72,13 @@ namespace Astrovisio
             XRGeneralSettings.Instance.Manager.StopSubsystems();
             XRGeneralSettings.Instance.Manager.DeinitializeLoader();
             Debug.Log("[VRManager] XR stopped.");
+            VRActive = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (VRActive)
+                StopXR();
         }
 
     }
