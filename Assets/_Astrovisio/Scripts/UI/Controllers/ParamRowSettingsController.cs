@@ -1,43 +1,51 @@
+using System.Linq;
 using UnityEngine;
 
 namespace Astrovisio
 {
+
     public class ParamRowSettingsController
     {
-        public Project Project { get; }
-        public ConfigParam Param { get; }
+
+        // === Dependencies ===
         public string ParamName { get; }
-        public ParamSettings ParamSettings { get; set; }
-        public bool State { get; set; }
+        public Project Project { get; }
 
-        // Local
-        private ColorMapSO colorMapSO;
+        // === Other ===
+        public RenderSettings RenderSettings { get; }
 
-        public ParamRowSettingsController(Project project, ConfigParam param, string paramName, UIContextSO uiContextSO)
+
+        public ParamRowSettingsController(string paramName, Project project)
         {
-            Project = project;
-            Param = param;
             ParamName = paramName;
-            colorMapSO = uiContextSO.colorMapSO;
+            Project = project;
 
-            State = false;
+            ConfigParam param = Project.ConfigProcess.Params.FirstOrDefault(p => p.Key == paramName).Value;
 
-            ParamSettings = new ParamSettings();
-            ParamSettings.Colormap = "Inferno";
+            RenderSettings = new RenderSettings(
+                paramName,
+                (float)param.ThrMin,
+                (float)param.ThrMax,
+                (float)param.ThrMinSel,
+                (float)param.ThrMaxSel,
+                MappingType.Colormap,
+                new ColorMapSettings(ColorMapEnum.Accent, ScalingType.Linear, (float)param.ThrMin, (float)param.ThrMax, false)
+            );
 
-
-            if (project.ConfigProcess.Params.TryGetValue(paramName, out var configParam))
+            if (Project.ConfigProcess.Params.TryGetValue(paramName, out var configParam))
             {
-                ParamSettings.MinThreshold = configParam.ThrMin;
-                ParamSettings.MaxThreshold = configParam.ThrMax;
-                ParamSettings.MinThresholdSelected = configParam.ThrMinSel ?? configParam.ThrMin;
-                ParamSettings.MaxThresholdSelected = configParam.ThrMaxSel ?? configParam.ThrMax;
+                RenderSettings.ThresholdMinSelected = (float)configParam.ThrMin;
+                RenderSettings.ThresholdMaxSelected = (float)configParam.ThrMax;
+                RenderSettings.ThresholdMin = (float)(configParam.ThrMinSel ?? configParam.ThrMin);
+                RenderSettings.ThresholdMax = (float)(configParam.ThrMaxSel ?? configParam.ThrMax);
             }
             else
             {
                 Debug.LogWarning($"Param '{paramName}' not found on dictionary.");
             }
         }
+
+
 
     }
 

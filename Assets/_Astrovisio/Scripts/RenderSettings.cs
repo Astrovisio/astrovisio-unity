@@ -2,36 +2,89 @@ using UnityEngine;
 
 namespace Astrovisio
 {
+    public enum MappingType
+    {
+        None,
+        Opacity,
+        Colormap,
+        Sound,
+        Haptics
+    }
+
+    public enum ScalingType
+    {
+        Linear,
+        Cubic,
+        Logaritmic
+    }
+
     public class RenderSettings
     {
-
-        public string ParamName { get; set; }
-        public string ColorMapName { get; set; }
-        public ColorMapEnum ColorMap { get; set; }
-        public float LowLimit { get; set; }
-        public float HighLimit { get; set; }
-        public float MinValue { get; set; }
-        public float MaxValue { get; set; }
+        public string Name { get; set; }
+        public float ThresholdMin { get; set; }
+        public float ThresholdMax { get; set; }
+        public float ThresholdMinSelected { get; set; }
+        public float ThresholdMaxSelected { get; set; }
+        public MappingType Mapping { get; set; }
+        public IMappingSettings MappingSettings { get; set; }
 
         public RenderSettings(
-            string paramName,
-            string colorMapName,
-            ColorMapEnum colorMap,
-            float lowLimit,
-            float highLimit,
-            float minValue,
-            float maxValue
+            string name,
+            float thresholdMin,
+            float thresholdMax,
+            float thresholdMinSelected,
+            float thresholdMaxSelected,
+            MappingType mapping,
+            IMappingSettings mappingSettings = null
         )
         {
-            ParamName = paramName;
-            ColorMapName = colorMapName;
-            ColorMap = colorMap;
-            LowLimit = lowLimit;
-            HighLimit = highLimit;
-            MinValue = minValue;
-            MaxValue = maxValue;
+            Name = name;
+            ThresholdMinSelected = thresholdMinSelected;
+            ThresholdMaxSelected = thresholdMaxSelected;
+            ThresholdMin = thresholdMin;
+            ThresholdMax = thresholdMax;
+            Mapping = mapping;
+            MappingSettings = mappingSettings;
         }
+    }
 
+    public interface IMappingSettings { }
+
+    public class OpacitySettings : IMappingSettings
+    {
+        // public float OpacityMultiplier { get; set; }
+        // public bool Invert { get; set; }
+    }
+
+    public class ColorMapSettings : IMappingSettings
+    {
+        public ColorMapEnum ColorMap { get; set; }
+        public ScalingType ScalingType { get; set; }
+        public float ThresholdMin { get; set; }
+        public float ThresholdMax { get; set; }
+        public bool Invert { get; set; }
+
+        public ColorMapSettings(
+            ColorMapEnum colorMap,
+            ScalingType scalingType,
+            float thresholdMin,
+            float thresholdMax,
+            bool invert
+        ) =>
+        (ColorMap, ScalingType, ThresholdMin, ThresholdMax, Invert) =
+        (colorMap, scalingType, thresholdMin, thresholdMax, invert);
+    }
+
+    public class SoundSettings : IMappingSettings
+    {
+        // public float Volume { get; set; }
+        // public AudioClip SoundEffect { get; set; }
+    }
+
+    public class HapticsSettings : IMappingSettings
+    {
+        // public float Intensity { get; set; }
+        // public float Duration { get; set; }
     }
 
 }

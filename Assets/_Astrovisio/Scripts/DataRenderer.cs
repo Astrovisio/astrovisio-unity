@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using CatalogData;
 using UnityEngine;
@@ -110,11 +111,11 @@ namespace Astrovisio
             }
         }
 
-        public void SetColorMapThreshold(float min, float max)
+        public void RemoveColorMap()
         {
-            astrovidioDataSetRenderer.SetColorMapThresholdAstrovisio(min, max);
+            astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }
-
+        
     }
 
 }

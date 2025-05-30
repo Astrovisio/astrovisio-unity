@@ -9,7 +9,7 @@
         <engine:VisualElement name="ColorMapContainer">
             <engine:VisualElement name="DropdownContainer">
                 <engine:Label text="Colormap" name="Label" />
-                <engine:VisualElement name="Preview" />
+                <engine:VisualElement name="Preview" style="display: none;" />
                 <engine:Instance template="DropdownSimple" name="ColorMapDropdown">
                     <AttributeOverrides element-name="DropdownField" choices="Inferno,Paradiso" index="0" />
                 </engine:Instance>

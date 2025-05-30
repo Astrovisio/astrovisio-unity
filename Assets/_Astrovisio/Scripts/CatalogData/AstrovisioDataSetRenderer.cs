@@ -240,12 +240,6 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
         }
 
-        [ContextMenu("SetColorMap2")]
-        public void SetColorMap2()
-        {
-            SetColorMapAstrovisio("iord", ColorMapEnum.Inferno, 0, 2097151);
-        }
-
         public void SetColorMapAstrovisio(string paramName, ColorMapEnum colorMap, float min, float max)
         {
             SetColorMap(colorMap);
@@ -263,12 +257,10 @@ namespace CatalogData
             UpdateMappingValues();
         }
 
-        public void SetColorMapThresholdAstrovisio(float min, float max)
+        public void RemoveColorMapAstrovisio()
         {
-            DataMapping.Mapping.Cmap.DataMinVal = min;
-            DataMapping.Mapping.Cmap.DataMaxVal = max;
-            UpdateMappingColumns();
-            UpdateMappingValues();
+            DataMapping.UniformColor = true;
+            SetColorMap(ColorMapEnum.None);
         }
 
         [ContextMenu("UpdateMappingColumns")]
@@ -520,7 +512,7 @@ namespace CatalogData
             _visible = visible;
         }
 
-        public void resetLocalPosition()
+        public void ResetLocalPosition()
         {
             transform.localPosition = _initialLocalPosition;
             transform.localRotation = _initialLocalRotation;
@@ -731,5 +723,7 @@ namespace CatalogData
                 }
             }
         }
+
     }
+
 }
