@@ -263,6 +263,16 @@ namespace CatalogData
             SetColorMap(ColorMapEnum.None);
         }
 
+        public void SetOpacityAstrovisio(string paramName, float opacity)
+        {
+            SetOpacity(opacity);
+        }
+
+        public void RemoveOpacityAstrovisio()
+        {
+            
+        }
+
         [ContextMenu("UpdateMappingColumns")]
         public bool UpdateMappingColumns()
         {

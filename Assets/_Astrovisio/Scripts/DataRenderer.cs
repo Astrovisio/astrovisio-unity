@@ -83,21 +83,6 @@ namespace Astrovisio
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
-            // if (dataCubeContainer == null)
-            // {
-            //     Debug.LogError("DataCubeContainer not assigned.");
-            //     return;
-            // }
-
-            // var cubeRenderer = dataCubeContainer.GetComponent<DataCubeRenderer>();
-            // if (cubeRenderer == null)
-            // {
-            //     cubeRenderer = dataCubeContainer.AddComponent<DataCubeRenderer>();
-            // }
-
-            // cubeRenderer.Initialize(dataContainer, pointShader);
-
-            // float[][] dataset = Transpose(dataContainer.DataPack.Rows);
             astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
@@ -114,6 +99,19 @@ namespace Astrovisio
         public void RemoveColorMap()
         {
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
+        }
+
+        public void SetOpacity(string paramName, float opacity)
+        {
+            if (astrovidioDataSetRenderer is not null)
+            {
+                astrovidioDataSetRenderer.SetOpacityAstrovisio(paramName, opacity);
+            }
+        }
+
+        public void RemoveOpacity()
+        {
+            astrovidioDataSetRenderer.RemoveOpacityAstrovisio();
         }
         
     }

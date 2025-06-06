@@ -8,6 +8,7 @@ namespace Astrovisio
 {
     public class ProjectSidebarRenderController
     {
+
         // === Dependencies ===
         public ProjectSidebarController ProjectSidebarController { private set; get; }
         public UIManager UIManager { private set; get; }
@@ -18,22 +19,11 @@ namespace Astrovisio
 
         // === Other ===
         private VisualElement renderSettingsContainer;
+        private SettingsPanelController settingsPanelController;
+        private VisualElement settingsPanel;
         private ScrollView paramSettingsScrollView;
         private Dictionary<string, ParamRow> paramSettingsDatas = new();
-        private VisualElement settingsPanel;
-        private DropdownField colorMapDropdown;
-        private MinMaxSlider settingsPanelThresholdSlider;
-        private DoubleField settingsPanelMinFloatField;
-        private DoubleField settingsPanelMaxFloatField;
-        private Button settingsPanelCancelButton;
-        private Button settingsPanelApplyButton;
-        private EventCallback<ChangeEvent<string>> settingsPanelDropdownCallback;
-        private EventCallback<ChangeEvent<Vector2>> settingsPanelSliderCallback;
-        private EventCallback<ChangeEvent<double>> settingsPanelMinFieldCallback;
-        private EventCallback<ChangeEvent<double>> settingsPanelMaxFieldCallback;
-        private Action settingsPanelCancelButtonCallback;
-        private Action settingsPanelApplyButtonCallback;
-        private bool isThresholdUpdating = false;
+        private ProjectRenderSettings projectRenderSettings = new();
 
 
         public ProjectSidebarRenderController(ProjectSidebarController projectSidebarController, UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
@@ -52,20 +42,13 @@ namespace Astrovisio
         {
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
 
-            InitSettingsPanel();
-            Update();
-        }
-
-        private void InitSettingsPanel()
-        {
             settingsPanel = renderSettingsContainer.Q<VisualElement>("SettingsPanel");
-            settingsPanel.RemoveFromClassList("active");
+            settingsPanelController = new SettingsPanelController(Project, settingsPanel);
 
-            settingsPanelThresholdSlider = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
-            settingsPanelMinFloatField = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
-            settingsPanelMaxFloatField = settingsPanel.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
-            settingsPanelCancelButton = settingsPanel.Q<VisualElement>("CancelButton")?.Q<Button>();
-            settingsPanelApplyButton = settingsPanel.Q<VisualElement>("ApplyButton")?.Q<Button>();
+            settingsPanelController.OnApplySetting = OnApplySettings;
+            settingsPanelController.OnCancelSetting = OnCancelSettings;
+
+            Update();
         }
 
         public void Update()
@@ -121,17 +104,21 @@ namespace Astrovisio
                 paramButton.RemoveFromClassList("active");
                 paramButton.clicked += () =>
                 {
+                    ParamRowSettingsController paramRowSettingsController = GetParamRowSettingsController(paramName);
+
                     if (paramButton.ClassListContains("active"))
                     {
                         UnselectAllParamSettingButton();
+                        CloseSettingsPanel();
                     }
                     else
                     {
                         UnselectAllParamSettingButton();
-                        paramButton.ToggleInClassList("active");
-                        settingsPanel.ToggleInClassList("active");
-                        UpdateSettingsPanel(paramRow.ParamRowSettingsController);
+                        paramButton.AddToClassList("active");
+                        settingsPanel.AddToClassList("active");
+                        settingsPanelController.InitSettingsPanel(paramRowSettingsController);
                     }
+
                 };
 
                 paramSettingsDatas.Add(paramName, paramRow);
@@ -151,162 +138,100 @@ namespace Astrovisio
                 }
             }
 
-            UnregisterSettingPanelEvents();
             CloseSettingsPanel();
-        }
-
-
-        // === Settings Panel ===
-        private void UpdateSettingsPanel(ParamRowSettingsController paramRowSettingsController)
-        {
-            RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-
-            ColorMapSettings colorMapSettings = paramRowSettingsController.RenderSettings.MappingSettings as ColorMapSettings;
-            ColorMapEnum colorMap = colorMapSettings.ColorMap;
-
-            colorMapDropdown = settingsPanel.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
-            if (colorMapDropdown != null)
-            {
-                colorMapDropdown.choices = Enum.GetNames(typeof(ColorMapEnum)).ToList();
-                colorMapDropdown.value = colorMap.ToString();
-
-                settingsPanelDropdownCallback = evt =>
-                {
-                    if (Enum.TryParse<ColorMapEnum>(evt.newValue, out var selectedColorMap))
-                    {
-                        ColorMapSettings colorMapSettings = paramRowSettingsController.RenderSettings.MappingSettings as ColorMapSettings;
-                        if (colorMapSettings != null)
-                        {
-                            colorMapSettings.ColorMap = selectedColorMap;
-                            RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-                            Debug.Log("ColorMAP " + (paramRowSettingsController.RenderSettings.MappingSettings as ColorMapSettings).ColorMap);
-                        }
-                        else
-                        {
-                            Debug.LogError("MappingSettings is not a ColorMapSettings");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError($"Not valid value for ColorMapEnum: {evt.newValue}");
-                    }
-                };
-
-                colorMapDropdown.RegisterValueChangedCallback(settingsPanelDropdownCallback);
-            }
-
-            if (settingsPanelThresholdSlider != null)
-            {
-                settingsPanelThresholdSlider.highLimit = float.MaxValue;
-                settingsPanelThresholdSlider.lowLimit = float.MinValue;
-                settingsPanelThresholdSlider.highLimit = paramRowSettingsController.RenderSettings.ThresholdMax;
-                settingsPanelThresholdSlider.lowLimit = paramRowSettingsController.RenderSettings.ThresholdMin;
-                settingsPanelThresholdSlider.maxValue = paramRowSettingsController.RenderSettings.ThresholdMaxSelected;
-                settingsPanelThresholdSlider.minValue = paramRowSettingsController.RenderSettings.ThresholdMinSelected;
-                settingsPanelMaxFloatField.value = paramRowSettingsController.RenderSettings.ThresholdMaxSelected;
-                settingsPanelMinFloatField.value = paramRowSettingsController.RenderSettings.ThresholdMinSelected;
-            }
-
-            isThresholdUpdating = false;
-
-            settingsPanelSliderCallback = evt =>
-            {
-                if (isThresholdUpdating)
-                {
-                    return;
-                }
-                isThresholdUpdating = true;
-                settingsPanelMinFloatField.value = evt.newValue.x;
-                settingsPanelMaxFloatField.value = evt.newValue.y;
-                paramRowSettingsController.RenderSettings.ThresholdMinSelected = settingsPanelThresholdSlider.minValue;
-                paramRowSettingsController.RenderSettings.ThresholdMaxSelected = settingsPanelThresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-                isThresholdUpdating = false;
-            };
-
-            settingsPanelMinFieldCallback = evt =>
-            {
-                if (isThresholdUpdating)
-                {
-                    return;
-                }
-                isThresholdUpdating = true;
-                settingsPanelThresholdSlider.minValue = (float)evt.newValue;
-                paramRowSettingsController.RenderSettings.ThresholdMinSelected = settingsPanelThresholdSlider.minValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-                isThresholdUpdating = false;
-            };
-
-            settingsPanelMaxFieldCallback = evt =>
-            {
-                if (isThresholdUpdating)
-                {
-                    return;
-                }
-                isThresholdUpdating = true;
-                settingsPanelThresholdSlider.maxValue = (float)evt.newValue;
-                paramRowSettingsController.RenderSettings.ThresholdMaxSelected = settingsPanelThresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-                isThresholdUpdating = false;
-            };
-
-            settingsPanelThresholdSlider?.RegisterValueChangedCallback(settingsPanelSliderCallback);
-            settingsPanelMinFloatField?.RegisterValueChangedCallback(settingsPanelMinFieldCallback);
-            settingsPanelMaxFloatField?.RegisterValueChangedCallback(settingsPanelMaxFieldCallback);
-
-            settingsPanelCancelButton.clicked += () =>
-            {
-                // Debug.Log("CancelButton clicked");
-                UnregisterSettingPanelEvents();
-                CloseSettingsPanel();
-                RenderManager.Instance.CancelRenderSettings();
-            };
-            settingsPanelApplyButton.clicked += () =>
-            {
-                // Debug.Log("ApplyButton clicked");
-                RenderManager.Instance.ApplyRenderSettings();
-                UnregisterSettingPanelEvents();
-                CloseSettingsPanel();
-            };
         }
 
         private void CloseSettingsPanel()
         {
+            // settingsPanelController.UnregisterSettingPanelEvents();
+            settingsPanelController.CloseSettingsPanel();
+
             foreach (var paramSettingButton in paramSettingsScrollView.Children())
             {
                 Button paramButton = paramSettingButton.Q<Button>();
                 paramButton.RemoveFromClassList("active");
                 paramSettingButton.RemoveFromClassList("active");
-                settingsPanel.RemoveFromClassList("active");
+                // settingsPanel.RemoveFromClassList("active");
             }
         }
 
-        private void UnregisterSettingPanelEvents()
+        private void OnApplySettings(ParamRowSettingsController appliedParamRowSettingsController)
         {
-            if (settingsPanelSliderCallback != null)
+            string appliedParamName = appliedParamRowSettingsController.ParamName;
+            MappingType appliedMapping = appliedParamRowSettingsController.RenderSettings.Mapping;
+
+            // Debug.Log("Applied Param Name: " + appliedParamName);
+
+            // Update project params
+            switch (appliedMapping)
             {
-                colorMapDropdown?.UnregisterValueChangedCallback(settingsPanelDropdownCallback);
+                case MappingType.None:
+                    // Debug.Log("OnApplySettings -> None: " + appliedParamName);
+                    break;
+                case MappingType.Opacity:
+                    if (projectRenderSettings.OpacitySettingsController is not null)
+                    {
+                        // Debug.Log("Resetting -> Opacity: " + projectRenderSettings.OpacitySettingsController.ParamName);
+                        projectRenderSettings.OpacitySettingsController.Reset();
+                    }
+                    // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName);
+                    projectRenderSettings.OpacitySettingsController = appliedParamRowSettingsController;
+                    break;
+                case MappingType.Colormap:
+                    if (projectRenderSettings.ColorMapSettingsController is not null)
+                    {
+                        // Debug.Log("Resetting -> Colormap: " + projectRenderSettings.ColorMapSettingsController.ParamName);
+                        projectRenderSettings.ColorMapSettingsController.Reset();
+                    }
+                    // Debug.Log("OnApplySettings -> Colormap: " + appliedParamName);
+                    projectRenderSettings.ColorMapSettingsController = appliedParamRowSettingsController;
+                    break;
             }
-            if (settingsPanelSliderCallback != null)
+
+            SetParamRowSettingsController(appliedParamName, appliedParamRowSettingsController);
+            CloseSettingsPanel();
+            // UpdateRenderManager();
+        }
+
+        private void UpdateRenderManager()
+        {
+            if (projectRenderSettings.ColorMapSettingsController is null)
             {
-                settingsPanelThresholdSlider?.UnregisterValueChangedCallback(settingsPanelSliderCallback);
+                RenderManager.Instance.RemoveColorMap();
             }
-            if (settingsPanelMinFieldCallback != null)
+        }
+
+        private void SetParamRowSettingsController(string paramName, ParamRowSettingsController paramRowSettingsController)
+        {
+            if (paramSettingsDatas.TryGetValue(paramName, out ParamRow paramRow))
             {
-                settingsPanelMinFloatField?.UnregisterValueChangedCallback(settingsPanelMinFieldCallback);
+                paramRow.ParamRowSettingsController = paramRowSettingsController;
+                // Debug.Log("SetParamRowSettingsController: " + paramName + " -> " + paramRowSettingsController.RenderSettings.Mapping);
+
+                // foreach (var kvp in paramSettingsDatas)
+                // {
+                //     string key = kvp.Key;
+                //     ParamRow value = kvp.Value;
+                //     Debug.Log($"Parametro: {key}, Mapping: {value.ParamRowSettingsController.RenderSettings.Mapping}");
+                // }
             }
-            if (settingsPanelMaxFieldCallback != null)
+        }
+
+        private ParamRowSettingsController GetParamRowSettingsController(string paramName)
+        {
+            if (paramSettingsDatas.TryGetValue(paramName, out ParamRow paramRow))
             {
-                settingsPanelMaxFloatField?.UnregisterValueChangedCallback(settingsPanelMaxFieldCallback);
+                // Debug.Log("GetParamRowSettingsController: " + paramName + " -> " + paramRow.ParamRowSettingsController.RenderSettings.Mapping);
+                return paramRow.ParamRowSettingsController;
             }
-            if (settingsPanelCancelButtonCallback != null)
-            {
-                settingsPanelCancelButton.clicked -= settingsPanelCancelButtonCallback;
-            }
-            if (settingsPanelApplyButtonCallback != null)
-            {
-                settingsPanelApplyButton.clicked -= settingsPanelApplyButtonCallback;
-            }
+
+            return null;
+        }
+
+
+        private void OnCancelSettings()
+        {
+            CloseSettingsPanel();
         }
 
     }

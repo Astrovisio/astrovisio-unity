@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Astrovisio
@@ -14,77 +15,107 @@ namespace Astrovisio
     public enum ScalingType
     {
         Linear,
+        Quadratic,
         Cubic,
+        Exponential,
         Logaritmic
     }
 
-    public class RenderSettings
+    public class RenderSettings : ICloneable
     {
         public string Name { get; set; }
-        public float ThresholdMin { get; set; }
-        public float ThresholdMax { get; set; }
-        public float ThresholdMinSelected { get; set; }
-        public float ThresholdMaxSelected { get; set; }
         public MappingType Mapping { get; set; }
         public IMappingSettings MappingSettings { get; set; }
 
-        public RenderSettings(
-            string name,
-            float thresholdMin,
-            float thresholdMax,
-            float thresholdMinSelected,
-            float thresholdMaxSelected,
-            MappingType mapping,
-            IMappingSettings mappingSettings = null
-        )
+        public RenderSettings(string name, MappingType mapping = MappingType.None, IMappingSettings mappingSettings = null)
         {
             Name = name;
-            ThresholdMinSelected = thresholdMinSelected;
-            ThresholdMaxSelected = thresholdMaxSelected;
-            ThresholdMin = thresholdMin;
-            ThresholdMax = thresholdMax;
             Mapping = mapping;
             MappingSettings = mappingSettings;
+        }
+
+        public object Clone()
+        {
+            return new RenderSettings(
+                Name,
+                Mapping,
+                MappingSettings is ICloneable cloneable ? cloneable.Clone() as IMappingSettings : null
+            );
         }
     }
 
     public interface IMappingSettings { }
 
-    public class OpacitySettings : IMappingSettings
+    public class OpacitySettings : IMappingSettings, ICloneable
     {
-        // public float OpacityMultiplier { get; set; }
-        // public bool Invert { get; set; }
+        public float Opacity { get; set; }
+        public bool Invert { get; set; }
+
+        public object Clone()
+        {
+            return new OpacitySettings
+            {
+                Opacity = this.Opacity,
+                Invert = this.Invert
+            };
+        }
     }
 
-    public class ColorMapSettings : IMappingSettings
+    public class ColorMapSettings : IMappingSettings, ICloneable
     {
         public ColorMapEnum ColorMap { get; set; }
         public ScalingType ScalingType { get; set; }
         public float ThresholdMin { get; set; }
         public float ThresholdMax { get; set; }
+        public float ThresholdMinSelected { get; set; }
+        public float ThresholdMaxSelected { get; set; }
         public bool Invert { get; set; }
+
+        public ColorMapSettings() { }
 
         public ColorMapSettings(
             ColorMapEnum colorMap,
             ScalingType scalingType,
             float thresholdMin,
             float thresholdMax,
+            float thresholdMinSelected,
+            float thresholdMaxSelected,
             bool invert
         ) =>
-        (ColorMap, ScalingType, ThresholdMin, ThresholdMax, Invert) =
-        (colorMap, scalingType, thresholdMin, thresholdMax, invert);
+        (ColorMap, ScalingType, ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, Invert) =
+        (colorMap, scalingType, thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, invert);
+
+        public object Clone()
+        {
+            return new ColorMapSettings
+            {
+                ColorMap = this.ColorMap,
+                ScalingType = this.ScalingType,
+                ThresholdMin = this.ThresholdMin,
+                ThresholdMax = this.ThresholdMax,
+                ThresholdMinSelected = this.ThresholdMinSelected,
+                ThresholdMaxSelected = this.ThresholdMaxSelected,
+                Invert = this.Invert
+            };
+        }
     }
 
-    public class SoundSettings : IMappingSettings
+    public class SoundSettings : IMappingSettings, ICloneable
     {
-        // public float Volume { get; set; }
-        // public AudioClip SoundEffect { get; set; }
+        // Aggiungi i campi se servono
+        public object Clone()
+        {
+            return new SoundSettings();
+        }
     }
 
-    public class HapticsSettings : IMappingSettings
+    public class HapticsSettings : IMappingSettings, ICloneable
     {
-        // public float Intensity { get; set; }
-        // public float Duration { get; set; }
+        // Aggiungi i campi se servono
+        public object Clone()
+        {
+            return new HapticsSettings();
+        }
     }
 
 }

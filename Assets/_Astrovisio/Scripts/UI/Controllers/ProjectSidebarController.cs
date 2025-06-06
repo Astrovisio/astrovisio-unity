@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    public struct ParamRow
+    public class ParamRow
     {
         public VisualElement VisualElement { get; set; }
         public ParamRowSettingsController ParamRowSettingsController { get; set; }
@@ -80,7 +80,7 @@ namespace Astrovisio
         private void OnProjectProcessed(DataPack data)
         {
             dataContainer = new DataContainer(data, Project);
-            Debug.Log(dataContainer.PointCount);
+            // Debug.Log(dataContainer.PointCount);
             // SetProcessDataButton(true);
             SetNextStepButtons(true);
         }

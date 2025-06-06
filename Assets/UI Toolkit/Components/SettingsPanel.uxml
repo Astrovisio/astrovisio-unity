@@ -1,34 +1,39 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="DropdownSimple" src="project://database/Assets/UI%20Toolkit/Components/DropdownSimple.uxml?fileID=9197481963319205126&amp;guid=8ab5ade032c81ed45911a48ecd2265d5&amp;type=3#DropdownSimple" />
-    <engine:Template name="Slider" src="project://database/Assets/UI%20Toolkit/Components/Shared/Slider.uxml?fileID=9197481963319205126&amp;guid=02d1baae80c0d20428e83b2e2aee8725&amp;type=3#Slider" />
     <engine:Template name="SliderMinMax" src="project://database/Assets/UI%20Toolkit/Components/Shared/SliderMinMax.uxml?fileID=9197481963319205126&amp;guid=0bf42dafab4d9894ab4cacd6dced15ac&amp;type=3#SliderMinMax" />
+    <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
     <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
     <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/SettingsPanel.uss?fileID=7433441132597879392&amp;guid=2d5de03ac7767cf43952c29c1af1f88b&amp;type=3#SettingsPanel" />
     <engine:VisualElement name="SettingsPanelRoot" class="active">
-        <engine:VisualElement name="ColorMapContainer">
-            <engine:VisualElement name="DropdownContainer">
-                <engine:Label text="Colormap" name="Label" />
-                <engine:VisualElement name="Preview" style="display: none;" />
-                <engine:Instance template="DropdownSimple" name="ColorMapDropdown">
-                    <AttributeOverrides element-name="DropdownField" choices="Inferno,Paradiso" index="0" />
-                </engine:Instance>
-            </engine:VisualElement>
-            <engine:Instance template="Slider" name="SaturationSlider" style="display: none;">
-                <AttributeOverrides element-name="Label" text="Saturation" />
-            </engine:Instance>
-            <engine:Instance template="Slider" name="ContrastSlider" style="display: none;">
-                <AttributeOverrides element-name="Label" text="Contrast" />
-            </engine:Instance>
-            <engine:Instance template="Slider" name="OpacitySlider" style="display: none;">
-                <AttributeOverrides element-name="Label" text="Opacity" />
-            </engine:Instance>
-            <engine:Instance template="Slider" name="BrightnessSlider" style="display: none;">
-                <AttributeOverrides element-name="Label" text="Brightness" />
+        <engine:Label text="Density" name="ParamNameLabel" class="h1" />
+        <engine:VisualElement name="MappingContainer" class="container">
+            <engine:Label text="Mapping" name="MappingLabel" class="h2" />
+            <engine:Instance template="DropdownSimple" name="MappingDropdown">
+                <AttributeOverrides element-name="DropdownField" choices="None,Opacity,Colormap" index="0" />
             </engine:Instance>
         </engine:VisualElement>
         <engine:VisualElement name="LineSpacer" style="flex-grow: 1;" />
         <engine:Instance template="SliderMinMax" name="ThresholdSlider" />
+        <engine:VisualElement name="ColorMapContainer">
+            <engine:Label text="Colormap" name="Label" class="h3" />
+            <engine:VisualElement name="Preview" />
+            <engine:Instance template="DropdownSimple" name="ColorMapDropdown">
+                <AttributeOverrides element-name="DropdownField" choices="Inferno,Paradiso" index="0" />
+            </engine:Instance>
+        </engine:VisualElement>
+        <engine:VisualElement name="ScalingContainer" style="flex-grow: 1;">
+            <engine:Label text="Scaling" name="Label" class="h3" />
+            <engine:Instance template="DropdownSimple" name="ScalingDropdown">
+                <AttributeOverrides element-name="DropdownField" choices="Linear,Quadratic,Cubic,Exponential,Logarithmic" index="0" />
+            </engine:Instance>
+        </engine:VisualElement>
+        <engine:Instance template="SliderMinMax" name="MappingThresholdSlider" style="display: none;" />
+        <engine:VisualElement name="InvertMappingToggleContainer" class="container" style="flex-grow: 1;">
+            <engine:Label text="Invert mapping" name="Label" />
+            <engine:Instance template="CheckboxSimple" name="InvertMappingToggle" />
+        </engine:VisualElement>
+        <engine:VisualElement name="LineSpacer" style="flex-grow: 1;" />
         <engine:VisualElement name="ButtonContainer" style="flex-grow: 1;">
             <engine:Instance template="SecondaryButton" name="CancelButton" class="button">
                 <AttributeOverrides element-name="Label" text="Cancel" />

@@ -493,7 +493,7 @@ MonoBehaviour:
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
-        Source: iord
+        Source: 
       Lat:
         Clamped: 0
         DataMinVal: 0
@@ -515,11 +515,11 @@ MonoBehaviour:
         ScalingType: 0
         Source: 
       Opacity:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
+        Clamped: 1
+        DataMinVal: 3.060184
+        DataMaxVal: 6501919
         TargetMinVal: 0
-        TargetMaxVal: 0
+        TargetMaxVal: 1
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
