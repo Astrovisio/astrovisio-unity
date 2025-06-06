@@ -147,11 +147,11 @@ Shader "Astrovisio/PointShader"
                     o.mustDiscard = 1.0;
                     return o;
                 }               
-                if ((mappingConfigs[CMAP_INDEX].Clamped) && ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].DataMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].DataMinVal))) {
+                if (!useUniformColor && (mappingConfigs[CMAP_INDEX].Clamped) && ((dataCmap[v.vertexID] > mappingConfigs[CMAP_INDEX].DataMaxVal) || (dataCmap[v.vertexID] < mappingConfigs[CMAP_INDEX].DataMinVal))) {
                     o.mustDiscard = 1.0;
                     return o;
                 }
-                if ((mappingConfigs[OPACITY_INDEX].Clamped) && ((dataOpacity[v.vertexID] > mappingConfigs[OPACITY_INDEX].DataMaxVal) || (dataOpacity[v.vertexID] < mappingConfigs[OPACITY_INDEX].DataMinVal))) {
+                if (!useUniformOpacity && (mappingConfigs[OPACITY_INDEX].Clamped) && ((dataOpacity[v.vertexID] > mappingConfigs[OPACITY_INDEX].DataMaxVal) || (dataOpacity[v.vertexID] < mappingConfigs[OPACITY_INDEX].DataMinVal))) {
                     o.mustDiscard = 1.0;
                     return o;
                 }

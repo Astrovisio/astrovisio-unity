@@ -101,11 +101,11 @@ namespace Astrovisio
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }
 
-        public void SetOpacity(string paramName, float opacity)
+        public void SetOpacity(string paramName, float min, float max)
         {
             if (astrovidioDataSetRenderer is not null)
             {
-                astrovidioDataSetRenderer.SetOpacityAstrovisio(paramName, opacity);
+                astrovidioDataSetRenderer.SetOpacityAstrovisio(paramName, min, max);
             }
         }
 

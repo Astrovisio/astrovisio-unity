@@ -42,23 +42,50 @@ namespace Astrovisio
                 MappingSettings is ICloneable cloneable ? cloneable.Clone() as IMappingSettings : null
             );
         }
+
     }
 
-    public interface IMappingSettings { }
+    public interface IMappingSettings
+    {
+        public float ThresholdMin { get; set; }
+        public float ThresholdMax { get; set; }
+        public float ThresholdMinSelected { get; set; }
+        public float ThresholdMaxSelected { get; set; }
+        public bool Invert { get; set; }
+    }
 
     public class OpacitySettings : IMappingSettings, ICloneable
     {
-        public float Opacity { get; set; }
+        public float ThresholdMin { get; set; }
+        public float ThresholdMax { get; set; }
+        public float ThresholdMinSelected { get; set; }
+        public float ThresholdMaxSelected { get; set; }
         public bool Invert { get; set; }
+
+        public OpacitySettings() { }
+
+        public OpacitySettings(
+            float thresholdMin,
+            float thresholdMax,
+            float thresholdMinSelected,
+            float thresholdMaxSelected,
+            bool invert
+        ) =>
+        (ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, Invert) =
+        (thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, invert);
 
         public object Clone()
         {
             return new OpacitySettings
             {
-                Opacity = this.Opacity,
+                ThresholdMin = this.ThresholdMin,
+                ThresholdMax = this.ThresholdMax,
+                ThresholdMinSelected = this.ThresholdMinSelected,
+                ThresholdMaxSelected = this.ThresholdMaxSelected,
                 Invert = this.Invert
             };
         }
+
     }
 
     public class ColorMapSettings : IMappingSettings, ICloneable
@@ -98,24 +125,7 @@ namespace Astrovisio
                 Invert = this.Invert
             };
         }
-    }
-
-    public class SoundSettings : IMappingSettings, ICloneable
-    {
-        // Aggiungi i campi se servono
-        public object Clone()
-        {
-            return new SoundSettings();
-        }
-    }
-
-    public class HapticsSettings : IMappingSettings, ICloneable
-    {
-        // Aggiungi i campi se servono
-        public object Clone()
-        {
-            return new HapticsSettings();
-        }
+        
     }
 
 }

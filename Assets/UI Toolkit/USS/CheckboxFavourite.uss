@@ -1,0 +1,22 @@
+#CheckboxRoot {
+    flex-grow: 1;
+}
+
+#CheckboxRoot > .unity-toggle__input > #unity-checkmark {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
+    flex-grow: 1;
+    -unity-background-image-tint-color: var(--grey-600);
+}
+
+#CheckboxRoot:checked > .unity-toggle__input > #unity-checkmark {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite_full.svg?fileID=7388822144124034973&guid=290cba493649053489ffc68402790639&type=3#favourite_full");
+    -unity-background-image-tint-color: var(--accent-100);
+}
+
+#CheckboxRoot:checked:hover > .unity-toggle__input > #unity-checkmark {
+    -unity-background-image-tint-color: var(--accent-200);
+}
+
+#CheckboxRoot:hover > .unity-toggle__input > #unity-checkmark {
+    -unity-background-image-tint-color: var(--grey-800);
+}

@@ -82,25 +82,6 @@ namespace Astrovisio
             };
         }
 
-        private void SetMappingDropdown(string value)
-        {
-            if (mappingDropdownCallback != null)
-            {
-                mappingDropdown.UnregisterValueChangedCallback(mappingDropdownCallback);
-            }
-
-            mappingDropdown.value = value;
-
-            mappingDropdown.schedule.Execute(() =>
-            {
-                if (mappingDropdownCallback != null)
-                {
-                    mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
-                }
-            }).ExecuteLater(100);
-        }
-
-
         public void InitSettingsPanel(ParamRowSettingsController paramRowSettingsController)
         {
             UnregisterSettingPanelEvents();
@@ -142,13 +123,14 @@ namespace Astrovisio
         private void InitOpacity(ParamRowSettingsController paramRowSettingsController)
         {
             SetOpacityDisplayStyle();
-            OpacitySettings opacitySettings = paramRowSettingsController.RenderSettings.MappingSettings as OpacitySettings;
+            Debug.Log("Opacity");
+            SetThresholdSlider(paramRowSettingsController);
         }
 
         private void InitColormap(ParamRowSettingsController paramRowSettingsController)
         {
             SetColorMapDisplayStyle();
-
+            Debug.Log("Colormap");
             SetThresholdSlider(paramRowSettingsController);
             SetColorMapDropdown(paramRowSettingsController);
         }
@@ -184,6 +166,11 @@ namespace Astrovisio
                             // Debug.Log("Mapping type: Opacity");
                             paramRowSettingsController.RenderSettings.Mapping = MappingType.Opacity;
                             paramRowSettingsController.RenderSettings.MappingSettings = new OpacitySettings(
+                                (float)paramRowSettingsController.Param.ThrMin,
+                                (float)paramRowSettingsController.Param.ThrMax,
+                                (float)paramRowSettingsController.Param.ThrMinSel,
+                                (float)paramRowSettingsController.Param.ThrMaxSel,
+                                false
                             );
                             InitOpacity(paramRowSettingsController);
                             break;
@@ -210,6 +197,24 @@ namespace Astrovisio
             mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
         }
 
+        private void SetMappingDropdownValue(string value)
+        {
+            if (mappingDropdownCallback != null)
+            {
+                mappingDropdown.UnregisterValueChangedCallback(mappingDropdownCallback);
+            }
+
+            mappingDropdown.value = value;
+
+            mappingDropdown.schedule.Execute(() =>
+            {
+                if (mappingDropdownCallback != null)
+                {
+                    mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
+                }
+            }).ExecuteLater(100);
+        }
+
         private void SetThresholdSlider(ParamRowSettingsController paramRowSettingsController)
         {
             if (thresholdSlider is null || thresholdSliderMinFloatField is null || thresholdSliderMaxFloatField is null)
@@ -231,16 +236,16 @@ namespace Astrovisio
             }
 
 
-            ColorMapSettings colorMapSettings = paramRowSettingsController.RenderSettings.MappingSettings as ColorMapSettings;
+            IMappingSettings mappingSettings = paramRowSettingsController.RenderSettings.MappingSettings;
 
             thresholdSlider.lowLimit = float.MinValue;
             thresholdSlider.highLimit = float.MaxValue;
-            thresholdSlider.lowLimit = colorMapSettings.ThresholdMin;
-            thresholdSlider.highLimit = colorMapSettings.ThresholdMax;
-            thresholdSlider.minValue = colorMapSettings.ThresholdMinSelected;
-            thresholdSlider.maxValue = colorMapSettings.ThresholdMaxSelected;
-            thresholdSliderMinFloatField.value = colorMapSettings.ThresholdMinSelected;
-            thresholdSliderMaxFloatField.value = colorMapSettings.ThresholdMaxSelected;
+            thresholdSlider.lowLimit = mappingSettings.ThresholdMin;
+            thresholdSlider.highLimit = mappingSettings.ThresholdMax;
+            thresholdSlider.minValue = mappingSettings.ThresholdMinSelected;
+            thresholdSlider.maxValue = mappingSettings.ThresholdMaxSelected;
+            thresholdSliderMinFloatField.value = mappingSettings.ThresholdMinSelected;
+            thresholdSliderMaxFloatField.value = mappingSettings.ThresholdMaxSelected;
 
 
             thresholdSliderCallback = evt =>
@@ -252,8 +257,8 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSliderMinFloatField.value = evt.newValue.x;
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
-                colorMapSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                colorMapSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
+                mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
+                mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
                 RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
                 isThresholdUpdating = false;
             };
@@ -266,7 +271,7 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 thresholdSlider.minValue = (float)evt.newValue;
-                colorMapSettings.ThresholdMinSelected = thresholdSlider.minValue;
+                mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
                 RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
                 isThresholdUpdating = false;
             };
@@ -279,7 +284,7 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 thresholdSlider.maxValue = (float)evt.newValue;
-                colorMapSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
+                mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
                 RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
                 isThresholdUpdating = false;
             };
@@ -336,7 +341,7 @@ namespace Astrovisio
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.None;
 
-            SetMappingDropdown(mappingDropdown.choices[0]);
+            SetMappingDropdownValue(mappingDropdown.choices[0]);
         }
 
         private void SetOpacityDisplayStyle()
@@ -356,7 +361,7 @@ namespace Astrovisio
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.Flex;
 
-            SetMappingDropdown(mappingDropdown.choices[1]);
+            SetMappingDropdownValue(mappingDropdown.choices[1]);
         }
 
         private void SetColorMapDisplayStyle()
@@ -376,7 +381,7 @@ namespace Astrovisio
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.Flex;
 
-            SetMappingDropdown(mappingDropdown.choices[2]);
+            SetMappingDropdownValue(mappingDropdown.choices[2]);
         }
 
         public void CloseSettingsPanel()

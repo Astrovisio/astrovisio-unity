@@ -261,16 +261,32 @@ namespace CatalogData
         {
             DataMapping.UniformColor = true;
             SetColorMap(ColorMapEnum.None);
+            UpdateMappingColumns();
+            UpdateMappingValues();
         }
 
-        public void SetOpacityAstrovisio(string paramName, float opacity)
+        public void SetOpacityAstrovisio(string paramName, float min, float max)
         {
-            SetOpacity(opacity);
+            DataMapping.UniformOpacity = false;
+            DataMapping.Mapping.Opacity = new MapFloatEntry
+            {
+                Source = paramName,
+                Clamped = true,
+                DataMinVal = min,
+                DataMaxVal = max,
+                TargetMinVal = 0f,
+                TargetMaxVal = 1f
+            };
+            UpdateMappingColumns();
+            UpdateMappingValues();
         }
 
         public void RemoveOpacityAstrovisio()
         {
-            
+            DataMapping.UniformOpacity = true;
+            SetOpacity(1f);
+            UpdateMappingColumns();
+            UpdateMappingValues();
         }
 
         [ContextMenu("UpdateMappingColumns")]

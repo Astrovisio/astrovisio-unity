@@ -472,7 +472,7 @@ MonoBehaviour:
     ColorMap: 12
     Spherical: 0
     RenderType: 0
-    UniformColor: 0
+    UniformColor: 1
     UniformPointSize: 1
     UniformPointShape: 1
     UniformOpacity: 1

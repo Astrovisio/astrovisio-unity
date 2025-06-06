@@ -7,7 +7,9 @@ namespace Astrovisio
     public class ProjectRowController
     {
         // === Dependencies ===
-        private readonly VisualElement projectRow;
+        public ProjectManager ProjectManager { get; set; }
+        public Project Project { get; set; }
+        public VisualElement Root { private set; get; }
 
         // === Events ===
 
@@ -16,32 +18,29 @@ namespace Astrovisio
         private Label filesLabel;
         private Label lastOpenedLabel;
         private Label createLabel;
-        private Button favouriteButton;
+        private Toggle favouriteToggle;
         private Button vrButton;
         private Button moreButton;
 
-        // === Data ===
-        public string ProjectName { get; set; }
-        public Project Project { get; set; }
 
-        public ProjectRowController(VisualElement projectRow, string projectName, Project project)
+        public ProjectRowController(ProjectManager projectManager, Project project, VisualElement root)
         {
-            this.projectRow = projectRow;
-            ProjectName = projectName;
+            ProjectManager = projectManager;
             Project = project;
+            Root = root;
 
             Init();
         }
 
         private void Init()
         {
-            projectNameLabel = projectRow.Q<Label>("ProjectNameLabel");
-            filesLabel = projectRow.Q<Label>("FilesLabel");
-            lastOpenedLabel = projectRow.Q<Label>("LastOpenedLabel");
-            createLabel = projectRow.Q<Label>("CreatedLabel");
-            favouriteButton = projectRow.Q<Button>("FavouriteButton");
-            vrButton = projectRow.Q<Button>("VRButton");
-            moreButton = projectRow.Q<Button>("MoreButton");
+            projectNameLabel = Root.Q<Label>("ProjectNameLabel");
+            filesLabel = Root.Q<Label>("FilesLabel");
+            lastOpenedLabel = Root.Q<Label>("LastOpenedLabel");
+            createLabel = Root.Q<Label>("CreatedLabel");
+            favouriteToggle = Root.Q<VisualElement>("FavouriteToggle")?.Q<Toggle>();
+            vrButton = Root.Q<Button>("VRButton");
+            moreButton = Root.Q<Button>("MoreButton");
 
             projectNameLabel.text = Project.Name;
             filesLabel.text = Project.Paths.Length.ToString() + " files";
@@ -62,9 +61,9 @@ namespace Astrovisio
                 createLabel.text = FormatDateTime((DateTime)Project.Created);
             }
 
-            favouriteButton.SetEnabled(false);
-            vrButton.SetEnabled(false);
-            moreButton.SetEnabled(false);
+            InitFavouriteToggle();
+            InitVRButton();
+            InitMoreButton();
         }
 
         private string FormatDateTime(DateTime dateTime)
@@ -74,6 +73,43 @@ namespace Astrovisio
             string formatted = localTime.ToString("dd/MM/yyyy HH:mm");
             return formatted;
         }
+
+        private void InitFavouriteToggle()
+        {
+            favouriteToggle.value = Project.Favourite;
+
+            favouriteToggle.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+            });
+
+            favouriteToggle.RegisterValueChangedCallback(evt =>
+            {
+                Project.Favourite = evt.newValue;
+                ProjectManager.UpdateProject(Project.Id, Project);
+            });
+        }
+
+        private void InitVRButton()
+        {
+            vrButton.SetEnabled(false);
+            vrButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+                Debug.Log("vrButton clicked");
+            });
+        }
+
+        private void InitMoreButton()
+        {
+            moreButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+                Debug.Log("moreButton clicked");
+            });
+        }
+
+
 
     }
 

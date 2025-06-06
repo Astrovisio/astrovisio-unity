@@ -95,7 +95,6 @@ namespace Astrovisio
             dataRenderer.RemoveColorMap();
         }
 
-        // TODO...
         private void SetOpacity(RenderSettings renderSettings)
         {
             if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
@@ -104,7 +103,7 @@ namespace Astrovisio
 
                 string name = renderSettings.Name;
 
-                dataRenderer.SetOpacity(name, opacitySettings.Opacity);
+                dataRenderer.SetOpacity(name, opacitySettings.ThresholdMinSelected, opacitySettings.ThresholdMaxSelected);
             }
             else
             {
@@ -113,8 +112,7 @@ namespace Astrovisio
             }
         }
 
-        // TODO...
-        private void RemoveOpacity()
+        public void RemoveOpacity()
         {
             dataRenderer.RemoveOpacity();
         }

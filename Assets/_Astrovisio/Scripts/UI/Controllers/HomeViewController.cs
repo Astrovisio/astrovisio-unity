@@ -95,7 +95,7 @@ namespace Astrovisio
             {
                 var projectRow = projectRowTemplate.CloneTree();
 
-                var controller = new ProjectRowController(projectRow, project.Name, project);
+                var controller = new ProjectRowController(projectManager, project, projectRow);
                 projectControllers[project.Name] = controller;
 
                 projectRow.RegisterCallback<ClickEvent>(_ => projectManager.OpenProject(project.Id));
