@@ -1,4 +1,5 @@
 using System;
+using CatalogData;
 using UnityEngine;
 
 namespace Astrovisio
@@ -10,15 +11,6 @@ namespace Astrovisio
         Colormap,
         Sound,
         Haptics
-    }
-
-    public enum ScalingType
-    {
-        Linear,
-        Quadratic,
-        Cubic,
-        Exponential,
-        Logaritmic
     }
 
     public class RenderSettings : ICloneable
@@ -51,6 +43,7 @@ namespace Astrovisio
         public float ThresholdMax { get; set; }
         public float ThresholdMinSelected { get; set; }
         public float ThresholdMaxSelected { get; set; }
+        public ScalingType ScalingType { get; set; }
         public bool Invert { get; set; }
     }
 
@@ -60,6 +53,7 @@ namespace Astrovisio
         public float ThresholdMax { get; set; }
         public float ThresholdMinSelected { get; set; }
         public float ThresholdMaxSelected { get; set; }
+        public ScalingType ScalingType { get; set; }
         public bool Invert { get; set; }
 
         public OpacitySettings() { }
@@ -69,10 +63,11 @@ namespace Astrovisio
             float thresholdMax,
             float thresholdMinSelected,
             float thresholdMaxSelected,
+            ScalingType scalingType,
             bool invert
         ) =>
-        (ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, Invert) =
-        (thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, invert);
+        (ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, ScalingType, Invert) =
+        (thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
 
         public object Clone()
         {
@@ -82,6 +77,7 @@ namespace Astrovisio
                 ThresholdMax = this.ThresholdMax,
                 ThresholdMinSelected = this.ThresholdMinSelected,
                 ThresholdMaxSelected = this.ThresholdMaxSelected,
+                ScalingType = this.ScalingType,
                 Invert = this.Invert
             };
         }
@@ -91,41 +87,41 @@ namespace Astrovisio
     public class ColorMapSettings : IMappingSettings, ICloneable
     {
         public ColorMapEnum ColorMap { get; set; }
-        public ScalingType ScalingType { get; set; }
         public float ThresholdMin { get; set; }
         public float ThresholdMax { get; set; }
         public float ThresholdMinSelected { get; set; }
         public float ThresholdMaxSelected { get; set; }
+        public ScalingType ScalingType { get; set; }
         public bool Invert { get; set; }
 
         public ColorMapSettings() { }
 
         public ColorMapSettings(
             ColorMapEnum colorMap,
-            ScalingType scalingType,
             float thresholdMin,
             float thresholdMax,
             float thresholdMinSelected,
             float thresholdMaxSelected,
+            ScalingType scalingType,
             bool invert
         ) =>
-        (ColorMap, ScalingType, ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, Invert) =
-        (colorMap, scalingType, thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, invert);
+        (ColorMap, ThresholdMin, ThresholdMax, ThresholdMinSelected, ThresholdMaxSelected, ScalingType, Invert) =
+        (colorMap, thresholdMin, thresholdMax, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
 
         public object Clone()
         {
             return new ColorMapSettings
             {
                 ColorMap = this.ColorMap,
-                ScalingType = this.ScalingType,
                 ThresholdMin = this.ThresholdMin,
                 ThresholdMax = this.ThresholdMax,
                 ThresholdMinSelected = this.ThresholdMinSelected,
                 ThresholdMaxSelected = this.ThresholdMaxSelected,
+                ScalingType = this.ScalingType,
                 Invert = this.Invert
             };
         }
-        
+
     }
 
 }

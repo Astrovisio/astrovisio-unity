@@ -1,3 +1,4 @@
+using CatalogData;
 using UnityEngine;
 
 namespace Astrovisio
@@ -55,7 +56,7 @@ namespace Astrovisio
             }
             else if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
             {
-                // Debug.Log("SetRenderSettings -> Opacity");
+                // Debug.Log("SetRenderSettings -> Opacity " + renderSettings.MappingSettings.ScalingType);
                 SetOpacity(renderSettings);
             }
             else if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
@@ -67,7 +68,7 @@ namespace Astrovisio
 
         private void SetNone()
         {
-
+            dataRenderer.SetNone();
         }
 
         private void SetColorMap(RenderSettings renderSettings)
@@ -80,8 +81,10 @@ namespace Astrovisio
                 ColorMapEnum colorMap = colorMapSettings.ColorMap;
                 float thresholdMinSelected = colorMapSettings.ThresholdMinSelected;
                 float thresholdMaxSelected = colorMapSettings.ThresholdMaxSelected;
+                ScalingType scalingType = colorMapSettings.ScalingType;
+                bool invert = colorMapSettings.Invert;
 
-                dataRenderer.SetColorMap(name, colorMap, thresholdMinSelected, thresholdMaxSelected);
+                dataRenderer.SetColorMap(name, colorMap, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
             }
             else
             {
@@ -103,7 +106,7 @@ namespace Astrovisio
 
                 string name = renderSettings.Name;
 
-                dataRenderer.SetOpacity(name, opacitySettings.ThresholdMinSelected, opacitySettings.ThresholdMaxSelected);
+                dataRenderer.SetOpacity(name, opacitySettings.ThresholdMinSelected, opacitySettings.ThresholdMaxSelected, opacitySettings.ScalingType, opacitySettings.Invert);
             }
             else
             {

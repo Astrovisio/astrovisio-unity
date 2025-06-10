@@ -25,7 +25,7 @@
         <engine:VisualElement name="ScalingContainer" style="flex-grow: 1;">
             <engine:Label text="Scaling" name="Label" class="h3" />
             <engine:Instance template="DropdownSimple" name="ScalingDropdown">
-                <AttributeOverrides element-name="DropdownField" choices="Linear,Quadratic,Cubic,Exponential,Logarithmic" index="0" />
+                <AttributeOverrides element-name="DropdownField" choices="Linear,Log,Sqrt,Squared,Exp" index="0" />
             </engine:Instance>
         </engine:VisualElement>
         <engine:Instance template="SliderMinMax" name="MappingThresholdSlider" style="display: none;" />

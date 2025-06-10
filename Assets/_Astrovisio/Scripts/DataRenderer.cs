@@ -88,11 +88,19 @@ namespace Astrovisio
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 
-        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max)
+        public void SetNone()
         {
             if (astrovidioDataSetRenderer is not null)
             {
-                astrovidioDataSetRenderer.SetColorMapAstrovisio(paramName, colorMap, min, max);
+                astrovidioDataSetRenderer.SetNoneAstrovisio();
+            }
+        }
+
+        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
+        {
+            if (astrovidioDataSetRenderer is not null)
+            {
+                astrovidioDataSetRenderer.SetColorMapAstrovisio(paramName, colorMap, min, max, scalingType, inverseMapping);
             }
         }
 
@@ -101,11 +109,11 @@ namespace Astrovisio
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }
 
-        public void SetOpacity(string paramName, float min, float max)
+        public void SetOpacity(string paramName, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             if (astrovidioDataSetRenderer is not null)
             {
-                astrovidioDataSetRenderer.SetOpacityAstrovisio(paramName, min, max);
+                astrovidioDataSetRenderer.SetOpacityAstrovisio(paramName, min, max, scalingType, inverseMapping);
             }
         }
 

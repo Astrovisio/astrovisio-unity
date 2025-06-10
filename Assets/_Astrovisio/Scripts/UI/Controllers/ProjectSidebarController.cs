@@ -57,19 +57,21 @@ namespace Astrovisio
             dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
             dataSettingsButton.clicked += OnDataSettingsButtonClicked;
-            projectSidebarDataController = new ProjectSidebarDataController(this, UIManager, ProjectManager, UIContextSO, Project, dataSettingsContainer);
 
             // Render
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
             renderSettingsButton.clicked += OnRenderSettingsButtonClicked;
             renderSettingsButton.SetEnabled(false);
-            projectSidebarRenderController = new ProjectSidebarRenderController(this, UIManager, ProjectManager, UIContextSO, Project, renderSettingsContainer);
 
             // VR
             goToVRButton = Root.Q<Button>("GoToVRButton");
             goToVRButton.SetEnabled(false);
             goToVRButton.clicked += OnGoToVRButtonClicked;
+
+            // Init
+            projectSidebarDataController = new ProjectSidebarDataController(this, UIManager, ProjectManager, UIContextSO, Project, dataSettingsContainer);
+            projectSidebarRenderController = new ProjectSidebarRenderController(this, UIManager, ProjectManager, UIContextSO, Project, renderSettingsContainer);
         }
 
         private void OnProjectOpened(Project project)
@@ -93,7 +95,7 @@ namespace Astrovisio
         private void OnRenderSettingsButtonClicked()
         {
             SetActiveStep(ProjectSidebarStep.Render);
-            RenderManager.Instance.RenderDataContainer(dataContainer); // To remove/change
+            RenderManager.Instance.RenderDataContainer(dataContainer);
         }
 
         private void OnGoToVRButtonClicked()

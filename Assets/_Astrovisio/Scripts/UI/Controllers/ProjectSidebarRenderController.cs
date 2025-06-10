@@ -175,7 +175,7 @@ namespace Astrovisio
                         // Debug.Log("Resetting -> Opacity: " + projectRenderSettings.OpacitySettingsController.ParamName);
                         projectRenderSettings.OpacitySettingsController.Reset();
                     }
-                    // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName);
+                    // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName + " " + appliedParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
                     projectRenderSettings.OpacitySettingsController = appliedParamRowSettingsController;
                     break;
                 case MappingType.Colormap:
@@ -196,26 +196,26 @@ namespace Astrovisio
 
         private void UpdateRenderManager()
         {
-            Debug.Log("UpdateRenderManager");
+            // Debug.Log("UpdateRenderManager");
             if (projectRenderSettings.ColorMapSettingsController is null)
             {
-                Debug.Log("Removing colormap");
+                // Debug.Log("Removing colormap");
                 RenderManager.Instance.RemoveColorMap();
             }
             else
             {
-                Debug.Log("Setting colormap");
+                // Debug.Log("Setting colormap");
                 RenderManager.Instance.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.RenderSettings);
             }
 
             if (projectRenderSettings.OpacitySettingsController is null)
             {
-                Debug.Log("Removing opacity");
+                // Debug.Log("Removing opacity");
                 RenderManager.Instance.RemoveOpacity();
             }
             else
             {
-                Debug.Log("Setting opacity");
+                // Debug.Log("Setting opacity");
                 RenderManager.Instance.SetRenderSettings(projectRenderSettings.OpacitySettingsController.RenderSettings);
             }
         }

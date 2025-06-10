@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Linq;
+using CatalogData;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,7 +25,7 @@ namespace Astrovisio
         private DoubleField thresholdSliderMaxFloatField;
         private DropdownField colorMapDropdown;
         private DropdownField scalingDropdown;
-        private Toggle invertMappingToggle;
+        private Toggle invertToggle;
         private Button applyButton;
         private Button cancelButton;
         private bool isThresholdUpdating = false;
@@ -32,6 +33,8 @@ namespace Astrovisio
         // === Callbacks ===
         private EventCallback<ChangeEvent<string>> mappingDropdownCallback;
         private EventCallback<ChangeEvent<string>> colorMapDropdownCallback;
+        private EventCallback<ChangeEvent<string>> scalingDropdownCallback;
+        private EventCallback<ChangeEvent<bool>> invertToggleCallback;
         private EventCallback<ChangeEvent<Vector2>> thresholdSliderCallback;
         private EventCallback<ChangeEvent<double>> thresholdMinFloatFieldCallback;
         private EventCallback<ChangeEvent<double>> thresholdMaxFloatFieldCallback;
@@ -61,7 +64,7 @@ namespace Astrovisio
             thresholdSliderMaxFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
             colorMapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
             scalingDropdown = Root.Q<VisualElement>("ScalingContainer")?.Q<DropdownField>("DropdownField");
-            invertMappingToggle = Root.Q<VisualElement>("InvertMappingToggleContainer")?.Q<Toggle>("CheckboxRoot");
+            invertToggle = Root.Q<VisualElement>("InvertMappingToggleContainer")?.Q<Toggle>("CheckboxRoot");
             applyButton = Root.Q<VisualElement>("ApplyButton")?.Q<Button>();
             cancelButton = Root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
@@ -103,7 +106,7 @@ namespace Astrovisio
                     break;
 
                 case MappingType.Opacity:
-                    // Debug.Log("MappingType.Opacity");
+                    // Debug.Log("MappingType.Opacity " + TempParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
                     InitOpacity(TempParamRowSettingsController);
                     break;
 
@@ -118,21 +121,43 @@ namespace Astrovisio
         private void InitNone(ParamRowSettingsController paramRowSettingsController)
         {
             SetNoneDisplayStyle();
+
+            // RenderSettings renderSettings = paramRowSettingsController.RenderSettings;
+
+            paramRowSettingsController.RenderSettings.Mapping = MappingType.None;
+            paramRowSettingsController.RenderSettings.MappingSettings = null;
+            RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+
+            // switch (renderSettings.Mapping)
+            // {
+            //     case MappingType.Opacity:
+            //         paramRowSettingsController.RenderSettings.Mapping = MappingType.None;
+            //         paramRowSettingsController.RenderSettings.MappingSettings = null;
+            //         RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+            //         break;
+            //     case MappingType.Colormap:
+            //         RenderManager.Instance.re
+            //         break;
+            // }
         }
 
         private void InitOpacity(ParamRowSettingsController paramRowSettingsController)
         {
             SetOpacityDisplayStyle();
-            Debug.Log("Opacity");
+
             SetThresholdSlider(paramRowSettingsController);
+            SetScalingDropdown(paramRowSettingsController);
+            SetInverseToggle(paramRowSettingsController);
         }
 
         private void InitColormap(ParamRowSettingsController paramRowSettingsController)
         {
             SetColorMapDisplayStyle();
-            Debug.Log("Colormap");
+
             SetThresholdSlider(paramRowSettingsController);
             SetColorMapDropdown(paramRowSettingsController);
+            SetScalingDropdown(paramRowSettingsController);
+            SetInverseToggle(paramRowSettingsController);
         }
 
         private void SetMappingDropdown(ParamRowSettingsController paramRowSettingsController)
@@ -170,6 +195,7 @@ namespace Astrovisio
                                 (float)paramRowSettingsController.Param.ThrMax,
                                 (float)paramRowSettingsController.Param.ThrMinSel,
                                 (float)paramRowSettingsController.Param.ThrMaxSel,
+                                ScalingType.Linear,
                                 false
                             );
                             InitOpacity(paramRowSettingsController);
@@ -180,11 +206,11 @@ namespace Astrovisio
                             paramRowSettingsController.RenderSettings.Mapping = MappingType.Colormap;
                             paramRowSettingsController.RenderSettings.MappingSettings = new ColorMapSettings(
                                 ColorMapEnum.Autumn,
-                                ScalingType.Linear,
                                 (float)paramRowSettingsController.Param.ThrMin,
                                 (float)paramRowSettingsController.Param.ThrMax,
                                 (float)paramRowSettingsController.Param.ThrMinSel,
                                 (float)paramRowSettingsController.Param.ThrMaxSel,
+                                ScalingType.Linear,
                                 false
                             );
                             // Debug.Log("Dropdown " + paramRowSettingsController.ParamName + " " + paramRowSettingsController.RenderSettings.Mapping);
@@ -324,6 +350,62 @@ namespace Astrovisio
             colorMapDropdown.RegisterValueChangedCallback(colorMapDropdownCallback);
         }
 
+        private void SetScalingDropdown(ParamRowSettingsController paramRowSettingsController)
+        {
+            if (scalingDropdown == null)
+                return;
+
+            if (scalingDropdownCallback != null)
+            {
+                scalingDropdown.UnregisterValueChangedCallback(scalingDropdownCallback);
+            }
+
+            IMappingSettings mappingSettings = paramRowSettingsController.RenderSettings.MappingSettings;
+
+            var scalingOptions = Enum.GetNames(typeof(ScalingType)).ToList();
+            scalingDropdown.choices = scalingOptions;
+            scalingDropdown.value = mappingSettings.ScalingType.ToString();
+
+            scalingDropdownCallback = evt =>
+            {
+                // Debug.Log($"Scaling type changed: {evt.newValue}");
+                if (Enum.TryParse<ScalingType>(evt.newValue, out var newScalingType))
+                {
+                    mappingSettings.ScalingType = newScalingType;
+                    RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+                }
+            };
+
+            scalingDropdown.RegisterValueChangedCallback(scalingDropdownCallback);
+        }
+
+        private void SetInverseToggle(ParamRowSettingsController paramRowSettingsController)
+        {
+            if (invertToggle is null)
+            {
+                return;
+            }
+
+            if (invertToggleCallback is not null)
+            {
+                invertToggle?.UnregisterValueChangedCallback(invertToggleCallback);
+            }
+
+
+            IMappingSettings mappingSettings = paramRowSettingsController.RenderSettings.MappingSettings;
+
+            invertToggle.value = mappingSettings.Invert;
+
+            invertToggleCallback = evt =>
+            {
+                Debug.Log($"Invert toggled: {evt.newValue}");
+                mappingSettings.Invert = evt.newValue;
+                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+            };
+
+            invertToggle.RegisterValueChangedCallback(invertToggleCallback);
+        }
+
         private void SetNoneDisplayStyle()
         {
             VisualElement lineSpacer = Root.Q<VisualElement>("LineSpacer");
@@ -411,6 +493,14 @@ namespace Astrovisio
             if (thresholdMaxFloatFieldCallback is not null)
             {
                 thresholdSliderMaxFloatField?.UnregisterValueChangedCallback(thresholdMaxFloatFieldCallback);
+            }
+            if (scalingDropdownCallback is not null)
+            {
+                scalingDropdown?.UnregisterValueChangedCallback(scalingDropdownCallback);
+            }
+            if (invertToggleCallback is not null)
+            {
+                invertToggle?.UnregisterValueChangedCallback(invertToggleCallback);
             }
             if (applyButtonCallback is not null)
             {

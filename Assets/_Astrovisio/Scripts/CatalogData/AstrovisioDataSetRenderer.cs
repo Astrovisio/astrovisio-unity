@@ -240,7 +240,15 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
         }
 
-        public void SetColorMapAstrovisio(string paramName, ColorMapEnum colorMap, float min, float max)
+        public void SetNoneAstrovisio()
+        {
+            DataMapping.UniformColor = true;
+            DataMapping.UniformOpacity = true;
+            UpdateMappingColumns();
+            UpdateMappingValues();
+        }
+
+        public void SetColorMapAstrovisio(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             SetColorMap(colorMap);
             DataMapping.UniformColor = false;
@@ -251,7 +259,9 @@ namespace CatalogData
                 DataMinVal = min,
                 DataMaxVal = max,
                 TargetMinVal = 0f,
-                TargetMaxVal = 1f
+                TargetMaxVal = 1f,
+                ScalingType = scalingType,
+                InverseMapping = inverseMapping
             };
             UpdateMappingColumns();
             UpdateMappingValues();
@@ -265,7 +275,7 @@ namespace CatalogData
             UpdateMappingValues();
         }
 
-        public void SetOpacityAstrovisio(string paramName, float min, float max)
+        public void SetOpacityAstrovisio(string paramName, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             DataMapping.UniformOpacity = false;
             DataMapping.Mapping.Opacity = new MapFloatEntry
@@ -275,7 +285,9 @@ namespace CatalogData
                 DataMinVal = min,
                 DataMaxVal = max,
                 TargetMinVal = 0f,
-                TargetMaxVal = 1f
+                TargetMaxVal = 1f,
+                ScalingType = scalingType,
+                InverseMapping = inverseMapping
             };
             UpdateMappingColumns();
             UpdateMappingValues();

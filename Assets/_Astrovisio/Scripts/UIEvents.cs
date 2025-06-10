@@ -8,6 +8,9 @@ namespace Astrovisio
     /// </summary>
     public static class UIEvents
     {
+
+        // NOT USED
+
         #region Menu/screen events:
 
         // Close the screen and go back
