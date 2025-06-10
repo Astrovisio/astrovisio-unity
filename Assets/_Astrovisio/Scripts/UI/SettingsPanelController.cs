@@ -145,6 +145,8 @@ namespace Astrovisio
         {
             SetOpacityDisplayStyle();
 
+            // RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+
             SetThresholdSlider(paramRowSettingsController);
             SetScalingDropdown(paramRowSettingsController);
             SetInverseToggle(paramRowSettingsController);
@@ -153,6 +155,8 @@ namespace Astrovisio
         private void InitColormap(ParamRowSettingsController paramRowSettingsController)
         {
             SetColorMapDisplayStyle();
+
+            // RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
 
             SetThresholdSlider(paramRowSettingsController);
             SetColorMapDropdown(paramRowSettingsController);
@@ -175,6 +179,22 @@ namespace Astrovisio
             mappingDropdownCallback = evt =>
             {
                 string mappingTypeValue = evt.newValue;
+                string prevValue = evt.previousValue;
+
+                if (Enum.TryParse<MappingType>(prevValue, ignoreCase: true, out var prevMappingType))
+                {
+                    switch (prevMappingType)
+                    {
+                        case MappingType.Opacity:
+                            // Debug.Log("Removing previous opacity...");
+                            RenderManager.Instance.RemoveOpacity();
+                            break;
+                        case MappingType.Colormap:
+                            // Debug.Log("Removing previous colormap...");
+                            RenderManager.Instance.RemoveColorMap();
+                            break;
+                    }
+                }
 
                 if (Enum.TryParse<MappingType>(mappingTypeValue, ignoreCase: true, out var mappingType))
                 {

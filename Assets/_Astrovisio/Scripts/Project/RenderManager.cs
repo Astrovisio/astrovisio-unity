@@ -49,12 +49,13 @@ namespace Astrovisio
 
         public void SetRenderSettings(RenderSettings renderSettings)
         {
-            if (renderSettings.Mapping == MappingType.None && renderSettings.MappingSettings is null)
-            {
-                // Debug.Log("SetRenderSettings -> None");
-                SetNone();
-            }
-            else if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
+            // if (renderSettings.Mapping == MappingType.None && renderSettings.MappingSettings is null)
+            // {
+            //     Debug.Log("SetRenderSettings -> None");
+            //     SetNone();
+            // }
+            // else
+            if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
             {
                 // Debug.Log("SetRenderSettings -> Opacity " + renderSettings.MappingSettings.ScalingType);
                 SetOpacity(renderSettings);

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine.UIElements;
 using UnityEngine;
@@ -10,23 +9,33 @@ namespace Astrovisio
     public class HomeViewController
     {
         // === Dependencies ===
-        private readonly ProjectManager projectManager;
+        public ProjectManager ProjectManager { get; }
+        public UIManager UIManager { get; }
+        public VisualElement Root { get; }
+
         private readonly VisualTreeAsset projectRowHeaderTemplate;
         private readonly VisualTreeAsset projectRowTemplate;
 
         // === Local ===
-        public VisualElement Root { get; }
         private readonly string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
         private readonly Dictionary<string, ProjectRowController> projectControllers = new();
 
-        public HomeViewController(ProjectManager projectManager, VisualElement root, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
+        private VisualElement projectScrollView;
+
+        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
         {
-            this.projectManager = projectManager;
+            ProjectManager = projectManager;
+            UIManager = uiManager;
             Root = root;
             this.projectRowHeaderTemplate = projectRowHeaderTemplate;
             this.projectRowTemplate = projectRowTemplate;
-            UpdateHomeView();
+
+            projectScrollView = Root.Q<ScrollView>("ProjectScrollView");
+            projectScrollView.Clear();
+
             projectManager.ProjectsFetched += OnProjectsFetched;
+            projectManager.ProjectCreated += OnProjectCreated;
+            projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void OnProjectsFetched(List<Project> list)
@@ -34,22 +43,31 @@ namespace Astrovisio
             UpdateHomeView();
         }
 
+        private void OnProjectCreated(Project project)
+        {
+            UpdateHomeView();
+        }
+
+        private void OnProjectDeleted(Project project)
+        {
+            UpdateHomeView();
+        }
+
         private void UpdateHomeView()
         {
-            VisualElement projectScrollView = Root.Q<ScrollView>("ProjectScrollView");
             projectScrollView.Clear();
 
             DateTime now = DateTime.UtcNow;
-            var projectList = projectManager.GetProjectList();
+            List<Project> projectList = ProjectManager.GetProjectList();
             // projectList = projectManager.GetFakeProjectList();
 
             // UnityEngine.Debug.Log(projectList.Count);
 
-            var lastWeekProjectList = projectList
+            List<Project> lastWeekProjectList = projectList
                 .Where(p => (p.LastOpened.HasValue && (now - p.LastOpened.Value).TotalDays <= 7) || (p.Created.HasValue && (now - p.Created.Value).TotalDays <= 7))
                 .ToList();
 
-            var lastMonthProjectList = projectList
+            List<Project> lastMonthProjectList = projectList
                 .Where(p => p.LastOpened.HasValue)
                 .Where(p =>
                 {
@@ -58,7 +76,7 @@ namespace Astrovisio
                 })
                 .ToList();
 
-            var olderProjectList = projectList
+            List<Project> olderProjectList = projectList
                 .Where(p => p.LastOpened.HasValue && (now - p.LastOpened.Value).TotalDays > 30)
                 .ToList();
 
@@ -76,11 +94,12 @@ namespace Astrovisio
             {
                 AddProjectRows(projectScrollView, olderProjectList, periodHeaderLabel[2]);
             }
+
         }
 
         private void AddProjectRows(VisualElement target, List<Project> projectList, string projectHeader)
         {
-            var header = projectRowHeaderTemplate.CloneTree();
+            TemplateContainer header = projectRowHeaderTemplate.CloneTree();
             header.Q<Label>("HeaderLabel").text = projectHeader;
             target.Add(header);
 
@@ -91,14 +110,14 @@ namespace Astrovisio
                 return p2DateTime.CompareTo(p1DateTime);
             });
 
-            foreach (var project in projectList)
+            foreach (Project project in projectList)
             {
-                var projectRow = projectRowTemplate.CloneTree();
+                TemplateContainer projectRow = projectRowTemplate.CloneTree();
 
-                var controller = new ProjectRowController(projectManager, project, projectRow);
+                ProjectRowController controller = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
                 projectControllers[project.Name] = controller;
 
-                projectRow.RegisterCallback<ClickEvent>(_ => projectManager.OpenProject(project.Id));
+                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
                 target.Add(projectRow);
             }
         }

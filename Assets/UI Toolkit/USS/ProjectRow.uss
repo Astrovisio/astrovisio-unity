@@ -10,6 +10,19 @@
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/more_vert.svg?fileID=7388822144124034973&guid=9a3422b4e43237e4eb57f9b72b793f49&type=3#more_vert");
 }
 
+#ProjectRowRoot > #RowButton > #FunctionContainer > #EditButton {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/edit24.svg?fileID=7388822144124034973&guid=08002d67a1a75e54fbfab900982bcd96&type=3#edit24");
+}
+
+#ProjectRowRoot > #RowButton > #FunctionContainer > #DuplicateButton {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/duplicate24.svg?fileID=7388822144124034973&guid=6750cd4bcb7a3c84ba2476108a01238f&type=3#duplicate24");
+}
+
+#ProjectRowRoot > #RowButton > #FunctionContainer > #DeleteButton {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete24.svg?fileID=7388822144124034973&guid=958041cea089f1b4d864224dc697c492&type=3#delete24");
+    -unity-background-image-tint-color: var(--red);
+}
+
 .icon-button {
     width: 24px;
     height: 24px;

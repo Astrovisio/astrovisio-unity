@@ -130,8 +130,9 @@ namespace Astrovisio
                 {
                     try
                     {
-                        var created = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
-                        onSuccess?.Invoke(created);
+                        Project createdProject = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        // Debug.Log("createdProject " + createdProject.ConfigProcess.Params.Count);
+                        onSuccess?.Invoke(createdProject);
                     }
                     catch (Exception ex)
                     {

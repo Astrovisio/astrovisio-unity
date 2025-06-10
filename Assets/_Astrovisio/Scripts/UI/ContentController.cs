@@ -105,7 +105,7 @@ namespace Astrovisio
 
         private void EnableHomeView()
         {
-            homeViewController = new HomeViewController(projectManager, contentContainer, uiContextSO.projectRowHeaderTemplate, uiContextSO.projectRowTemplate);
+            homeViewController = new HomeViewController(projectManager, uiManager, contentContainer, uiContextSO.projectRowHeaderTemplate, uiContextSO.projectRowTemplate);
             homeViewContainer = contentContainer.Q<VisualElement>("HomeView");
         }
 

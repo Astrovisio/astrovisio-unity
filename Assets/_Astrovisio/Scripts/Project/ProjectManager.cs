@@ -22,7 +22,7 @@ namespace Astrovisio
 		public event Action<Project> ProjectClosed;
 		public event Action<DataPack> ProjectProcessed;
 		public event Action ProjectUnselected;
-		public event Action<int> ProjectDeleted;
+		public event Action<Project> ProjectDeleted;
 		public event Action<string> ApiError;
 
 		// === Local ===
@@ -368,6 +368,8 @@ namespace Astrovisio
 
 		private IEnumerator FetchAllProjectsCoroutine()
 		{
+			// Debug.Log("FetchAllProjectsCoroutine -> START");
+			uiManager.SetLoading(true);
 			yield return apiManager.ReadProjects(
 			  onSuccess: fetched =>
 			  {
@@ -378,6 +380,8 @@ namespace Astrovisio
 			  },
 			  onError: err => ApiError?.Invoke(err)
 			);
+			uiManager.SetLoading(false);
+			// Debug.Log("FetchAllProjectsCoroutine -> END");
 		}
 
 
@@ -411,6 +415,7 @@ namespace Astrovisio
 						openedProjectList.Add(project);
 					}
 
+					// Debug.Log("project: " + project.ConfigProcess.Params.Count);
 					ProjectOpened?.Invoke(project);
 				},
 				onError: err => ApiError?.Invoke(err)
@@ -432,11 +437,19 @@ namespace Astrovisio
 
 		private IEnumerator CreateProjectCoroutine(CreateProjectRequest createProjectRequest)
 		{
+			// Debug.Log("CreateProjectCoroutine -> START");
+			uiManager.SetLoading(true);
 			yield return apiManager.CreateNewProject(
 			  createProjectRequest,
-			  onSuccess: created => ProjectCreated?.Invoke(created),
+			  onSuccess: created =>
+			  {
+				  projectList.Add(created);
+				  ProjectCreated?.Invoke(created);
+			  },
 			  onError: err => ApiError?.Invoke(err)
 			);
+			uiManager.SetLoading(false);
+			// Debug.Log("CreateProjectCoroutine -> END");
 		}
 
 
@@ -464,16 +477,19 @@ namespace Astrovisio
 		}
 
 
-		public void DeleteProject(int id)
+		public void DeleteProject(int id, Project project)
 		{
-			StartCoroutine(DeleteProjectCoroutine(id));
+			StartCoroutine(DeleteProjectCoroutine(id, project));
 		}
 
-		private IEnumerator DeleteProjectCoroutine(int id)
+		private IEnumerator DeleteProjectCoroutine(int id, Project project)
 		{
+			projectList.Remove(project);
+			openedProjectList.Remove(project); // ?
+
 			yield return apiManager.DeleteProject(
 			  id,
-			  onSuccess: () => ProjectDeleted?.Invoke(id),
+			  onSuccess: () => ProjectDeleted?.Invoke(project),
 			  onError: err => ApiError?.Invoke(err)
 			);
 		}

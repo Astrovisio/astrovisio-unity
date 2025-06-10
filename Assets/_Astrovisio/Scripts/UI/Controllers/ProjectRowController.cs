@@ -8,6 +8,7 @@ namespace Astrovisio
     {
         // === Dependencies ===
         public ProjectManager ProjectManager { get; set; }
+        public UIManager UIManager { get; set; }
         public Project Project { get; set; }
         public VisualElement Root { private set; get; }
 
@@ -19,13 +20,15 @@ namespace Astrovisio
         private Label lastOpenedLabel;
         private Label createLabel;
         private Toggle favouriteToggle;
-        private Button vrButton;
-        private Button moreButton;
+        private Button editButton;
+        private Button duplicateButton;
+        private Button deleteButton;
 
 
-        public ProjectRowController(ProjectManager projectManager, Project project, VisualElement root)
+        public ProjectRowController(ProjectManager projectManager, UIManager uiManager, Project project, VisualElement root)
         {
             ProjectManager = projectManager;
+            UIManager = uiManager;
             Project = project;
             Root = root;
 
@@ -39,8 +42,9 @@ namespace Astrovisio
             lastOpenedLabel = Root.Q<Label>("LastOpenedLabel");
             createLabel = Root.Q<Label>("CreatedLabel");
             favouriteToggle = Root.Q<VisualElement>("FavouriteToggle")?.Q<Toggle>();
-            vrButton = Root.Q<Button>("VRButton");
-            moreButton = Root.Q<Button>("MoreButton");
+            editButton = Root.Q<Button>("EditButton");
+            duplicateButton = Root.Q<Button>("DuplicateButton");
+            deleteButton = Root.Q<Button>("DeleteButton");
 
             projectNameLabel.text = Project.Name;
             filesLabel.text = Project.Paths.Length.ToString() + " files";
@@ -62,8 +66,9 @@ namespace Astrovisio
             }
 
             InitFavouriteToggle();
-            InitVRButton();
-            InitMoreButton();
+            InitEditButton();
+            InitDuplicateButton();
+            InitDeleteButton();
         }
 
         private string FormatDateTime(DateTime dateTime)
@@ -90,25 +95,33 @@ namespace Astrovisio
             });
         }
 
-        private void InitVRButton()
+        private void InitEditButton()
         {
-            vrButton.SetEnabled(false);
-            vrButton.RegisterCallback<ClickEvent>(evt =>
+            editButton.RegisterCallback<ClickEvent>(evt =>
             {
                 evt.StopPropagation();
-                Debug.Log("vrButton clicked");
+                Debug.Log("EditButton clicked");
             });
         }
 
-        private void InitMoreButton()
+        private void InitDuplicateButton()
         {
-            moreButton.RegisterCallback<ClickEvent>(evt =>
+            duplicateButton.RegisterCallback<ClickEvent>(evt =>
             {
                 evt.StopPropagation();
-                Debug.Log("moreButton clicked");
+                Debug.Log("DuplicateButton clicked");
             });
         }
 
+        private void InitDeleteButton()
+        {
+            deleteButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                UIManager.SetDeleteProject(Project);
+                evt.StopPropagation();
+                // Debug.Log("DeleteButton clicked");
+            });
+        }
 
 
     }

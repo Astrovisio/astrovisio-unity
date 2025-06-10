@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -69,9 +70,9 @@ namespace Astrovisio
             UpdateTabMargins();
         }
 
-        private void OnProjectDeleted(int projectId)
+        private void OnProjectDeleted(Project project)
         {
-            RemoveProjectTab(projectId);
+            RemoveProjectTab(project.Id);
         }
 
         private VisualElement CreateProjectTab(Project project)

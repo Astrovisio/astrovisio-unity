@@ -15,19 +15,27 @@ namespace Astrovisio
         private UIDocument uiDocument;
         private MainViewController mainViewController;
         private ErrorVRViewController errorVRViewController;
+        private ToastMessageController toastMessageController;
+        private DeleteProjectViewController deleteProjectViewController;
 
         private void Start()
         {
             uiDocument = GetComponent<UIDocument>();
 
-            var mainView = uiDocument.rootVisualElement.Q<VisualElement>("MainView");
+            VisualElement mainView = uiDocument.rootVisualElement.Q<VisualElement>("MainView");
             mainViewController = new MainViewController(mainView);
 
-            var errorVRView = uiDocument.rootVisualElement.Q<VisualElement>("ErrorVrView");
+            VisualElement errorVRView = uiDocument.rootVisualElement.Q<VisualElement>("ErrorVrView");
             errorVRViewController = new ErrorVRViewController(errorVRView);
 
-            var toastMessage = uiDocument.rootVisualElement.Q<VisualElement>("ToastMessageView");
-            var toastMessageController = new ToastMessageController(toastMessage);
+            VisualElement toastMessage = uiDocument.rootVisualElement.Q<VisualElement>("ToastMessageView");
+            toastMessageController = new ToastMessageController(toastMessage);
+
+            VisualElement deleteProjectView = uiDocument.rootVisualElement.Q<VisualElement>("DeleteProjectView");
+            deleteProjectViewController = new DeleteProjectViewController(projectManager, deleteProjectView);
+
+            projectManager.ProjectCreated += OnProjectCreated;
+            projectManager.ProjectDeleted += OnProjectDeleted;
 
             projectManager.FetchAllProjects();
         }
@@ -44,7 +52,7 @@ namespace Astrovisio
 
         public void SetLoading(bool state)
         {
-            var loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
 
             if (state)
             {
@@ -54,7 +62,6 @@ namespace Astrovisio
             {
                 loaderView.RemoveFromClassList("active");
             }
-
         }
 
         public void SetErrorVR(bool state)
@@ -67,6 +74,34 @@ namespace Astrovisio
             {
                 errorVRViewController.Close();
             }
+        }
+
+        private void OnProjectCreated(Project project)
+        {
+            toastMessageController.SetToastSuccessMessage($"Project {project.Name} has been created.");
+        }
+
+        private void OnProjectDeleted(Project project)
+        {
+            toastMessageController.SetToastSuccessMessage($"Project {project.Name} has been deleted.");
+        }
+
+        // public void SetToastSuccessMessage(string title, string message)
+        // {
+        //     toastMessageController.SetToastSuccessMessage(title, message);
+        // }
+
+        // public void SetToastErrorMessage(string message)
+        // {
+        //     toastMessageController.SetToastErrorMessage(message);
+        // }
+
+        public void SetDeleteProject(Project project)
+        {
+            VisualElement root = uiDocument.rootVisualElement;
+            VisualElement deleteProjectView = root.Q<VisualElement>("DeleteProjectView");
+            deleteProjectViewController.SetProjectToDelete(project);
+            deleteProjectView.AddToClassList("active");
         }
 
     }

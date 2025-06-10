@@ -1,0 +1,7 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="DeleteProjectPanel" src="project://database/Assets/UI%20Toolkit/Components/DeleteProjectPanel.uxml?fileID=9197481963319205126&amp;guid=5c84fc31a17ec6c4fbdfdbb3afe9c733&amp;type=3#DeleteProjectPanel" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/DeleteProjectView.uss?fileID=7433441132597879392&amp;guid=e3b3a964b3bc1f24593d96e76a096f72&amp;type=3#DeleteProjectView" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:Instance template="DeleteProjectPanel" name="DeleteProjectPanel" />
+    </engine:VisualElement>
+</engine:UXML>

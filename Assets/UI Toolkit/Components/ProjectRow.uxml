@@ -14,8 +14,11 @@
             <engine:Label text="09/01/2025 13:23" name="CreatedLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&amp;guid=da4bbf1ce25304b43a0cbab5791f30fe&amp;type=3#SpaceGrotesk-Medium&quot;); color: rgb(234, 232, 228); height: 10px; min-height: 10px; max-height: 10px; width: 120px; min-width: 120px; max-width: 120px;" />
             <engine:VisualElement name="FunctionContainer" style="flex-grow: 1; flex-direction: row; width: 120px; min-width: 120px; max-width: 120px; height: 24px; min-height: 24px; max-height: 24px; justify-content: space-around; align-items: center;">
                 <engine:Instance template="CheckboxFavourite" name="FavouriteToggle" class="icon-button" />
-                <engine:Button name="VRButton" class="icon-button" />
-                <engine:Button name="MoreButton" class="icon-button" />
+                <engine:Button name="VRButton" class="icon-button" style="display: none;" />
+                <engine:Button name="MoreButton" class="icon-button" style="display: none;" />
+                <engine:Button name="EditButton" class="icon-button" />
+                <engine:Button name="DuplicateButton" class="icon-button" />
+                <engine:Button name="DeleteButton" class="icon-button" />
             </engine:VisualElement>
         </engine:Button>
     </engine:VisualElement>

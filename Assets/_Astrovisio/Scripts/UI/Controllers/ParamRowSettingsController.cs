@@ -20,17 +20,17 @@ namespace Astrovisio
             RenderSettings = new RenderSettings(ParamName, MappingType.None);
         }
 
-        public void Reset()
-        {
-            RenderSettings = new RenderSettings(ParamName, MappingType.None);
-        }
-
         public object Clone()
         {
             return new ParamRowSettingsController(ParamName, Project)
             {
                 RenderSettings = this.RenderSettings?.Clone() as RenderSettings
             };
+        }
+
+        public void Reset()
+        {
+            RenderSettings = new RenderSettings(ParamName, MappingType.None);
         }
 
     }

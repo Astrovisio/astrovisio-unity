@@ -96,8 +96,6 @@ namespace Astrovisio
             downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.choices.Add("95%");
-            downsamplingDropdown.choices.Add("100%");
             downsamplingDropdown.value = ((1 - Project.ConfigProcess.Downsampling) * 100).ToString("0") + "%";
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
@@ -106,7 +104,7 @@ namespace Astrovisio
                 {
                     float value = 1 - (percentage / 100f);
                     Project.ConfigProcess.Downsampling = value;
-                    // Debug.Log($"Converted value: {value}");
+                    SetProcessDataButton(true);
                 }
                 else
                 {

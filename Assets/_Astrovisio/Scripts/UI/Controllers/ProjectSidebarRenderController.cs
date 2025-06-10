@@ -161,13 +161,25 @@ namespace Astrovisio
             string appliedParamName = appliedParamRowSettingsController.ParamName;
             MappingType appliedMapping = appliedParamRowSettingsController.RenderSettings.Mapping;
 
-            // Debug.Log("Applied Param Name: " + appliedParamName);
+            // Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
 
             // Update project params
             switch (appliedMapping)
             {
                 case MappingType.None:
                     // Debug.Log("OnApplySettings -> None: " + appliedParamName);
+                    if (projectRenderSettings.OpacitySettingsController.ParamName == appliedParamName)
+                    {
+                        // Debug.Log("Resetting opacity...");
+                        projectRenderSettings.OpacitySettingsController.Reset();
+                        projectRenderSettings.OpacitySettingsController = null;
+                    }
+                    else if (projectRenderSettings.ColorMapSettingsController.ParamName == appliedParamName)
+                    {
+                        // Debug.Log("Resetting colormap...");
+                        projectRenderSettings.ColorMapSettingsController.Reset();
+                        projectRenderSettings.ColorMapSettingsController = null;
+                    }
                     break;
                 case MappingType.Opacity:
                     if (projectRenderSettings.OpacitySettingsController is not null)
@@ -196,7 +208,6 @@ namespace Astrovisio
 
         private void UpdateRenderManager()
         {
-            // Debug.Log("UpdateRenderManager");
             if (projectRenderSettings.ColorMapSettingsController is null)
             {
                 // Debug.Log("Removing colormap");

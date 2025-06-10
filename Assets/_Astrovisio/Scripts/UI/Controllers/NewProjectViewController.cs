@@ -77,7 +77,6 @@ namespace Astrovisio
                 addFileButton.clicked -= OnAddFileClicked;
             }
 
-
             if (continueButton != null)
             {
                 continueButton.clicked -= OnContinueClicked;
@@ -149,7 +148,7 @@ namespace Astrovisio
             {
                 projectNameField?.SetValueWithoutNotify(string.Empty);
                 projectDescriptionField?.SetValueWithoutNotify(string.Empty);
-                projectManager.FetchAllProjects();
+                // projectManager.FetchAllProjects();
             }).StartingIn(400);
         }
 
