@@ -8,7 +8,7 @@ public class KDTreeComponent : MonoBehaviour
     public Transform controllerTransform;
 
     [Header("Query Settings")]
-    public float queryInterval = 0.05f;
+    public float queryInterval = 0.033f;
 
     [Header("Mapping Ranges (visivi)")]
     public Vector2 xRange = new Vector2(-10f, 10f);
@@ -27,7 +27,6 @@ public class KDTreeComponent : MonoBehaviour
 
     private float[][] pointData;
     private KDTree kdTree;
-    private float lastQueryTime = -1f;
     private bool isTreeReady = false;
 
     private int lastNearestIndex = -1;
@@ -68,45 +67,6 @@ public class KDTreeComponent : MonoBehaviour
         RunQueryLoop();
     }
 
-    // void Update()
-    // {
-    //     if (!isTreeReady || controllerTransform == null || pointCloudTransform == null)
-    //         return;
-
-    //     if (Time.unscaledTime - lastQueryTime < queryInterval)
-    //         return;
-
-    //     lastQueryTime = Time.unscaledTime;
-
-    //     // Vector3 controllerWorld = controllerTransform.position;
-    //     Vector3 controllerWorld = controllerTransform.position + controllerTransform.forward * 0.1f;
-    //     Vector3 controllerLocal = pointCloudTransform.InverseTransformPoint(controllerWorld);
-
-    //     float x = RemapInverse(controllerLocal.x, normalizedRange, xRange);
-    //     float y = RemapInverse(controllerLocal.y, normalizedRange, yRange);
-    //     float z = RemapInverse(controllerLocal.z, normalizedRange, zRange);
-    //     Vector3 queryPoint = new Vector3(x, y, z);
-
-    //     var (nearestIndex, distSqr) = kdTree.FindNearest(queryPoint);
-    //     lastNearestIndex = nearestIndex;
-
-    //     float value = pointData[3][nearestIndex];
-    //     Debug.Log($"Punto più vicino: indice={nearestIndex}, valore={value}, distanza²={distSqr}");
-
-    //     // Sposta la sfera debug nel mondo
-    //     if (debugSphere != null && lastNearestIndex >= 0)
-    //     {
-    //         Vector3 pointOriginal = new Vector3(
-    //             pointData[0][lastNearestIndex],
-    //             pointData[1][lastNearestIndex],
-    //             pointData[2][lastNearestIndex]
-    //         );
-
-    //         Vector3 worldPos = pointCloudTransform.TransformPoint(pointOriginal);
-    //         debugSphere.transform.position = worldPos;
-    //     }
-    // }
-
     private async Task WaitUntilTreeReady()
     {
         while (!isTreeReady)
@@ -125,6 +85,7 @@ public class KDTreeComponent : MonoBehaviour
     {
         while (enabled && isTreeReady && controllerTransform != null && pointCloudTransform != null)
         {
+            float initialTime = Time.unscaledTime;
             await Task.Yield(); // evitare blocco main thread
 
             Vector3 controllerWorld = controllerTransform.position;
@@ -155,8 +116,14 @@ public class KDTreeComponent : MonoBehaviour
                 debugSphere.transform.position = worldPos;
             }
 
+            float elapsedTime = Time.unscaledTime - initialTime;
+
             // Attendi un minimo prima della prossima iterazione
-            await Task.Delay((int)(queryInterval * 1000)); // puoi regolare qui se serve rate limit
+            if (elapsedTime < queryInterval)
+            {
+                await Task.Delay((int)((queryInterval - elapsedTime) * 1000)); // puoi regolare qui se serve rate limit
+            }
+
         }
 
         isQueryRunning = false;

@@ -132,7 +132,7 @@ namespace CatalogData
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
 
-            // GetComponent<KDTreeComponent>().InitializeAsync(data);
+            GetComponent<KDTreeComponent>().InitializeAsync(data);
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];

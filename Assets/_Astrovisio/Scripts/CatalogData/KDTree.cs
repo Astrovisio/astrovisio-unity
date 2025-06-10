@@ -54,7 +54,7 @@ public class KDTree
     {
         float bestDist = float.MaxValue;
         int bestIndex = -1;
-        Search(root, target, ref bestDist, ref bestIndex);
+        Search(root, target, ref bestDist, ref bestIndex, 0);
         return (bestIndex, bestDist);
     }
 
@@ -72,13 +72,17 @@ public class KDTree
         return result;
     }
 
-    private void Search(KDTreeNode node, Vector3 target, ref float bestDist, ref int bestIndex)
+    private void Search(KDTreeNode node, Vector3 target, ref float bestDist, ref int bestIndex, int depth)
     {
-        if (node == null) return;
+        if (node == null)
+        {
+            // Debug.Log("Iterations: " + depth);
+            return;
+        }
 
         int i = node.index;
-        Vector3 point = new Vector3(data[0][i], data[1][i], data[2][i]);
-        float dist = (target - point).sqrMagnitude;
+        // Vector3 point = new Vector3(data[0][i], data[1][i], data[2][i]);
+        float dist = (target - node.point).sqrMagnitude;
 
         if (dist < bestDist)
         {
@@ -92,10 +96,14 @@ public class KDTree
         KDTreeNode first = delta < 0 ? node.left : node.right;
         KDTreeNode second = delta < 0 ? node.right : node.left;
 
-        Search(first, target, ref bestDist, ref bestIndex);
+        Search(first, target, ref bestDist, ref bestIndex, depth + 1);
 
         if (delta * delta < bestDist)
-            Search(second, target, ref bestDist, ref bestIndex);
+        {
+            // Debug.Log(delta * delta + " < " + bestDist);
+            Search(second, target, ref bestDist, ref bestIndex, depth + 1);
+        }
+
     }
 
     private void SearchKNearest(KDTreeNode node, Vector3 target, int depth, int k, MaxHeap<(int, float)> heap)
