@@ -109,7 +109,7 @@ public class OrbitCameraController : MonoBehaviour
     {
         if (rootVisualElement == null)
         {
-            Debug.Log("rootVisualElement is null");
+            //Debug.Log("rootVisualElement is null");
             return false;
         }
 
