@@ -329,14 +329,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0420587223217749bf6419732c89671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  realtime: 1
   pointCloudTransform: {fileID: 573990660}
   controllerTransform: {fileID: 2087590747}
   xRange: {x: -0.5, y: 0.5}
   yRange: {x: -0.5, y: 0.5}
   zRange: {x: -0.5, y: 0.5}
-  normalizedRange: {x: -0.5, y: 0.5}
+  xTargetRange: {x: -0.5, y: 0.5}
+  yTargetRange: {x: -0.5, y: 0.5}
+  zTargetRange: {x: -0.5, y: 0.5}
+  debugSphereEnabled: 1
   sphereColor: {r: 1, g: 0, b: 0, a: 1}
-  sphereRadius: 0.01
+  sphereRadius: 0.005
 --- !u!1 &794102722
 GameObject:
   m_ObjectHideFlags: 0
