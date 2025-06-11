@@ -31,6 +31,11 @@ public class KDTreeComponent : MonoBehaviour
         data = pointData;
         _ = await Task.Run(() => manager = new KDTreeManager(data, pivot));
 
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         // Crea la sfera di debug se non esiste
         if (debugSphere == null)
         {
