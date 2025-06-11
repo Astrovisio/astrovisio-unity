@@ -59,6 +59,7 @@ Shader "Astrovisio/PointShader"
             // Properties variables
             uniform int useUniformColor;
             uniform int useUniformOpacity;
+            uniform int useNoise;
             // Data buffers for positions and values
             StructuredBuffer<float> dataX;
             StructuredBuffer<float> dataY;
@@ -76,6 +77,7 @@ Shader "Astrovisio/PointShader"
             // Uniforms
             uniform float4 color;
             uniform float opacity;
+            uniform float noiseStrength;
 
             float4x4 datasetMatrix;
 
@@ -100,7 +102,7 @@ Shader "Astrovisio/PointShader"
 
             float applyNoise(float input, float3 p) 
             {
-                return input + (noise(p) - 0.5) * 0.02;
+                return input + (noise(p) - 0.5) * noiseStrength;
             }
 
             float applyScaling(float input, MappingConfig config)
@@ -171,9 +173,12 @@ Shader "Astrovisio/PointShader"
                 float y = applyScaling(dataY[v.vertexID], mappingConfigs[Y_INDEX]);
                 float z = applyScaling(dataZ[v.vertexID], mappingConfigs[Z_INDEX]);
 
-                // x = applyNoise(x, float3(dataX[v.vertexID], dataY[v.vertexID], dataZ[v.vertexID]));
-                // y = applyNoise(y, float3(dataY[v.vertexID], dataZ[v.vertexID], dataX[v.vertexID]));
-                // z = applyNoise(z, float3(dataZ[v.vertexID], dataX[v.vertexID], dataY[v.vertexID]));
+                if(useNoise) {
+                    x = applyNoise(x, float3(dataX[v.vertexID], dataY[v.vertexID], dataZ[v.vertexID]));
+                    y = applyNoise(y, float3(dataY[v.vertexID], dataZ[v.vertexID], dataX[v.vertexID]));
+                    z = applyNoise(z, float3(dataZ[v.vertexID], dataX[v.vertexID], dataY[v.vertexID]));
+                }
+
 
                 float3 pos = float3(
                     x,

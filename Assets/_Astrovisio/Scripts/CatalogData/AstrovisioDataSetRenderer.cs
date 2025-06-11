@@ -76,8 +76,8 @@ namespace CatalogData
         private int _idSpriteSheet, _idNumSprites, _idColorMap, _idColorMapIndex, _idNumColorMaps, _idDataSetMatrix, _idScalingFactor;
         private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape;
         private int _idCutoffMin, _idCutoffMax;
-        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape;
-        private int _idColor, _idOpacity, _idPointSize, _idPointShape;
+        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise;
+        private int _idColor, _idOpacity, _idPointSize, _idPointShape, _idNoiseStrength;
         private int _idMappingConfigs;
         private int _idVignetteFadeStart, _idVignetteFadeEnd, _idVignetteIntensity, _idVignetteColor;
 
@@ -110,11 +110,13 @@ namespace CatalogData
             _idUseUniformOpacity = Shader.PropertyToID("useUniformOpacity");
             _idUseUniformPointSize = Shader.PropertyToID("useUniformPointSize");
             _idUseUniformPointShape = Shader.PropertyToID("useUniformPointShape");
+            _idUseNoise = Shader.PropertyToID("useNoise");
 
             _idColor = Shader.PropertyToID("color");
             _idOpacity = Shader.PropertyToID("opacity");
             _idPointSize = Shader.PropertyToID("pointSize");
             _idPointShape = Shader.PropertyToID("pointShape");
+            _idNoiseStrength = Shader.PropertyToID("noiseStrength");
 
             _idMappingConfigs = Shader.PropertyToID("mappingConfigs");
 
@@ -609,6 +611,8 @@ namespace CatalogData
                     _catalogMaterial.SetFloat(_idOpacity, 0);
             }
 
+            _catalogMaterial.SetInt(_idUseNoise, DataMapping.UseNoise ? 1 : 0);
+            _catalogMaterial.SetFloat(_idNoiseStrength, DataMapping.Uniforms.NoiseStrength);
 
             if (!DataMapping.UniformPointSize && DataMapping.Mapping.PointSize != null && !string.IsNullOrEmpty(DataMapping.Mapping.PointSize.Source))
             {
