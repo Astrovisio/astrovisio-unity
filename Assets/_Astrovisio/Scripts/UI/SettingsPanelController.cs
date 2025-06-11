@@ -14,6 +14,7 @@ namespace Astrovisio
         // === Dependencies ===
         public Project Project { private set; get; }
         public VisualElement Root { private set; get; }
+        public UIContextSO UIContextSO { private set; get; }
 
         // === Other ===
         public ParamRowSettingsController ParamRowSettingsController { private set; get; }
@@ -23,6 +24,7 @@ namespace Astrovisio
         private MinMaxSlider thresholdSlider;
         private DoubleField thresholdSliderMinFloatField;
         private DoubleField thresholdSliderMaxFloatField;
+        private VisualElement colorMapVisualPreview;
         private DropdownField colorMapDropdown;
         private DropdownField scalingDropdown;
         private Toggle invertToggle;
@@ -45,10 +47,11 @@ namespace Astrovisio
         public Action<ParamRowSettingsController> OnApplySetting;
         public Action OnCancelSetting;
 
-        public SettingsPanelController(Project project, VisualElement root)
+        public SettingsPanelController(Project project, VisualElement root, UIContextSO uiContextSO)
         {
             Project = project;
             Root = root;
+            UIContextSO = uiContextSO;
 
             Init();
         }
@@ -62,6 +65,7 @@ namespace Astrovisio
             thresholdSlider = Root.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             thresholdSliderMinFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
             thresholdSliderMaxFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
+            colorMapVisualPreview = Root.Q<VisualElement>("ColorMapContainer")?.Q<VisualElement>("Preview");
             colorMapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
             scalingDropdown = Root.Q<VisualElement>("ScalingContainer")?.Q<DropdownField>("DropdownField");
             invertToggle = Root.Q<VisualElement>("InvertMappingToggleContainer")?.Q<Toggle>("CheckboxRoot");
@@ -355,6 +359,8 @@ namespace Astrovisio
             ColorMapSettings colorMapSettings = paramRowSettingsController.RenderSettings.MappingSettings as ColorMapSettings;
             ColorMapEnum colorMap = colorMapSettings.ColorMap;
 
+            UpdateColormapPreview(colorMap);
+
             colorMapDropdown.choices = Enum.GetNames(typeof(ColorMapEnum)).ToList();
             colorMapDropdown.value = colorMap.ToString();
 
@@ -362,6 +368,7 @@ namespace Astrovisio
             {
                 if (Enum.TryParse<ColorMapEnum>(evt.newValue, out var selectedColorMap))
                 {
+                    UpdateColormapPreview(selectedColorMap);
                     colorMapSettings.ColorMap = selectedColorMap;
                     RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
                 }
@@ -369,6 +376,28 @@ namespace Astrovisio
 
             colorMapDropdown.RegisterValueChangedCallback(colorMapDropdownCallback);
         }
+
+        private void UpdateColormapPreview(ColorMapEnum colorMapEnum)
+        {
+            if (UIContextSO == null || UIContextSO.colorMapSO == null)
+            {
+                Debug.LogWarning("[UI] UIContextSO o ColorMapSO non assegnato.");
+                return;
+            }
+
+            Texture2D texture = UIContextSO.colorMapSO.GetTexture2D(colorMapEnum);
+
+            if (texture != null && colorMapVisualPreview != null)
+            {
+                colorMapVisualPreview.style.backgroundImage = new StyleBackground(texture);
+            }
+            else
+            {
+                Debug.LogWarning($"[UI] Nessuna texture trovata per la colormap: {colorMapEnum}");
+            }
+        }
+
+
 
         private void SetScalingDropdown(ParamRowSettingsController paramRowSettingsController)
         {

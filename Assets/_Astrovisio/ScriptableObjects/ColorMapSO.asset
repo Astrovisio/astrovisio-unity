@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac02d219e7560814ba11467fab1d3df2, type: 3}
+  m_Name: ColorMapSO
+  m_EditorClassIdentifier: 
+  entries:
+  - colorMap: 0
+    texture: {fileID: 275164787, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 1
+    texture: {fileID: 1404634179, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 2
+    texture: {fileID: -717688827, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 3
+    texture: {fileID: -1566010445, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 4
+    texture: {fileID: 1509518022, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 5
+    texture: {fileID: -78859160, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 6
+    texture: {fileID: 1490624045, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 7
+    texture: {fileID: -255798254, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 8
+    texture: {fileID: 1754168037, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 9
+    texture: {fileID: 1316000115, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 10
+    texture: {fileID: -1945595970, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 11
+    texture: {fileID: -250544256, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 12
+    texture: {fileID: 1802376351, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 13
+    texture: {fileID: 919889557, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 14
+    texture: {fileID: 1268652278, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 15
+    texture: {fileID: 1845414214, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 16
+    texture: {fileID: -1052779545, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 17
+    texture: {fileID: -1511810893, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 18
+    texture: {fileID: 1134492795, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 19
+    texture: {fileID: -572466675, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 20
+    texture: {fileID: 1757980073, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 21
+    texture: {fileID: -688409683, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 22
+    texture: {fileID: 1298479223, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 23
+    texture: {fileID: 2065808809, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 24
+    texture: {fileID: -1276157773, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 25
+    texture: {fileID: -1212827568, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 26
+    texture: {fileID: -1133122296, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 27
+    texture: {fileID: -85777552, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 28
+    texture: {fileID: -2029317369, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 29
+    texture: {fileID: -610533139, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 30
+    texture: {fileID: -539293902, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 31
+    texture: {fileID: 1583975887, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 32
+    texture: {fileID: 31420587, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 33
+    texture: {fileID: 919348944, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 34
+    texture: {fileID: 1026436983, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 35
+    texture: {fileID: 580796012, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 36
+    texture: {fileID: 1009395818, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 37
+    texture: {fileID: 166120169, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 38
+    texture: {fileID: -1030480350, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 39
+    texture: {fileID: 1373108630, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 40
+    texture: {fileID: 1200396371, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 41
+    texture: {fileID: 919405274, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 42
+    texture: {fileID: 71193582, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 43
+    texture: {fileID: -415740895, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 44
+    texture: {fileID: 2752133, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 45
+    texture: {fileID: -1287392940, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 46
+    texture: {fileID: -463127445, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 47
+    texture: {fileID: 778353244, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 48
+    texture: {fileID: 1627639575, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 49
+    texture: {fileID: -1600044129, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 50
+    texture: {fileID: -1456537827, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 51
+    texture: {fileID: 1776088361, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 52
+    texture: {fileID: 1154160228, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 53
+    texture: {fileID: 787157256, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 54
+    texture: {fileID: -144922602, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 55
+    texture: {fileID: 285084300, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 56
+    texture: {fileID: -1732012652, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 57
+    texture: {fileID: -1266057113, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 58
+    texture: {fileID: -805184803, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 59
+    texture: {fileID: 562471977, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 60
+    texture: {fileID: 443145856, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 61
+    texture: {fileID: 1114460346, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 62
+    texture: {fileID: 381190142, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 63
+    texture: {fileID: 63254594, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 64
+    texture: {fileID: 1468238488, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 65
+    texture: {fileID: 2110701671, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 66
+    texture: {fileID: -565565099, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 67
+    texture: {fileID: 632659821, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 68
+    texture: {fileID: -1041695588, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 69
+    texture: {fileID: 51476879, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 70
+    texture: {fileID: -172502731, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 71
+    texture: {fileID: -1200013771, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 72
+    texture: {fileID: -1788945346, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 73
+    texture: {fileID: -841235391, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 74
+    texture: {fileID: -270769513, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 75
+    texture: {fileID: -804808515, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 76
+    texture: {fileID: 1232099433, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 77
+    texture: {fileID: 1925909073, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 78
+    texture: {fileID: -1770507955, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}
+  - colorMap: 79
+    texture: {fileID: 1225618814, guid: 6c3bdb2178b4b9249ad8ff6f82e12d21, type: 3}

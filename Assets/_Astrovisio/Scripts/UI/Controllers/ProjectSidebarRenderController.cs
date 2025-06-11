@@ -43,7 +43,7 @@ namespace Astrovisio
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
 
             settingsPanel = renderSettingsContainer.Q<VisualElement>("SettingsPanel");
-            settingsPanelController = new SettingsPanelController(Project, settingsPanel);
+            settingsPanelController = new SettingsPanelController(Project, settingsPanel, UIContextSO);
 
             settingsPanelController.OnApplySetting = OnApplySettings;
             settingsPanelController.OnCancelSetting = OnCancelSettings;
