@@ -132,7 +132,13 @@ namespace CatalogData
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
 
-            GetComponent<KDTreeComponent>().InitializeAsync(data);
+            Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
+
+            GetComponent<KDTreeComponent>().xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
+            GetComponent<KDTreeComponent>().yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
+            GetComponent<KDTreeComponent>().zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
+
+            GetComponent<KDTreeComponent>().Initialize(data, dataContainer.Center);
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];

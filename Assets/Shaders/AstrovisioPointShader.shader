@@ -92,6 +92,17 @@ Shader "Astrovisio/PointShader"
                 return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
             }
 
+            float noise(float3 p)
+            {
+                float dotProduct = dot(p, float3(12.9898, 78.233, 37.719));
+                return frac(sin(dotProduct) * 43758.5453);
+            }
+
+            float applyNoise(float input, float3 p) 
+            {
+                return input + (noise(p) - 0.5) * 0.02;
+            }
+
             float applyScaling(float input, MappingConfig config)
             {
 
@@ -156,10 +167,18 @@ Shader "Astrovisio/PointShader"
                     return o;
                 }
 
+                float x = applyScaling(dataX[v.vertexID], mappingConfigs[X_INDEX]);
+                float y = applyScaling(dataY[v.vertexID], mappingConfigs[Y_INDEX]);
+                float z = applyScaling(dataZ[v.vertexID], mappingConfigs[Z_INDEX]);
+
+                // x = applyNoise(x, float3(dataX[v.vertexID], dataY[v.vertexID], dataZ[v.vertexID]));
+                // y = applyNoise(y, float3(dataY[v.vertexID], dataZ[v.vertexID], dataX[v.vertexID]));
+                // z = applyNoise(z, float3(dataZ[v.vertexID], dataX[v.vertexID], dataY[v.vertexID]));
+
                 float3 pos = float3(
-                    applyScaling(dataX[v.vertexID], mappingConfigs[X_INDEX]),
-                    applyScaling(dataY[v.vertexID], mappingConfigs[Y_INDEX]),
-                    applyScaling(dataZ[v.vertexID], mappingConfigs[Z_INDEX])
+                    x,
+                    y,
+                    z
                 );
 
                 float4 worldPos = mul(datasetMatrix, float4(pos, 1.0));

@@ -1,154 +1,113 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class KDTree
 {
-    private float[][] data;   // float[4][N]
-    private int[] indices;    // Indici dei punti
+    private readonly float[][] data;
+    private readonly int[] indices;
     private KDTreeNode root;
-
-    public KDTree(float[][] data)
-    {
-        this.data = data;
-        int count = data[0].Length;
-        this.indices = Enumerable.Range(0, count).ToArray();
-        this.root = BuildTree(0, count, 0);
-    }
 
     private class KDTreeNode
     {
         public int index;
-        public int axis;
+        public Vector3 point;
         public KDTreeNode left;
         public KDTreeNode right;
-        public Vector3 point;
+    }
+
+    public KDTree(float[][] data, List<int> pointIndices)
+    {
+        this.data = data;
+        this.indices = pointIndices.ToArray();
+        root = BuildTree(0, indices.Length, 0);
     }
 
     private KDTreeNode BuildTree(int start, int end, int depth)
     {
-        if (start >= end)
-            return null;
+        if (start >= end) return null;
 
         int axis = depth % 3;
-        int mid = (start + end) / 2;
-
         Array.Sort(indices, start, end - start, Comparer<int>.Create((a, b) =>
             data[axis][a].CompareTo(data[axis][b])
         ));
 
-        var node = new KDTreeNode
+        int mid = (start + end) / 2;
+        return new KDTreeNode
         {
             index = indices[mid],
-            axis = axis,
             point = new Vector3(data[0][indices[mid]], data[1][indices[mid]], data[2][indices[mid]]),
             left = BuildTree(start, mid, depth + 1),
             right = BuildTree(mid + 1, end, depth + 1)
         };
-
-        return node;
     }
 
     public (int index, float distanceSquared) FindNearest(Vector3 target)
     {
-        float bestDist = float.MaxValue;
-        int bestIndex = -1;
-        Search(root, target, ref bestDist, ref bestIndex, 0);
-        return (bestIndex, bestDist);
+        return SearchNearest(root, target, 0, (-1, float.MaxValue));
     }
 
-    public List<(int index, float distanceSquared)> FindKNearest(Vector3 target, int k)
+    private (int, float) SearchNearest(KDTreeNode node, Vector3 target, int depth, (int, float) best)
     {
-        var heap = new MaxHeap<(int index, float distanceSquared)>();
-        SearchKNearest(root, target, 0, k, heap);
+        if (node == null) return best;
+
+        int idx = node.index;
+        float distSq = (node.point - target).sqrMagnitude;
+
+        if (distSq < best.Item2) best = (idx, distSq);
+
+        int axis = depth % 3;
+        float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
+        float nodeVal = data[axis][idx];
+
+        KDTreeNode near = targetVal < nodeVal ? node.left : node.right;
+        KDTreeNode far = targetVal < nodeVal ? node.right : node.left;
+
+        best = SearchNearest(near, target, depth + 1, best);
+        if ((targetVal - nodeVal) * (targetVal - nodeVal) < best.Item2)
+            best = SearchNearest(far, target, depth + 1, best);
+
+        return best;
+    }
+
+    public List<(int, float)> FindKNearest(Vector3 target, int k)
+    {
+        var heap = new MaxHeap<(int, float)>();
+        SearchKNearest(root, target, 0, heap, k);
 
         var result = new List<(int, float)>(heap.Count);
         while (heap.Count > 0)
             result.Add(heap.Dequeue());
 
-        // Ordinamento dal più vicino al più lontano
         result.Sort((a, b) => a.Item2.CompareTo(b.Item2));
         return result;
     }
 
-    private void Search(KDTreeNode node, Vector3 target, ref float bestDist, ref int bestIndex, int depth)
-    {
-        if (node == null)
-        {
-            // Debug.Log("Iterations: " + depth);
-            return;
-        }
-
-        int i = node.index;
-        // Vector3 point = new Vector3(data[0][i], data[1][i], data[2][i]);
-        float dist = (target - node.point).sqrMagnitude;
-
-        if (dist < bestDist)
-        {
-            bestDist = dist;
-            bestIndex = i;
-        }
-
-        int axis = node.axis;
-        float delta = GetComponent(target, axis) - data[axis][i];
-
-        KDTreeNode first = delta < 0 ? node.left : node.right;
-        KDTreeNode second = delta < 0 ? node.right : node.left;
-
-        Search(first, target, ref bestDist, ref bestIndex, depth + 1);
-
-        if (delta * delta < bestDist)
-        {
-            // Debug.Log(delta * delta + " < " + bestDist);
-            Search(second, target, ref bestDist, ref bestIndex, depth + 1);
-        }
-
-    }
-
-    private void SearchKNearest(KDTreeNode node, Vector3 target, int depth, int k, MaxHeap<(int, float)> heap)
+    private void SearchKNearest(KDTreeNode node, Vector3 target, int depth, MaxHeap<(int, float)> heap, int k)
     {
         if (node == null) return;
 
+        int idx = node.index;
+        Vector3 point = new Vector3(data[0][idx], data[1][idx], data[2][idx]);
+        float distSq = (point - target).sqrMagnitude;
+
+        if (heap.Count < k)
+            heap.Enqueue((idx, distSq), distSq);
+        else if (distSq < heap.PeekPriority())
+        {
+            heap.Dequeue();
+            heap.Enqueue((idx, distSq), distSq);
+        }
+
         int axis = depth % 3;
-        float targetVal = axis == 0 ? target.x : (axis == 1 ? target.y : target.z);
-        float nodeVal = axis == 0 ? node.point.x : (axis == 1 ? node.point.y : node.point.z);
+        float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
+        float nodeVal = data[axis][idx];
 
         KDTreeNode near = targetVal < nodeVal ? node.left : node.right;
         KDTreeNode far = targetVal < nodeVal ? node.right : node.left;
 
-        // Visita ramo vicino
-        SearchKNearest(near, target, depth + 1, k, heap);
-
-        float distSqr = (target - node.point).sqrMagnitude;
-
-        if (heap.Count < k)
-        {
-            heap.Enqueue((node.index, distSqr), distSqr);
-        }
-        else if (distSqr < heap.PeekPriority())
-        {
-            heap.Dequeue();
-            heap.Enqueue((node.index, distSqr), distSqr);
-        }
-
-        float delta = targetVal - nodeVal;
-        float deltaSqr = delta * delta;
-
-        if (heap.Count < k || deltaSqr < heap.PeekPriority())
-        {
-            SearchKNearest(far, target, depth + 1, k, heap);
-        }
-    }
-
-    private float GetComponent(Vector3 v, int axis)
-    {
-        return axis switch
-        {
-            0 => v.x,
-            1 => v.y,
-            2 => v.z,
-            _ => throw new Exception("Asse non valido")
-        };
+        SearchKNearest(near, target, depth + 1, heap, k);
+        if ((targetVal - nodeVal) * (targetVal - nodeVal) < (heap.Count < k ? float.MaxValue : heap.PeekPriority()))
+            SearchKNearest(far, target, depth + 1, heap, k);
     }
 }

@@ -3,100 +3,52 @@ using System.Collections.Generic;
 
 public class MaxHeap<T>
 {
-    private readonly List<(T item, float priority)> _items = new();
-    private readonly IComparer<float> _comparer;
+    private readonly List<(T item, float priority)> heap = new();
 
-    public MaxHeap()
-    {
-        _comparer = Comparer<float>.Default;
-    }
-
-    public int Count => _items.Count;
+    public int Count => heap.Count;
 
     public void Enqueue(T item, float priority)
     {
-        _items.Add((item, priority));
-        HeapifyUp(_items.Count - 1);
-    }
-
-    public T Peek()
-    {
-        if (_items.Count == 0) throw new InvalidOperationException("Heap is empty");
-        return _items[0].item;
-    }
-
-    public float PeekPriority()
-    {
-        if (_items.Count == 0) throw new InvalidOperationException("Heap is empty");
-        return _items[0].priority;
+        heap.Add((item, priority));
+        HeapifyUp(heap.Count - 1);
     }
 
     public T Dequeue()
     {
-        if (_items.Count == 0) throw new InvalidOperationException("Heap is empty");
-
-        T rootItem = _items[0].item;
-        int last = _items.Count - 1;
-        _items[0] = _items[last];
-        _items.RemoveAt(last);
+        var root = heap[0].item;
+        heap[0] = heap[^1];
+        heap.RemoveAt(heap.Count - 1);
         HeapifyDown(0);
-
-        return rootItem;
+        return root;
     }
 
-    private void HeapifyUp(int index)
-    {
-        while (index > 0)
-        {
-            int parent = (index - 1) / 2;
-            if (_comparer.Compare(_items[index].priority, _items[parent].priority) <= 0)
-                break;
+    public float PeekPriority() => heap[0].priority;
 
-            Swap(index, parent);
-            index = parent;
+    private void HeapifyUp(int i)
+    {
+        while (i > 0)
+        {
+            int parent = (i - 1) / 2;
+            if (heap[i].priority <= heap[parent].priority) break;
+            (heap[i], heap[parent]) = (heap[parent], heap[i]);
+            i = parent;
         }
     }
 
-    private void HeapifyDown(int index)
+    private void HeapifyDown(int i)
     {
-        int last = _items.Count - 1;
+        int last = heap.Count - 1;
         while (true)
         {
-            int largest = index;
-            int left = 2 * index + 1;
-            int right = 2 * index + 2;
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int largest = i;
 
-            if (left <= last && _comparer.Compare(_items[left].priority, _items[largest].priority) > 0)
-                largest = left;
-
-            if (right <= last && _comparer.Compare(_items[right].priority, _items[largest].priority) > 0)
-                largest = right;
-
-            if (largest == index)
-                break;
-
-            Swap(index, largest);
-            index = largest;
+            if (left <= last && heap[left].priority > heap[largest].priority) largest = left;
+            if (right <= last && heap[right].priority > heap[largest].priority) largest = right;
+            if (largest == i) break;
+            (heap[i], heap[largest]) = (heap[largest], heap[i]);
+            i = largest;
         }
-    }
-
-    private void Swap(int i, int j)
-    {
-        var tmp = _items[i];
-        _items[i] = _items[j];
-        _items[j] = tmp;
-    }
-
-    public List<T> ToSortedList()
-    {
-        var sorted = new List<T>(_items.Count);
-        var copy = new MaxHeap<T>();
-        foreach (var (item, priority) in _items)
-            copy.Enqueue(item, priority);
-
-        while (copy.Count > 0)
-            sorted.Add(copy.Dequeue());
-
-        return sorted;
     }
 }
