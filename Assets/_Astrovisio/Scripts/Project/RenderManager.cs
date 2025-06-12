@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using CatalogData;
 using UnityEngine;
 
@@ -18,6 +21,11 @@ namespace Astrovisio
         private DataRenderer dataRenderer;
         private RenderSettings renderSettings;
 
+        private Dictionary<Project, DataContainer> projectDataContainers = new();
+
+        public Action<Project> OnProjectReadyToGetRendered;
+
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -30,10 +38,25 @@ namespace Astrovisio
             Instance = this;
         }
 
+        private void Start()
+        {
+            projectManager.ProjectProcessed += OnProjectProcessed;
+        }
+
+        private void OnProjectProcessed(Project project, DataPack pack)
+        {
+            DataContainer dataContainer = new DataContainer(pack, project);
+            projectDataContainers[project] = dataContainer;
+            OnProjectReadyToGetRendered?.Invoke(project);
+            // Debug.Log("OnProjectReadyToGetRendered");
+        }
+
         public DataRenderer GetCurrentDataRenderer() => dataRenderer;
 
-        public void RenderDataContainer(DataContainer dataContainer)
+        public void RenderDataContainer(Project project)
         {
+            DataContainer dataContainer = projectDataContainers[project];
+
             renderSettings = null;
 
             DataRenderer[] allDataRenderer = FindObjectsByType<DataRenderer>(FindObjectsSortMode.None);
@@ -42,10 +65,12 @@ namespace Astrovisio
                 Destroy(dR.gameObject);
             }
 
+            // Debug.Log("Length :" + dataContainer.DataPack.Rows.Length);
             dataRenderer = Instantiate(dataRendererPrefab);
             dataRenderer.RenderDataContainer(dataContainer);
-            Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
+            // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
         }
+
 
         public void SetRenderSettings(RenderSettings renderSettings)
         {

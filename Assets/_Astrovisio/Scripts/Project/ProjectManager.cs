@@ -20,7 +20,7 @@ namespace Astrovisio
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<DataPack> ProjectProcessed;
+		public event Action<Project, DataPack> ProjectProcessed;
 		public event Action ProjectUnselected;
 		public event Action<Project> ProjectDeleted;
 		public event Action<string> ApiError;
@@ -45,6 +45,11 @@ namespace Astrovisio
 			return openedProjectList.Any(p => p.Id == id);
 		}
 
+		public Project GetProject(int id)
+		{
+			return projectList.FirstOrDefault(p => p.Id == id);
+		}
+
 		public Project GetCurrentProject()
 		{
 			return currentProject;
@@ -53,6 +58,21 @@ namespace Astrovisio
 		public Project GetOpenedProject(int id)
 		{
 			return openedProjectList.Find(p => p.Id == id);
+		}
+
+		private void UpdateProjectInList(Project updated)
+		{
+			int index = projectList.FindIndex(p => p.Id == updated.Id);
+			if (index >= 0)
+			{
+				projectList[index] = updated;
+			}
+
+			int openedIndex = openedProjectList.FindIndex(p => p.Id == updated.Id);
+			if (openedIndex >= 0)
+			{
+				openedProjectList[openedIndex] = updated;
+			}
 		}
 
 		public void CloseProject(int id)
@@ -407,6 +427,9 @@ namespace Astrovisio
 				id,
 				onSuccess: project =>
 				{
+					UpdateProjectInList(project);
+					// Debug.Log("===" + (GetProject(project.Id) == project));
+
 					currentProject = project;
 					// Debug.Log("Current project updated to: " + currentProject.Id);
 
@@ -511,7 +534,19 @@ namespace Astrovisio
 			yield return apiManager.ProcessProject(
 				id,
 				processProjectRequest,
-				onSuccess: processed => ProjectProcessed?.Invoke(processed),
+				onSuccess: processed =>
+				{
+					Project project = GetProject(id);
+					// Debug.Log(project == projectList.FirstOrDefault(p => p.Id == id));
+					if (project is not null)
+					{
+						ProjectProcessed?.Invoke(project, processed);
+					}
+					else
+					{
+						Debug.LogWarning($"Project with ID {id} not found.");
+					}
+				},
 				onError: err => ApiError?.Invoke(err)
 			);
 			uiManager.SetLoading(false);

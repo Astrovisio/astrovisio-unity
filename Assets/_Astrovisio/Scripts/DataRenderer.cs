@@ -83,6 +83,7 @@ namespace Astrovisio
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
+            this.dataContainer = dataContainer;
             astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);

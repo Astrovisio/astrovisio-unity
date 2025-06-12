@@ -35,13 +35,6 @@ namespace Astrovisio
 
             projectManager = uiManager.GetProjectManager();
             uiContextSO = uiManager.getUIContext();
-
-            projectManager.ProjectProcessed += OnProjectProcessed;
-        }
-
-        private void OnProjectProcessed(DataPack data)
-        {
-            // contentContainer.style.visibility = Visibility.Hidden;
         }
 
         private void OnEnable()

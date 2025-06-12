@@ -54,7 +54,7 @@ namespace Astrovisio
                 {
                     try
                     {
-                        var project = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        Project project = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
                         onSuccess?.Invoke(project);
                     }
                     catch (Exception ex)
@@ -88,7 +88,7 @@ namespace Astrovisio
 
                     try
                     {
-                        var projects = JsonConvert.DeserializeObject<List<Project>>(jsonResponse);
+                        List<Project> projects = JsonConvert.DeserializeObject<List<Project>>(jsonResponse);
                         onSuccess?.Invoke(projects);
                     }
                     catch (Exception ex)
@@ -168,7 +168,7 @@ namespace Astrovisio
                 {
                     try
                     {
-                        var updated = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        Project updated = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
                         onSuccess?.Invoke(updated);
                     }
                     catch (Exception ex)

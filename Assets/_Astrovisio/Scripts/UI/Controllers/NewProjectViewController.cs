@@ -25,7 +25,7 @@ namespace Astrovisio
         private Button cancelButton;
 
         // === Local ===
-        private List<FileInfo> selectedFiles = new();
+        private List<FileInfo> selectedFiles;
 
         public NewProjectViewController(ProjectManager projectManager, VisualTreeAsset listItemFileTemplate)
         {
@@ -44,6 +44,9 @@ namespace Astrovisio
             continueButton = root.Q<VisualElement>("ContinueButton")?.Q<Button>();
             cancelButton = root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
+            projectNameField.value = string.Empty;
+            projectDescriptionField.value = string.Empty;
+
             if (addFileButton != null)
             {
                 addFileButton.clicked += OnAddFileClicked;
@@ -51,6 +54,7 @@ namespace Astrovisio
 
             if (filesScrollView != null)
             {
+                selectedFiles = new();
                 UpdateFilesContainer();
             }
 

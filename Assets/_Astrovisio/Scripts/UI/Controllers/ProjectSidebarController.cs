@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -44,11 +45,13 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            ProjectManager.ProjectProcessed += OnProjectProcessed;
+            RenderManager.Instance.OnProjectReadyToGetRendered += OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened += OnProjectOpened;
 
             Init();
             SetActiveStep(ProjectSidebarStep.Data);
+
+            // Debug.Log("###" + (projectManager.GetProject(Project.Id) == Project));
         }
 
         private void Init()
@@ -79,11 +82,26 @@ namespace Astrovisio
             SetActiveStep(ProjectSidebarStep.Data);
         }
 
-        private void OnProjectProcessed(DataPack data)
+        // private void OnProjectProcessed(DataPack data)
+        // {
+        //     dataContainer = new DataContainer(data, Project);
+        //     // Debug.Log(dataContainer.PointCount);
+        //     // SetProcessDataButton(true);
+        //     SetNextStepButtons(true);
+        // }
+
+        private void OnProjectReadyToGetRendered(Project project)
         {
-            dataContainer = new DataContainer(data, Project);
-            // Debug.Log(dataContainer.PointCount);
-            // SetProcessDataButton(true);
+            // Debug.Log($"Returned {Project.Id} {Project.Name} - {project.Id} {project.Name}");
+            // Debug.Log(Project == project);
+            // Debug.Log(ReferenceEquals(project, Project));
+
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+            
+            // Project = project;
             SetNextStepButtons(true);
         }
 
@@ -94,8 +112,9 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
+            // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
             SetActiveStep(ProjectSidebarStep.Render);
-            RenderManager.Instance.RenderDataContainer(dataContainer);
+            RenderManager.Instance.RenderDataContainer(Project);
         }
 
         private void OnGoToVRButtonClicked()
