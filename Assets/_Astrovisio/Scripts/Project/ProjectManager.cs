@@ -494,7 +494,11 @@ namespace Astrovisio
 			yield return apiManager.UpdateProject(
 			  id,
 			  updateProjectRequest,
-			  onSuccess: updated => ProjectUpdated?.Invoke(updated),
+			  onSuccess: updated =>
+			  {
+				  UpdateProjectInList(updated);
+				  ProjectUpdated?.Invoke(updated);
+			  },
 			  onError: err => ApiError?.Invoke(err)
 			);
 		}

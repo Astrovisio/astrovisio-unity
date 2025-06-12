@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,15 +10,21 @@ namespace Astrovisio
     {
 
         // === Dependencies ===
-        private readonly ProjectManager projectManager;
+        private ProjectManager ProjectManager { get; }
+        private VisualElement Root { get; }
+        private UIContextSO UIContextSO { get; }
 
-        // === Local ===
-        public VisualElement Root { get; }
+        private ScrollView favouritesScrollView;
 
         public HomeSidebarController(ProjectManager projectManager, VisualElement root, UIContextSO uiContextSO)
         {
-            this.projectManager = projectManager;
+            ProjectManager = projectManager;
             Root = root;
+            UIContextSO = uiContextSO;
+
+            ProjectManager.ProjectsFetched += OnProjectFetched;
+            ProjectManager.ProjectCreated += OnProjectCreated;
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
 
             InitFavouriteScrollView();
         }
@@ -25,10 +32,62 @@ namespace Astrovisio
         private void InitFavouriteScrollView()
         {
             var favouritesContainer = Root.Q<VisualElement>("FavouritesContainer");
-            var projectScrollView = favouritesContainer.Q<ScrollView>("ProjectScrollView");
+            favouritesScrollView = favouritesContainer.Q<ScrollView>("ProjectScrollView");
 
-            projectScrollView.Clear();
+            favouritesScrollView.Clear();
+            UpdateFavouriteScrollView();
         }
+
+        private void UpdateFavouriteScrollView()
+        {
+            List<Project> projectList = ProjectManager.GetProjectList();
+
+            favouritesScrollView.Clear();
+
+            foreach (Project project in projectList)
+            {
+
+                if (!project.Favourite)
+                {
+                    continue;
+                }
+
+                // Debug.Log("Checking project " + project.Name);
+
+                TemplateContainer favouriteProjectTemplate = UIContextSO.favouriteProjectButton.CloneTree();
+
+                Button favouriteButton = favouriteProjectTemplate.Q<Button>();
+                favouriteButton.text = project.Name;
+
+                favouriteButton.clicked += () =>
+                {
+                    // Debug.Log(project.Name);
+                    ProjectManager.OpenProject(project.Id);
+                };
+                
+                favouritesScrollView.Add(favouriteProjectTemplate);
+            }
+        }
+
+
+        private void OnProjectUpdated(Project project)
+        {
+            // Debug.Log("OnProjectUpdated");
+            UpdateFavouriteScrollView();
+        }
+
+        private void OnProjectCreated(Project project)
+        {
+            // Debug.Log("OnProjectCreated");
+            UpdateFavouriteScrollView();
+        }
+
+        private void OnProjectFetched(List<Project> list)
+        {
+            // Debug.Log("OnProjectFetched");
+            UpdateFavouriteScrollView();
+        }
+
     }
 
 }

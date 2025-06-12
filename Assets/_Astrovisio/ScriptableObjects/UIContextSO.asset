@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectButtonTemplate: {fileID: 9197481963319205126, guid: db11fa552c6819f47999b9cee67e33d4,
     type: 3}
+  favouriteProjectButton: {fileID: 9197481963319205126, guid: 6ea029e86f6e3c840893dc1298955482,
+    type: 3}
   projectSidebarTemplate: {fileID: 9197481963319205126, guid: 0f81f4c46e0c640418c9b40678b28b0a,
     type: 3}
   sidebarParamRowTemplate: {fileID: 9197481963319205126, guid: 52b9839a12932d44499b3960b752ac68,

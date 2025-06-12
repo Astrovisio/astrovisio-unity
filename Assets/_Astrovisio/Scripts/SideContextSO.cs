@@ -14,10 +14,10 @@ namespace Astrovisio
 
         [Space(3)]
         [Header("Side")]
-        [Space(2)]
 
         [Space(1)]
         [Header("- Home")]
+        public VisualTreeAsset favouriteProjectButton;
         public VisualTreeAsset projectSidebarTemplate;
 
         [Space(1)]
