@@ -22,12 +22,12 @@ namespace Astrovisio
 
         public void SetToastSuccessMessage(string message)
         {
-            Debug.Log($"SetToastSuccessMessage: {message}");
+            // Debug.Log($"SetToastSuccessMessage: {message}");
         }
 
         public void SetToastErrorMessage(string message)
         {
-            Debug.Log($"SetToastSuccessMessage: {message}");
+            // Debug.Log($"SetToastSuccessMessage: {message}");
         }
 
     }

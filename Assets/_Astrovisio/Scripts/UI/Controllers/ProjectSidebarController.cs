@@ -79,6 +79,15 @@ namespace Astrovisio
 
         private void OnProjectOpened(Project project)
         {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+            // else
+            // {
+            //     Project = project;
+            // }
+
             SetActiveStep(ProjectSidebarStep.Data);
         }
 
@@ -100,8 +109,11 @@ namespace Astrovisio
             {
                 return;
             }
+            else
+            {
+                Project = project;
+            }
             
-            // Project = project;
             SetNextStepButtons(true);
         }
 

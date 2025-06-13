@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Astrovisio
 {
@@ -160,6 +161,27 @@ namespace Astrovisio
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void UpdateFrom(ConfigParam other)
+        {
+            ThrMin = other.ThrMin;
+            ThrMinSel = other.ThrMinSel;
+            ThrMax = other.ThrMax;
+            ThrMaxSel = other.ThrMaxSel;
+            Selected = other.Selected;
+            Unit = other.Unit;
+            XAxis = other.XAxis;
+            YAxis = other.YAxis;
+            ZAxis = other.ZAxis;
+
+            Files = other.Files != null ? (string[])other.Files.Clone() : null;
+        }
+
+        public ConfigParam DeepCopy()
+        {
+            string json = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<ConfigParam>(json);
         }
 
     }

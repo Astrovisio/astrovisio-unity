@@ -60,20 +60,6 @@ namespace Astrovisio
 			return openedProjectList.Find(p => p.Id == id);
 		}
 
-		private void UpdateProjectInList(Project updated)
-		{
-			int index = projectList.FindIndex(p => p.Id == updated.Id);
-			if (index >= 0)
-			{
-				projectList[index] = updated;
-			}
-
-			int openedIndex = openedProjectList.FindIndex(p => p.Id == updated.Id);
-			if (openedIndex >= 0)
-			{
-				openedProjectList[openedIndex] = updated;
-			}
-		}
 
 		public void CloseProject(int id)
 		{
@@ -427,23 +413,37 @@ namespace Astrovisio
 				id,
 				onSuccess: project =>
 				{
-					UpdateProjectInList(project);
-					// Debug.Log("===" + (GetProject(project.Id) == project));
+					// Cerca se esiste già un progetto con lo stesso ID
+					Project existingProject = projectList.FirstOrDefault(p => p.Id == project.Id);
 
-					currentProject = project;
-					// Debug.Log("Current project updated to: " + currentProject.Id);
-
-					if (!openedProjectList.Any(p => p.Id == project.Id))
+					if (existingProject != null)
 					{
-						openedProjectList.Add(project);
+						// Aggiorna i valori mantenendo lo stesso riferimento
+						existingProject.UpdateFrom(project);
+					}
+					else
+					{
+						// Aggiunge il nuovo progetto alla lista
+						existingProject = project;
+						projectList.Add(existingProject);
 					}
 
-					// Debug.Log("project: " + project.ConfigProcess.Params.Count);
-					ProjectOpened?.Invoke(project);
+					// Aggiunge alla lista degli aperti se non già presente (evita duplicati)
+					if (!openedProjectList.Any(p => p.Id == existingProject.Id))
+					{
+						openedProjectList.Add(existingProject);
+					}
+
+					// Aggiorna il progetto corrente
+					currentProject = existingProject;
+
+					// Notifica apertura progetto
+					ProjectOpened?.Invoke(existingProject);
 				},
 				onError: err => ApiError?.Invoke(err)
 			);
 		}
+
 
 
 		public void CreateProject(string name, string description, string[] paths)
@@ -460,20 +460,131 @@ namespace Astrovisio
 
 		private IEnumerator CreateProjectCoroutine(CreateProjectRequest createProjectRequest)
 		{
-			// Debug.Log("CreateProjectCoroutine -> START");
 			uiManager.SetLoading(true);
+			bool finished = false;
+
 			yield return apiManager.CreateNewProject(
-			  createProjectRequest,
-			  onSuccess: created =>
-			  {
-				  projectList.Add(created);
-				  ProjectCreated?.Invoke(created);
-			  },
-			  onError: err => ApiError?.Invoke(err)
+				createProjectRequest,
+				onSuccess: created =>
+				{
+					projectList.Add(created);
+					ProjectCreated?.Invoke(created);
+					finished = true;
+				},
+				onError: err =>
+				{
+					Debug.Log("Error " + err);
+					ApiError?.Invoke(err);
+					finished = true;
+				}
 			);
+
+			// Nel caso la CreateNewProject non sia una coroutine e non garantisca il finish, potresti aggiungere un timeout o controllo
+			while (!finished)
+				yield return null;
+
 			uiManager.SetLoading(false);
-			// Debug.Log("CreateProjectCoroutine -> END");
 		}
+
+
+		public void DuplicateProject(string name, string description, Project projectToDuplicate)
+		{
+			DuplicateProjectRequest duplicateProjectRequest = new DuplicateProjectRequest
+			{
+				Name = name,
+				Description = description,
+				Paths = projectToDuplicate.Paths,
+				ConfigProcess = projectToDuplicate.ConfigProcess
+			};
+
+			// Debug.Log($"Duplicating project {projectToDuplicate.Id} - {projectToDuplicate.Name}");
+			StartCoroutine(DuplicateProjectCoroutine(duplicateProjectRequest));
+		}
+
+		private IEnumerator DuplicateProjectCoroutine(DuplicateProjectRequest duplicateProjectRequest)
+		{
+			uiManager.SetLoading(true);
+			// Debug.Log($"[Duplicate] Step 1: Creating '{duplicateProjectRequest.Name}'");
+
+			// Step 1: Crea un nuovo progetto base
+			var createProjectRequest = new CreateProjectRequest
+			{
+				Name = duplicateProjectRequest.Name,
+				Description = duplicateProjectRequest.Description,
+				Favourite = false,
+				Paths = duplicateProjectRequest.Paths
+			};
+
+			Project createdProject = null;
+
+			yield return apiManager.CreateNewProject(
+				createProjectRequest,
+				onSuccess: created =>
+				{
+					createdProject = created;
+					projectList.Add(createdProject);
+				},
+				onError: err =>
+				{
+					ApiError?.Invoke(err);
+				}
+			);
+
+			// Se la creazione è fallita, termina
+			if (createdProject == null)
+			{
+				uiManager.SetLoading(false);
+				yield break;
+			}
+
+			// Debug.Log($"[Duplicate] Step 2: Created base project with ID {createdProject.Id}");
+
+			// Step 2: Applica il ConfigProcess e altri dettagli duplicati
+			UpdateProjectRequest updateProjectRequest = new UpdateProjectRequest
+			{
+				Name = createdProject.Name,
+				Description = createdProject.Description,
+				Favourite = false,
+				Paths = createdProject.Paths,
+				ConfigProcess = duplicateProjectRequest.ConfigProcess.DeepCopy()
+			};
+
+			Debug.Log("SERIAL: " + JsonConvert.SerializeObject(updateProjectRequest.ConfigProcess));
+
+			// UpdateProjectRequest updateProjectRequest = new UpdateProjectRequest
+			// {
+			// 	Name = createdProject.Name,
+			// 	Description = createdProject.Description,
+			// 	Favourite = createdProject.Favourite,
+			// 	Paths = createdProject.Paths,
+			// 	ConfigProcess = createdProject.ConfigProcess
+			// };
+
+			// Debug.Log(updateProjectRequest.ConfigProcess);
+
+			yield return apiManager.UpdateProject(
+				createdProject.Id,
+				updateProjectRequest,
+				onSuccess: updated =>
+				{
+					// Usa UpdateFrom per copiare solo i valori, senza sostituire riferimenti
+					createdProject.UpdateFrom(updated);
+
+					// Debug.Log(createdProject.Print());
+					// currentProject = createdProject;
+					ProjectCreated?.Invoke(createdProject);
+					// Debug.Log($"[Duplicate] Step 3: Duplicated project '{createdProject.Name}' (ID: {createdProject.Id})");
+				},
+				onError: err =>
+				{
+					// Debug.Log("ERROR: " + err);
+					ApiError?.Invoke(err);
+				}
+			);
+
+			uiManager.SetLoading(false);
+		}
+
 
 
 		public void UpdateProject(int id, Project project)
@@ -492,16 +603,37 @@ namespace Astrovisio
 		private IEnumerator UpdateProjectCoroutine(int id, UpdateProjectRequest updateProjectRequest)
 		{
 			yield return apiManager.UpdateProject(
-			  id,
-			  updateProjectRequest,
-			  onSuccess: updated =>
-			  {
-				  UpdateProjectInList(updated);
-				  ProjectUpdated?.Invoke(updated);
-			  },
-			  onError: err => ApiError?.Invoke(err)
+				id,
+				updateProjectRequest,
+				onSuccess: updated =>
+				{
+					// Cerca se esiste già il progetto nella lista
+					Project existingProject = projectList.FirstOrDefault(p => p.Id == updated.Id);
+
+					if (existingProject != null)
+					{
+						// Aggiorna i valori senza creare un nuovo riferimento
+						existingProject.UpdateFrom(updated);
+					}
+					else
+					{
+						// Aggiunge il nuovo progetto alla lista
+						existingProject = updated;
+						projectList.Add(existingProject);
+					}
+
+					// Eventuale aggiornamento del currentProject, se ti serve
+					// currentProject = existingProject;
+
+					// Notifica aggiornamento
+					ProjectUpdated?.Invoke(existingProject);
+					// Debug.Log($"Updated project: {existingProject.Name} (ID: {existingProject.Id})");
+				},
+				onError: err => ApiError?.Invoke(err)
 			);
 		}
+
+
 
 
 		public void DeleteProject(int id, Project project)

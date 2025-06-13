@@ -188,7 +188,7 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProjectById(id);
-            Debug.Log($"[APIManager] DELETE {url}");
+            // Debug.Log($"[APIManager] DELETE {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Delete(url))
             {

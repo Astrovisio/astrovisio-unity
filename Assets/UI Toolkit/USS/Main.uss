@@ -117,6 +117,19 @@
     transition-delay: 0s, 0s;
 }
 
+#EditProjectView {
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    visibility: hidden;
+}
+
+#EditProjectView.active {
+    visibility: visible;
+}
+
 #DeleteProjectView {
     position: absolute;
     top: 0;

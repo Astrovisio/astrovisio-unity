@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Astrovisio
 {
@@ -138,6 +140,44 @@ namespace Astrovisio
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void UpdateFrom(Project other)
+        {
+            Name = other.Name;
+            Description = other.Description;
+            Favourite = other.Favourite;
+            Created = other.Created;
+            LastOpened = other.LastOpened;
+
+            // Copia i valori dei path
+            if (other.Paths != null)
+                Paths = other.Paths.ToArray();
+
+            // Copia i valori di ConfigProcess, ma senza creare una nuova istanza se non serve
+            if (ConfigProcess != null && other.ConfigProcess != null)
+            {
+                ConfigProcess.UpdateFrom(other.ConfigProcess);
+            }
+            else if (other.ConfigProcess != null)
+            {
+                ConfigProcess = other.ConfigProcess.DeepCopy();
+            }
+        }
+
+        public Project DeepCopy()
+        {
+            string json = JsonConvert.SerializeObject(this);
+            Debug.Log($"DeepCopy of {json}");
+            return JsonConvert.DeserializeObject<Project>(json);
+        }
+
+        public string Print()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
     }
 }

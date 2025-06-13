@@ -18,7 +18,7 @@ namespace Astrovisio
 
         // === Local ===
         private readonly string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
-        private readonly Dictionary<string, ProjectRowController> projectControllers = new();
+        private readonly Dictionary<int, ProjectRowController> projectControllers = new();
 
         private VisualElement projectScrollView;
 
@@ -33,9 +33,16 @@ namespace Astrovisio
             projectScrollView = Root.Q<ScrollView>("ProjectScrollView");
             projectScrollView.Clear();
 
+            projectManager.ProjectOpened += OnProjectsOpened;
             projectManager.ProjectsFetched += OnProjectsFetched;
             projectManager.ProjectCreated += OnProjectCreated;
+            projectManager.ProjectUpdated += OnProjectUpdated;
             projectManager.ProjectDeleted += OnProjectDeleted;
+        }
+
+        private void OnProjectsOpened(Project project)
+        {
+            UpdateHomeView();
         }
 
         private void OnProjectsFetched(List<Project> list)
@@ -44,6 +51,11 @@ namespace Astrovisio
         }
 
         private void OnProjectCreated(Project project)
+        {
+            UpdateHomeView();
+        }
+
+        private void OnProjectUpdated(Project project)
         {
             UpdateHomeView();
         }
@@ -114,8 +126,9 @@ namespace Astrovisio
             {
                 TemplateContainer projectRow = projectRowTemplate.CloneTree();
 
+                // Debug.Log("AddProjectRows " + project.Name + " " + project.Id);
                 ProjectRowController controller = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
-                projectControllers[project.Name] = controller;
+                projectControllers[project.Id] = controller;
 
                 projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
                 target.Add(projectRow);

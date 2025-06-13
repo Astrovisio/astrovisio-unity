@@ -41,7 +41,7 @@ namespace Astrovisio
         public string ParamName { get; set; }
         public ConfigParam Param { get; set; }
 
-        public ParamRowController(VisualElement paramRow, string paramName, ConfigParam param)
+        public ParamRowController(ProjectManager projectManager, VisualElement paramRow, string paramName, ConfigParam param)
         {
             this.paramRow = paramRow;
             ParamName = paramName;

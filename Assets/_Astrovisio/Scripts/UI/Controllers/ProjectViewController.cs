@@ -101,14 +101,14 @@ namespace Astrovisio
 
             foreach (var kvp in Project.ConfigProcess.Params)
             {
-                var paramName = kvp.Key;
-                var param = kvp.Value;
+                string paramName = kvp.Key;
+                ConfigParam param = kvp.Value;
 
-                var paramRow = paramRowTemplate.CloneTree();
-                var nameContainer = paramRow.Q<VisualElement>("NameContainer");
+                TemplateContainer paramRow = paramRowTemplate.CloneTree();
+                VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = paramName;
 
-                var controller = new ParamRowController(paramRow, paramName, param);
+                ParamRowController controller = new ParamRowController(projectManager, paramRow, paramName, param);
                 paramControllers[paramName] = controller;
 
                 controller.OnAxisChanged += HandleOnAxisChanged;

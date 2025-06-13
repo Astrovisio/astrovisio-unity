@@ -1,0 +1,9 @@
+#Root {
+    background-color: var(--bg-50-black);
+}
+
+#Root > #EditProjectPanel {
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}

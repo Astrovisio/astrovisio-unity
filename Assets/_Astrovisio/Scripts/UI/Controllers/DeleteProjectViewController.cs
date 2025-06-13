@@ -32,14 +32,14 @@ namespace Astrovisio
 
         private void OnDeleteClicked()
         {
-            Debug.Log("OnDeleteClicked");
+            // Debug.Log("OnDeleteClicked");
             ProjectManager.DeleteProject(projectToDelete.Id, projectToDelete);
             Root.RemoveFromClassList("active");
         }
 
         private void OnCancelClicked()
         {
-            Debug.Log("OnCancelClicked");
+            // Debug.Log("OnCancelClicked");
             projectToDelete = null;
             Root.RemoveFromClassList("active");
         }

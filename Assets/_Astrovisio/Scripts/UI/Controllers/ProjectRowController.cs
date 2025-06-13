@@ -32,8 +32,16 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
+            // ProjectManager.ProjectOpened += OnProjectOpened;
+            // ProjectManager.ProjectCreated += ProjectCreated;
+
             Init();
         }
+
+        // private void ProjectCreated(Project project)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         private void Init()
         {
@@ -71,6 +79,18 @@ namespace Astrovisio
             InitDeleteButton();
         }
 
+        // private void OnProjectOpened(Project project)
+        // {
+        //     if (Project.Id != project.Id)
+        //     {
+        //         return;
+        //     }
+        //     else
+        //     {
+        //         Project = project;
+        //     }
+        // }
+
         private string FormatDateTime(DateTime dateTime)
         {
             DateTime utcTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
@@ -99,8 +119,9 @@ namespace Astrovisio
         {
             editButton.RegisterCallback<ClickEvent>(evt =>
             {
+                UIManager.SetEditProject(Project);
                 evt.StopPropagation();
-                Debug.Log("EditButton clicked");
+                // Debug.Log("EditButton clicked");
             });
         }
 
@@ -108,8 +129,9 @@ namespace Astrovisio
         {
             duplicateButton.RegisterCallback<ClickEvent>(evt =>
             {
+                UIManager.SetDuplicateProject(Project);
                 evt.StopPropagation();
-                Debug.Log("DuplicateButton clicked");
+                // Debug.Log("DuplicateButton clicked");
             });
         }
 

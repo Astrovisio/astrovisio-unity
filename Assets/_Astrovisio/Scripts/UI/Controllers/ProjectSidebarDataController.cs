@@ -37,6 +37,9 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
+            ProjectManager.ProjectOpened += OnProjectOpened;
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+
             Init();
         }
 
@@ -274,6 +277,36 @@ namespace Astrovisio
 
                 var labelChip = row.Q<VisualElement>("LabelChip");
                 labelChip.style.display = DisplayStyle.None;
+            }
+        }
+
+        private void OnProjectOpened(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                // Debug.Log("RETURNED");
+                return;
+            }
+            else
+            {
+                // Debug.Log("OPENED");
+                // Project = project;
+                UpdateChipLabel();
+            }
+        }
+
+        private void OnProjectUpdated(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                // Debug.Log("RETURNED");
+                return;
+            }
+            else
+            {
+                // Debug.Log("UPDATED");
+                // Project = project;
+                UpdateChipLabel();
             }
         }
 

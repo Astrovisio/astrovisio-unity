@@ -1,0 +1,7 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="EditProjectPanel" src="project://database/Assets/UI%20Toolkit/Components/EditProjectPanel.uxml?fileID=9197481963319205126&amp;guid=10c4ddf885f130f4899e96366f1d7a64&amp;type=3#EditProjectPanel" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/EditProjectView.uss?fileID=7433441132597879392&amp;guid=6579bd3e7f78d7d47bd8c5545381e3d5&amp;type=3#EditProjectView" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:Instance template="EditProjectPanel" name="EditProjectPanel" />
+    </engine:VisualElement>
+</engine:UXML>

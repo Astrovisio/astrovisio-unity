@@ -25,6 +25,7 @@ namespace Astrovisio
             ProjectManager.ProjectsFetched += OnProjectFetched;
             ProjectManager.ProjectCreated += OnProjectCreated;
             ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.ProjectDeleted += OnProjectDeleted;
 
             InitFavouriteScrollView();
         }
@@ -64,7 +65,7 @@ namespace Astrovisio
                     // Debug.Log(project.Name);
                     ProjectManager.OpenProject(project.Id);
                 };
-                
+
                 favouritesScrollView.Add(favouriteProjectTemplate);
             }
         }
@@ -85,6 +86,12 @@ namespace Astrovisio
         private void OnProjectFetched(List<Project> list)
         {
             // Debug.Log("OnProjectFetched");
+            UpdateFavouriteScrollView();
+        }
+
+        private void OnProjectDeleted(Project project)
+        {
+            // Debug.Log("OnProjectDeleted");
             UpdateFavouriteScrollView();
         }
 

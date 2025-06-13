@@ -16,6 +16,8 @@ namespace Astrovisio
         private MainViewController mainViewController;
         private ErrorVRViewController errorVRViewController;
         private ToastMessageController toastMessageController;
+        private EditProjectViewController editProjectViewController;
+        private DuplicateProjectViewController duplicateProjectViewController;
         private DeleteProjectViewController deleteProjectViewController;
 
         private void Start()
@@ -30,6 +32,10 @@ namespace Astrovisio
 
             VisualElement toastMessage = uiDocument.rootVisualElement.Q<VisualElement>("ToastMessageView");
             toastMessageController = new ToastMessageController(toastMessage);
+
+            VisualElement editProjectView = uiDocument.rootVisualElement.Q<VisualElement>("EditProjectView");
+            editProjectViewController = new EditProjectViewController(projectManager, editProjectView);
+            duplicateProjectViewController = new DuplicateProjectViewController(projectManager, editProjectView);
 
             VisualElement deleteProjectView = uiDocument.rootVisualElement.Q<VisualElement>("DeleteProjectView");
             deleteProjectViewController = new DeleteProjectViewController(projectManager, deleteProjectView);
@@ -95,6 +101,29 @@ namespace Astrovisio
         // {
         //     toastMessageController.SetToastErrorMessage(message);
         // }
+
+        public void SetEditProject(Project project)
+        {
+            // Debug.Log("SetEditProject");
+            VisualElement root = uiDocument.rootVisualElement;
+            VisualElement editProjectView = root.Q<VisualElement>("EditProjectView");
+            Label titleLabel = editProjectView.Q<Label>("TitleLabel");
+            titleLabel.text = "Edit title and description";
+            editProjectViewController.SetProjectToEdit(project);
+            editProjectView.AddToClassList("active");
+        }
+
+        public void SetDuplicateProject(Project project)
+        {
+            // Debug.Log("SetDuplicateProject");
+            VisualElement root = uiDocument.rootVisualElement;
+            VisualElement duplicateProjectView = root.Q<VisualElement>("EditProjectView");
+            Label titleLabel = duplicateProjectView.Q<Label>("TitleLabel");
+            titleLabel.text = "Duplicate project";
+            duplicateProjectViewController.SetProjectToDuplicate(project);
+            duplicateProjectView.AddToClassList("active");
+            // Debug.Log("End SetDuplicateProject");
+        }
 
         public void SetDeleteProject(Project project)
         {

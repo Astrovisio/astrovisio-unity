@@ -2,14 +2,10 @@ using Newtonsoft.Json;
 
 namespace Astrovisio
 {
-    public class UpdateProjectRequest
+    public class DuplicateProjectRequest
     {
-
         [JsonProperty("name")]
         public string Name { get; set; }
-
-        [JsonProperty("favourite")]
-        public bool Favourite { get; set; }
 
         [JsonProperty("description")]
         public string Description { get; set; }
@@ -19,6 +15,6 @@ namespace Astrovisio
 
         [JsonProperty("config_process")]
         public ConfigProcess ConfigProcess { get; set; }
-        
+
     }
 }
