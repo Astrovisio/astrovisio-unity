@@ -76,11 +76,25 @@ namespace CatalogData
         private int _idSpriteSheet, _idNumSprites, _idColorMap, _idColorMapIndex, _idNumColorMaps, _idDataSetMatrix, _idScalingFactor;
         private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape;
         private int _idCutoffMin, _idCutoffMax;
-        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape;
-        private int _idColor, _idOpacity, _idPointSize, _idPointShape;
+        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise;
+        private int _idColor, _idOpacity, _idPointSize, _idPointShape, _idNoiseStrength;
         private int _idMappingConfigs;
         private int _idVignetteFadeStart, _idVignetteFadeEnd, _idVignetteIntensity, _idVignetteColor;
 
+
+        private Transform cameraTarget;
+        private KDTreeComponent kdTreeComponent;
+
+        private void Awake()
+        {
+            cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
+
+            kdTreeComponent = GetComponent<KDTreeComponent>();
+            kdTreeComponent.controllerTransform = cameraTarget;
+            
+            Debug.Log(cameraTarget);
+            Debug.Log(kdTreeComponent);
+        }
 
         private void GetPropertyIds()
         {
@@ -110,11 +124,13 @@ namespace CatalogData
             _idUseUniformOpacity = Shader.PropertyToID("useUniformOpacity");
             _idUseUniformPointSize = Shader.PropertyToID("useUniformPointSize");
             _idUseUniformPointShape = Shader.PropertyToID("useUniformPointShape");
+            _idUseNoise = Shader.PropertyToID("useNoise");
 
             _idColor = Shader.PropertyToID("color");
             _idOpacity = Shader.PropertyToID("opacity");
             _idPointSize = Shader.PropertyToID("pointSize");
             _idPointShape = Shader.PropertyToID("pointShape");
+            _idNoiseStrength = Shader.PropertyToID("noiseStrength");
 
             _idMappingConfigs = Shader.PropertyToID("mappingConfigs");
 
@@ -131,6 +147,14 @@ namespace CatalogData
 
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
+
+            Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
+
+            kdTreeComponent.xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
+            kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
+            kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
+
+            kdTreeComponent.Initialize(data, dataContainer.Center);
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
@@ -171,8 +195,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.XMinThreshold,
                             DataMaxVal = dataContainer.XMaxThreshold,
-                            TargetMinVal = -1f,
-                            TargetMaxVal = 1f
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
                         },
                         Y = new MapFloatEntry
                         {
@@ -180,8 +204,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.YMinThreshold,
                             DataMaxVal = dataContainer.YMaxThreshold,
-                            TargetMinVal = -1f,
-                            TargetMaxVal = 1f
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
                         },
                         Z = new MapFloatEntry
                         {
@@ -189,8 +213,8 @@ namespace CatalogData
                             // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.ZMinThreshold,
                             DataMaxVal = dataContainer.ZMaxThreshold,
-                            TargetMinVal = -1f,
-                            TargetMaxVal = 1f
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
                         }
                     }
                 };
@@ -601,6 +625,8 @@ namespace CatalogData
                     _catalogMaterial.SetFloat(_idOpacity, 0);
             }
 
+            _catalogMaterial.SetInt(_idUseNoise, DataMapping.UseNoise ? 1 : 0);
+            _catalogMaterial.SetFloat(_idNoiseStrength, DataMapping.Uniforms.NoiseStrength);
 
             if (!DataMapping.UniformPointSize && DataMapping.Mapping.PointSize != null && !string.IsNullOrEmpty(DataMapping.Mapping.PointSize.Source))
             {

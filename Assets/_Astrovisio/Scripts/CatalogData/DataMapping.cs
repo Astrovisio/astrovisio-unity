@@ -35,6 +35,7 @@ namespace CatalogData
         public bool UniformPointSize;
         public bool UniformPointShape;
         public bool UniformOpacity;
+        public bool UseNoise;
         public MappingUniforms Uniforms = new MappingUniforms();
 
         public Mapping Mapping;
@@ -79,6 +80,7 @@ namespace CatalogData
                     UniformPointSize = true,
                     UniformPointShape = true,
                     UniformOpacity = true,
+                    UseNoise = false,
                     Uniforms = new MappingUniforms
                     {
                         Scale = 0.001f,
@@ -109,6 +111,7 @@ namespace CatalogData
                     UniformPointSize = true,
                     UniformPointShape = true,
                     UniformOpacity = true,
+                    UseNoise = false,
                     Uniforms = new MappingUniforms
                     {
                         Scale = 0.001f,
@@ -137,6 +140,7 @@ namespace CatalogData
         public float PointSize = 0.1f;
         public ShapeType PointShape = ShapeType.OutlinedCircle;
         [Range(0.0f, 1.0f)] public float Opacity = 1.0f;
+        public float NoiseStrength = 0.01f;
     }
 
     [Serializable]

@@ -272,6 +272,7 @@ MonoBehaviour:
     UniformPointSize: 1
     UniformPointShape: 1
     UniformOpacity: 0
+    UseNoise: 0
     Uniforms:
       ColorString: 
       Color: {r: 1, g: 0, b: 0, a: 1}
@@ -279,6 +280,7 @@ MonoBehaviour:
       PointSize: 0.3
       PointShape: 1
       Opacity: 1
+      NoiseStrength: 0.01
     Mapping:
       Cmap:
         Clamped: 0
@@ -432,6 +434,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6528833266872925955}
   - component: {fileID: 9054602126277597126}
+  - component: {fileID: 884816262672831559}
   m_Layer: 0
   m_Name: AstrovisioDataSetRenderer
   m_TagString: Untagged
@@ -476,6 +479,7 @@ MonoBehaviour:
     UniformPointSize: 1
     UniformPointShape: 1
     UniformOpacity: 1
+    UseNoise: 0
     Uniforms:
       ColorString: 
       Color: {r: 1, g: 0, b: 0, a: 1}
@@ -483,6 +487,7 @@ MonoBehaviour:
       PointSize: 0.3
       PointShape: 1
       Opacity: 1
+      NoiseStrength: 0.01
     Mapping:
       Cmap:
         Clamped: 1
@@ -558,8 +563,8 @@ MonoBehaviour:
         Clamped: 0
         DataMinVal: 0
         DataMaxVal: 74272.14
-        TargetMinVal: -1
-        TargetMaxVal: 1
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
@@ -568,8 +573,8 @@ MonoBehaviour:
         Clamped: 0
         DataMinVal: 0
         DataMaxVal: 74272.14
-        TargetMinVal: -1
-        TargetMaxVal: 1
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
@@ -578,8 +583,8 @@ MonoBehaviour:
         Clamped: 0
         DataMinVal: 0
         DataMaxVal: 74272.125
-        TargetMinVal: -1
-        TargetMaxVal: 1
+        TargetMinVal: -0.5
+        TargetMaxVal: 0.5
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
@@ -626,3 +631,27 @@ MonoBehaviour:
   VignetteFadeEnd: 0.4
   VignetteIntensity: 0
   VignetteColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &884816262672831559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8520159369413343584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0420587223217749bf6419732c89671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  realtime: 1
+  pointCloudTransform: {fileID: 6528833266872925955}
+  controllerTransform: {fileID: 0}
+  xRange: {x: -0.5, y: 0.5}
+  yRange: {x: -0.5, y: 0.5}
+  zRange: {x: -0.5, y: 0.5}
+  xTargetRange: {x: -0.5, y: 0.5}
+  yTargetRange: {x: -0.5, y: 0.5}
+  zTargetRange: {x: -0.5, y: 0.5}
+  debugSphereEnabled: 1
+  sphereColor: {r: 1, g: 0, b: 0, a: 1}
+  sphereRadius: 0.05
