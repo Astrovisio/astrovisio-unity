@@ -63,7 +63,7 @@ public class OrbitCameraController : MonoBehaviour
     }
 
 
-    void LateUpdate()
+    private void LateUpdate()
     {
 
         if (IsInteractingWithUI())
@@ -138,46 +138,65 @@ public class OrbitCameraController : MonoBehaviour
         return false;
     }
 
-    private void LogUITreeUnderMouse()
+    public void ResetCameraView(Vector3 position, Vector3 rotationEuler, float distance)
     {
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
+        target.position = position;
 
-        Debug.Log($"Mouse Screen Position: {mousePosition}, UI Position: {uiPosition}");
+        desiredRotation = rotationEuler;
+        currentRotation = rotationEuler;
+        rotationVelocity = Vector3.zero;
 
-        var picked = rootVisualElement.panel.Pick(uiPosition);
-        if (picked == null)
-        {
-            Debug.Log("UI Pick: null");
-            return;
-        }
+        desiredDistance = distance;
+        currentDistance = distance;
 
-        Debug.Log($"[Picked] name={picked.name}, class={picked.GetType().Name}, pickingMode={picked.pickingMode}, visible={picked.resolvedStyle.visibility}");
+        Quaternion rotation = Quaternion.Euler(rotationEuler.x, rotationEuler.y, 0);
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+        Vector3 cameraPosition = rotation * negDistance + target.position;
 
-        VisualElement current = picked;
-        while (current != null)
-        {
-            Debug.Log($"  > Parent: {current.name} - pickingMode: {current.pickingMode} - display: {current.resolvedStyle.display} - visible: {current.resolvedStyle.visibility}");
-            current = current.parent;
-        }
+        transform.position = cameraPosition;
+        transform.rotation = rotation;
     }
 
-    private bool IsAnyVisibleUIElementUnderMouse()
-    {
-        var mousePos = Mouse.current.position.ReadValue();
-        var panelPos = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePos);
+    // private void LogUITreeUnderMouse()
+    // {
+    //     Vector2 mousePosition = Mouse.current.position.ReadValue();
+    //     Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
 
-        List<VisualElement> hits = new();
-        rootVisualElement.panel.PickAll(panelPos, hits);
+    //     Debug.Log($"Mouse Screen Position: {mousePosition}, UI Position: {uiPosition}");
 
-        foreach (var el in hits)
-        {
-            Debug.Log($"[Hit] {el.name} picking: {el.pickingMode}, visible: {el.resolvedStyle.visibility}");
-            if (el.resolvedStyle.visibility == Visibility.Visible && el.pickingMode != PickingMode.Ignore)
-                return true;
-        }
-        return false;
-    }
+    //     var picked = rootVisualElement.panel.Pick(uiPosition);
+    //     if (picked == null)
+    //     {
+    //         Debug.Log("UI Pick: null");
+    //         return;
+    //     }
+
+    //     Debug.Log($"[Picked] name={picked.name}, class={picked.GetType().Name}, pickingMode={picked.pickingMode}, visible={picked.resolvedStyle.visibility}");
+
+    //     VisualElement current = picked;
+    //     while (current != null)
+    //     {
+    //         Debug.Log($"  > Parent: {current.name} - pickingMode: {current.pickingMode} - display: {current.resolvedStyle.display} - visible: {current.resolvedStyle.visibility}");
+    //         current = current.parent;
+    //     }
+    // }
+
+    // private bool IsAnyVisibleUIElementUnderMouse()
+    // {
+    //     var mousePos = Mouse.current.position.ReadValue();
+    //     var panelPos = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePos);
+
+    //     List<VisualElement> hits = new();
+    //     rootVisualElement.panel.PickAll(panelPos, hits);
+
+    //     foreach (var el in hits)
+    //     {
+    //         Debug.Log($"[Hit] {el.name} picking: {el.pickingMode}, visible: {el.resolvedStyle.visibility}");
+    //         if (el.resolvedStyle.visibility == Visibility.Visible && el.pickingMode != PickingMode.Ignore)
+    //             return true;
+    //     }
+    //     return false;
+    // }
 
 
 }

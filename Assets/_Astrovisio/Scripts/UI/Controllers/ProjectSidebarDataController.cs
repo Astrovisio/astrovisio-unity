@@ -18,7 +18,7 @@ namespace Astrovisio
         public VisualElement Root { private set; get; }
 
         // === Other ===
-        // private VisualElement dataSettingsContainer;
+        private VisualElement dataSettingsContainer;
         private Label warningLabel;
         private ScrollView paramsScrollView;
         private DropdownField downsamplingDropdown;
@@ -45,53 +45,26 @@ namespace Astrovisio
 
         private void Init()
         {
-            var dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
+            dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
 
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
             processDataButton.clicked += OnProcessDataClicked;
 
-            InitWarningLabel(dataSettingsContainer);
-            InitParamsScrollView(dataSettingsContainer);
-            InitActualSizeLabel(dataSettingsContainer);
-            InitDownsamplingDropdown(dataSettingsContainer);
+            InitWarningLabel();
+            InitParamsScrollView();
+            InitActualSizeLabel();
+            InitDownsamplingDropdown();
         }
 
-        private void InitParamsScrollView(VisualElement dataSettingsContainer)
+        private void InitParamsScrollView()
         {
             paramsScrollView = dataSettingsContainer.Q<ScrollView>("ParamsScrollView");
-            paramsScrollView.contentContainer.Clear();
-            paramRowVisualElement.Clear();
 
-            if (Project.ConfigProcess?.Params == null)
-            {
-                Debug.LogWarning("No variables to display.");
-                return;
-            }
-
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                var paramName = kvp.Key;
-                var param = kvp.Value;
-
-                var paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
-
-                var nameContainer = paramRow.Q<VisualElement>("LabelContainer");
-                nameContainer.Q<Label>("LabelParam").text = paramName;
-
-                var labelChip = paramRow.Q<VisualElement>("LabelChip");
-                labelChip.style.display = DisplayStyle.None;
-                var labelChipLetter = labelChip.Q<Label>("Letter");
-
-                param.PropertyChanged += OnPropertyChanged;
-
-                paramRowVisualElement.Add(paramName, paramRow);
-                paramsScrollView.Add(paramRow);
-            }
-
+            UpdateParamsScrollView();
             UpdateChipLabel();
         }
 
-        private void InitDownsamplingDropdown(VisualElement dataSettingsContainer)
+        private void InitDownsamplingDropdown()
         {
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
             downsamplingDropdown.choices.Clear();
@@ -116,18 +89,21 @@ namespace Astrovisio
             });
         }
 
-        private void InitActualSizeLabel(VisualElement dataSettingsContainer)
+        private void InitActualSizeLabel()
         {
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
         }
 
-        private void InitWarningLabel(VisualElement dataSettingsContainer)
+        private void InitWarningLabel()
         {
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // Debug.Log($"Property changed: {e.PropertyName}");
+
+            UpdateParamsScrollView();
             UpdateChipLabel();
         }
 
@@ -239,12 +215,12 @@ namespace Astrovisio
 
                 if (!paramRowVisualElement.TryGetValue(paramName, out VisualElement row))
                 {
-                    Debug.LogWarning($"Row not found for param: {paramName}");
+                    // Debug.LogWarning($"Row not found for param: {paramName}");
                     continue;
                 }
 
-                var labelChip = row.Q<VisualElement>("LabelChip");
-                var labelChipLetter = labelChip.Q<Label>("Letter");
+                VisualElement labelChip = row.Q<VisualElement>("LabelChip");
+                Label labelChipLetter = labelChip.Q<Label>("Letter");
 
                 if (param.XAxis)
                 {
@@ -266,6 +242,54 @@ namespace Astrovisio
             }
 
             HandleAxisControll();
+        }
+
+        private void UpdateParamsScrollView()
+        {
+            if (Project.ConfigProcess?.Params == null)
+            {
+                Debug.LogWarning("No variables to display.");
+                return;
+            }
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                ConfigParam param = kvp.Value;
+                param.PropertyChanged -= OnPropertyChanged;
+            }
+
+            paramsScrollView.contentContainer.Clear();
+            paramRowVisualElement.Clear();
+
+            if (Project.ConfigProcess?.Params == null)
+            {
+                Debug.LogWarning("No variables to display.");
+                return;
+            }
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                string paramName = kvp.Key;
+                ConfigParam param = kvp.Value;
+
+                param.PropertyChanged += OnPropertyChanged;
+
+                if (!param.Selected)
+                {
+                    continue;
+                }
+
+                TemplateContainer paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
+
+                VisualElement nameContainer = paramRow.Q<VisualElement>("LabelContainer");
+                nameContainer.Q<Label>("LabelParam").text = paramName;
+
+                VisualElement labelChip = paramRow.Q<VisualElement>("LabelChip");
+                labelChip.style.display = DisplayStyle.None;
+
+                paramRowVisualElement.Add(paramName, paramRow);
+                paramsScrollView.Add(paramRow);
+            }
         }
 
         private void ClearChipLabel()

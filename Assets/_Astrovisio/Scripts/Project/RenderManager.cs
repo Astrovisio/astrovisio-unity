@@ -13,16 +13,21 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
+        [SerializeField] private Camera mainCamera;
 
         [Header("Other")]
         [SerializeField] private DataRenderer dataRendererPrefab;
 
+        // Camera
+        private Vector3 initialCameraTargetPosition;
+        private Vector3 initialCameraRotation;
+        private float initialCameraDistance;
+        private OrbitCameraController orbitController;
+
         // Settings
         private DataRenderer dataRenderer;
         private RenderSettings renderSettings;
-
         private Dictionary<Project, DataContainer> projectDataContainers = new();
-
         public Action<Project> OnProjectReadyToGetRendered;
 
 
@@ -41,6 +46,23 @@ namespace Astrovisio
         private void Start()
         {
             projectManager.ProjectProcessed += OnProjectProcessed;
+
+            orbitController = mainCamera.GetComponent<OrbitCameraController>();
+
+            if (orbitController != null)
+            {
+                initialCameraTargetPosition = orbitController.target.position;
+                initialCameraRotation = orbitController.transform.rotation.eulerAngles;
+                initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
+            }
+        }
+
+        private void ResetCameraTransform()
+        {
+            if (orbitController != null)
+            {
+                orbitController.ResetCameraView(initialCameraTargetPosition, initialCameraRotation, initialCameraDistance);
+            }
         }
 
         private void OnProjectProcessed(Project project, DataPack pack)
@@ -55,6 +77,8 @@ namespace Astrovisio
 
         public void RenderDataContainer(Project project)
         {
+            ResetCameraTransform();
+
             DataContainer dataContainer = projectDataContainers[project];
 
             renderSettings = null;
