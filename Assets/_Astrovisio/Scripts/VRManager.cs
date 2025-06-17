@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Management;
 
 namespace Astrovisio
@@ -43,6 +44,11 @@ namespace Astrovisio
                 return;
             }
 
+            // HandleCubeInteraction();
+        }
+
+        private void HandleCubeInteraction()
+        {
             // Scaling
             float scaleInput = Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical");
             if (Mathf.Abs(scaleInput) > 0.1f)
@@ -56,7 +62,7 @@ namespace Astrovisio
             float rotationInputHorizontal = Input.GetAxis("Oculus_CrossPlatform_PrimaryThumbstickHorizontal");
             if (Mathf.Abs(rotationInputHorizontal) > 0.1f)
             {
-                float rotationSpeed = 90f; // gradi/secondo
+                float rotationSpeed = 90f;
                 dataRendererTransform.Rotate(Vector3.up, rotationInputHorizontal * rotationSpeed * Time.deltaTime, Space.World);
             }
 
@@ -67,7 +73,6 @@ namespace Astrovisio
                 float rotationSpeed = 90f;
                 dataRendererTransform.Rotate(Vector3.right, -rotationInputVertical * rotationSpeed * Time.deltaTime, Space.World);
             }
-
         }
 
         [ContextMenu("Enter VR")]
@@ -103,7 +108,7 @@ namespace Astrovisio
 
         private IEnumerator StartXR()
         {
-            Debug.Log("[VRManager] Initializing XR...");
+            // Debug.Log("[VRManager] Initializing XR...");
             yield return XRGeneralSettings.Instance.Manager.InitializeLoader();
 
             if (XRGeneralSettings.Instance.Manager.activeLoader == null)
@@ -113,16 +118,24 @@ namespace Astrovisio
             else
             {
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
-                Debug.Log("[VRManager] XR started.");
+                // Debug.Log("[VRManager] XR started.");
+                InitVRSettings();
                 VRActive = true;
             }
+        }
+
+        private void InitVRSettings()
+        {
+            KDTreeComponent kdTreeComponent = FindAnyObjectByType<KDTreeComponent>();
+            XRController xrController = FindAnyObjectByType<XRController>();
+            kdTreeComponent.controllerTransform = xrController.GetPokePoint();
         }
 
         private void StopXR()
         {
             XRGeneralSettings.Instance.Manager.StopSubsystems();
             XRGeneralSettings.Instance.Manager.DeinitializeLoader();
-            Debug.Log("[VRManager] XR stopped.");
+            // Debug.Log("[VRManager] XR stopped.");
             VRActive = false;
         }
 

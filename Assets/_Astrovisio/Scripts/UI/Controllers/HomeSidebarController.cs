@@ -15,6 +15,7 @@ namespace Astrovisio
         private UIContextSO UIContextSO { get; }
 
         private ScrollView favouritesScrollView;
+        private Label versionLabel;
 
         public HomeSidebarController(ProjectManager projectManager, VisualElement root, UIContextSO uiContextSO)
         {
@@ -28,6 +29,13 @@ namespace Astrovisio
             ProjectManager.ProjectDeleted += OnProjectDeleted;
 
             InitFavouriteScrollView();
+            InitVersionLabel();
+        }
+
+        private void InitVersionLabel()
+        {
+            versionLabel = Root.Q<Label>("AstrovisioLabel");
+            versionLabel.text = "<u>©INAF Astrovisio v " + Application.version + "</u>";
         }
 
         private void InitFavouriteScrollView()

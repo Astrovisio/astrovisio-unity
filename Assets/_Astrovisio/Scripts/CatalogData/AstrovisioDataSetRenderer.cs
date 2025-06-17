@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -91,9 +92,6 @@ namespace CatalogData
 
             kdTreeComponent = GetComponent<KDTreeComponent>();
             kdTreeComponent.controllerTransform = cameraTarget;
-            
-            Debug.Log(cameraTarget);
-            Debug.Log(kdTreeComponent);
         }
 
         private void GetPropertyIds()
@@ -148,7 +146,7 @@ namespace CatalogData
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
 
-            Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
+            // Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
 
             kdTreeComponent.xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
             kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
@@ -741,7 +739,7 @@ namespace CatalogData
             OnColorMapChanged?.Invoke(DataMapping.ColorMap);
         }
 
-        void Update()
+        private void Update()
         {
             if (_catalogMaterial != null)
             {
@@ -754,7 +752,17 @@ namespace CatalogData
             _catalogMaterial.SetFloat(_idVignetteIntensity, VignetteIntensity);
             _catalogMaterial.SetColor(_idVignetteColor, VignetteColor);
 
+            HandleNoizeCheck();
+
             UpdateMappingValues();
+        }
+
+        private void HandleNoizeCheck()
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                DataMapping.UseNoise = !DataMapping.UseNoise;
+            }
         }
 
         void OnDrawGizmosSelected()

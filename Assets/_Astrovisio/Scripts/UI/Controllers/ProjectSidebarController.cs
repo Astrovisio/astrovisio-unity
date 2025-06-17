@@ -131,7 +131,7 @@ namespace Astrovisio
 
         private void OnGoToVRButtonClicked()
         {
-            Debug.Log("OnGoToVRButtonClicked");
+            // Debug.Log("OnGoToVRButtonClicked");
             VRManager.Instance.EnterVR();
             // UIManager.SetErrorVR(true);
         }
