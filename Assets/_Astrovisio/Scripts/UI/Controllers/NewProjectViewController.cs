@@ -103,7 +103,7 @@ namespace Astrovisio
                     if (File.Exists(path))
                     {
                         var sysInfo = new System.IO.FileInfo(path);
-                        var fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
+                        FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
                         selectedFiles.Add(fileInfo);
                         Debug.Log($"File selezionato: {fileInfo.name} ({fileInfo.size} byte) - {fileInfo.path}");
                     }
@@ -175,22 +175,31 @@ namespace Astrovisio
                 //     filesScrollView.Add(rowContainer);
                 // }
 
-                var file = selectedFiles[i];
-                var fileItem = listItemFileTemplate.CloneTree();
+                FileInfo file = selectedFiles[i];
+                TemplateContainer fileItem = listItemFileTemplate.CloneTree();
 
                 // Name
-                var nameLabel = fileItem.Q<Label>("NameLabel");
+                Label nameLabel = fileItem.Q<Label>("NameLabel");
                 if (nameLabel != null)
                 {
                     nameLabel.text = Path.GetFileName(file.path);
                 }
 
                 // Size
-                var sizeLabel = fileItem.Q<Label>("SizeLabel");
+                Label sizeLabel = fileItem.Q<Label>("SizeLabel");
                 if (sizeLabel != null)
                 {
                     sizeLabel.text = FormatFileSize(file.size);
                 }
+
+                Button fileItemButton = fileItem.Q<Button>();
+                fileItemButton.clicked += () =>
+                {
+                    // Debug.Log("Removing " + nameLabel.text);
+                    selectedFiles.Remove(file);
+                    UpdateFilesContainer();
+                    UpdateFilesSizeLabel();
+                };
 
                 fileItem.AddToClassList("ColListItem");
                 filesScrollView.Add(fileItem);
