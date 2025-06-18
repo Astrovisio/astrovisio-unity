@@ -12,6 +12,7 @@ namespace Astrovisio
         // === Dependencies ===
         private UIDocument uiDocument;
         private UIManager uiManager;
+        private SideController sideController;
 
         // === References ===
         private ProjectManager projectManager;
@@ -32,6 +33,7 @@ namespace Astrovisio
         {
             uiDocument = GetComponentInParent<UIDocument>();
             uiManager = GetComponentInParent<UIManager>();
+            sideController = transform.parent.GetComponentInChildren<SideController>();
 
             projectManager = uiManager.GetProjectManager();
             uiContextSO = uiManager.getUIContext();
@@ -41,12 +43,18 @@ namespace Astrovisio
         {
             contentContainer = uiDocument.rootVisualElement.Q<VisualElement>("Content");
 
-            EnableNewProjectButton();
-            EnableHomeView();
+            // EnableNewProjectButton();
+            // EnableHomeView();
 
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectUnselected += OnProjectUnselected;
             projectManager.ProjectClosed += OnProjectClosed;
+        }
+
+        private void Start()
+        {
+            EnableNewProjectButton();
+            EnableHomeView();
         }
 
         private void OnDisable()
@@ -98,7 +106,7 @@ namespace Astrovisio
 
         private void EnableHomeView()
         {
-            homeViewController = new HomeViewController(projectManager, uiManager, contentContainer, uiContextSO.projectRowHeaderTemplate, uiContextSO.projectRowTemplate);
+            homeViewController = new HomeViewController(projectManager, uiManager, contentContainer, uiContextSO, sideController);
             homeViewContainer = contentContainer.Q<VisualElement>("HomeView");
         }
 

@@ -65,6 +65,11 @@ namespace Astrovisio
             sidebarController = new HomeSidebarController(projectManager, sidebarContainer, uiContextSO);
         }
 
+        public HomeSidebarController GetHomeSidebarController()
+        {
+            return sidebarController;
+        }
+
         private void OnProjectOpened(Project project)
         {
             sidebarContainer.style.display = DisplayStyle.None;

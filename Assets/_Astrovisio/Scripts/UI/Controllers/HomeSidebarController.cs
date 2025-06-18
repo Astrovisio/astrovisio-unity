@@ -14,6 +14,10 @@ namespace Astrovisio
         private VisualElement Root { get; }
         private UIContextSO UIContextSO { get; }
 
+        public event Action<string> SearchValueChanged;
+
+        private TextField searchTextField;
+        private Button clearSearchButton;
         private ScrollView favouritesScrollView;
         private Label versionLabel;
 
@@ -28,8 +32,34 @@ namespace Astrovisio
             ProjectManager.ProjectUpdated += OnProjectUpdated;
             ProjectManager.ProjectDeleted += OnProjectDeleted;
 
+            InitSearchField();
             InitFavouriteScrollView();
             InitVersionLabel();
+        }
+
+        private void InitSearchField()
+        {
+            searchTextField = Root.Q<VisualElement>("SearchContainer")?.Q<TextField>();
+            clearSearchButton = Root.Q<VisualElement>("SearchContainer")?.Q<Button>();
+
+            if (clearSearchButton != null && searchTextField != null)
+            {
+                clearSearchButton.clicked += () =>
+                {
+                    searchTextField.value = string.Empty;
+                };
+
+                searchTextField.RegisterValueChangedCallback(evt =>
+                {
+                    OnSearchValueChanged(evt.newValue);
+                });
+            }
+        }
+
+        private void OnSearchValueChanged(string newValue)
+        {
+            // Debug.Log("Search updated: " + newValue);
+            SearchValueChanged?.Invoke(newValue);
         }
 
         private void InitVersionLabel()

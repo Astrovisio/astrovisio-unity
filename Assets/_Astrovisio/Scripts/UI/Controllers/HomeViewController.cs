@@ -12,32 +12,42 @@ namespace Astrovisio
         public ProjectManager ProjectManager { get; }
         public UIManager UIManager { get; }
         public VisualElement Root { get; }
-
-        private readonly VisualTreeAsset projectRowHeaderTemplate;
-        private readonly VisualTreeAsset projectRowTemplate;
+        public UIContextSO UIContextSO { get; }
+        public SideController SideController { get; }
 
         // === Local ===
         private readonly string[] periodHeaderLabel = new string[3] { "Last week", "Last month", "Older" };
         private readonly Dictionary<int, ProjectRowController> projectControllers = new();
 
         private VisualElement projectScrollView;
+        private bool isSearching = false;
+        private string searchValue = "";
 
-        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, VisualTreeAsset projectRowHeaderTemplate, VisualTreeAsset projectRowTemplate)
+        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, UIContextSO uiContextSO, SideController sideController)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
             Root = root;
-            this.projectRowHeaderTemplate = projectRowHeaderTemplate;
-            this.projectRowTemplate = projectRowTemplate;
+            UIContextSO = uiContextSO;
+            SideController = sideController;
 
             projectScrollView = Root.Q<ScrollView>("ProjectScrollView");
             projectScrollView.Clear();
 
-            projectManager.ProjectOpened += OnProjectsOpened;
-            projectManager.ProjectsFetched += OnProjectsFetched;
-            projectManager.ProjectCreated += OnProjectCreated;
-            projectManager.ProjectUpdated += OnProjectUpdated;
-            projectManager.ProjectDeleted += OnProjectDeleted;
+            ProjectManager.ProjectOpened += OnProjectsOpened;
+            ProjectManager.ProjectsFetched += OnProjectsFetched;
+            ProjectManager.ProjectCreated += OnProjectCreated;
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.ProjectDeleted += OnProjectDeleted;
+            SideController.GetHomeSidebarController().SearchValueChanged += OnSearchValueChanged;
+        }
+
+        private void OnSearchValueChanged(string obj)
+        {
+            // Debug.Log(obj);
+            isSearching = obj.Length > 0;
+            searchValue = obj;
+            UpdateHomeView();
         }
 
         private void OnProjectsOpened(Project project)
@@ -66,6 +76,47 @@ namespace Astrovisio
         }
 
         private void UpdateHomeView()
+        {
+            if (isSearching)
+            {
+                UpdateSearchView();
+            }
+            else
+            {
+                UpdateProjectView();
+            }
+        }
+
+        private void AddProjectRows(VisualElement target, List<Project> projectList, string projectHeader)
+        {
+            if (!string.IsNullOrEmpty(projectHeader))
+            {
+                TemplateContainer header = UIContextSO.projectRowHeaderTemplate.CloneTree();
+                header.Q<Label>("HeaderLabel").text = projectHeader;
+                target.Add(header);
+            }
+
+            projectList.Sort((p1, p2) =>
+            {
+                DateTime p1DateTime = (DateTime)(p1.LastOpened ?? p1.Created);
+                DateTime p2DateTime = (DateTime)(p2.LastOpened ?? p2.Created);
+                return p2DateTime.CompareTo(p1DateTime);
+            });
+
+            foreach (Project project in projectList)
+            {
+                TemplateContainer projectRow = UIContextSO.projectRowTemplate.CloneTree();
+
+                // Debug.Log("AddProjectRows " + project.Name + " " + project.Id);
+                ProjectRowController controller = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
+                projectControllers[project.Id] = controller;
+
+                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
+                target.Add(projectRow);
+            }
+        }
+
+        private void UpdateProjectView()
         {
             projectScrollView.Clear();
 
@@ -106,33 +157,25 @@ namespace Astrovisio
             {
                 AddProjectRows(projectScrollView, olderProjectList, periodHeaderLabel[2]);
             }
-
         }
 
-        private void AddProjectRows(VisualElement target, List<Project> projectList, string projectHeader)
+        private void UpdateSearchView()
         {
-            TemplateContainer header = projectRowHeaderTemplate.CloneTree();
-            header.Q<Label>("HeaderLabel").text = projectHeader;
-            target.Add(header);
+            projectScrollView.Clear();
 
-            projectList.Sort((p1, p2) =>
-            {
-                DateTime p1DateTime = (DateTime)(p1.LastOpened ?? p1.Created);
-                DateTime p2DateTime = (DateTime)(p2.LastOpened ?? p2.Created);
-                return p2DateTime.CompareTo(p1DateTime);
-            });
+            DateTime now = DateTime.UtcNow;
+            List<Project> projectList = ProjectManager.GetProjectList();
 
-            foreach (Project project in projectList)
-            {
-                TemplateContainer projectRow = projectRowTemplate.CloneTree();
+            List<Project> filteredProjects = projectList
+                .Where(p => p.Name != null && p.Name.IndexOf(searchValue, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
 
-                // Debug.Log("AddProjectRows " + project.Name + " " + project.Id);
-                ProjectRowController controller = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
-                projectControllers[project.Id] = controller;
+            // foreach (var project in filteredProjects)
+            // {
+            //     Debug.Log(project.Name);
+            // }
 
-                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
-                target.Add(projectRow);
-            }
+            AddProjectRows(projectScrollView, filteredProjects, "");
         }
 
     }
