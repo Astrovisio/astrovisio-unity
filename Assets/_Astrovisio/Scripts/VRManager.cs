@@ -124,7 +124,7 @@ namespace Astrovisio
             else
             {
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
-                // InitVRSettings(); // uncomment!
+                InitVRSettings(); // uncomment!
                 VRActive = true;
             }
         }
@@ -132,8 +132,11 @@ namespace Astrovisio
         private void InitVRSettings()
         {
             KDTreeComponent kdTreeComponent = FindAnyObjectByType<KDTreeComponent>();
+            TransformManipulator transformManipulator = FindAnyObjectByType<TransformManipulator>();
             XRInputController xrController = FindAnyObjectByType<XRInputController>();
             kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
+            transformManipulator.leftController = xrController.GetLeftPokePoint();
+            transformManipulator.rightController = xrController.GetRightPokePoint();
         }
 
         private void StopXR()

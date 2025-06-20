@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 6528833266872925955}
   - component: {fileID: 9054602126277597126}
   - component: {fileID: 884816262672831559}
+  - component: {fileID: 2959556249307481476}
   m_Layer: 0
   m_Name: AstrovisioDataSetRenderer
   m_TagString: Untagged
@@ -655,3 +656,97 @@ MonoBehaviour:
   debugSphereEnabled: 1
   sphereColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
   sphereRadius: 0.05
+--- !u!114 &2959556249307481476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8520159369413343584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816a6bd484dc24f4da8811b1beb5cbb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftGripAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Left Grip
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 08f503ab-3624-4196-bdf5-b8d3e29d56bd
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 04bf01e0-8c9f-42c2-9659-b26b56f39e23
+        m_Path: <XRController>{LeftHand}/grip
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Left Grip
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  rightGripAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Right Grip
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 613cac1c-3e9a-4d5b-8a66-e0bb5918d581
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: b5315b67-5728-4caf-820a-91566afb8f31
+        m_Path: <XRController>{RightHand}/grip
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Right Grip
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  leftPositionAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Left Position
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: fd5721f3-68c9-40d4-b92a-084e83a4fab8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: f55acc43-f015-4b5c-b2e0-43bc13eb1149
+        m_Path: <XRController>{LeftHand}/devicePosition
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Left Position
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  rightPositionAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Right Position
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: fa564527-72c6-4eb8-a63f-3e55d59adb47
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: fbaf1b2f-d142-45cd-a22d-3d9d3780e5d1
+        m_Path: <XRController>{RightHand}/devicePosition
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Right Position
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  leftController: {fileID: 0}
+  rightController: {fileID: 0}
