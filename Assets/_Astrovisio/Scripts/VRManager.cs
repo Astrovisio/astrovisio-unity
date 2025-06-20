@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Astrovisio
 
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameObject xrOrigin;
+        [SerializeField] private bool beginOnPlay = false;
 
         private Transform dataRendererTransform;
         private Vector3 originalScale;
@@ -30,18 +32,22 @@ namespace Astrovisio
             Instance = this;
         }
 
+        void Start()
+        {
+            if (beginOnPlay)
+            {
+                EnterVR();
+            }
+        }
+
         private void Update()
         {
-            if (!VRActive || !XRGeneralSettings.Instance.Manager.isInitializationComplete || dataRendererTransform == null)
+            if (!beginOnPlay)
             {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.JoystickButton1))
-            {
-                Debug.Log("[VRManager] B button pressed. Exiting VR...");
-                ExitVR();
-                return;
+                if (!VRActive || !XRGeneralSettings.Instance.Manager.isInitializationComplete || dataRendererTransform == null)
+                {
+                    return;
+                }
             }
 
             // HandleCubeInteraction();
@@ -118,8 +124,7 @@ namespace Astrovisio
             else
             {
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
-                // Debug.Log("[VRManager] XR started.");
-                InitVRSettings();
+                // InitVRSettings(); // uncomment!
                 VRActive = true;
             }
         }
@@ -127,8 +132,8 @@ namespace Astrovisio
         private void InitVRSettings()
         {
             KDTreeComponent kdTreeComponent = FindAnyObjectByType<KDTreeComponent>();
-            XRController xrController = FindAnyObjectByType<XRController>();
-            kdTreeComponent.controllerTransform = xrController.GetPokePoint();
+            XRInputController xrController = FindAnyObjectByType<XRInputController>();
+            kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
         }
 
         private void StopXR()

@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Astrovisio/Scenes/UIScene.unity
     guid: 489b521a74ff82242bd0a1e9a2349ee5
+  - enabled: 1
+    path: Assets/_Astrovisio/Scenes/SampleScene.unity
+    guid: fe17a6f42463e5442a707c3170d00dee
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e3aee76b9372917449aef639e2f74814,
       type: 2}
