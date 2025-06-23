@@ -163,11 +163,11 @@ public class KDTreeComponent : MonoBehaviour
             }
         }
 
-        if (GetLastNearest() is not null)
-        {
-            var test = GetDataInfo(GetLastNearest().Value.index);
-            Debug.Log($"{test[0]}, {test[1]}, {test[2]}");
-        }
+        // if (GetLastNearest() is not null)
+        // {
+        //     var test = GetDataInfo(GetLastNearest().Value.index);
+        //     Debug.Log($"{test[0]}, {test[1]}, {test[2]}");
+        // }
     }
 
     private float RemapInverse(float val, Vector2 from, Vector2 to)

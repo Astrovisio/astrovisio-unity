@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
+
     public class NavbarController
     {
         // === Dependencies ===
@@ -50,6 +51,7 @@ namespace Astrovisio
             projectTabDictionary.Clear();
 
             projectManager.ProjectOpened += OnProjectOpened;
+            projectManager.ProjectUpdated += OnProjectUpdated;
             projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
@@ -61,13 +63,23 @@ namespace Astrovisio
                 return;
             }
 
-            var tabElement = CreateProjectTab(project);
-            var tabInfo = new ProjectTabInfo(project, tabElement);
+            VisualElement tabElement = CreateProjectTab(project);
+            ProjectTabInfo tabInfo = new ProjectTabInfo(project, tabElement);
             projectTabDictionary[project.Id] = tabInfo;
 
             projectTabContainer.Add(tabElement);
             SetActiveTab(project.Id);
             UpdateTabMargins();
+        }
+
+        private void OnProjectUpdated(Project updatedProject)
+        {
+
+            if (projectTabDictionary.TryGetValue(updatedProject.Id, out ProjectTabInfo projectTabInfo))
+            {
+                projectTabInfo.TabElement.Q<Label>("Label").text = updatedProject.Name;
+            }
+
         }
 
         private void OnProjectDeleted(Project project)
@@ -77,7 +89,7 @@ namespace Astrovisio
 
         private VisualElement CreateProjectTab(Project project)
         {
-            var projectTab = projectButtonTemplate.CloneTree();
+            TemplateContainer projectTab = projectButtonTemplate.CloneTree();
             projectTab.name = $"ProjectTab_{project.Id}";
             projectTab.Q<Label>("Label").text = project.Name;
 
@@ -190,6 +202,7 @@ namespace Astrovisio
         public void Dispose()
         {
             projectManager.ProjectOpened -= OnProjectOpened;
+            projectManager.ProjectUpdated -= OnProjectUpdated;
             projectManager.ProjectDeleted -= OnProjectDeleted;
         }
 
