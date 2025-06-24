@@ -14,7 +14,6 @@
             </engine:Instance>
         </engine:VisualElement>
         <engine:VisualElement name="LineSpacer" style="flex-grow: 1;" />
-        <engine:Instance template="SliderMinMax" name="ThresholdSlider" />
         <engine:VisualElement name="ColorMapContainer">
             <engine:Label text="Colormap" name="Label" class="h3" />
             <engine:VisualElement name="Preview" />
@@ -22,6 +21,10 @@
                 <AttributeOverrides element-name="DropdownField" choices="Inferno,Paradiso" index="0" />
             </engine:Instance>
         </engine:VisualElement>
+        <engine:Instance template="SliderMinMax" name="ThresholdSlider" />
+        <engine:Instance template="SliderMinMax" name="RangeSlider">
+            <AttributeOverrides element-name="Label" text="Range" />
+        </engine:Instance>
         <engine:VisualElement name="ScalingContainer" style="flex-grow: 1;">
             <engine:Label text="Scaling" name="Label" class="h3" />
             <engine:Instance template="DropdownSimple" name="ScalingDropdown">

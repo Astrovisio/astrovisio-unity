@@ -161,7 +161,37 @@ namespace Astrovisio
             string appliedParamName = appliedParamRowSettingsController.ParamName;
             MappingType appliedMapping = appliedParamRowSettingsController.RenderSettings.Mapping;
 
-            // Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
+            Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
+            PrintAllMappings();
+
+            // Update projectRenderSettings
+            // switch (appliedMapping)
+            // {
+            //     case MappingType.None:
+            //         // Do nothing ?
+            //         break;
+            //     case MappingType.Colormap:
+            //         foreach (var paramSettings in paramSettingsDatas)
+            //         {
+            //             string paramName = paramSettings.Key;
+            //             if (paramName == appliedParamName)
+            //             {
+            //                 projectRenderSettings.ColorMapSettingsController = null;
+            //             }
+            //         }
+            //         break;
+            //     case MappingType.Opacity:
+            //         foreach (var paramSettings in paramSettingsDatas)
+            //         {
+            //             string paramName = paramSettings.Key;
+            //             if (paramName == appliedParamName)
+            //             {
+            //                 projectRenderSettings.OpacitySettingsController = null;
+            //             }
+            //         }
+            //         break;
+            // }
+
 
             // Update project params
             switch (appliedMapping)
@@ -182,21 +212,13 @@ namespace Astrovisio
                     }
                     break;
                 case MappingType.Opacity:
-                    if (projectRenderSettings.OpacitySettingsController is not null)
-                    {
-                        // Debug.Log("Resetting -> Opacity: " + projectRenderSettings.OpacitySettingsController.ParamName);
-                        projectRenderSettings.OpacitySettingsController.Reset();
-                    }
                     // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName + " " + appliedParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
+                    ResetParamsByMappingType(appliedParamName, MappingType.Opacity);
                     projectRenderSettings.OpacitySettingsController = appliedParamRowSettingsController;
                     break;
                 case MappingType.Colormap:
-                    if (projectRenderSettings.ColorMapSettingsController is not null)
-                    {
-                        // Debug.Log("Resetting -> Colormap: " + projectRenderSettings.ColorMapSettingsController.ParamName);
-                        projectRenderSettings.ColorMapSettingsController.Reset();
-                    }
                     // Debug.Log("OnApplySettings -> Colormap: " + appliedParamName);
+                    ResetParamsByMappingType(appliedParamName, MappingType.Colormap);
                     projectRenderSettings.ColorMapSettingsController = appliedParamRowSettingsController;
                     break;
             }
@@ -204,6 +226,45 @@ namespace Astrovisio
             SetParamRowSettingsController(appliedParamName, appliedParamRowSettingsController);
             CloseSettingsPanel();
             UpdateRenderManager();
+            UpdateMappingIcons();
+            PrintAllMappings();
+        }
+
+        private void ResetParamsByMappingType(string appliedParamName, MappingType appliedMappingType)
+        {
+            foreach (var paramSettings in paramSettingsDatas)
+            {
+                string paramName = paramSettings.Key;
+                ParamRow paramRow = paramSettings.Value;
+                ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
+                MappingType paramMappingType = paramRowSettingsController.RenderSettings.Mapping;
+
+                // Debug.Log(paramName + " <-> " + appliedParamName);
+                if (paramName == appliedParamName)
+                {
+                    if (paramMappingType == MappingType.Opacity)
+                    {
+                        projectRenderSettings.OpacitySettingsController = null;
+                        // Debug.Log(paramName + " opacity null");
+                    }
+                    else if (paramMappingType == MappingType.Colormap)
+                    {
+                        projectRenderSettings.ColorMapSettingsController = null;
+                        // Debug.Log(paramName + " colormap null");
+                    }
+                }
+            }
+
+            foreach (var paramSettings in paramSettingsDatas)
+            {
+                ParamRow paramRow = paramSettings.Value;
+                ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
+                MappingType paramMappingType = paramRowSettingsController.RenderSettings.Mapping;
+                if (paramMappingType == appliedMappingType)
+                {
+                    paramRowSettingsController.Reset();
+                }
+            }
         }
 
         private void UpdateRenderManager()
@@ -215,7 +276,7 @@ namespace Astrovisio
             }
             else
             {
-                // Debug.Log("Setting colormap");
+                // Debug.Log("Setting colormap " + projectRenderSettings.ColorMapSettingsController.ParamName);
                 RenderManager.Instance.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.RenderSettings);
             }
 
@@ -226,9 +287,69 @@ namespace Astrovisio
             }
             else
             {
-                // Debug.Log("Setting opacity");
+                // Debug.Log("Setting opacity " + projectRenderSettings.OpacitySettingsController.ParamName);
                 RenderManager.Instance.SetRenderSettings(projectRenderSettings.OpacitySettingsController.RenderSettings);
             }
+        }
+
+        private void UpdateMappingIcons()
+        {
+            string colormapParamName = projectRenderSettings.ColorMapSettingsController != null ? projectRenderSettings.ColorMapSettingsController.ParamName : "";
+            string opacityParamName = projectRenderSettings.OpacitySettingsController != null ? projectRenderSettings.OpacitySettingsController.ParamName : "";
+
+            // Debug.Log("colormapParamName " + colormapParamName);
+            // Debug.Log("opacityParamName " + opacityParamName);
+
+            foreach (var paramSettings in paramSettingsDatas)
+            {
+                string paramName = paramSettings.Key;
+                ParamRow paramRow = paramSettings.Value;
+
+                VisualElement paramVisualElement = paramRow.VisualElement.Q<VisualElement>("Root");
+                paramVisualElement.RemoveFromClassList("colormap");
+                paramVisualElement.RemoveFromClassList("opacity");
+                paramVisualElement.RemoveFromClassList("haptics");
+                paramVisualElement.RemoveFromClassList("sound");
+                // Debug.Log("Remove all from " + paramName);
+
+                if (paramName == colormapParamName)
+                {
+                    paramVisualElement.AddToClassList("colormap");
+                    // Debug.Log("Add colormap to " + paramName);
+                }
+                else if (paramName == opacityParamName)
+                {
+                    paramVisualElement.AddToClassList("opacity");
+                    // Debug.Log("Add opacity to " + paramName);
+                }
+            }
+
+            // VisualElement colormapRow;
+            // if (colormapParamName != "")
+            // {
+            //     colormapRow = paramSettingsDatas[colormapParamName].VisualElement;
+            //     colormapRow.Q<VisualElement>("Root").AddToClassList("colormap");
+            //     Debug.Log(colormapRow.Q<VisualElement>("Root"));
+            // }
+
+            // VisualElement opacityRow;
+            // if (opacityParamName != "")
+            // {
+            //     opacityRow = paramSettingsDatas[opacityParamName].VisualElement;
+            //     opacityRow.Q<VisualElement>("Root").AddToClassList("opacity");
+            //     Debug.Log(opacityRow.Q<VisualElement>("Root"));
+            // }
+
+        }
+
+        private void PrintAllMappings()
+        {
+            string opacityParamName = (projectRenderSettings.OpacitySettingsController != null) ? projectRenderSettings.OpacitySettingsController.ParamName : "null";
+            string colormapParamName = (projectRenderSettings.ColorMapSettingsController != null) ? projectRenderSettings.ColorMapSettingsController.ParamName : "null";
+
+            Debug.Log("PrintAllMapping");
+            Debug.Log("Opacity: " + opacityParamName);
+            Debug.Log("Colormap: " + colormapParamName);
         }
 
         private void SetParamRowSettingsController(string paramName, ParamRowSettingsController paramRowSettingsController)
@@ -262,6 +383,8 @@ namespace Astrovisio
         {
             CloseSettingsPanel();
             UpdateRenderManager();
+            UpdateMappingIcons();
+            PrintAllMappings();
         }
 
     }
