@@ -3,7 +3,7 @@
     <engine:VisualElement name="RootToastSuccess">
         <engine:VisualElement name="Icon" style="flex-grow: 1;" />
         <engine:VisualElement name="ContainerLabel" style="flex-grow: 1;">
-            <engine:Label text="Video saved in" name="TitleLabel" />
+            <engine:Label text="Project Serra has been created" name="TitleLabel" />
             <engine:Label text="Video saved in" name="DescriptionLabel" />
         </engine:VisualElement>
     </engine:VisualElement>

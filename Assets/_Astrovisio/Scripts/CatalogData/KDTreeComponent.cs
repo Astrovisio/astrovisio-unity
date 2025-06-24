@@ -176,4 +176,9 @@ public class KDTreeComponent : MonoBehaviour
         return Mathf.Lerp(to.x, to.y, t);
     }
 
+    private void OnDestroy()
+    {
+        Destroy(debugSphere);
+    }
+
 }

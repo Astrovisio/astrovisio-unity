@@ -24,6 +24,7 @@ namespace Astrovisio
         private MinMaxSlider thresholdSlider;
         private DoubleField thresholdSliderMinFloatField;
         private DoubleField thresholdSliderMaxFloatField;
+        private MinMaxSlider rangeSlider;
         private VisualElement colorMapVisualPreview;
         private DropdownField colorMapDropdown;
         private DropdownField scalingDropdown;
@@ -65,6 +66,7 @@ namespace Astrovisio
             thresholdSlider = Root.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             thresholdSliderMinFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
             thresholdSliderMaxFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
+            rangeSlider = Root.Q<VisualElement>("RangeSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             colorMapVisualPreview = Root.Q<VisualElement>("ColorMapContainer")?.Q<VisualElement>("Preview");
             colorMapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
             scalingDropdown = Root.Q<VisualElement>("ScalingContainer")?.Q<DropdownField>("DropdownField");
@@ -152,6 +154,7 @@ namespace Astrovisio
             // RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
 
             SetThresholdSlider(paramRowSettingsController);
+            SetRangeSlider(paramRowSettingsController);
             SetScalingDropdown(paramRowSettingsController);
             SetInverseToggle(paramRowSettingsController);
         }
@@ -344,6 +347,11 @@ namespace Astrovisio
             thresholdSliderMaxFloatField?.RegisterValueChangedCallback(thresholdMaxFloatFieldCallback);
         }
 
+        private void SetRangeSlider(ParamRowSettingsController paramRowSettingsController)
+        {
+            //
+        }
+
         private void SetColorMapDropdown(ParamRowSettingsController paramRowSettingsController)
         {
             if (colorMapDropdown is null)
@@ -463,6 +471,9 @@ namespace Astrovisio
             VisualElement thresholdSlider = Root.Q<VisualElement>("ThresholdSlider");
             thresholdSlider.style.display = DisplayStyle.None;
 
+            VisualElement rangeSlider = Root.Q<VisualElement>("RangeSlider");
+            rangeSlider.style.display = DisplayStyle.None;
+
             VisualElement colorMapContainer = Root.Q<VisualElement>("ColorMapContainer");
             colorMapContainer.style.display = DisplayStyle.None;
 
@@ -483,6 +494,9 @@ namespace Astrovisio
             VisualElement thresholdSlider = Root.Q<VisualElement>("ThresholdSlider");
             thresholdSlider.style.display = DisplayStyle.Flex;
 
+            VisualElement rangeSlider = Root.Q<VisualElement>("RangeSlider");
+            rangeSlider.style.display = DisplayStyle.Flex;
+
             VisualElement colorMapContainer = Root.Q<VisualElement>("ColorMapContainer");
             colorMapContainer.style.display = DisplayStyle.None;
 
@@ -502,6 +516,9 @@ namespace Astrovisio
 
             VisualElement thresholdSlider = Root.Q<VisualElement>("ThresholdSlider");
             thresholdSlider.style.display = DisplayStyle.Flex;
+
+            VisualElement rangeSlider = Root.Q<VisualElement>("RangeSlider");
+            rangeSlider.style.display = DisplayStyle.None;
 
             VisualElement colorMapContainer = Root.Q<VisualElement>("ColorMapContainer");
             colorMapContainer.style.display = DisplayStyle.Flex;
