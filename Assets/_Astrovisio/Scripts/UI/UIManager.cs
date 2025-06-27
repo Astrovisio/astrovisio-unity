@@ -42,6 +42,7 @@ namespace Astrovisio
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
+            projectManager.ApiError += OnApiError;
 
             projectManager.FetchAllProjects();
         }
@@ -92,15 +93,10 @@ namespace Astrovisio
             toastMessageController.SetToastSuccessMessage($"Project {project.Name} has been deleted.");
         }
 
-        // public void SetToastSuccessMessage(string title, string message)
-        // {
-        //     toastMessageController.SetToastSuccessMessage(title, message);
-        // }
-
-        // public void SetToastErrorMessage(string message)
-        // {
-        //     toastMessageController.SetToastErrorMessage(message);
-        // }
+        private void OnApiError(string message)
+        {
+            toastMessageController.SetToastErrorMessage($"{message}");
+        }
 
         public void SetEditProject(Project project)
         {

@@ -6,7 +6,7 @@ namespace Astrovisio
     [CreateAssetMenu(fileName = "UIContext", menuName = "Astrovisio SO/UI Context")]
     public class UIContextSO : ScriptableObject
     {
-        // [Header("Shared")]
+
 
         [Header("Header")]
         public VisualTreeAsset projectButtonTemplate;

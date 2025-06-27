@@ -37,12 +37,24 @@
     align-items: center;
 }
 
-#Root > #IconContainer > #VisibilityIcon {
-    -unity-background-image-tint-color: var(--grey-400);
+#Root > #IconContainer > #MappingIcon {
+    -unity-background-image-tint-color: var(--grey-800);
 }
 
-#Root > #IconContainer > #StateIcon {
-    -unity-background-image-tint-color: var(--grey-800);
+#Root.colormap > #IconContainer > #MappingIcon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/gradient.svg?fileID=7388822144124034973&guid=d6a8ed60fc340c848b054b28ac330a5a&type=3#gradient");
+}
+
+#Root.opacity > #IconContainer > #MappingIcon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/opacity.svg?fileID=7388822144124034973&guid=6441d41d9a8fad343ad246bfe402618c&type=3#opacity");
+}
+
+#Root.sound > #IconContainer > #MappingIcon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/sound.svg?fileID=7388822144124034973&guid=8f1e1525376a3bc4380f65b23b359ab8&type=3#sound");
+}
+
+#Root.haptic > #IconContainer > #MappingIcon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/haptics.svg?fileID=7388822144124034973&guid=a559c93b188ff5f4ba36ce007bd8aebb&type=3#haptics");
 }
 
 #Root.active {
@@ -50,10 +62,6 @@
     color: var(--accent-100);
 }
 
-#Root.active > #IconContainer > #VisibilityIcon {
-    opacity: 0;
-}
-
-#Root.active > #IconContainer > #StateIcon {
+#Root.active > #IconContainer > #MappingIcon {
     -unity-background-image-tint-color: var(--accent-100);
 }

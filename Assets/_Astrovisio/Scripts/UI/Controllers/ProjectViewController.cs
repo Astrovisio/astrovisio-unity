@@ -11,7 +11,7 @@ namespace Astrovisio
     {
 
         // === Dependencies ===
-        private readonly ProjectManager projectManager;
+        public ProjectManager ProjectManager { get; }
         private readonly VisualTreeAsset paramRowTemplate;
 
         // === Local ===
@@ -19,6 +19,8 @@ namespace Astrovisio
         public VisualElement Root { get; }
 
         // === UI ===
+        private Label projectNameLabel;
+        private Label descriptionLabel;
         private Toggle checkAllToggle;
 
         // === Local ===
@@ -27,12 +29,25 @@ namespace Astrovisio
 
         public ProjectViewController(ProjectManager projectManager, VisualElement root, Project project, VisualTreeAsset paramRowTemplate)
         {
-            this.projectManager = projectManager;
+            ProjectManager = projectManager;
             Root = root;
             Project = project;
             this.paramRowTemplate = paramRowTemplate;
 
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+
             Init();
+        }
+
+        private void OnProjectUpdated(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            projectNameLabel.text = project.Name;
+            descriptionLabel.text = project.Description;
         }
 
         private void Init()
@@ -48,11 +63,11 @@ namespace Astrovisio
             filesContainer.SetEnabled(false);
 
             // Project Name
-            var projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
+            projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
             projectNameLabel.text = Project.Name;
 
             // Project Description
-            var descriptionLabel = rightContainer.Q<Label>("DescriptionLabel");
+            descriptionLabel = rightContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
             // VR Reels
@@ -108,7 +123,7 @@ namespace Astrovisio
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = paramName;
 
-                ParamRowController controller = new ParamRowController(projectManager, paramRow, paramName, param);
+                ParamRowController controller = new ParamRowController(ProjectManager, paramRow, paramName, param);
                 paramControllers[paramName] = controller;
 
                 controller.OnAxisChanged += HandleOnAxisChanged;
@@ -236,7 +251,7 @@ namespace Astrovisio
 
         private void UpdateProject()
         {
-            projectManager.UpdateProject(Project.Id, Project);
+            ProjectManager.UpdateProject(Project.Id, Project);
         }
 
         private void InitCheckAllToggle()

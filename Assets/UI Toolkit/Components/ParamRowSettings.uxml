@@ -3,8 +3,7 @@
     <engine:Button name="Root" class="active" style="overflow: visible;">
         <engine:Label text="Pressure" name="ParamLabel" />
         <engine:VisualElement name="IconContainer">
-            <engine:VisualElement name="VisibilityIcon" style="flex-grow: 1; width: 16px; height: 16px; min-width: 16px; min-height: 16px; max-width: 16px; max-height: 16px; margin-right: 8px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/visibility_off.svg?fileID=7388822144124034973&amp;guid=42dc87fd5d0f33140b25a1237fc09505&amp;type=3#visibility_off&quot;);" />
-            <engine:VisualElement name="StateIcon" style="flex-grow: 1; width: 16px; height: 16px; min-width: 16px; min-height: 16px; max-width: 16px; max-height: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/discover_tune.svg?fileID=7388822144124034973&amp;guid=a4dac9e51e7976a40aab94282b71bfb1&amp;type=3#discover_tune&quot;);" />
+            <engine:VisualElement name="MappingIcon" style="flex-grow: 1; width: 16px; height: 16px; min-width: 16px; min-height: 16px; max-width: 16px; max-height: 16px;" />
         </engine:VisualElement>
     </engine:Button>
 </engine:UXML>

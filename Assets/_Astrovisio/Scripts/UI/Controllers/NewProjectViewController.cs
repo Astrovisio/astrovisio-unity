@@ -92,31 +92,47 @@ namespace Astrovisio
             }
         }
 
+
         private void OnAddFileClicked()
         {
             var paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", true);
             if (paths.Length > 0)
             {
-                selectedFiles.Clear();
                 foreach (var path in paths)
                 {
-                    if (File.Exists(path))
+                    if (!File.Exists(path))
                     {
-                        var sysInfo = new System.IO.FileInfo(path);
-                        FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
-                        selectedFiles.Add(fileInfo);
-                        Debug.Log($"File selezionato: {fileInfo.name} ({fileInfo.size} byte) - {fileInfo.path}");
+                        Debug.LogWarning($"File not found: {path}");
+                        continue;
                     }
-                    else
+
+                    // Check if the file extension is supported (.hdf5 or .fits)
+                    string extension = Path.GetExtension(path).ToLowerInvariant();
+                    if (extension != ".hdf5" && extension != ".fits")
                     {
-                        Debug.LogWarning($"File non trovato: {path}");
+                        Debug.LogWarning($"Unsupported file format: {path}");
+                        continue;
                     }
+
+                    // Skip if the file is already in the list
+                    if (selectedFiles.Any(f => f.path == path))
+                    {
+                        Debug.Log($"File already added: {path}");
+                        continue;
+                    }
+
+                    var sysInfo = new System.IO.FileInfo(path);
+                    FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
+                    selectedFiles.Add(fileInfo);
+                    Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");
                 }
 
                 UpdateFilesContainer();
                 UpdateFilesSizeLabel();
             }
         }
+
+
 
         private void UpdateFilesSizeLabel()
         {

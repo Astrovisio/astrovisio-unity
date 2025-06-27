@@ -193,9 +193,9 @@
     border-bottom-right-radius: 12px;
     border-bottom-left-radius: 12px;
     flex-grow: 0;
-    height: 68px;
-    min-height: 68px;
-    max-height: 68px;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
     margin-bottom: 12px;
 }
 
@@ -261,6 +261,7 @@
     min-height: 10px;
     max-height: 10px;
     align-items: stretch;
+    display: none;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer > #BottonContainer > #ActualSizeLabel {

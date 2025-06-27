@@ -55,6 +55,7 @@
     white-space: normal;
     margin-top: -4px;
     -unity-text-align: middle-left;
+    display: none;
 }
 
 #ContainerSucces.active {

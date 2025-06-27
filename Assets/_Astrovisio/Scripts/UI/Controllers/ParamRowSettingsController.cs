@@ -24,7 +24,7 @@ namespace Astrovisio
         {
             return new ParamRowSettingsController(ParamName, Project)
             {
-                RenderSettings = this.RenderSettings?.Clone() as RenderSettings
+                RenderSettings = RenderSettings?.Clone() as RenderSettings
             };
         }
 

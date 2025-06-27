@@ -66,6 +66,14 @@
     margin-bottom: 16px;
 }
 
+#SettingsPanelRoot > #RangeSlider {
+    margin-bottom: 24px;
+}
+
+#SettingsPanelRoot > #RangeSlider > #SliderMinMaxRoot > #Label {
+    margin-bottom: 16px;
+}
+
 #SettingsPanelRoot > #ColorMapContainer {
     margin-bottom: 24px;
     flex-shrink: 0;
