@@ -89,6 +89,14 @@ namespace Astrovisio
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
 
+        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        {
+            if (astrovidioDataSetRenderer is not null)
+            {
+                astrovidioDataSetRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+            }
+        }
+
         public void SetNone()
         {
             if (astrovidioDataSetRenderer is not null)

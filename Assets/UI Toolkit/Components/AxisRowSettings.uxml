@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/AxisRowSettings.uss?fileID=7433441132597879392&amp;guid=6718b1c389c8c434db0caeb3112845f2&amp;type=3#AxisRowSettings" />
+    <engine:Button name="Root" class="active" style="overflow: visible;">
+        <engine:Instance template="Label" name="Label" />
+        <engine:Label text="Pressure" name="ParamLabel" />
+    </engine:Button>
+</engine:UXML>

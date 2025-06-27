@@ -4,11 +4,6 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    public class ParamRow
-    {
-        public VisualElement VisualElement { get; set; }
-        public ParamRowSettingsController ParamRowSettingsController { get; set; }
-    }
 
     public enum ProjectSidebarStep
     {
@@ -35,7 +30,7 @@ namespace Astrovisio
         private Button dataSettingsButton;
         private Button renderSettingsButton;
         private Button goToVRButton;
-        private DataContainer dataContainer;
+        // private DataContainer dataContainer;
 
         public ProjectSidebarController(UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
         {
@@ -83,21 +78,9 @@ namespace Astrovisio
             {
                 return;
             }
-            // else
-            // {
-            //     Project = project;
-            // }
 
             SetActiveStep(ProjectSidebarStep.Data);
         }
-
-        // private void OnProjectProcessed(DataPack data)
-        // {
-        //     dataContainer = new DataContainer(data, Project);
-        //     // Debug.Log(dataContainer.PointCount);
-        //     // SetProcessDataButton(true);
-        //     SetNextStepButtons(true);
-        // }
 
         private void OnProjectReadyToGetRendered(Project project)
         {
@@ -113,7 +96,7 @@ namespace Astrovisio
             {
                 Project = project;
             }
-            
+
             SetNextStepButtons(true);
         }
 

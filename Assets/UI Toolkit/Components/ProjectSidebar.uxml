@@ -2,7 +2,7 @@
     <engine:Template name="Downsampling" src="project://database/Assets/UI%20Toolkit/Components/Downsampling.uxml?fileID=9197481963319205126&amp;guid=34fcbd8083bb80441a3f1c505b1892c9&amp;type=3#Downsampling" />
     <engine:Template name="Chip" src="project://database/Assets/UI%20Toolkit/Components/Shared/Chip.uxml?fileID=9197481963319205126&amp;guid=22e927bf1e871d648aed0fb34ab68ded&amp;type=3#Chip" />
     <engine:Template name="RestFrequencyPanel" src="project://database/Assets/UI%20Toolkit/Components/RestFrequencyPanel.uxml?fileID=9197481963319205126&amp;guid=24d6d9c53dbe3564b87077d9f0536a36&amp;type=3#RestFrequencyPanel" />
-    <engine:Template name="Label" src="project://database/Assets/UI%20Toolkit/Components/Shared/Label.uxml?fileID=9197481963319205126&amp;guid=5ea55893152a48145a60be600bcd8d73&amp;type=3#Label" />
+    <engine:Template name="AxisRowSettings" src="project://database/Assets/UI%20Toolkit/Components/AxisRowSettings.uxml?fileID=9197481963319205126&amp;guid=ef9c1ba7419487a41865a9acf9187aa4&amp;type=3#AxisRowSettings" />
     <engine:Template name="ParamRowSettings" src="project://database/Assets/UI%20Toolkit/Components/ParamRowSettings.uxml?fileID=9197481963319205126&amp;guid=8d8fba102f4b8354eb735e1f87607b16&amp;type=3#ParamRowSettings" />
     <engine:Template name="SettingsPanel" src="project://database/Assets/UI%20Toolkit/Components/SettingsPanel.uxml?fileID=9197481963319205126&amp;guid=94ff22f4db2321348877e1aacc58566e&amp;type=3#SettingsPanel" />
     <engine:Template name="GoToVRButton" src="project://database/Assets/UI%20Toolkit/Components/GoToVRButton.uxml?fileID=9197481963319205126&amp;guid=d7b4828cc0c7c704c81e8572c5d04c6e&amp;type=3#GoToVRButton" />
@@ -84,44 +84,25 @@
                         </engine:VisualElement>
                         <engine:VisualElement name="LineSpacer" style="display: none;" />
                         <engine:VisualElement name="AxisContainer" style="flex-grow: 0; flex-direction: column; justify-content: space-between;">
-                            <engine:VisualElement name="XLabel" class="AxisLabel" style="flex-grow: 1;">
-                                <engine:Instance template="Label" name="XLabel" class="ChipLabel">
-                                    <AttributeOverrides element-name="Letter" text="X" />
-                                </engine:Instance>
-                                <engine:Label text="Label" name="XParamLabel" class="ParamLabel" />
-                            </engine:VisualElement>
-                            <engine:VisualElement name="YLabel" class="AxisLabel" style="flex-grow: 1;">
-                                <engine:Instance template="Label" name="YLabel" class="ChipLabel">
-                                    <AttributeOverrides element-name="Letter" text="Y" />
-                                </engine:Instance>
-                                <engine:Label text="Label" name="YParamLabel" class="ParamLabel" />
-                            </engine:VisualElement>
-                            <engine:VisualElement name="ZLabel" class="AxisLabel" style="flex-grow: 1;">
-                                <engine:Instance template="Label" name="ZLabel" class="ChipLabel" />
-                                <engine:Label text="Label" name="ZParamLabel" class="ParamLabel" />
-                            </engine:VisualElement>
+                            <engine:Instance template="AxisRowSettings" name="XLabel" style="margin-bottom: 8px;">
+                                <AttributeOverrides element-name="Label Letter" text="X" />
+                            </engine:Instance>
+                            <engine:Instance template="AxisRowSettings" name="YLabel" style="margin-bottom: 8px;">
+                                <AttributeOverrides element-name="Label Letter" text="Y" />
+                            </engine:Instance>
+                            <engine:Instance template="AxisRowSettings" name="ZLabel" />
                         </engine:VisualElement>
+                        <engine:VisualElement name="LineSpacer" style="display: flex; margin-top: 0; margin-bottom: 8px; margin-left: 2px; margin-right: 2px;" />
                     </engine:VisualElement>
-                    <engine:VisualElement style="flex-grow: 0; display: none; flex-shrink: 0;">
-                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
-                    </engine:VisualElement>
-                    <engine:ScrollView name="ParamSettingsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible">
-                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
-                            <AttributeOverrides element-name="ParamLabel" text="1" />
-                        </engine:Instance>
-                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
-                            <AttributeOverrides element-name="ParamLabel" text="2" />
-                        </engine:Instance>
-                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;">
-                            <AttributeOverrides element-name="ParamLabel" text="3" />
-                        </engine:Instance>
+                    <engine:ScrollView name="ParamSettingsScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
+                        <engine:Instance template="ParamRowSettings" name="TemplateContainer" style="margin-bottom: 8px;" />
                         <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
                         <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
                         <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
                         <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
-                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 0;">
-                            <AttributeOverrides element-name="ParamLabel" text="Last" />
-                        </engine:Instance>
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" style="margin-bottom: 8px;" />
+                        <engine:Instance template="ParamRowSettings" />
                     </engine:ScrollView>
                 </engine:VisualElement>
                 <engine:Instance template="SettingsPanel" name="SettingsPanel" class="active" />

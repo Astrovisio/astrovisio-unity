@@ -262,6 +262,60 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
         }
 
+        public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        {
+
+            switch (axis)
+            {
+                case Astrovisio.Axis.X:
+                    // Debug.Log($"X {thresholdMin} {thresholdMax}");
+                    DataMapping.Mapping.X = new MapFloatEntry
+                    {
+                        Source = paramName,
+                        Clamped = true,
+                        DataMinVal = thresholdMin,
+                        DataMaxVal = thresholdMax,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f,
+                        ScalingType = scalingType,
+                        InverseMapping = false
+                    };
+                    break;
+                case Astrovisio.Axis.Y:
+                    // Debug.Log($"Y {thresholdMin} {thresholdMax}");
+                    DataMapping.Mapping.Y = new MapFloatEntry
+                    {
+                        Source = paramName,
+                        Clamped = true,
+                        DataMinVal = thresholdMin,
+                        DataMaxVal = thresholdMax,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f,
+                        ScalingType = scalingType,
+                        InverseMapping = false
+                    };
+                    break;
+                case Astrovisio.Axis.Z:
+                    // Debug.Log($"Z {thresholdMin} {thresholdMax}");
+                    DataMapping.Mapping.Z = new MapFloatEntry
+                    {
+                        Source = paramName,
+                        Clamped = true,
+                        DataMinVal = thresholdMin,
+                        DataMaxVal = thresholdMax,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f,
+                        ScalingType = scalingType,
+                        InverseMapping = false
+                    };
+                    break;
+            }
+
+            UpdateMappingColumns();
+            UpdateMappingValues();
+
+        }
+
         public void SetNoneAstrovisio()
         {
             DataMapping.UniformColor = true;

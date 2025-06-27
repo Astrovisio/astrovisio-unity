@@ -13,13 +13,13 @@ namespace Astrovisio
         Haptics
     }
 
-    public class RenderSettings : ICloneable
+    public class ParamRenderSettings : ICloneable
     {
         public string Name { get; set; }
         public MappingType Mapping { get; set; }
         public IMappingSettings MappingSettings { get; set; }
 
-        public RenderSettings(string name, MappingType mapping = MappingType.None, IMappingSettings mappingSettings = null)
+        public ParamRenderSettings(string name, MappingType mapping = MappingType.None, IMappingSettings mappingSettings = null)
         {
             Name = name;
             Mapping = mapping;
@@ -28,7 +28,7 @@ namespace Astrovisio
 
         public object Clone()
         {
-            return new RenderSettings(
+            return new ParamRenderSettings(
                 Name,
                 Mapping,
                 MappingSettings is ICloneable cloneable ? cloneable.Clone() as IMappingSettings : null

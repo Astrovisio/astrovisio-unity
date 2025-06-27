@@ -6,6 +6,20 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
+
+    public class AxisRow
+    {
+        public VisualElement VisualElement { get; set; }
+        public AxisRowSettingsController AxisRowSettingsController { get; set; }
+        public EventCallback<ClickEvent> ClickHandler;
+    }
+
+    public class ParamRow
+    {
+        public VisualElement VisualElement { get; set; }
+        public ParamRowSettingsController ParamRowSettingsController { get; set; }
+    }
+
     public class ProjectSidebarRenderController
     {
 
@@ -19,10 +33,15 @@ namespace Astrovisio
 
         // === Other ===
         private VisualElement renderSettingsContainer;
-        private SettingsPanelController settingsPanelController;
-        private VisualElement settingsPanel;
+        private Button xButton;
+        private Button yButton;
+        private Button zButton;
+        private Dictionary<string, AxisRow> axisSettingsData = new();
         private ScrollView paramSettingsScrollView;
         private Dictionary<string, ParamRow> paramSettingsDatas = new();
+        private VisualElement settingsPanel;
+        private SettingsPanelController settingsPanelController;
+
         private ProjectRenderSettings projectRenderSettings = new();
 
 
@@ -42,36 +61,112 @@ namespace Astrovisio
         {
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
 
+            VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
+            xButton = axisContainer.Q<VisualElement>("XLabel")?.Q<Button>("Root");
+            yButton = axisContainer.Q<VisualElement>("YLabel")?.Q<Button>("Root");
+            zButton = axisContainer.Q<VisualElement>("ZLabel")?.Q<Button>("Root");
+
+            paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
+
             settingsPanel = renderSettingsContainer.Q<VisualElement>("SettingsPanel");
             settingsPanelController = new SettingsPanelController(Project, settingsPanel, UIContextSO);
 
-            settingsPanelController.OnApplySetting = OnApplySettings;
-            settingsPanelController.OnCancelSetting = OnCancelSettings;
-
-            Update();
+            settingsPanelController.OnApplyAxisSetting += OnApplyAxisSettings;
+            settingsPanelController.OnApplyParamSetting += OnApplyParamSettings;
+            settingsPanelController.OnCancelSetting += OnCancelSettings;
         }
 
         public void Update()
         {
-            UpdateXYZLabels();
+            paramSettingsDatas.Clear();
+            UpdateAxisButtons();
             UpdateParamsScrollView();
+            UnselectAllSettingsButton();
         }
 
-        private void UpdateXYZLabels()
+        private void UpdateAxisButtons()
         {
-            paramSettingsDatas.Clear();
+            Label xLabel = xButton.Q<Label>("ParamLabel");
+            Label yLabel = yButton.Q<Label>("ParamLabel");
+            Label zLabel = zButton.Q<Label>("ParamLabel");
 
-            var xLabel = renderSettingsContainer.Q<Label>("XParamLabel");
-            var yLabel = renderSettingsContainer.Q<Label>("YParamLabel");
-            var zLabel = renderSettingsContainer.Q<Label>("ZParamLabel");
             xLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.XAxis).Key ?? "";
             yLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.YAxis).Key ?? "";
             zLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.ZAxis).Key ?? "";
+
+            VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
+            VisualElement xVisualElement = axisContainer.Q<VisualElement>("XLabel");
+            VisualElement yVisualElement = axisContainer.Q<VisualElement>("YLabel");
+            VisualElement zVisualElement = axisContainer.Q<VisualElement>("ZLabel");
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                string paramName = kvp.Key;
+                ConfigParam configParam = kvp.Value;
+
+                if (!configParam.Selected)
+                {
+                    continue;
+                }
+
+                VisualElement axisVisualElement = null;
+
+                if (configParam.XAxis)
+                    axisVisualElement = xVisualElement;
+                else if (configParam.YAxis)
+                    axisVisualElement = yVisualElement;
+                else if (configParam.ZAxis)
+                    axisVisualElement = zVisualElement;
+
+
+                if (axisVisualElement != null)
+                {
+                    // Debug.Log("Axis " + paramName);
+
+                    Button axisButton = axisVisualElement.Q<Button>("Root");
+                    axisButton.RemoveFromClassList("active");
+
+                    if (axisSettingsData.ContainsKey(paramName))
+                    {
+                        var existingRow = axisSettingsData[paramName];
+                        axisButton.UnregisterCallback(existingRow.ClickHandler);
+                    }
+
+                    EventCallback<ClickEvent> clickHandler = evt =>
+                    {
+                        AxisRowSettingsController axisRowSettingsController = GetAxisRowSettingsController(paramName);
+
+                        if (axisButton.ClassListContains("active"))
+                        {
+                            UnselectAllSettingsButton();
+                            CloseSettingsPanel();
+                        }
+                        else
+                        {
+                            UnselectAllSettingsButton();
+                            axisButton.AddToClassList("active");
+                            settingsPanel.AddToClassList("active");
+                            settingsPanelController.InitAxisSettingsPanel(axisRowSettingsController);
+                        }
+                    };
+
+                    axisButton.RegisterCallback(clickHandler);
+
+                    AxisRow axisRow = new AxisRow
+                    {
+                        VisualElement = axisVisualElement,
+                        AxisRowSettingsController = new AxisRowSettingsController(paramName, Project),
+                        ClickHandler = clickHandler
+                    };
+
+                    axisSettingsData[paramName] = axisRow;
+                }
+            }
         }
+
 
         private void UpdateParamsScrollView()
         {
-            paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
             paramSettingsScrollView.Clear();
 
             foreach (var kvp in Project.ConfigProcess.Params)
@@ -88,7 +183,7 @@ namespace Astrovisio
                 VisualElement paramRowSettings = UIContextSO.paramRowSettingsTemplate.CloneTree();
                 paramRowSettings.style.marginBottom = 8;
 
-                var nameLabel = paramRowSettings.Q<Label>("ParamLabel");
+                Label nameLabel = paramRowSettings.Q<Label>("ParamLabel");
                 if (nameLabel != null)
                 {
                     nameLabel.text = paramName;
@@ -104,19 +199,20 @@ namespace Astrovisio
                 paramButton.RemoveFromClassList("active");
                 paramButton.clicked += () =>
                 {
+                    // Debug.Log("Clicked");
                     ParamRowSettingsController paramRowSettingsController = GetParamRowSettingsController(paramName);
 
                     if (paramButton.ClassListContains("active"))
                     {
-                        UnselectAllParamSettingButton();
+                        UnselectAllSettingsButton();
                         CloseSettingsPanel();
                     }
                     else
                     {
-                        UnselectAllParamSettingButton();
+                        UnselectAllSettingsButton();
                         paramButton.AddToClassList("active");
                         settingsPanel.AddToClassList("active");
-                        settingsPanelController.InitSettingsPanel(paramRowSettingsController);
+                        settingsPanelController.InitParamSettingsPanel(paramRowSettingsController);
                         UpdateRenderManager();
                     }
 
@@ -127,11 +223,15 @@ namespace Astrovisio
             }
         }
 
-        private void UnselectAllParamSettingButton()
+        private void UnselectAllSettingsButton()
         {
-            foreach (var paramSettingsData in paramSettingsDatas.Values)
+            xButton.RemoveFromClassList("active");
+            yButton.RemoveFromClassList("active");
+            zButton.RemoveFromClassList("active");
+
+            foreach (ParamRow paramSettingsData in paramSettingsDatas.Values)
             {
-                var button = paramSettingsData.VisualElement.Q<Button>("Root");
+                Button button = paramSettingsData.VisualElement.Q<Button>("Root");
                 if (button != null)
                 {
                     button.RemoveFromClassList("active");
@@ -156,10 +256,22 @@ namespace Astrovisio
             }
         }
 
-        private void OnApplySettings(ParamRowSettingsController appliedParamRowSettingsController)
+        private void OnApplyAxisSettings(AxisRowSettingsController appliedAxisRowSettingsController)
+        {
+            string appliedParamName = appliedAxisRowSettingsController.ParamName;
+
+            SetAxisRowSettingsController(appliedParamName, appliedAxisRowSettingsController);
+
+            CloseSettingsPanel();
+            xButton.RemoveFromClassList("active");
+            yButton.RemoveFromClassList("active");
+            zButton.RemoveFromClassList("active");
+        }
+
+        private void OnApplyParamSettings(ParamRowSettingsController appliedParamRowSettingsController)
         {
             string appliedParamName = appliedParamRowSettingsController.ParamName;
-            MappingType appliedMapping = appliedParamRowSettingsController.RenderSettings.Mapping;
+            MappingType appliedMapping = appliedParamRowSettingsController.ParamRenderSettings.Mapping;
 
             // Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
             // PrintAllMappings();
@@ -212,7 +324,7 @@ namespace Astrovisio
                 string paramName = paramSettings.Key;
                 ParamRow paramRow = paramSettings.Value;
                 ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
-                MappingType paramMappingType = paramRowSettingsController.RenderSettings.Mapping;
+                MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
 
                 // Debug.Log(paramName + " <-> " + appliedParamName);
                 if (paramName == appliedParamName)
@@ -234,7 +346,7 @@ namespace Astrovisio
             {
                 ParamRow paramRow = paramSettings.Value;
                 ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
-                MappingType paramMappingType = paramRowSettingsController.RenderSettings.Mapping;
+                MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
                 if (paramMappingType == appliedMappingType)
                 {
                     paramRowSettingsController.Reset();
@@ -252,7 +364,7 @@ namespace Astrovisio
             else
             {
                 // Debug.Log("Setting colormap " + projectRenderSettings.ColorMapSettingsController.ParamName);
-                RenderManager.Instance.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.RenderSettings);
+                RenderManager.Instance.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.ParamRenderSettings);
             }
 
             if (projectRenderSettings.OpacitySettingsController is null)
@@ -263,7 +375,7 @@ namespace Astrovisio
             else
             {
                 // Debug.Log("Setting opacity " + projectRenderSettings.OpacitySettingsController.ParamName);
-                RenderManager.Instance.SetRenderSettings(projectRenderSettings.OpacitySettingsController.RenderSettings);
+                RenderManager.Instance.SetRenderSettings(projectRenderSettings.OpacitySettingsController.ParamRenderSettings);
             }
         }
 
@@ -311,20 +423,32 @@ namespace Astrovisio
             Debug.Log("Colormap: " + colormapParamName);
         }
 
+        private void SetAxisRowSettingsController(string paramName, AxisRowSettingsController axisRowSettingsController)
+        {
+            if (axisSettingsData.TryGetValue(paramName, out AxisRow axisRow))
+            {
+                // Debug.Log($"Set: {axisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+                axisRow.AxisRowSettingsController = axisRowSettingsController;
+            }
+        }
+
         private void SetParamRowSettingsController(string paramName, ParamRowSettingsController paramRowSettingsController)
         {
             if (paramSettingsDatas.TryGetValue(paramName, out ParamRow paramRow))
             {
                 paramRow.ParamRowSettingsController = paramRowSettingsController;
-                // Debug.Log("SetParamRowSettingsController: " + paramName + " -> " + paramRowSettingsController.RenderSettings.Mapping);
-
-                // foreach (var kvp in paramSettingsDatas)
-                // {
-                //     string key = kvp.Key;
-                //     ParamRow value = kvp.Value;
-                //     Debug.Log($"Parametro: {key}, Mapping: {value.ParamRowSettingsController.RenderSettings.Mapping}");
-                // }
             }
+        }
+
+        private AxisRowSettingsController GetAxisRowSettingsController(string paramName)
+        {
+            if (axisSettingsData.TryGetValue(paramName, out AxisRow axisRow))
+            {
+                // Debug.Log($"Get: {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+                return axisRow.AxisRowSettingsController;
+            }
+
+            return null;
         }
 
         private ParamRowSettingsController GetParamRowSettingsController(string paramName)
@@ -343,7 +467,7 @@ namespace Astrovisio
             CloseSettingsPanel();
             UpdateRenderManager();
             UpdateMappingIcons();
-            PrintAllMappings();
+            // PrintAllMappings();
         }
 
     }

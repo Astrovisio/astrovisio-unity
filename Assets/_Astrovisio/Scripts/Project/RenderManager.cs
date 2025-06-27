@@ -26,7 +26,7 @@ namespace Astrovisio
 
         // Settings
         private DataRenderer dataRenderer;
-        private RenderSettings renderSettings;
+        private ParamRenderSettings renderSettings;
         private Dictionary<Project, DataContainer> projectDataContainers = new();
         public Action<Project> OnProjectReadyToGetRendered;
 
@@ -56,6 +56,23 @@ namespace Astrovisio
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
         }
+
+        private void Update()
+        {
+            // TO BE REMOVED ON FUTURE
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
+                if (foundObject != null)
+                {
+                    MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
+                    bool currentState = meshRenderer.enabled;
+                    meshRenderer.enabled = !currentState;
+                    // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
+                }
+            }
+        }
+
 
         private void ResetCameraTransform()
         {
@@ -95,8 +112,13 @@ namespace Astrovisio
             // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
         }
 
+        public void SetAxisSettings(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        {
+            // Debug.Log($"SetAxisSettings: {axis} {thresholdMin} {thresholdMax} {scalingType}");
+            dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+        }
 
-        public void SetRenderSettings(RenderSettings renderSettings)
+        public void SetRenderSettings(ParamRenderSettings renderSettings)
         {
             // if (renderSettings.Mapping == MappingType.None && renderSettings.MappingSettings is null)
             // {
@@ -116,12 +138,20 @@ namespace Astrovisio
             }
         }
 
-        private void SetNone()
+        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
         {
-            dataRenderer.SetNone();
+            if (dataRenderer is not null)
+            {
+                dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+            }
         }
 
-        private void SetColorMap(RenderSettings renderSettings)
+        // private void SetNone()
+        // {
+        //     dataRenderer.SetNone();
+        // }
+
+        private void SetColorMap(ParamRenderSettings renderSettings)
         {
             if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
             {
@@ -148,7 +178,7 @@ namespace Astrovisio
             dataRenderer.RemoveColorMap();
         }
 
-        private void SetOpacity(RenderSettings renderSettings)
+        private void SetOpacity(ParamRenderSettings renderSettings)
         {
             if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
             {
