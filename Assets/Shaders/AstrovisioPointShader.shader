@@ -1,6 +1,12 @@
 Shader "Astrovisio/PointShader"
 {
-    Properties { }
+    Properties 
+    {
+
+
+
+
+    }
 
     SubShader
     {
@@ -50,8 +56,6 @@ Shader "Astrovisio/PointShader"
                 int InverseMapping;
                 float Offset;
                 int ScalingType;
-                
-                // Future use: Will filter points based on this range
                 float TargetMinVal;
                 float TargetMaxVal;
             };
@@ -67,9 +71,6 @@ Shader "Astrovisio/PointShader"
             StructuredBuffer<float> dataCmap;
             StructuredBuffer<float> dataOpacity;
             StructuredBuffer<MappingConfig> mappingConfigs;
-            // Filtering
-            uniform float cutoffMin;
-            uniform float cutoffMax;
             // Color maps
             uniform sampler2D colorMap;
             uniform float colorMapIndex;
@@ -89,6 +90,17 @@ Shader "Astrovisio/PointShader"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
+            float signed_log10(float x, float scale) {
+                return sign(x) * log10(1 + abs(x) / scale);
+            }
+
+            float signed_sqrt(float x, float scale) {
+                return sign(x) * sqrt(abs(x) / scale);
+            }
+
+            float signed_squared(float x, float scale) {
+                return sign(x) * (abs(x * x) / scale);
+            }
             
             float map(float value, float min1, float max1, float min2, float max2) {
                 return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
@@ -112,16 +124,16 @@ Shader "Astrovisio/PointShader"
                 switch (config.ScalingType)
                 {
                     case LOG:
-                        scaledValue = log(input);
-                        scaledValue = map(scaledValue, log(max(config.DataMinVal, 1.0)), log(max(config.DataMaxVal, 1.0)), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = signed_log10(input, 1.0);
+                        scaledValue = map(scaledValue, signed_log10(config.DataMinVal, 1.0), signed_log10(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQRT:
-                        scaledValue = sqrt(input);
-                        scaledValue = map(scaledValue, sqrt(max(config.DataMinVal, 0.0)), sqrt(max(config.DataMaxVal, 0.0)), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = signed_sqrt(input, 1.0);
+                        scaledValue = map(scaledValue, signed_sqrt(config.DataMinVal, 1.0), signed_sqrt(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQUARED:
-                        scaledValue = input * input;
-                        scaledValue = map(scaledValue, config.DataMinVal * config.DataMinVal, config.DataMaxVal * config.DataMaxVal, config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = signed_squared(input, 1.0);
+                        scaledValue = map(scaledValue, signed_squared(config.DataMinVal, 1.0), signed_squared(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case EXP:
                         scaledValue = exp(input);

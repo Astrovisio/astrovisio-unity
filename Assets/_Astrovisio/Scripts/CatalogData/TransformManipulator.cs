@@ -11,6 +11,12 @@ public class TransformManipulator : MonoBehaviour
     public Transform leftController;
     public Transform rightController;
 
+    [Header("Line Renderers")]
+    public LineRenderer lineBetweenControllers;
+    public LineRenderer lineLeftToObject;
+    public LineRenderer lineRightToObject;
+    public LineRenderer lineTranslateToObject;
+
     private bool isLeftGripping;
     private bool isRightGripping;
 
@@ -64,6 +70,8 @@ public class TransformManipulator : MonoBehaviour
             initializedSingleGrip = false;
             initializedDualGrip = false;
         }
+
+        UpdateLines();
     }
 
     void InitSingleGrip()
@@ -128,5 +136,37 @@ public class TransformManipulator : MonoBehaviour
         Vector3 initialMidpoint = (initialLeftPos + initialRightPos) / 2f;
         Vector3 deltaMid = currentMidpoint - initialMidpoint;
         transform.position = initialObjectPosition + deltaMid;
+    }
+
+    void UpdateLines()
+    {
+        lineBetweenControllers.enabled = false;
+        lineLeftToObject.enabled = false;
+        lineRightToObject.enabled = false;
+        lineTranslateToObject.enabled = false;
+
+        Vector3 objectCenter = transform.position;
+
+        if (isLeftGripping && isRightGripping)
+        {
+            lineBetweenControllers.enabled = true;
+            lineBetweenControllers.SetPosition(0, leftController.position);
+            lineBetweenControllers.SetPosition(1, rightController.position);
+
+            lineLeftToObject.enabled = true;
+            lineLeftToObject.SetPosition(0, leftController.position);
+            lineLeftToObject.SetPosition(1, objectCenter);
+
+            lineRightToObject.enabled = true;
+            lineRightToObject.SetPosition(0, rightController.position);
+            lineRightToObject.SetPosition(1, objectCenter);
+        }
+        else if (isLeftGripping || isRightGripping)
+        {
+            Transform active = isLeftGripping ? leftController : rightController;
+            lineTranslateToObject.enabled = true;
+            lineTranslateToObject.SetPosition(0, active.position);
+            lineTranslateToObject.SetPosition(1, objectCenter);
+        }
     }
 }

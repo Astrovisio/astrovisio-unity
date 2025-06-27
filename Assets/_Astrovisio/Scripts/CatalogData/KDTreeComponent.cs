@@ -38,7 +38,7 @@ public class KDTreeComponent : MonoBehaviour
 
     [Header("Debug Sphere (in game)")]
     public bool debugSphereEnabled = true;
-    public Color sphereColor = Color.red;
+    public Material sphereMaterial;
     public float sphereRadius = 0.05f;
     private GameObject debugSphere;
 
@@ -60,9 +60,7 @@ public class KDTreeComponent : MonoBehaviour
             debugSphere.name = "DebugNearestPointSphere";
             debugSphere.transform.localScale = Vector3.one * sphereRadius * 2f; // diametro = raggio*2
             var rend = debugSphere.GetComponent<Renderer>();
-            rend.material = new Material(Shader.Find("Standard"));
-            rend.material.color = sphereColor;
-
+            rend.material = sphereMaterial;
             // Rimuovo collider per evitare problemi fisici se non serve
             Destroy(debugSphere.GetComponent<Collider>());
         }
@@ -163,11 +161,6 @@ public class KDTreeComponent : MonoBehaviour
             }
         }
 
-        if (GetLastNearest() is not null)
-        {
-            var test = GetDataInfo(GetLastNearest().Value.index);
-            Debug.Log($"{test[0]}, {test[1]}, {test[2]}");
-        }
     }
 
     private float RemapInverse(float val, Vector2 from, Vector2 to)

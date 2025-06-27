@@ -19,7 +19,7 @@ public class KDTree
     public KDTree(float[][] data, List<int> pointIndices)
     {
         this.data = data;
-        this.indices = pointIndices.ToArray();
+        indices = pointIndices.ToArray();
         root = BuildTree(0, indices.Length, 0);
     }
 
@@ -88,8 +88,7 @@ public class KDTree
         if (node == null) return;
 
         int idx = node.index;
-        Vector3 point = new Vector3(data[0][idx], data[1][idx], data[2][idx]);
-        float distSq = (point - target).sqrMagnitude;
+        float distSq = (node.point - target).sqrMagnitude;
 
         if (heap.Count < k)
             heap.Enqueue((idx, distSq), distSq);
