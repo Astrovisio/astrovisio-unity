@@ -137,6 +137,9 @@ namespace Astrovisio
             kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
             transformManipulator.leftController = xrController.GetLeftPokePoint();
             transformManipulator.rightController = xrController.GetRightPokePoint();
+
+            transformManipulator.cubeTransform = kdTreeComponent.gameObject.transform;
+
         }
 
         private void StopXR()
