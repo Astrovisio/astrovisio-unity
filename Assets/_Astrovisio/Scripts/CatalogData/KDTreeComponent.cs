@@ -42,10 +42,11 @@ public class KDTreeComponent : MonoBehaviour
     public float sphereRadius = 0.05f;
     private GameObject debugSphere;
 
-    public async void Initialize(float[][] pointData, Vector3 pivot = new Vector3())
+    public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz = null)
     {
         data = pointData;
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot));
+        xyz ??= new int[] { 0, 1, 2 };
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
 
         if (!Application.isPlaying)
         {

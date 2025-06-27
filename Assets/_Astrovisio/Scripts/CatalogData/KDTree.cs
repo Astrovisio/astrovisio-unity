@@ -7,6 +7,7 @@ public class KDTree
     private readonly float[][] data;
     private readonly int[] indices;
     private KDTreeNode root;
+    private int[] xyz;
 
     private class KDTreeNode
     {
@@ -16,9 +17,10 @@ public class KDTree
         public KDTreeNode right;
     }
 
-    public KDTree(float[][] data, List<int> pointIndices)
+    public KDTree(float[][] data, List<int> pointIndices, int[] xyz)
     {
         this.data = data;
+        this.xyz = xyz;
         indices = pointIndices.ToArray();
         root = BuildTree(0, indices.Length, 0);
     }
@@ -36,7 +38,7 @@ public class KDTree
         return new KDTreeNode
         {
             index = indices[mid],
-            point = new Vector3(data[0][indices[mid]], data[1][indices[mid]], data[2][indices[mid]]),
+            point = new Vector3(data[xyz[0]][indices[mid]], data[xyz[1]][indices[mid]], data[xyz[2]][indices[mid]]),
             left = BuildTree(start, mid, depth + 1),
             right = BuildTree(mid + 1, end, depth + 1)
         };
