@@ -112,20 +112,21 @@ namespace Astrovisio
             // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
         }
 
-        public void SetAxisSettings(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        public void SetAxisSettings(AxisRenderSettings axisRenderSettings)
         {
+
             // Debug.Log($"SetAxisSettings: {axis} {thresholdMin} {thresholdMax} {scalingType}");
-            dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+            dataRenderer.SetAxisAstrovisio(
+                axisRenderSettings.Axis,
+                axisRenderSettings.Name,
+                axisRenderSettings.ThresholdMinSelected,
+                axisRenderSettings.ThresholdMaxSelected,
+                axisRenderSettings.ScalingType
+            );
         }
 
         public void SetRenderSettings(ParamRenderSettings renderSettings)
         {
-            // if (renderSettings.Mapping == MappingType.None && renderSettings.MappingSettings is null)
-            // {
-            //     Debug.Log("SetRenderSettings -> None");
-            //     SetNone();
-            // }
-            // else
             if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
             {
                 // Debug.Log("SetRenderSettings -> Opacity " + renderSettings.MappingSettings.ScalingType);

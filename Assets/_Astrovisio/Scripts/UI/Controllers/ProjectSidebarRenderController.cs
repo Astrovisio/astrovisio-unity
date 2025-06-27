@@ -444,7 +444,7 @@ namespace Astrovisio
         {
             if (axisSettingsData.TryGetValue(paramName, out AxisRow axisRow))
             {
-                // Debug.Log($"Get: {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+                Debug.Log($"Get: {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRow.AxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
                 return axisRow.AxisRowSettingsController;
             }
 

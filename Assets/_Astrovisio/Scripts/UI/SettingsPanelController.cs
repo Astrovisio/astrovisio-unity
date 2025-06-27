@@ -134,6 +134,8 @@ namespace Astrovisio
 
             paramNameLabel.text = TempAxisRowSettingsController.ParamName;
 
+            // Debug.Log($"Get 2: {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+
             // THRESHOLD
             thresholdSlider.lowLimit = float.MinValue;
             thresholdSlider.highLimit = float.MaxValue;
@@ -156,16 +158,39 @@ namespace Astrovisio
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetAxisSettings(
-                    TempAxisRowSettingsController.AxisRenderSettings.Axis,
-                    TempAxisRowSettingsController.AxisRenderSettings.Name,
-                    TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected,
-                    TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected,
-                    TempAxisRowSettingsController.AxisRenderSettings.ScalingType
-                );
+                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 isThresholdUpdating = false;
             };
-            thresholdSlider?.RegisterCallback(thresholdSliderCallback);
+
+            thresholdMinFloatFieldCallback = evt =>
+            {
+                if (isThresholdUpdating)
+                {
+                    return;
+                }
+                isThresholdUpdating = true;
+                thresholdSlider.minValue = (float)evt.newValue;
+                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
+                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                isThresholdUpdating = false;
+            };
+
+            thresholdMaxFloatFieldCallback = evt =>
+            {
+                if (isThresholdUpdating)
+                {
+                    return;
+                }
+                isThresholdUpdating = true;
+                thresholdSlider.maxValue = (float)evt.newValue;
+                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
+                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                isThresholdUpdating = false;
+            };
+
+            thresholdSlider?.RegisterValueChangedCallback(thresholdSliderCallback);
+            thresholdSliderMinFloatField?.RegisterValueChangedCallback(thresholdMinFloatFieldCallback);
+            thresholdSliderMaxFloatField?.RegisterValueChangedCallback(thresholdMaxFloatFieldCallback);
 
 
             // SCALING
@@ -177,13 +202,7 @@ namespace Astrovisio
                 {
                     TempAxisRowSettingsController.AxisRenderSettings.ScalingType = selectedType;
 
-                    RenderManager.Instance.SetAxisSettings(
-                        TempAxisRowSettingsController.AxisRenderSettings.Axis,
-                        TempAxisRowSettingsController.AxisRenderSettings.Name,
-                        TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected,
-                        TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected,
-                        TempAxisRowSettingsController.AxisRenderSettings.ScalingType
-                    );
+                    RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 }
                 else
                 {
@@ -196,25 +215,13 @@ namespace Astrovisio
             EventCallback<ClickEvent> onApply = evt =>
             {
                 AxisRowSettingsController = TempAxisRowSettingsController;
-                RenderManager.Instance.SetAxisSettings(
-                    AxisRowSettingsController.AxisRenderSettings.Axis,
-                    AxisRowSettingsController.AxisRenderSettings.Name,
-                    AxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected,
-                    AxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected,
-                    AxisRowSettingsController.AxisRenderSettings.ScalingType
-                );
+                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 CloseSettingsPanel();
                 OnApplyAxisSetting?.Invoke(AxisRowSettingsController);
             };
             EventCallback<ClickEvent> onCancel = evt =>
             {
-                RenderManager.Instance.SetAxisSettings(
-                    AxisRowSettingsController.AxisRenderSettings.Axis,
-                    AxisRowSettingsController.AxisRenderSettings.Name,
-                    AxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected,
-                    AxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected,
-                    AxisRowSettingsController.AxisRenderSettings.ScalingType
-                );
+                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 CloseSettingsPanel();
                 OnCancelSetting?.Invoke();
             };
@@ -632,7 +639,7 @@ namespace Astrovisio
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.None;
 
-            SetMappingDropdownValue(mappingDropdown.choices[0]);
+            // SetMappingDropdownValue(mappingDropdown.choices[0]);
         }
 
         private void SetNoneDisplayStyle()
@@ -731,14 +738,17 @@ namespace Astrovisio
             }
             if (thresholdSliderCallback is not null)
             {
+                // Debug.Log("Unregistered thresholdSliderCallback");
                 thresholdSlider?.UnregisterValueChangedCallback(thresholdSliderCallback);
             }
             if (thresholdMinFloatFieldCallback is not null)
             {
+                // Debug.Log("Unregistered thresholdMinFloatFieldCallback");
                 thresholdSliderMinFloatField?.UnregisterValueChangedCallback(thresholdMinFloatFieldCallback);
             }
             if (thresholdMaxFloatFieldCallback is not null)
             {
+                // Debug.Log("Unregistered thresholdMaxFloatFieldCallback");
                 thresholdSliderMaxFloatField?.UnregisterValueChangedCallback(thresholdMaxFloatFieldCallback);
             }
             if (scalingDropdownCallback is not null)
