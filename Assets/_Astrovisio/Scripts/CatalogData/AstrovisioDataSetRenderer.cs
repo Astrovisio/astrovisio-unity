@@ -813,9 +813,39 @@ namespace CatalogData
 
         private void HandleNoizeCheck()
         {
-            if (Input.GetKeyDown(KeyCode.N))
+            if (Input.GetKeyDown(KeyCode.Alpha0))
             {
-                DataMapping.UseNoise = !DataMapping.UseNoise;
+                DataMapping.UseNoise = false;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.005f;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.010f;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.015f;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.020f;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.025f;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                DataMapping.UseNoise = true;
+                DataMapping.Uniforms.NoiseStrength = 0.030f;
             }
         }
 
