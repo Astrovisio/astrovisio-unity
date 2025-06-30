@@ -338,6 +338,28 @@
     overflow: hidden;
 }
 
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #SettingsPanel {
+    position: absolute;
+    top: auto;
+    left: 100%;
+    min-height: auto;
+    height: auto;
+    max-height: none;
+    width: 276px;
+    right: 0;
+    background-color: var(--grey-200);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    justify-content: flex-end;
+    min-width: 276px;
+    max-width: 276px;
+    bottom: auto;
+    translate: 8px 0;
+    display: none;
+}
+
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer {
     padding-top: 20px;
     padding-left: 8px;
@@ -550,28 +572,6 @@
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
 }
 
-#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #SettingsPanel {
-    position: absolute;
-    top: auto;
-    left: 100%;
-    min-height: auto;
-    height: auto;
-    max-height: none;
-    width: 276px;
-    right: 0;
-    translate: 8px 0;
-    background-color: var(--grey-200);
-    display: none;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
-    border-bottom-left-radius: 16px;
-    justify-content: flex-end;
-    min-width: 276px;
-    max-width: 276px;
-    bottom: auto;
-}
-
 #ProjectSidebarRoot > #RenderSettingsContainer.active {
     flex-grow: 1;
     height: auto;
@@ -611,21 +611,12 @@
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent > #SettingsPanel {
     opacity: 0;
-    transition-property: opacity, visibility;
-    transition-duration: 0.4s, 0s;
-    transition-timing-function: ease-in-out, ease;
-    visibility: hidden;
-    transition-delay: 0s, 0.4s;
-    display: flex;
+    display: none;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent > #SettingsPanel.active {
     opacity: 1;
-    visibility: visible;
-    transition-property: visibility, opacity;
-    transition-duration: 0s, 0.4s;
-    transition-timing-function: ease, ease-in-out;
-    transition-delay: 0s, 0s;
+    display: flex;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer.active > #AccordionContent > #ContentContainer > #FirstContainer > #RestFrequencyButton > #RestFrequencyPanel.active {

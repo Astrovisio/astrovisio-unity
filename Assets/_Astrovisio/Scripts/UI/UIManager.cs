@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace Astrovisio
@@ -19,6 +20,9 @@ namespace Astrovisio
         private EditProjectViewController editProjectViewController;
         private DuplicateProjectViewController duplicateProjectViewController;
         private DeleteProjectViewController deleteProjectViewController;
+
+        // === Local ===
+        private bool isInteractingWithUI = false;
 
         private void Start()
         {
@@ -50,6 +54,53 @@ namespace Astrovisio
         public ProjectManager GetProjectManager() => projectManager;
         public RenderManager GetRenderManager() => renderManager;
         public UIContextSO getUIContext() => uiContextSO;
+
+        public bool IsInteractingWithUI()
+        {
+            isInteractingWithUI = IsPointerOverVisibleUI();
+            return isInteractingWithUI;
+        }
+
+        private bool IsPointerOverVisibleUI()
+        {
+            if (uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
+            {
+                Debug.Log("rootVisualElement or panel is null");
+                return false;
+            }
+
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            mousePosition.y = Screen.height - mousePosition.y;
+            Vector2 panelPosition = RuntimePanelUtils.ScreenToPanel(uiDocument.rootVisualElement.panel, mousePosition);
+            VisualElement picked = uiDocument.rootVisualElement.panel.Pick(panelPosition);
+
+            if (picked == null)
+            {
+                // Debug.Log("No UI");
+                return false;
+            }
+
+            // Debug.Log($"UI: {picked.name}, pickingMode: {picked.pickingMode}, visibility: {picked.resolvedStyle.visibility}, display: {picked.resolvedStyle.display}");
+
+            while (picked != null)
+            {
+                var style = picked.resolvedStyle;
+                if (
+                    picked.pickingMode == PickingMode.Position &&
+                    style.visibility == Visibility.Visible &&
+                    style.display != DisplayStyle.None &&
+                    style.opacity > 0.01f &&
+                    style.width > 0 && style.height > 0
+                )
+                {
+                    return true;
+                }
+
+                picked = picked.parent;
+            }
+
+            return false;
+        }
 
         public void SetSceneVisibility(bool state)
         {

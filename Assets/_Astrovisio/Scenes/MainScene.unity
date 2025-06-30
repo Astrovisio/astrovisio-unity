@@ -461,6 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f200f4a778b334e9c908fd7bedc607, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiManager: {fileID: 1869469690}
   target: {fileID: 2087590747}
   minDistance: 0.05
   maxDistance: 15

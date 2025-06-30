@@ -1,10 +1,11 @@
-using System.Collections.Generic;
+using Astrovisio;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class OrbitCameraController : MonoBehaviour
 {
+    // Dependecies
+    [SerializeField] private UIManager uiManager;
+
     [Header("Target & Distance")]
     public Transform target;
     public float minDistance = 2.0f;
@@ -28,10 +29,6 @@ public class OrbitCameraController : MonoBehaviour
     private float desiredDistance;
     private float currentDistance;
 
-    // UI
-    private bool isInteractingWithUI = false;
-    private VisualElement rootVisualElement;
-
     private void Start()
     {
         if (target == null)
@@ -49,24 +46,16 @@ public class OrbitCameraController : MonoBehaviour
         desiredRotation = initialRotation.eulerAngles;
         currentRotation = initialRotation.eulerAngles;
 
-        var uiDocument = FindFirstObjectByType<UIDocument>();
-        if (uiDocument != null)
+        if (uiManager == null)
         {
-            rootVisualElement = uiDocument.rootVisualElement;
+            Debug.LogWarning("Missing UIManager.");
         }
     }
-
-    private bool IsInteractingWithUI()
-    {
-        isInteractingWithUI = IsPointerOverVisibleUI();
-        return isInteractingWithUI;
-    }
-
 
     private void LateUpdate()
     {
 
-        if (IsInteractingWithUI())
+        if (uiManager.IsInteractingWithUI())
         {
             return;
         }
@@ -105,39 +94,6 @@ public class OrbitCameraController : MonoBehaviour
         transform.rotation = rotation;
     }
 
-    private bool IsPointerOverVisibleUI()
-    {
-        if (rootVisualElement == null)
-        {
-            //Debug.Log("rootVisualElement is null");
-            return false;
-        }
-
-        // LogUITreeUnderMouse();
-
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
-        VisualElement picked = rootVisualElement.panel.Pick(uiPosition);
-
-        if (picked == null)
-        {
-            // Debug.Log("Nessun elemento UI sotto il mouse");
-            return false;
-        }
-
-        // Debug.Log($"Elemento UI sotto mouse: {picked.name}, visibility: {picked.resolvedStyle.visibility}, display: {picked.resolvedStyle.display}, pickingMode: {picked.pickingMode}");
-
-        while (picked != null)
-        {
-            if (picked.resolvedStyle.visibility == Visibility.Visible)
-                return true;
-
-            picked = picked.parent;
-        }
-
-        return false;
-    }
-
     public void ResetCameraView(Vector3 position, Vector3 rotationEuler, float distance)
     {
         target.position = position;
@@ -156,47 +112,5 @@ public class OrbitCameraController : MonoBehaviour
         transform.position = cameraPosition;
         transform.rotation = rotation;
     }
-
-    // private void LogUITreeUnderMouse()
-    // {
-    //     Vector2 mousePosition = Mouse.current.position.ReadValue();
-    //     Vector2 uiPosition = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePosition);
-
-    //     Debug.Log($"Mouse Screen Position: {mousePosition}, UI Position: {uiPosition}");
-
-    //     var picked = rootVisualElement.panel.Pick(uiPosition);
-    //     if (picked == null)
-    //     {
-    //         Debug.Log("UI Pick: null");
-    //         return;
-    //     }
-
-    //     Debug.Log($"[Picked] name={picked.name}, class={picked.GetType().Name}, pickingMode={picked.pickingMode}, visible={picked.resolvedStyle.visibility}");
-
-    //     VisualElement current = picked;
-    //     while (current != null)
-    //     {
-    //         Debug.Log($"  > Parent: {current.name} - pickingMode: {current.pickingMode} - display: {current.resolvedStyle.display} - visible: {current.resolvedStyle.visibility}");
-    //         current = current.parent;
-    //     }
-    // }
-
-    // private bool IsAnyVisibleUIElementUnderMouse()
-    // {
-    //     var mousePos = Mouse.current.position.ReadValue();
-    //     var panelPos = RuntimePanelUtils.ScreenToPanel(rootVisualElement.panel, mousePos);
-
-    //     List<VisualElement> hits = new();
-    //     rootVisualElement.panel.PickAll(panelPos, hits);
-
-    //     foreach (var el in hits)
-    //     {
-    //         Debug.Log($"[Hit] {el.name} picking: {el.pickingMode}, visible: {el.resolvedStyle.visibility}");
-    //         if (el.resolvedStyle.visibility == Visibility.Visible && el.pickingMode != PickingMode.Ignore)
-    //             return true;
-    //     }
-    //     return false;
-    // }
-
 
 }
