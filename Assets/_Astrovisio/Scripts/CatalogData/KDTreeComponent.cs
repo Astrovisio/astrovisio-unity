@@ -30,6 +30,7 @@ public class KDTreeComponent : MonoBehaviour
     public Vector2 yTargetRange = new Vector2(-10f, 10f);
     public Vector2 zTargetRange = new Vector2(-10f, 10f);
 
+    private int[] xyz = new int[] { 0, 1, 2 };
 
     private KDTreeManager manager;
     private float[][] data;
@@ -42,11 +43,11 @@ public class KDTreeComponent : MonoBehaviour
     public float sphereRadius = 0.05f;
     private GameObject debugSphere;
 
-    public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz = null)
+    public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
     {
         data = pointData;
-        xyz ??= new int[] { 0, 1, 2 };
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
+        this.xyz = xyz;
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, this.xyz));
 
         if (!Application.isPlaying)
         {
@@ -93,11 +94,16 @@ public class KDTreeComponent : MonoBehaviour
 
     public Vector3 GetNearestWorldSpaceCoordinates(int? index)
     {
+        if (pointCloudTransform == null)
+        {
+            return new Vector3();
+        }
+
         int lastNearestIndex = index != null ? (int)index : nearest.Value.index;
         Vector3 pointOriginal = new Vector3(
-            data[0][lastNearestIndex],
-            data[1][lastNearestIndex],
-            data[2][lastNearestIndex]
+            data[xyz[0]][lastNearestIndex],
+            data[xyz[1]][lastNearestIndex],
+            data[xyz[2]][lastNearestIndex]
         );
 
         pointOriginal.x = RemapInverse(pointOriginal.x, xRange, xTargetRange);

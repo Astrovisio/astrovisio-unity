@@ -32,20 +32,20 @@ namespace Astrovisio
         public Vector3 MaxPoint { private set; get; }
         public Vector3 Center { private set; get; }
 
-        #nullable enable
+#nullable enable
         public DataContainer(DataPack dataPack, Project? project)
         {
             DataPack = dataPack ?? throw new ArgumentNullException(nameof(dataPack));
             Project = project;
 
-            ComputeMinMax();
-            ComputeCenter();
-            InitAxisIndex();
+            InitAxis();
+            InitMinMax();
+            InitCenter();
             InitAxisThreshold();
 
             TransposedData = Transpose(DataPack.Rows);
         }
-        #nullable disable
+#nullable disable
 
         private void InitAxisThreshold()
         {
@@ -74,92 +74,114 @@ namespace Astrovisio
                 }
         }
 
-        private void InitAxisIndex()
+        private void InitAxis()
         {
-            string xAxisName = "";
-            string yAxisName = "";
-            string zAxisName = "";
-            if (Project != null)
-                foreach (var kvp in Project.ConfigProcess.Params)
+            if (Project == null)
+            {
+                return;
+            }
+
+            XAxisName = "";
+            YAxisName = "";
+            ZAxisName = "";
+
+            foreach (var kvp in Project.ConfigProcess.Params)
+            {
+                string paramName = kvp.Key;
+                ConfigParam param = kvp.Value;
+
+                if (param.XAxis)
                 {
-                    string paramName = kvp.Key;
-                    ConfigParam param = kvp.Value;
-
-                    // Debug.Log($"Parametro: {paramName}");
-                    // Debug.Log($"Valore: {param.XAxis}");
-
-                    if (param.XAxis)
-                    {
-                        XAxisName = paramName;
-                    }
-                    else if (param.YAxis)
-                    {
-                        YAxisName = paramName;
-                    }
-                    else if (param.ZAxis)
-                    {
-                        ZAxisName = paramName;
-                    }
+                    // Debug.Log("x: " + paramName);
+                    XAxisName = paramName;
                 }
-            // Debug.Log("xAxisName: " + xAxisName);
-            // Debug.Log("yAxisName: " + yAxisName);
-            // Debug.Log("zAxisName: " + zAxisName);
+                else if (param.YAxis)
+                {
+                    // Debug.Log("y: " + paramName);
+                    YAxisName = paramName;
+                }
+                else if (param.ZAxis)
+                {
+                    // Debug.Log("z: " + paramName);
+                    ZAxisName = paramName;
+                }
+            }
+            // Debug.Log("XAxisName: " + XAxisName);
+            // Debug.Log("YAxisName: " + YAxisName);
+            // Debug.Log("ZAxisName: " + ZAxisName);
 
             for (int i = 0; i < DataPack.Columns.Length; i++)
             {
-                if (DataPack.Columns[i] == xAxisName)
+                if (DataPack.Columns[i] == XAxisName)
                 {
                     XAxisIndex = i;
                 }
-                else if (DataPack.Columns[i] == yAxisName)
+                else if (DataPack.Columns[i] == YAxisName)
                 {
                     YAxisIndex = i;
                 }
-                else if (DataPack.Columns[i] == zAxisName)
+                else if (DataPack.Columns[i] == ZAxisName)
                 {
                     ZAxisIndex = i;
                 }
             }
-            // Debug.Log("XAxis: " + XAxis);
-            // Debug.Log("YAxis: " + YAxis);
-            // Debug.Log("ZAxis: " + ZAxis);
+            // Debug.Log("XAxisIndex: " + XAxisIndex);
+            // Debug.Log("YAxisIndex: " + YAxisIndex);
+            // Debug.Log("ZAxisIndex: " + ZAxisIndex);
         }
 
-        private void ComputeMinMax()
+
+        private void InitMinMax()
         {
             if (DataPack.Rows == null || DataPack.Rows.Length == 0)
             {
                 throw new InvalidOperationException("No data rows available.");
             }
 
-            var first = ToVector3(DataPack.Rows[0]);
+            double[] firstRow = DataPack.Rows[0];
+            Vector3 first = new Vector3(
+                (float)firstRow[XAxisIndex],
+                (float)firstRow[YAxisIndex],
+                (float)firstRow[ZAxisIndex]
+            );
+
             MinPoint = first;
             MaxPoint = first;
             PointCount = 0;
 
-            foreach (var row in DataPack.Rows)
+            foreach (double[] row in DataPack.Rows)
             {
-                var point = ToVector3(row);
+                Vector3 point = new Vector3(
+                    (float)row[XAxisIndex],
+                    (float)row[YAxisIndex],
+                    (float)row[ZAxisIndex]
+                );
+
                 MinPoint = Vector3.Min(MinPoint, point);
                 MaxPoint = Vector3.Max(MaxPoint, point);
                 PointCount++;
             }
+
+            Debug.Log(MinPoint);
+            Debug.Log(MaxPoint);
+            Debug.Log(PointCount);
         }
 
-        private void ComputeCenter()
+
+        private void InitCenter()
         {
             Center = (MinPoint + MaxPoint) / 2f;
         }
 
-        private Vector3 ToVector3(double[] row)
-        {
-            if (row.Length < 3)
-            {
-                throw new ArgumentException("Each row must have at least 3 values (x, y, z).");
-            }
+        // private Vector3 ToVector3(double[] row)
+        // {
+        //     if (row.Length < 3)
+        //     {
+        //         throw new ArgumentException("Each row must have at least 3 values (x, y, z).");
+        //     }
 
-            return new Vector3((float)row[0], (float)row[1], (float)row[2]);
-        }
+        //     return new Vector3((float)row[0], (float)row[1], (float)row[2]);
+        // }
 
         public Vector3[] GetProportionalScaledData(float cubeDim)
         {

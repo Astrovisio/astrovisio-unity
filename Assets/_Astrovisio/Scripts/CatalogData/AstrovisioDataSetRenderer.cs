@@ -152,7 +152,8 @@ namespace CatalogData
             kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
             kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
 
-            kdTreeComponent.Initialize(data, dataContainer.Center);
+            int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
+            kdTreeComponent.Initialize(data, dataContainer.Center, xyzIndex);
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
