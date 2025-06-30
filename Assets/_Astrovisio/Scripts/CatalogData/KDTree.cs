@@ -29,7 +29,7 @@ public class KDTree
     {
         if (start >= end) return null;
 
-        int axis = depth % 3;
+        int axis = this.xyz[depth % 3];
         Array.Sort(indices, start, end - start, Comparer<int>.Create((a, b) =>
             data[axis][a].CompareTo(data[axis][b])
         ));
@@ -58,7 +58,7 @@ public class KDTree
 
         if (distSq < best.Item2) best = (idx, distSq);
 
-        int axis = depth % 3;
+        int axis = this.xyz[depth % 3];
         float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
         float nodeVal = data[axis][idx];
 
@@ -100,7 +100,7 @@ public class KDTree
             heap.Enqueue((idx, distSq), distSq);
         }
 
-        int axis = depth % 3;
+        int axis = this.xyz[depth % 3];
         float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
         float nodeVal = data[axis][idx];
 
