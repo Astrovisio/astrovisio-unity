@@ -58,8 +58,9 @@ public class KDTree
 
         if (distSq < best.Item2) best = (idx, distSq);
 
-        int axis = this.xyz[depth % 3];
-        float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
+        int depthMod = depth % 3;
+        int axis = xyz[depthMod];
+        float targetVal = depthMod == 0 ? target.x : depthMod == 1 ? target.y : target.z;
         float nodeVal = data[axis][idx];
 
         KDTreeNode near = targetVal < nodeVal ? node.left : node.right;
@@ -100,8 +101,9 @@ public class KDTree
             heap.Enqueue((idx, distSq), distSq);
         }
 
-        int axis = this.xyz[depth % 3];
-        float targetVal = axis == 0 ? target.x : axis == 1 ? target.y : target.z;
+        int depthMod = depth % 3;
+        int axis = this.xyz[depthMod];
+        float targetVal = depthMod == 0 ? target.x : depthMod == 1 ? target.y : target.z;
         float nodeVal = data[axis][idx];
 
         KDTreeNode near = targetVal < nodeVal ? node.left : node.right;

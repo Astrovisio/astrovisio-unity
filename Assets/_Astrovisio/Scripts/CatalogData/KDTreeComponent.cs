@@ -100,18 +100,25 @@ public class KDTreeComponent : MonoBehaviour
         }
 
         int lastNearestIndex = index != null ? (int)index : nearest.Value.index;
-        Vector3 pointOriginal = new Vector3(
-            data[xyz[0]][lastNearestIndex],
-            data[xyz[1]][lastNearestIndex],
-            data[xyz[2]][lastNearestIndex]
-        );
 
-        pointOriginal.x = RemapInverse(pointOriginal.x, xRange, xTargetRange);
-        pointOriginal.y = RemapInverse(pointOriginal.y, yRange, yTargetRange);
-        pointOriginal.z = RemapInverse(pointOriginal.z, zRange, zTargetRange);
+        if (lastNearestIndex > 0)
+        {
+            Vector3 pointOriginal = new Vector3(
+                data[xyz[0]][lastNearestIndex],
+                data[xyz[1]][lastNearestIndex],
+                data[xyz[2]][lastNearestIndex]
+            );
 
-        Vector3 worldPos = pointCloudTransform.TransformPoint(pointOriginal);
-        return worldPos;
+            pointOriginal.x = RemapInverse(pointOriginal.x, xRange, xTargetRange);
+            pointOriginal.y = RemapInverse(pointOriginal.y, yRange, yTargetRange);
+            pointOriginal.z = RemapInverse(pointOriginal.z, zRange, zTargetRange);
+
+            Vector3 worldPos = pointCloudTransform.TransformPoint(pointOriginal);
+            return worldPos;
+        }
+
+        return new Vector3();
+
     }
 
     public async Task<PointDistance> ComputeNearestPoint(Vector3 point)
