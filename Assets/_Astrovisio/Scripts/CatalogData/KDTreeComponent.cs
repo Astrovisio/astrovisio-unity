@@ -40,7 +40,7 @@ public class KDTreeComponent : MonoBehaviour
     [Header("Debug Sphere (in game)")]
     public bool debugSphereEnabled = true;
     public Material sphereMaterial;
-    public float sphereRadius = 0.05f;
+    public float sphereRadius = 0.005f;
     private GameObject debugSphere;
 
     public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz)

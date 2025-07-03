@@ -183,7 +183,7 @@ namespace CatalogData
                         Scale = 0.001f,
                         PointSize = 0.3f,
                         PointShape = ShapeType.Circle,
-                        Color = Color.red,
+                        Color = Color.white,
                         Opacity = 1.0f
                     },
                     Mapping = new Mapping
@@ -261,6 +261,17 @@ namespace CatalogData
             _initialLocalRotation = transform.localRotation;
             _initialLocalScale = transform.localScale;
             _initialOpacity = DataMapping.Uniforms.Opacity;
+        }
+
+        public float[] GetDataInfo()
+        {
+            if (kdTreeComponent.GetLastNearest() != null)
+            {
+                int index = kdTreeComponent.GetLastNearest().Value.index;
+                return kdTreeComponent.GetDataInfo(index);
+            }
+            
+            return null;
         }
 
         public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
@@ -808,8 +819,9 @@ namespace CatalogData
             _catalogMaterial.SetColor(_idVignetteColor, VignetteColor);
 
             HandleNoizeCheck();
-
             UpdateMappingValues();
+
+            GetDataInfo();
         }
 
         private void HandleNoizeCheck()

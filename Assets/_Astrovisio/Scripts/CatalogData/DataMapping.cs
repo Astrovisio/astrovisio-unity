@@ -86,7 +86,7 @@ namespace CatalogData
                         Scale = 0.001f,
                         PointSize = 0.3f,
                         PointShape = ShapeType.Circle,
-                        Color = Color.red
+                        Color = Color.white
                     },
                     Mapping = new Mapping
                     {
@@ -117,7 +117,7 @@ namespace CatalogData
                         Scale = 0.001f,
                         PointSize = 0.3f,
                         PointShape = ShapeType.Circle,
-                        Color = Color.red
+                        Color = Color.white
                     },
                     Mapping = new Mapping
                     {

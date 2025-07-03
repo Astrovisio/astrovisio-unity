@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class ParamsPanelUI : MonoBehaviour
+    public class XRParamsUIController : MonoBehaviour
     {
 
         private void Start()

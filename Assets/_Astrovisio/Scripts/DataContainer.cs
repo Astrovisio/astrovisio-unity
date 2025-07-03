@@ -162,9 +162,9 @@ namespace Astrovisio
                 PointCount++;
             }
 
-            Debug.Log(MinPoint);
-            Debug.Log(MaxPoint);
-            Debug.Log(PointCount);
+            // Debug.Log(MinPoint);
+            // Debug.Log(MaxPoint);
+            // Debug.Log(PointCount);
         }
 
 

@@ -22,6 +22,11 @@ namespace Astrovisio
         private AstrovidioDataSetRenderer astrovidioDataSetRenderer;
 
 
+        private Vector3 dataRendererOriginalPosition;
+        private Quaternion dataRendererOriginalRotation;
+        private Vector3 dataRendererOriginalScale;
+
+
         private void Start()
         {
             if (debugMode)
@@ -35,6 +40,10 @@ namespace Astrovisio
                 dataContainer = new DataContainer(dataPack, null);
                 RenderDataContainer(dataContainer);
             }
+
+            dataRendererOriginalPosition = astrovidioDataSetRenderer.transform.position;
+            dataRendererOriginalRotation = astrovidioDataSetRenderer.transform.rotation;
+            dataRendererOriginalScale = astrovidioDataSetRenderer.transform.localScale;
         }
 
         private DataPack LoadCSV()
@@ -80,6 +89,9 @@ namespace Astrovisio
             Debug.Log($"[DataRenderer] Caricati {pack.Rows.Length} punti da {fileName}");
             return pack;
         }
+
+        public DataContainer GetDataContainer() => dataContainer;
+        public AstrovidioDataSetRenderer GetAstrovidioDataSetRenderer() => astrovidioDataSetRenderer;
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
@@ -130,7 +142,14 @@ namespace Astrovisio
         {
             astrovidioDataSetRenderer.RemoveOpacityAstrovisio();
         }
-        
+
+        public void ResetDatasetTransform()
+        {
+            astrovidioDataSetRenderer.transform.position = dataRendererOriginalPosition;
+            astrovidioDataSetRenderer.transform.rotation = dataRendererOriginalRotation;
+            astrovidioDataSetRenderer.transform.localScale = dataRendererOriginalScale;
+        }
+
     }
 
 }
