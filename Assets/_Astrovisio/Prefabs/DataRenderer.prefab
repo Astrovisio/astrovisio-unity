@@ -654,4 +654,4 @@ MonoBehaviour:
   zTargetRange: {x: -0.5, y: 0.5}
   debugSphereEnabled: 1
   sphereMaterial: {fileID: 2100000, guid: c76156930453a994f9f6e6c9a47a08dc, type: 2}
-  sphereRadius: 0.05
+  sphereRadius: 0.005

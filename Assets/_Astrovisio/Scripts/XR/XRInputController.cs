@@ -4,99 +4,111 @@ using UnityEngine.InputSystem;
 
 namespace Astrovisio
 {
+
     public class XRInputController : MonoBehaviour
     {
-        [Header("Dependecies")]
-        [SerializeField] private VRManager vrManager;
-
-        [Header("Controller References")]
-        [SerializeField] private Transform leftController;
-        [SerializeField] private Transform rightController;
 
         [Header("Poke Point References")]
         [SerializeField] private Transform leftPokePoint;
         [SerializeField] private Transform rightPokePoint;
 
-        [Header("Target to Manipulate")]
-        [SerializeField] private Transform target;
-
-        [Header("Options")]
-        [SerializeField] private bool enableScaling = true;
-        [SerializeField] private bool inPlaceScaling = true;
-        [SerializeField] private float rotationCutoff = 5f;
-
         [Header("Input Bindings")]
-        [SerializeField] private InputActionReference leftPrimaryButton;
-        [SerializeField] private InputActionReference leftSecondaryButton;
-        [SerializeField] private InputActionReference leftMenuButton;
-        [SerializeField] private InputActionReference leftTrigger;
-        [SerializeField] private InputActionReference leftGrip;
-        [SerializeField] private InputActionReference rightPrimaryButton;
-        [SerializeField] private InputActionReference rightSecondaryButton;
-        [SerializeField] private InputActionReference rightMenuButton;
-        [SerializeField] private InputActionReference rightTrigger;
-        [SerializeField] private InputActionReference rightGrip;
-        [SerializeField] private MenuPanelUI menuPanelUI;
+        [SerializeField] public InputActionReference leftPrimaryButton;
+        [SerializeField] public InputActionReference leftSecondaryButton;
+        [SerializeField] public InputActionReference leftMenuButton;
+        [SerializeField] public InputActionReference leftTrigger;
+        [SerializeField] public InputActionReference leftGrip;
+        [SerializeField] public InputActionReference rightPrimaryButton;
+        [SerializeField] public InputActionReference rightSecondaryButton;
+        [SerializeField] public InputActionReference rightMenuButton;
+        [SerializeField] public InputActionReference rightTrigger;
+        [SerializeField] public InputActionReference rightGrip;
+
+        // Events
+        public event Action OnLeftPrimaryButtonPressed;
+        public event Action OnLeftSecondaryButtonPressed;
+        public event Action OnLeftMenuButtonPressed;
+        public event Action OnLeftTriggerPressed;
+        public event Action OnLeftGripPressed;
+        public event Action OnRightPrimaryButtonPressed;
+        public event Action OnRightSecondaryButtonPressed;
+        public event Action OnRightMenuButtonPressed;
+        public event Action OnRightTriggerPressed;
+        public event Action OnRightGripPressed;
+
+        public event Action OnRightPrimaryButtonReleased;
 
 
-        private XRScaleRotateController scaleRotateController;
-        private bool isScaling = false;
-
-
-        private void Start()
+        private void OnEnable()
         {
-            if (target != null)
-            {
-                scaleRotateController = new XRScaleRotateController(
-                    target,
-                    target.localScale.magnitude,
-                    rotationCutoff,
-                    inPlaceScaling,
-                    enableScaling
-                );
-            }
+            EnableInputActions();
+            SubscribeToInputActions();
+        }
 
+        private void OnDisable()
+        {
+            DisableInputActions();
+            UnsubscribeFromInputActions();
+        }
+
+        private void EnableInputActions()
+        {
+            leftPrimaryButton.action.Enable();
+            leftSecondaryButton.action.Enable();
+            leftMenuButton.action.Enable();
+            leftTrigger.action.Enable();
+            leftGrip.action.Enable();
+            rightPrimaryButton.action.Enable();
+            rightSecondaryButton.action.Enable();
+            rightMenuButton.action.Enable();
+            rightTrigger.action.Enable();
+            rightGrip.action.Enable();
+        }
+
+        private void DisableInputActions()
+        {
+            leftPrimaryButton.action.Disable();
+            leftSecondaryButton.action.Disable();
+            leftMenuButton.action.Disable();
+            leftTrigger.action.Disable();
+            leftGrip.action.Disable();
+            rightPrimaryButton.action.Disable();
+            rightSecondaryButton.action.Disable();
+            rightMenuButton.action.Disable();
+            rightTrigger.action.Disable();
+            rightGrip.action.Disable();
+        }
+
+        private void SubscribeToInputActions()
+        {
             leftPrimaryButton.action.started += OnLeftPrimaryButtonStarted;
             leftSecondaryButton.action.started += OnLeftSecondaryButtonStarted;
-            leftMenuButton.action.started += OnLeftMenuButton;
-            leftTrigger.action.started += OnLeftTrigger;
-            leftGrip.action.started += OnLeftGrip;
+            leftMenuButton.action.started += OnLeftMenuButtonStarted;
+            leftTrigger.action.started += OnLeftTriggerStarted;
+            leftGrip.action.started += OnLeftGripStarted;
             rightPrimaryButton.action.started += OnRightPrimaryButtonStarted;
             rightSecondaryButton.action.started += OnRightSecondaryButtonStarted;
-            rightMenuButton.action.started += OnRightMenuButton;
-            rightTrigger.action.started += OnRightTrigger;
-            rightGrip.action.started += OnRightGrip;
+            rightMenuButton.action.started += OnRightMenuButtonStarted;
+            rightTrigger.action.started += OnRightTriggerStarted;
+            rightGrip.action.started += OnRightGripStarted;
+
+            rightPrimaryButton.action.canceled += OnRightPrimaryButtonCancelled;
         }
 
-        private void Update()
+        private void UnsubscribeFromInputActions()
         {
+            leftPrimaryButton.action.started -= OnLeftPrimaryButtonStarted;
+            leftSecondaryButton.action.started -= OnLeftSecondaryButtonStarted;
+            leftMenuButton.action.started -= OnLeftMenuButtonStarted;
+            leftTrigger.action.started -= OnLeftTriggerStarted;
+            leftGrip.action.started -= OnLeftGripStarted;
+            rightPrimaryButton.action.started -= OnRightPrimaryButtonStarted;
+            rightSecondaryButton.action.started -= OnRightSecondaryButtonStarted;
+            rightMenuButton.action.started -= OnRightMenuButtonStarted;
+            rightTrigger.action.started -= OnRightTriggerStarted;
+            rightGrip.action.started -= OnRightGripStarted;
 
-            if (BothHandsActive())
-            {
-                Debug.Log("OK");
-                if (!isScaling)
-                {
-                    scaleRotateController.Begin(leftController, rightController);
-                    isScaling = true;
-                }
-
-                scaleRotateController.Update(leftController, rightController);
-            }
-            else
-            {
-                isScaling = false;
-            }
-        }
-
-        private void DebugInput()
-        {
-            for (int i = 0; i < 20; i++)
-            {
-                if (Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode), "JoystickButton" + i)))
-                {
-                    Debug.Log("Joystick Button " + i + " pressed");
-                }
-            }
+            rightPrimaryButton.action.canceled -= OnRightPrimaryButtonCancelled;
         }
 
         public Transform GetLeftPokePoint()
@@ -109,63 +121,73 @@ namespace Astrovisio
             return rightPokePoint;
         }
 
-        private bool BothHandsActive()
-        {
-            return Input.GetKey(KeyCode.G) && Input.GetKey(KeyCode.H);
-        }
-
         private void OnLeftPrimaryButtonStarted(InputAction.CallbackContext context)
         {
             Debug.Log("OnLeftPrimaryButtonStarted");
+            OnLeftPrimaryButtonPressed?.Invoke();
         }
 
         private void OnLeftSecondaryButtonStarted(InputAction.CallbackContext context)
         {
             Debug.Log("OnLeftSecondaryButtonStarted");
+            OnLeftSecondaryButtonPressed?.Invoke();
         }
 
-        private void OnLeftMenuButton(InputAction.CallbackContext context)
+        private void OnLeftMenuButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftMenuButton");
-            menuPanelUI.TogglePanel();
+            Debug.Log("OnLeftMenuButtonStarted");
+            OnLeftMenuButtonPressed?.Invoke();
+            // menuPanelUI.TogglePanel();
         }
 
-        private void OnLeftTrigger(InputAction.CallbackContext context)
+        private void OnLeftTriggerStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftTrigger");
+            Debug.Log("OnLeftTriggerStarted");
+            OnLeftTriggerPressed?.Invoke();
         }
 
-        private void OnLeftGrip(InputAction.CallbackContext context)
+        private void OnLeftGripStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftGrip");
+            Debug.Log("OnLeftGripStarted");
+            OnLeftGripPressed?.Invoke();
         }
 
         private void OnRightPrimaryButtonStarted(InputAction.CallbackContext context)
         {
             Debug.Log("OnRightPrimaryButtonStarted");
+            OnRightPrimaryButtonPressed?.Invoke();
         }
 
         private void OnRightSecondaryButtonStarted(InputAction.CallbackContext context)
         {
             Debug.Log("OnRightSecondaryButtonStarted");
-            Debug.Log("[VRManager] B button pressed. Exiting VR...");
-            vrManager.ExitVR();
+            OnRightSecondaryButtonPressed?.Invoke();
         }
 
-        private void OnRightMenuButton(InputAction.CallbackContext context)
+        private void OnRightMenuButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightMenuButton");
+            Debug.Log("OnRightMenuButtonStarted");
+            OnRightMenuButtonPressed?.Invoke();
         }
 
-        private void OnRightTrigger(InputAction.CallbackContext context)
+        private void OnRightTriggerStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightTrigger");
+            Debug.Log("OnRightTriggerStarted");
+            OnRightTriggerPressed?.Invoke();
         }
 
-        private void OnRightGrip(InputAction.CallbackContext context)
+        private void OnRightGripStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightGrip");
+            Debug.Log("OnRightGripStarted");
+            OnRightGripPressed?.Invoke();
+        }
+
+        private void OnRightPrimaryButtonCancelled(InputAction.CallbackContext context)
+        {
+            Debug.Log("OnRightPrimaryButtonCancelled");
+            OnRightPrimaryButtonReleased?.Invoke();
         }
 
     }
+
 }

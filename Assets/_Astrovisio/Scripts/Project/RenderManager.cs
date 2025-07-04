@@ -1,7 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using CatalogData;
+using TMPro;
 using UnityEngine;
 
 namespace Astrovisio
@@ -17,6 +17,7 @@ namespace Astrovisio
 
         [Header("Other")]
         [SerializeField] private DataRenderer dataRendererPrefab;
+        [SerializeField] private TextMeshProUGUI textMeshProUGUI;
 
         // Camera
         private Vector3 initialCameraTargetPosition;
@@ -55,24 +56,45 @@ namespace Astrovisio
                 initialCameraRotation = orbitController.transform.rotation.eulerAngles;
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
+
+            textMeshProUGUI.text = "test";
         }
 
+        // TO BE REMOVED ON FUTURE
         private void Update()
         {
             // TO BE REMOVED ON FUTURE
             if (Input.GetKeyDown(KeyCode.I))
             {
-                GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
-                if (foundObject != null)
-                {
-                    MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
-                    bool currentState = meshRenderer.enabled;
-                    meshRenderer.enabled = !currentState;
-                    // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
-                }
+                ToggleDebugSphere();
             }
         }
 
+        // TO BE REMOVED ON FUTURE
+        public void ToggleDebugSphere()
+        {
+            GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
+            if (foundObject != null)
+            {
+                MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
+                bool currentState = meshRenderer.enabled;
+                meshRenderer.enabled = !currentState;
+                // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
+            }
+        }
+
+        // TO BE REMOVED ON FUTURE
+        public void SetDebugSphere(bool value)
+        {
+            GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
+            if (foundObject != null)
+            {
+                MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
+                meshRenderer.enabled = value;
+                // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
+            }
+        }
+        
 
         private void ResetCameraTransform()
         {
@@ -110,6 +132,8 @@ namespace Astrovisio
             dataRenderer = Instantiate(dataRendererPrefab);
             dataRenderer.RenderDataContainer(dataContainer);
             // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
+
+            SetDebugSphere(false);
         }
 
         public void SetAxisSettings(AxisRenderSettings axisRenderSettings)

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Astrovisio
 {
-    public class MenuPanelUI : MonoBehaviour
+    public class XRMenuUIController : MonoBehaviour
     {
         [SerializeField] private Button closeButton;
         [SerializeField] private Button valuesButton;
@@ -15,7 +15,7 @@ namespace Astrovisio
 
         private void Start()
         {
-            ClosePanel();
+            // ClosePanel();
 
             if (closeButton != null)
             {
@@ -112,7 +112,7 @@ namespace Astrovisio
         private void OnExitVRButtonClick()
         {
             Debug.Log("Bottone 'Exit VR' cliccato!");
-            VRManager.Instance.ExitVR();
+            XRManager.Instance.ExitVR();
             // Qui la logica per uscire dall'applicazione o dalla modalità VR.
             // Attenzione: Application.Quit() funziona solo nelle build, non nell'editor.
             // Application.Quit();
