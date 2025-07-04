@@ -6,7 +6,6 @@ namespace Astrovisio
 {
     public class XRMenuUIController : MonoBehaviour
     {
-        [SerializeField] private Button closeButton;
         [SerializeField] private Button valuesButton;
         [SerializeField] private Button vrReelButton;
         [SerializeField] private Button helpButton;
@@ -15,16 +14,7 @@ namespace Astrovisio
 
         private void Start()
         {
-            // ClosePanel();
-
-            if (closeButton != null)
-            {
-                closeButton.onClick.AddListener(OnCloseButtonClick);
-            }
-            else
-            {
-                Debug.LogWarning("Close Button non assegnato in MenuPanelUI!");
-            }
+            ClosePanel();
 
             if (valuesButton != null)
             {
@@ -85,51 +75,29 @@ namespace Astrovisio
             }
         }
 
-        private void OnCloseButtonClick()
-        {
-            Debug.Log("Bottone 'Close' cliccato!");
-            ClosePanel();
-        }
-
         private void OnValuesButtonClick()
         {
             Debug.Log("Bottone 'Values' cliccato!");
-            // Qui la logica per aprire un pannello dei valori, caricare dati, ecc.
         }
 
         private void OnVrReelButtonClick()
         {
             Debug.Log("Bottone 'VR Reel' cliccato!");
-            // Qui la logica per avviare un video VR o una sequenza predefinita.
         }
 
         private void OnHelpButtonClick()
         {
             Debug.Log("Bottone 'Help' cliccato!");
-            // Qui la logica per mostrare un pannello di aiuto o un tutorial.
         }
 
         private void OnExitVRButtonClick()
         {
             Debug.Log("Bottone 'Exit VR' cliccato!");
             XRManager.Instance.ExitVR();
-            // Qui la logica per uscire dall'applicazione o dalla modalità VR.
-            // Attenzione: Application.Quit() funziona solo nelle build, non nell'editor.
-            // Application.Quit();
-            // Per l'editor:
-            // UnityEditor.EditorApplication.isPlaying = false;
         }
 
         private void OnDestroy()
         {
-            // Rimuovi i listener quando l'oggetto viene distrutto per prevenire memory leak
-            // o riferimenti a oggetti già distrutti. Questo è fondamentale per una gestione pulita.
-
-            if (closeButton != null)
-            {
-                closeButton.onClick.RemoveListener(OnCloseButtonClick);
-            }
-
             if (valuesButton != null)
             {
                 valuesButton.onClick.RemoveListener(OnValuesButtonClick);

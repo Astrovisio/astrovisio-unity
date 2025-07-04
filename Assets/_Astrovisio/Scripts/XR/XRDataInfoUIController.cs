@@ -17,7 +17,7 @@ namespace Astrovisio
         private void Update()
         {
             DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
-            AstrovidioDataSetRenderer atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+            AstrovisioDataSetRenderer atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
 
             string[] dataHeader = dataRenderer.GetDataContainer().DataPack.Columns;
             float[] dataInfo = atrovidioDataSetRenderer.GetDataInfo();

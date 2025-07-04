@@ -19,7 +19,7 @@ namespace Astrovisio
 
 
         private DataContainer dataContainer;
-        private AstrovidioDataSetRenderer astrovidioDataSetRenderer;
+        private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
 
 
         private Vector3 dataRendererOriginalPosition;
@@ -91,12 +91,12 @@ namespace Astrovisio
         }
 
         public DataContainer GetDataContainer() => dataContainer;
-        public AstrovidioDataSetRenderer GetAstrovidioDataSetRenderer() => astrovidioDataSetRenderer;
+        public AstrovisioDataSetRenderer GetAstrovidioDataSetRenderer() => astrovidioDataSetRenderer;
 
         public void RenderDataContainer(DataContainer dataContainer)
         {
             this.dataContainer = dataContainer;
-            astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovidioDataSetRenderer>();
+            astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovisioDataSetRenderer>();
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }

@@ -12,7 +12,7 @@ namespace Astrovisio
             SetHelpImage(false);
         }
 
-        public void ToggleHelpImage()
+        public void ToggleHelp()
         {
             bool state = !helpImage.gameObject.activeSelf;
             SetHelpImage(state);

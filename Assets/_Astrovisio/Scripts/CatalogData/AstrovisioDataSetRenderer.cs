@@ -35,7 +35,7 @@ using Debug = UnityEngine.Debug;
 
 namespace CatalogData
 {
-    public class AstrovidioDataSetRenderer : MonoBehaviour
+    public class AstrovisioDataSetRenderer : MonoBehaviour
     {
         public ColorMapDelegate OnColorMapChanged;
 

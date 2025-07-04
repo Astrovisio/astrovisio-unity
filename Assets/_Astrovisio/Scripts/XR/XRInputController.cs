@@ -36,6 +36,8 @@ namespace Astrovisio
         public event Action OnRightTriggerPressed;
         public event Action OnRightGripPressed;
 
+        public event Action OnLeftSecondaryButtonReleased;
+        public event Action OnRightSecondaryButtonReleased;
         public event Action OnRightPrimaryButtonReleased;
 
 
@@ -92,6 +94,8 @@ namespace Astrovisio
             rightTrigger.action.started += OnRightTriggerStarted;
             rightGrip.action.started += OnRightGripStarted;
 
+            leftSecondaryButton.action.canceled += OnLeftSecondaryButtonCancelled;
+            rightSecondaryButton.action.canceled += OnRightSecondaryButtonCancelled;
             rightPrimaryButton.action.canceled += OnRightPrimaryButtonCancelled;
         }
 
@@ -108,6 +112,8 @@ namespace Astrovisio
             rightTrigger.action.started -= OnRightTriggerStarted;
             rightGrip.action.started -= OnRightGripStarted;
 
+            leftSecondaryButton.action.canceled -= OnLeftSecondaryButtonCancelled;
+            rightSecondaryButton.action.canceled -= OnRightSecondaryButtonCancelled;
             rightPrimaryButton.action.canceled -= OnRightPrimaryButtonCancelled;
         }
 
@@ -180,6 +186,20 @@ namespace Astrovisio
         {
             Debug.Log("OnRightGripStarted");
             OnRightGripPressed?.Invoke();
+        }
+
+        // Cancelled
+
+        private void OnLeftSecondaryButtonCancelled(InputAction.CallbackContext context)
+        {
+            Debug.Log("OnLeftSecondaryButtonCancelled");
+            OnLeftSecondaryButtonReleased?.Invoke();
+        }
+
+        private void OnRightSecondaryButtonCancelled(InputAction.CallbackContext context)
+        {
+            Debug.Log("OnRightSecondaryButtonCancelled");
+            OnRightSecondaryButtonReleased?.Invoke();
         }
 
         private void OnRightPrimaryButtonCancelled(InputAction.CallbackContext context)

@@ -18,9 +18,16 @@ namespace Astrovisio
 
 
         [Header("Controllers")]
+        [SerializeField] private XRMenuUIController xrMenuUIController;
         [SerializeField] private XRDataInfoUIController xrDataInfoUIController;
         [SerializeField] private XRResetTransformUIController xrResetTransformUIController;
         [SerializeField] private XRHelpUIController xrHelpUIController;
+
+
+        // Reset position
+        private Coroutine holdCoroutine;
+        private float holdDuration = 1f;
+        private float minHoldDuration = 0.15f;
 
 
         private void Awake()
@@ -35,44 +42,78 @@ namespace Astrovisio
 
         private void OnEnable()
         {
+            // Left
+            xrInputController.OnLeftMenuButtonPressed += OnLeftMenuButtonPressed;
             xrInputController.OnLeftPrimaryButtonPressed += OnLeftPrimaryButtonPressed;
             xrInputController.OnLeftSecondaryButtonPressed += OnLeftSecondaryButtonPressed;
-            xrInputController.OnLeftMenuButtonPressed += OnLeftMenuButtonPressed;
+
+            xrInputController.OnLeftSecondaryButtonReleased += OnLeftSecondaryButtonReleased;
+
+            // Right
             xrInputController.OnRightPrimaryButtonPressed += OnRightPrimaryButtonPressed;
             xrInputController.OnRightSecondaryButtonPressed += OnRightSecondaryButtonPressed;
 
-            xrInputController.OnRightPrimaryButtonReleased += OnRightPrimaryButtonReleased;
+            xrInputController.OnRightSecondaryButtonReleased += OnRightSecondaryButtonReleased;
         }
 
         private void OnDisable()
         {
-            xrInputController.OnLeftPrimaryButtonPressed -= OnLeftPrimaryButtonPressed;
-            xrInputController.OnLeftSecondaryButtonPressed += OnLeftSecondaryButtonPressed;
+            // Left
             xrInputController.OnLeftMenuButtonPressed -= OnLeftMenuButtonPressed;
+            xrInputController.OnLeftPrimaryButtonPressed -= OnLeftPrimaryButtonPressed;
+            xrInputController.OnLeftSecondaryButtonPressed -= OnLeftSecondaryButtonPressed;
+
+            xrInputController.OnLeftSecondaryButtonReleased -= OnLeftSecondaryButtonReleased;
+
+            // Right
             xrInputController.OnRightPrimaryButtonPressed -= OnRightPrimaryButtonPressed;
             xrInputController.OnRightSecondaryButtonPressed -= OnRightSecondaryButtonPressed;
-        }
 
-        private void OnLeftPrimaryButtonPressed()
-        {
-            xrDataInfoUIController.TogglePanelVisibility();
-            RenderManager.Instance.SetDebugSphere(xrDataInfoUIController.GetPanelVisibility());
-        }
-
-        private void OnLeftSecondaryButtonPressed()
-        {
-            xrHelpUIController.ToggleHelpImage();
+            xrInputController.OnRightSecondaryButtonReleased -= OnRightSecondaryButtonReleased;
         }
 
         private void OnLeftMenuButtonPressed()
         {
-            xrCanvas.gameObject.SetActive(xrCanvas.gameObject);
+            ToggleMenu();
         }
 
-        private Coroutine holdCoroutine;
-        private float holdDuration = 1f;
+        private void OnLeftPrimaryButtonPressed()
+        {
+            // ToggleDataInspector();
+        }
+
+        private void OnLeftSecondaryButtonPressed()
+        {
+            // ToggleHelp();
+            StartResetPosition();
+        }
 
         private void OnRightPrimaryButtonPressed()
+        {
+            // StartResetPosition();
+            ToggleDataInspector();
+        }
+
+        private void OnRightSecondaryButtonPressed()
+        {
+            // ExitVR();
+            StartResetPosition();
+        }
+
+        private void OnLeftSecondaryButtonReleased()
+        {
+            StopResetPosition();
+        }
+
+        private void OnRightSecondaryButtonReleased()
+        {
+            StopResetPosition();
+        }
+
+
+        // -----------------------------------------------------------
+
+        private void StartResetPosition()
         {
             if (holdCoroutine == null)
             {
@@ -80,7 +121,7 @@ namespace Astrovisio
             }
         }
 
-        private void OnRightPrimaryButtonReleased()
+        private void StopResetPosition()
         {
             if (holdCoroutine != null)
             {
@@ -92,16 +133,21 @@ namespace Astrovisio
 
         private IEnumerator HoldRoutine()
         {
-            float elapsed = 0f;
+            yield return new WaitForSeconds(minHoldDuration);
 
-            xrResetTransformUIController.SetLoaderImage(true, elapsed);
-            while (elapsed < holdDuration)
+            float elapsed = 0f;
+            float adjustedDuration = holdDuration - minHoldDuration;
+
+            xrResetTransformUIController.SetLoaderImage(true, 0f);
+
+            while (elapsed < adjustedDuration)
             {
-                // Debug.Log($"elapsed: {elapsed}");
                 elapsed += Time.deltaTime;
-                xrResetTransformUIController.SetLoaderImage(true, elapsed);
+                float progress = Mathf.Clamp01(elapsed / adjustedDuration);
+                xrResetTransformUIController.SetLoaderImage(true, progress);
                 yield return null;
             }
+
             xrResetTransformUIController.SetLoaderImage(false, 0f);
 
             XRManager.Instance.ResetXROriginTransform();
@@ -110,7 +156,24 @@ namespace Astrovisio
             holdCoroutine = null;
         }
 
-        private void OnRightSecondaryButtonPressed()
+        private void ToggleMenu()
+        {
+            // xrCanvas.gameObject.SetActive(xrCanvas.gameObject);
+            xrMenuUIController.TogglePanel();
+        }
+
+        private void ToggleHelp()
+        {
+            xrHelpUIController.ToggleHelp();
+        }
+
+        private void ToggleDataInspector()
+        {
+            xrDataInfoUIController.TogglePanelVisibility();
+            RenderManager.Instance.SetDebugSphere(xrDataInfoUIController.GetPanelVisibility());
+        }
+
+        private void ExitVR()
         {
             XRManager.Instance.ExitVR();
         }
