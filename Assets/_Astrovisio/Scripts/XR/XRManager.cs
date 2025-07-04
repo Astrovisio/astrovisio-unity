@@ -51,6 +51,13 @@ namespace Astrovisio
         }
 
         [ContextMenu("Enter VR")]
+        public void EnterDebugVR()
+        {
+            mainCamera.gameObject.SetActive(false);
+            xrOrigin.SetActive(true);
+            StartCoroutine(StartDebugXR());
+        }
+
         public void EnterVR()
         {
             if (VRActive)
@@ -93,6 +100,23 @@ namespace Astrovisio
             StartCoroutine(StopXRAndReturnToDesktop());
 
             ResetDataRendererTransform();
+        }
+
+        private IEnumerator StartDebugXR()
+        {
+            // Debug.Log("[VRManager] Initializing XR...");
+            yield return XRGeneralSettings.Instance.Manager.InitializeLoader();
+
+            if (XRGeneralSettings.Instance.Manager.activeLoader == null)
+            {
+                Debug.LogError("[VRManager] Failed to initialize XR Loader.");
+            }
+            else
+            {
+                XRGeneralSettings.Instance.Manager.StartSubsystems();
+                InitVRSettings(); // uncomment!
+                VRActive = true;
+            }
         }
 
         private IEnumerator StartXR()

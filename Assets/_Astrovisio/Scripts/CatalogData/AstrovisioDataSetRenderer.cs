@@ -153,7 +153,8 @@ namespace CatalogData
             kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
 
             int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
-            kdTreeComponent.Initialize(data, dataContainer.Center, xyzIndex);
+            // kdTreeComponent.Initialize(data, dataContainer.Center, xyzIndex);
+            kdTreeComponent.Initialize(data, Vector3.zero, new int[] {0, 1, 2});
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
@@ -268,9 +269,15 @@ namespace CatalogData
             if (kdTreeComponent.GetLastNearest() != null)
             {
                 int index = kdTreeComponent.GetLastNearest().Value.index;
-                return kdTreeComponent.GetDataInfo(index);
+
+                if (index >= 0)
+                {
+                    return kdTreeComponent.GetDataInfo(index);
+                }
+
+
             }
-            
+
             return null;
         }
 
