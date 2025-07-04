@@ -3,12 +3,14 @@ using UnityEngine.InputSystem;
 
 public class TransformManipulator : MonoBehaviour
 {
-    [Header("DataRenderer")]
-    public Transform cubeTransform;
+    [Header("Target to Manipulate")]
+    public Transform targetObject;
 
     [Header("Input Actions")]
     public InputActionProperty leftGripAction;
     public InputActionProperty rightGripAction;
+    public InputActionProperty leftPositionAction;
+    public InputActionProperty rightPositionAction;
 
     [Header("Controller References")]
     public Transform leftController;
@@ -29,44 +31,57 @@ public class TransformManipulator : MonoBehaviour
 
     private Vector3 initialLeftPos;
     private Vector3 initialRightPos;
+    private Vector3 initialMidpoint;
+
     private float initialDistance;
     private float initialAngleY;
 
+    private Vector3 initialTranslateControllerPos;
+
     private bool initializedSingleGrip = false;
     private bool initializedDualGrip = false;
+    private bool wasDualGrippingLastFrame = false;
 
     void OnEnable()
     {
         leftGripAction.action.Enable();
         rightGripAction.action.Enable();
+        leftPositionAction.action.Enable();
+        rightPositionAction.action.Enable();
     }
 
     void OnDisable()
     {
         leftGripAction.action.Disable();
         rightGripAction.action.Disable();
+        leftPositionAction.action.Disable();
+        rightPositionAction.action.Disable();
     }
 
     void Update()
     {
+        if (targetObject == null) return;
+
         isLeftGripping = leftGripAction.action.ReadValue<float>() > 0.5f;
         isRightGripping = rightGripAction.action.ReadValue<float>() > 0.5f;
 
-        if (isLeftGripping && isRightGripping)
+        bool isDualGripping = isLeftGripping && isRightGripping;
+
+        if (wasDualGrippingLastFrame && !isDualGripping)
         {
-            if (!initializedDualGrip)
-            {
-                InitDualGrip();
-            }
+            initializedSingleGrip = false;
+        }
+
+        if (isDualGripping)
+        {
+            if (!initializedDualGrip) InitDualGrip();
             HandleScaleAndRotation();
         }
         else if (isLeftGripping || isRightGripping)
         {
-            if (!initializedSingleGrip)
-            {
-                InitSingleGrip();
-            }
-            HandleTranslation(isLeftGripping ? leftController : rightController, isLeftGripping ? initialLeftPos : initialRightPos);
+            if (!initializedSingleGrip) InitSingleGrip();
+            Transform active = isLeftGripping ? leftController : rightController;
+            HandleTranslation(active);
         }
         else
         {
@@ -74,32 +89,32 @@ public class TransformManipulator : MonoBehaviour
             initializedDualGrip = false;
         }
 
+        wasDualGrippingLastFrame = isDualGripping;
+
         UpdateLines();
     }
 
     void InitSingleGrip()
     {
         initializedSingleGrip = true;
-        initialObjectPosition = cubeTransform.position;
-        if (isLeftGripping)
-        {
-            initialLeftPos = leftController.position;
-        }
-        else
-        {
-            initialRightPos = rightController.position;
-        }
+        initializedDualGrip = false;
+        initialObjectPosition = targetObject.position;
+        Transform active = isLeftGripping ? leftController : rightController;
+        initialTranslateControllerPos = active.position;
     }
 
     void InitDualGrip()
     {
         initializedDualGrip = true;
-        initialObjectPosition = cubeTransform.position;
-        initialObjectRotation = cubeTransform.rotation;
-        initialObjectScale = cubeTransform.localScale;
+        initializedSingleGrip = false;
+
+        initialObjectPosition = targetObject.position;
+        initialObjectRotation = targetObject.rotation;
+        initialObjectScale = targetObject.localScale;
 
         initialLeftPos = leftController.position;
         initialRightPos = rightController.position;
+        initialMidpoint = (initialLeftPos + initialRightPos) / 2f;
 
         initialDistance = Vector3.Distance(initialLeftPos, initialRightPos);
         initialAngleY = Mathf.Atan2(
@@ -108,71 +123,67 @@ public class TransformManipulator : MonoBehaviour
         ) * Mathf.Rad2Deg;
     }
 
-    void HandleTranslation(Transform controller, Vector3 initialControllerPos)
+    void HandleTranslation(Transform controller)
     {
-        Vector3 delta = controller.position - initialControllerPos;
-        cubeTransform.position = initialObjectPosition + delta;
+        Vector3 delta = controller.position - initialTranslateControllerPos;
+        targetObject.position = initialObjectPosition + delta;
     }
 
     void HandleScaleAndRotation()
     {
-        Vector3 leftPos = leftController.position;
-        Vector3 rightPos = rightController.position;
+        Vector3 currentLeft = leftController.position;
+        Vector3 currentRight = rightController.position;
+        Vector3 currentMid = (currentLeft + currentRight) / 2f;
 
-        // --- Scale ---
-        float currentDistance = Vector3.Distance(leftPos, rightPos);
+        float currentDistance = Vector3.Distance(currentLeft, currentRight);
         float scaleFactor = currentDistance / initialDistance;
-        cubeTransform.localScale = initialObjectScale * scaleFactor;
+        targetObject.localScale = initialObjectScale * scaleFactor;
 
-        // --- Rotation around Y ---
         float currentAngleY = Mathf.Atan2(
-            rightPos.x - leftPos.x,
-            rightPos.z - leftPos.z
+            currentRight.x - currentLeft.x,
+            currentRight.z - currentLeft.z
         ) * Mathf.Rad2Deg;
 
-        float deltaAngleY = currentAngleY - initialAngleY;
-        Quaternion deltaRotation = Quaternion.Euler(0, deltaAngleY, 0);
-        cubeTransform.rotation = deltaRotation * initialObjectRotation;
+        float angleDeltaY = currentAngleY - initialAngleY;
+        Quaternion deltaRotY = Quaternion.Euler(0, angleDeltaY, 0);
 
-        // --- Optional: Update position (center between controllers)
-        Vector3 currentMidpoint = (leftPos + rightPos) / 2f;
-        Vector3 initialMidpoint = (initialLeftPos + initialRightPos) / 2f;
-        Vector3 deltaMid = currentMidpoint - initialMidpoint;
-        cubeTransform.position = initialObjectPosition + deltaMid;
+        Vector3 dirFromPivot = initialObjectPosition - initialMidpoint;
+        dirFromPivot = deltaRotY * dirFromPivot;
+
+        targetObject.rotation = deltaRotY * initialObjectRotation;
+        targetObject.position = currentMid + dirFromPivot * scaleFactor;
     }
 
     void UpdateLines()
     {
-        if (cubeTransform != null)
+        lineBetweenControllers.enabled = false;
+        lineLeftToObject.enabled = false;
+        lineRightToObject.enabled = false;
+        lineTranslateToObject.enabled = false;
+
+        if (targetObject == null) return;
+        Vector3 objectCenter = targetObject.position;
+
+        if (isLeftGripping && isRightGripping)
         {
-            lineBetweenControllers.enabled = false;
-            lineLeftToObject.enabled = false;
-            lineRightToObject.enabled = false;
-            lineTranslateToObject.enabled = false;
+            lineBetweenControllers.enabled = true;
+            lineBetweenControllers.SetPosition(0, leftController.position);
+            lineBetweenControllers.SetPosition(1, rightController.position);
 
-            Vector3 objectCenter = cubeTransform.position;
+            lineLeftToObject.enabled = true;
+            lineLeftToObject.SetPosition(0, leftController.position);
+            lineLeftToObject.SetPosition(1, objectCenter);
 
-            if (isLeftGripping && isRightGripping)
-            {
-                lineBetweenControllers.enabled = true;
-                lineBetweenControllers.SetPosition(0, leftController.position);
-                lineBetweenControllers.SetPosition(1, rightController.position);
-
-                lineLeftToObject.enabled = true;
-                lineLeftToObject.SetPosition(0, leftController.position);
-                lineLeftToObject.SetPosition(1, objectCenter);
-
-                lineRightToObject.enabled = true;
-                lineRightToObject.SetPosition(0, rightController.position);
-                lineRightToObject.SetPosition(1, objectCenter);
-            }
-            else if (isLeftGripping || isRightGripping)
-            {
-                Transform active = isLeftGripping ? leftController : rightController;
-                lineTranslateToObject.enabled = true;
-                lineTranslateToObject.SetPosition(0, active.position);
-                lineTranslateToObject.SetPosition(1, objectCenter);
-            }
+            lineRightToObject.enabled = true;
+            lineRightToObject.SetPosition(0, rightController.position);
+            lineRightToObject.SetPosition(1, objectCenter);
+        }
+        else if (isLeftGripping || isRightGripping)
+        {
+            Transform active = isLeftGripping ? leftController : rightController;
+            lineTranslateToObject.enabled = true;
+            lineTranslateToObject.SetPosition(0, active.position);
+            lineTranslateToObject.SetPosition(1, objectCenter);
         }
     }
 }

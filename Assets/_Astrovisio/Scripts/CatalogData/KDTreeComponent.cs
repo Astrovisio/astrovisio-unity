@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using CatalogData;
+using System;
 
 public readonly struct PointDistance
 {
@@ -29,6 +31,11 @@ public class KDTreeComponent : MonoBehaviour
     public Vector2 xTargetRange = new Vector2(-10f, 10f);
     public Vector2 yTargetRange = new Vector2(-10f, 10f);
     public Vector2 zTargetRange = new Vector2(-10f, 10f);
+
+    [Header("Mapping Scales")]
+    public ScalingType XScale = ScalingType.Linear;
+    public ScalingType YScale = ScalingType.Linear;
+    public ScalingType ZScale = ScalingType.Linear;
 
     private int[] xyz = new int[] { 0, 1, 2 };
 
@@ -109,6 +116,33 @@ public class KDTreeComponent : MonoBehaviour
                 data[xyz[2]][lastNearestIndex]
             );
 
+            switch (XScale)
+            {
+                case ScalingType.Sqrt:
+                    pointOriginal.x = signed_sqrt(pointOriginal.x, 1);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (YScale)
+            {
+                case ScalingType.Sqrt:
+                    pointOriginal.y = signed_sqrt(pointOriginal.y, 1);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (ZScale)
+            {
+                case ScalingType.Sqrt:
+                    pointOriginal.z = signed_sqrt(pointOriginal.z, 1);
+                    break;
+                default:
+                    break;
+            }
+
             pointOriginal.x = RemapInverse(pointOriginal.x, xRange, xTargetRange);
             pointOriginal.y = RemapInverse(pointOriginal.y, yRange, yTargetRange);
             pointOriginal.z = RemapInverse(pointOriginal.z, zRange, zTargetRange);
@@ -125,9 +159,37 @@ public class KDTreeComponent : MonoBehaviour
     {
         Vector3 controllerLocal = pointCloudTransform.InverseTransformPoint(point);
 
+        switch (XScale)
+        {
+            case ScalingType.Sqrt:
+                controllerLocal.x = inverse_signed_sqrt(controllerLocal.x, 1);
+                break;
+            default:
+                break;
+        }
+
+        switch (YScale)
+        {
+            case ScalingType.Sqrt:
+                controllerLocal.y = inverse_signed_sqrt(controllerLocal.y, 1);
+                break;
+            default:
+                break;
+        }
+
+        switch (ZScale)
+        {
+            case ScalingType.Sqrt:
+                controllerLocal.z = inverse_signed_sqrt(controllerLocal.z, 1);
+                break;
+            default:
+                break;
+        }
+
         float x = RemapInverse(controllerLocal.x, xTargetRange, xRange);
         float y = RemapInverse(controllerLocal.y, yTargetRange, yRange);
         float z = RemapInverse(controllerLocal.z, zTargetRange, zRange);
+
         Vector3 queryPoint = new Vector3(x, y, z);
 
         (int index, float distanceSquared) tuple = await Task.Run(() => manager.FindNearest(queryPoint));
@@ -186,6 +248,15 @@ public class KDTreeComponent : MonoBehaviour
     private void OnDestroy()
     {
         Destroy(debugSphere);
+    }
+
+    private float inverse_signed_sqrt(float y, float scale)
+    {
+        return Math.Sign(y) * scale * (y * y);
+    }
+    private float signed_sqrt(float x, float scale)
+    {
+        return Math.Sign(x) * (float)Math.Sqrt(Math.Abs(x) / scale);
     }
 
 }

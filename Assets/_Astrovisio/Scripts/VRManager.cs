@@ -138,7 +138,7 @@ namespace Astrovisio
             transformManipulator.leftController = xrController.GetLeftPokePoint();
             transformManipulator.rightController = xrController.GetRightPokePoint();
 
-            transformManipulator.cubeTransform = kdTreeComponent.gameObject.transform;
+            transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
 
         }
 
