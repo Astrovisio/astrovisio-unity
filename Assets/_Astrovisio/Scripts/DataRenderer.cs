@@ -8,10 +8,8 @@ namespace Astrovisio
     public class DataRenderer : MonoBehaviour
     {
         [Header("Dependencies")]
-        [SerializeField] private Shader pointShader;
-        [SerializeField] private GameObject dataCubeContainer;
-        [SerializeField] private GameObject catalogDataSetRendererGO;
-        [SerializeField] private GameObject astrovidioDataSetRendererGO;
+        [SerializeField] private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
+        [SerializeField] private KDTreeComponent kdTreeComponent;
 
         [Header("Debug")]
         [SerializeField] private bool debugMode = false;
@@ -19,8 +17,6 @@ namespace Astrovisio
 
 
         private DataContainer dataContainer;
-        private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
-
 
         private Vector3 dataRendererOriginalPosition;
         private Quaternion dataRendererOriginalRotation;
@@ -96,7 +92,6 @@ namespace Astrovisio
         public void RenderDataContainer(DataContainer dataContainer)
         {
             this.dataContainer = dataContainer;
-            astrovidioDataSetRenderer = astrovidioDataSetRendererGO.GetComponent<AstrovisioDataSetRenderer>();
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
         }
@@ -106,6 +101,23 @@ namespace Astrovisio
             if (astrovidioDataSetRenderer is not null)
             {
                 astrovidioDataSetRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+
+                switch (axis)
+                {
+                    case Axis.X:
+                        kdTreeComponent.xRange.x = thresholdMin;
+                        kdTreeComponent.xRange.y = thresholdMax;
+                        break;
+                    case Axis.Y:
+                        kdTreeComponent.yRange.x = thresholdMin;
+                        kdTreeComponent.yRange.y = thresholdMax;
+                        break;
+                    case Axis.Z:
+                        kdTreeComponent.zRange.x = thresholdMin;
+                        kdTreeComponent.zRange.y = thresholdMax;
+                        break;
+                }
+
             }
         }
 

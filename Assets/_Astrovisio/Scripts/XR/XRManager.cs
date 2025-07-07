@@ -18,6 +18,7 @@ namespace Astrovisio
         [SerializeField] private UIManager uiManager;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private GameObject xrOrigin;
+        [SerializeField] private GameObject worldCanvasGO;
 
         [Header("Others")]
         [SerializeField] private bool beginOnPlay = false;
@@ -140,6 +141,7 @@ namespace Astrovisio
 
                 InitVRSettings();
                 VRActive = true;
+                worldCanvasGO.SetActive(true);
                 Debug.Log("[XRManager] XR successfully initialized.");
             }
             catch (Exception ex)
@@ -168,6 +170,7 @@ namespace Astrovisio
             xrOrigin.SetActive(false);
             mainCamera.gameObject.SetActive(true);
             VRActive = false;
+            worldCanvasGO.SetActive(false);
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 

@@ -164,7 +164,6 @@ namespace Astrovisio
             }
         }
 
-
         private void UpdateParamsScrollView()
         {
             paramSettingsScrollView.Clear();
