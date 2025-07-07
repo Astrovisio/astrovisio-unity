@@ -2,6 +2,7 @@
     <engine:Template name="Navbar" src="project://database/Assets/UI%20Toolkit/Components/Navbar.uxml?fileID=9197481963319205126&amp;guid=7bb125ee270bca141be6679de4957541&amp;type=3#Navbar" />
     <engine:Template name="Home" src="project://database/Assets/UI%20Toolkit/Components/HomeView.uxml?fileID=9197481963319205126&amp;guid=085c37c519bac4a4bbcca89b8ed17b03&amp;type=3#HomeView" />
     <engine:Template name="ProjectView" src="project://database/Assets/UI%20Toolkit/Components/ProjectView.uxml?fileID=9197481963319205126&amp;guid=5d8609a87d4f32b4186bfff69ad0a849&amp;type=3#ProjectView" />
+    <engine:Template name="DataInspector" src="project://database/Assets/UI%20Toolkit/Components/DataInspector.uxml?fileID=9197481963319205126&amp;guid=94128d5cd3cec2b4abee0d3ff2c8184a&amp;type=3#DataInspector" />
     <engine:Template name="Sidebar" src="project://database/Assets/UI%20Toolkit/Components/Sidebar.uxml?fileID=9197481963319205126&amp;guid=be7a59423a7e0cd41ad0133f66c01576&amp;type=3#Sidebar" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/MainView.uss?fileID=7433441132597879392&amp;guid=f459acdc270be664693f813c03150c26&amp;type=3#MainView" />
     <engine:VisualElement name="MainViewRoot" class="active">
@@ -12,6 +13,7 @@
             <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
                 <engine:Instance template="Home" name="HomeView" style="display: flex;" />
                 <engine:Instance template="ProjectView" name="ProjectView" style="display: none;" />
+                <engine:Instance template="DataInspector" name="DataInspector" />
             </engine:VisualElement>
             <engine:VisualElement name="Side" style="flex-grow: 1; width: 245px; margin-right: 40px; min-width: 245px; max-width: 245px;">
                 <engine:Instance template="Sidebar" name="Sidebar" style="justify-content: space-between; flex-grow: 1; overflow: hidden;" />

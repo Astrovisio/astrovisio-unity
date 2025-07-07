@@ -103,6 +103,7 @@ namespace Astrovisio
         private void OnDataSettingsButtonClicked()
         {
             SetActiveStep(ProjectSidebarStep.Data);
+            UIManager.SetDataInspectorVisibility(false);
         }
 
         private void OnRenderSettingsButtonClicked()
@@ -116,7 +117,6 @@ namespace Astrovisio
         {
             // Debug.Log("OnGoToVRButtonClicked");
             XRManager.Instance.EnterVR();
-            RenderManager.Instance.SetDebugSphere(true);
             // UIManager.SetErrorVR(true);
         }
 

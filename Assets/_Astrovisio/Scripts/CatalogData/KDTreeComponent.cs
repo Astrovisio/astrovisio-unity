@@ -50,6 +50,52 @@ public class KDTreeComponent : MonoBehaviour
     public float sphereRadius = 0.005f;
     private GameObject debugSphere;
 
+
+    [ContextMenu("ComputeNearestPoint")]
+    public async Task<PointDistance?> ComputeNearestPoint()
+    {
+        nearest = await ComputeNearestPoint(controllerTransform.position);
+        return nearest;
+    }
+
+    private async void Update()
+    {
+        if (manager == null || running || controllerTransform == null || pointCloudTransform == null)
+        {
+            return;
+        }
+
+
+        if (realtime)
+        {
+            running = true;
+            nearest = await ComputeNearestPoint(controllerTransform.position);
+            // Debug.Log("0");
+            // Debug.Log(nearest);
+            running = false;
+        }
+
+        // Debug.Log($"{nearest != null} - {debugSphereEnabled} - {debugSphere}");
+        if (nearest != null && debugSphereEnabled && debugSphere != null)
+        {
+            // Debug.Log("1");
+            if (!debugSphere.activeSelf)
+            {
+                debugSphere.SetActive(true);
+            }
+            debugSphere.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
+        }
+        else if (!debugSphereEnabled)
+        {
+            // Debug.Log("2");
+            if (debugSphere.activeSelf)
+            {
+                debugSphere.SetActive(false);
+            }
+        }
+
+    }
+
     public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
     {
         data = pointData;
@@ -61,16 +107,15 @@ public class KDTreeComponent : MonoBehaviour
             return;
         }
 
-        // Crea la sfera di debug se non esiste
         if (debugSphere == null)
         {
             debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            debugSphere.SetActive(false);
+            SetDebugSphereVisibility(false);
+            // debugSphere.SetActive(false);
             debugSphere.name = "DebugNearestPointSphere";
-            debugSphere.transform.localScale = Vector3.one * sphereRadius * 2f; // diametro = raggio*2
-            var rend = debugSphere.GetComponent<Renderer>();
+            debugSphere.transform.localScale = Vector3.one * sphereRadius * 2f;
+            Renderer rend = debugSphere.GetComponent<Renderer>();
             rend.material = sphereMaterial;
-            // Rimuovo collider per evitare problemi fisici se non serve
             Destroy(debugSphere.GetComponent<Collider>());
         }
     }
@@ -98,6 +143,38 @@ public class KDTreeComponent : MonoBehaviour
         return result;
     }
 
+    public void SetDebugSphereVisibility(bool state)
+    {
+        if (debugSphere != null)
+        {
+            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
+            meshRenderer.enabled = state;
+            // Debug.Log($"Toggled object '{debugSphere.name}' to {(debugSphere.activeSelf ? "visible" : "hidden")}");
+        }
+    }
+
+    public bool GetDebugSphereVisibility()
+    {
+        if (debugSphere != null)
+        {
+            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
+            return meshRenderer.enabled;
+        }
+        return false;
+    }
+
+    public bool ToggleDebugSphereVisibility()
+    {
+        if (debugSphere != null)
+        {
+            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
+            bool currentState = meshRenderer.enabled;
+            meshRenderer.enabled = !currentState;
+            return meshRenderer.enabled;
+            // Debug.Log($"Toggled object '{debugSphere.name}' to {(debugSphere.activeSelf ? "visible" : "hidden")}");
+        }
+        return false;
+    }
 
     public Vector3 GetNearestWorldSpaceCoordinates(int? index)
     {
@@ -196,47 +273,6 @@ public class KDTreeComponent : MonoBehaviour
         PointDistance nearest = new PointDistance(tuple.index, tuple.distanceSquared);
 
         return nearest;
-    }
-
-    [ContextMenu("ComputeNearestPoint")]
-    public async Task<PointDistance?> ComputeNearestPoint()
-    {
-        nearest = await ComputeNearestPoint(controllerTransform.position);
-        return nearest;
-    }
-
-    private async void Update()
-    {
-        if (manager == null || running || controllerTransform == null || pointCloudTransform == null)
-        {
-            return;
-        }
-
-
-        if (realtime)
-        {
-            running = true;
-            nearest = await ComputeNearestPoint(controllerTransform.position);
-            running = false;
-        }
-
-        // Sposta la sfera debug nel mondo
-        if (nearest != null && debugSphereEnabled && debugSphere != null)
-        {
-            if (!debugSphere.activeSelf)
-            {
-                debugSphere.SetActive(true);
-            }
-            debugSphere.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
-        }
-        else if (!debugSphereEnabled)
-        {
-            if (debugSphere.activeSelf)
-            {
-                debugSphere.SetActive(false);
-            }
-        }
-
     }
 
     private float RemapInverse(float val, Vector2 from, Vector2 to)

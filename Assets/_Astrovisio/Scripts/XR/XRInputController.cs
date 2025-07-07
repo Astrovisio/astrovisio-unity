@@ -127,6 +127,8 @@ namespace Astrovisio
             return rightPokePoint;
         }
 
+        // Started
+
         private void OnLeftPrimaryButtonStarted(InputAction.CallbackContext context)
         {
             Debug.Log("OnLeftPrimaryButtonStarted");
@@ -204,7 +206,7 @@ namespace Astrovisio
 
         private void OnRightPrimaryButtonCancelled(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightPrimaryButtonCancelled");
+            // Debug.Log("OnRightPrimaryButtonCancelled");
             OnRightPrimaryButtonReleased?.Invoke();
         }
 

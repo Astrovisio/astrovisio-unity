@@ -42,6 +42,10 @@ namespace Astrovisio
             dataRendererOriginalScale = astrovidioDataSetRenderer.transform.localScale;
         }
 
+        public DataContainer GetDataContainer() => dataContainer;
+        public AstrovisioDataSetRenderer GetAstrovidioDataSetRenderer() => astrovidioDataSetRenderer;
+        public KDTreeComponent GetKDTreeComponent() => kdTreeComponent;
+
         private DataPack LoadCSV()
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
@@ -85,9 +89,6 @@ namespace Astrovisio
             Debug.Log($"[DataRenderer] Caricati {pack.Rows.Length} punti da {fileName}");
             return pack;
         }
-
-        public DataContainer GetDataContainer() => dataContainer;
-        public AstrovisioDataSetRenderer GetAstrovidioDataSetRenderer() => astrovidioDataSetRenderer;
 
         public void RenderDataContainer(DataContainer dataContainer)
         {

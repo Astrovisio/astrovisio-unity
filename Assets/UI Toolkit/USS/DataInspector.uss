@@ -1,0 +1,22 @@
+#DataInspector {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    background-color: var(--bg-10);
+    visibility: visible;
+    display: flex;
+}
+
+.param-row {
+    -unity-font-definition: url("project://database/Assets/_Astrovisio/Fonts/SpaceGrotesk-Light.ttf?fileID=12800000&guid=1b6a3047da0549846bee7d3bcbb5b25a&type=3#SpaceGrotesk-Light");
+    color: var(--black);
+}

@@ -12,12 +12,40 @@ namespace Astrovisio
     {
 
         [SerializeField] private TextMeshProUGUI textMeshProUGUI;
-        [SerializeField] private Button closeButton;
+        // [SerializeField] private Button closeButton;
+
+        private DataRenderer dataRenderer;
+        private AstrovisioDataSetRenderer atrovidioDataSetRenderer;
+        private KDTreeComponent kdTreeComponent;
+
+        private void OnEnable()
+        {
+            if (RenderManager.Instance.isInspectorModeActive)
+            {
+                UpdateDataInfoPanel();
+            }
+        }
 
         private void Update()
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
-            AstrovisioDataSetRenderer atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+            dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+            kdTreeComponent = dataRenderer.GetKDTreeComponent();
+
+            if (kdTreeComponent.GetLastNearest() == null || dataRenderer.GetDataContainer() == null)
+            {
+                return;
+            }
+
+            UpdateDataInfoPanel();
+        }
+
+        private void UpdateDataInfoPanel()
+        {
+            if (dataRenderer.GetDataContainer() == null)
+            {
+                return;
+            }
 
             string[] dataHeader = dataRenderer.GetDataContainer().DataPack.Columns;
             float[] dataInfo = atrovidioDataSetRenderer.GetDataInfo();
@@ -42,53 +70,52 @@ namespace Astrovisio
             SetText(builder.ToString());
         }
 
-
-        private void OnEnable()
-        {
-            if (closeButton != null)
-            {
-                closeButton.onClick.AddListener(OnCloseButtonClicked);
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (closeButton != null)
-            {
-                closeButton.onClick.RemoveListener(OnCloseButtonClicked);
-            }
-        }
-
-        private void OnCloseButtonClicked()
-        {
-            SetPanelVisibility(false);
-        }
-
         private void SetText(string text)
         {
             textMeshProUGUI.text = text;
         }
 
-        public bool GetPanelVisibility()
-        {
-            return gameObject.activeSelf;
-        }
+        // private void OnEnable()
+        // {
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.AddListener(OnCloseButtonClicked);
+        //     }
+        // }
 
-        public void TogglePanelVisibility()
-        {
-            bool newVisibility = !gameObject.activeSelf;
-            gameObject.SetActive(newVisibility);
-            // Debug.Log($"[MenuPanelUI] Panel visibility toggled to: {newVisibility}");
-        }
+        // private void OnDisable()
+        // {
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.RemoveListener(OnCloseButtonClicked);
+        //     }
+        // }
 
-        public void SetPanelVisibility(bool isVisible)
-        {
-            if (gameObject.activeSelf != isVisible)
-            {
-                gameObject.SetActive(isVisible);
-                // Debug.Log($"[MenuPanelUI] Panel visibility set to: {isVisible}");
-            }
-        }
+        // private void OnCloseButtonClicked()
+        // {
+        //     SetPanelVisibility(false);
+        // }
+
+        // public bool GetPanelVisibility()
+        // {
+        //     return gameObject.activeSelf;
+        // }
+
+        // public void TogglePanelVisibility()
+        // {
+        //     bool newVisibility = !gameObject.activeSelf;
+        //     gameObject.SetActive(newVisibility);
+        //     // Debug.Log($"[MenuPanelUI] Panel visibility toggled to: {newVisibility}");
+        // }
+
+        // public void SetPanelVisibility(bool isVisible)
+        // {
+        //     if (gameObject.activeSelf != isVisible)
+        //     {
+        //         gameObject.SetActive(isVisible);
+        //         // Debug.Log($"[MenuPanelUI] Panel visibility set to: {isVisible}");
+        //     }
+        // }
 
     }
 

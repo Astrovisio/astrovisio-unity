@@ -13,11 +13,11 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
+        [SerializeField] private UIManager uiManager;
         [SerializeField] private Camera mainCamera;
 
         [Header("Other")]
         [SerializeField] private DataRenderer dataRendererPrefab;
-        [SerializeField] private TextMeshProUGUI textMeshProUGUI;
 
         // Camera
         private Vector3 initialCameraTargetPosition;
@@ -27,9 +27,13 @@ namespace Astrovisio
 
         // Settings
         private DataRenderer dataRenderer;
+        private KDTreeComponent kdTreeComponent;
         private ParamRenderSettings renderSettings;
         private Dictionary<Project, DataContainer> projectDataContainers = new();
         public Action<Project> OnProjectReadyToGetRendered;
+
+        // Local
+        public bool isInspectorModeActive = false;
 
 
         private void Awake()
@@ -57,7 +61,6 @@ namespace Astrovisio
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
 
-            textMeshProUGUI.text = "test";
         }
 
         // TO BE REMOVED ON FUTURE
@@ -66,35 +69,47 @@ namespace Astrovisio
             // TO BE REMOVED ON FUTURE
             if (Input.GetKeyDown(KeyCode.I))
             {
-                ToggleDebugSphere();
+                ToggleDataInspector();
+            }
+
+
+            if (isInspectorModeActive)
+            {
+                PointDistance? nearest = kdTreeComponent.GetLastNearest();
+
+                if (nearest != null)
+                {
+                    float[] dataInfo = kdTreeComponent.GetDataInfo(nearest.Value.index);
+                    uiManager.SetDataInspector(dataRenderer.GetDataContainer().DataPack.Columns, dataInfo);
+                }
             }
         }
 
         // TO BE REMOVED ON FUTURE
-        public void ToggleDebugSphere()
+        public void ToggleDataInspector()
         {
-            GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
-            if (foundObject != null)
-            {
-                MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
-                bool currentState = meshRenderer.enabled;
-                meshRenderer.enabled = !currentState;
-                // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
-            }
+            kdTreeComponent = dataRenderer.GetKDTreeComponent();
+            kdTreeComponent.ToggleDebugSphereVisibility();
+            isInspectorModeActive = kdTreeComponent.GetDebugSphereVisibility();
+            uiManager.SetDataInspectorVisibility(isInspectorModeActive);
+            kdTreeComponent.realtime = isInspectorModeActive;
         }
 
-        // TO BE REMOVED ON FUTURE
-        public void SetDebugSphere(bool value)
+        // public void SetDataInspector(bool state)
+        // {
+        //     kdTreeComponent = dataRenderer.GetKDTreeComponent();
+        //     kdTreeComponent.SetDebugSphereVisibility(state);
+        //     isInspectorModeActive = kdTreeComponent.GetDebugSphereVisibility();
+        //     kdTreeComponent.realtime = state;
+        // }
+
+        public void SetDataInspector(bool state)
         {
-            GameObject foundObject = GameObject.Find("DebugNearestPointSphere");
-            if (foundObject != null)
-            {
-                MeshRenderer meshRenderer = foundObject.GetComponent<MeshRenderer>();
-                meshRenderer.enabled = value;
-                // Debug.Log($"Toggled object '{foundObject.name}' to {(foundObject.activeSelf ? "visible" : "hidden")}");
-            }
+            // Debug.Log("UpdateDataInspector " + state);
+            KDTreeComponent kdTreeComponent = dataRenderer.GetKDTreeComponent();
+            kdTreeComponent.SetDebugSphereVisibility(true);
+            kdTreeComponent.realtime = state;
         }
-        
 
         private void ResetCameraTransform()
         {
@@ -133,7 +148,7 @@ namespace Astrovisio
             dataRenderer.RenderDataContainer(dataContainer);
             // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
 
-            SetDebugSphere(false);
+            SetDataInspector(false);
         }
 
         public void SetAxisSettings(AxisRenderSettings axisRenderSettings)

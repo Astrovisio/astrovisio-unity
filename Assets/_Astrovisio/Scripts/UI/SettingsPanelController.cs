@@ -679,7 +679,7 @@ namespace Astrovisio
             thresholdSlider.style.display = DisplayStyle.Flex;
 
             VisualElement rangeSlider = Root.Q<VisualElement>("RangeSlider");
-            rangeSlider.style.display = DisplayStyle.Flex;
+            rangeSlider.style.display = DisplayStyle.None;
 
             VisualElement colorMapContainer = Root.Q<VisualElement>("ColorMapContainer");
             colorMapContainer.style.display = DisplayStyle.None;

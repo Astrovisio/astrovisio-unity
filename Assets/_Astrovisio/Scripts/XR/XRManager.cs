@@ -143,6 +143,7 @@ namespace Astrovisio
                 VRActive = true;
                 worldCanvasGO.SetActive(true);
                 uiManager.SwitchEventSystemToVR();
+                RenderManager.Instance.SetDataInspector(false);
                 Debug.Log("[XRManager] XR successfully initialized.");
             }
             catch (Exception ex)
@@ -173,6 +174,8 @@ namespace Astrovisio
             VRActive = false;
             worldCanvasGO.SetActive(false);
             uiManager.SwitchEventSystemToDesktop();
+            InitDesktopSettings();
+            RenderManager.Instance.SetDataInspector(true);
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 
@@ -204,6 +207,18 @@ namespace Astrovisio
             {
                 transformManipulator.leftController = xrController.GetLeftPokePoint();
                 transformManipulator.rightController = xrController.GetRightPokePoint();
+            }
+        }
+
+        private void InitDesktopSettings()
+        {
+            KDTreeComponent kdTreeComponent = FindAnyObjectByType<KDTreeComponent>();
+            CameraTarget cameraTarget = FindAnyObjectByType<CameraTarget>();
+
+
+            if (kdTreeComponent != null)
+            {
+                kdTreeComponent.controllerTransform = cameraTarget.gameObject.transform;
             }
         }
 

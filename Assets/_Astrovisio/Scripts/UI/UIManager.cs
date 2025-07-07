@@ -22,6 +22,7 @@ namespace Astrovisio
         private EditProjectViewController editProjectViewController;
         private DuplicateProjectViewController duplicateProjectViewController;
         private DeleteProjectViewController deleteProjectViewController;
+        private DataInspectorController dataInspectorController;
 
         // Event System
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -50,6 +51,9 @@ namespace Astrovisio
 
             VisualElement deleteProjectView = uiDocument.rootVisualElement.Q<VisualElement>("DeleteProjectView");
             deleteProjectViewController = new DeleteProjectViewController(projectManager, deleteProjectView);
+
+            VisualElement dataInspector = uiDocument.rootVisualElement.Q<VisualElement>("DataInspector");
+            dataInspectorController = new DataInspectorController(dataInspector);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -197,6 +201,16 @@ namespace Astrovisio
             VisualElement deleteProjectView = root.Q<VisualElement>("DeleteProjectView");
             deleteProjectViewController.SetProjectToDelete(project);
             deleteProjectView.AddToClassList("active");
+        }
+
+        public void SetDataInspectorVisibility(bool state)
+        {
+            dataInspectorController.SetPanelVisibility(state);
+        }
+
+        public void SetDataInspector(string[] header, float[] dataInfo)
+        {
+            dataInspectorController.SetData(header, dataInfo);
         }
 
     }

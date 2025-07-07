@@ -97,8 +97,9 @@ namespace Astrovisio
         private void OnRightPrimaryButtonPressed()
         {
             Debug.Log("START");
+            SetDataInspector(true);
             // StartResetPosition();
-            ToggleDataInspector();
+            // ToggleDataInspector();
         }
 
         private void OnRightSecondaryButtonPressed()
@@ -115,6 +116,7 @@ namespace Astrovisio
         private void OnRightPrimaryButtonReleased()
         {
             Debug.Log("STOP");
+            SetDataInspector(false);
         }
 
         private void OnRightSecondaryButtonReleased()
@@ -173,6 +175,18 @@ namespace Astrovisio
             xrMenuUIController.TogglePanel();
         }
 
+        private void SetDataInspector(bool state)
+        {
+            if (state)
+            {
+                RenderManager.Instance.SetDataInspector(true);
+            }
+            else
+            {
+                RenderManager.Instance.SetDataInspector(false);
+            }
+        }
+
         private void ToggleHelp()
         {
             xrHelpUIController.ToggleHelp();
@@ -180,8 +194,7 @@ namespace Astrovisio
 
         private void ToggleDataInspector()
         {
-            xrDataInfoUIController.TogglePanelVisibility();
-            RenderManager.Instance.SetDebugSphere(xrDataInfoUIController.GetPanelVisibility());
+            // xrDataInfoUIController.TogglePanelVisibility();
         }
 
         private void ExitVR()

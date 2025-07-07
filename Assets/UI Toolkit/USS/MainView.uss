@@ -9,3 +9,21 @@
 #Side > * {
     flex-grow: 1;
 }
+
+#MainViewRoot > #Body > #Content > #DataInspector {
+    position: absolute;
+    height: 300px;
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 300px;
+    max-height: 300px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    right: 0;
+    bottom: 0;
+    visibility: visible;
+    display: none;
+}

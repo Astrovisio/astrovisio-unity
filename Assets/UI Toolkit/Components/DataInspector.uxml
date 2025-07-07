@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/DataInspector.uss?fileID=7433441132597879392&amp;guid=c3487dca4bdc9f247a80ad9a9e1ee17b&amp;type=3#DataInspector" />
+    <engine:VisualElement name="DataInspector" style="flex-grow: 1;">
+        <engine:ScrollView name="ParamScrollView" style="flex-grow: 1;">
+            <engine:Label text="x: 100" name="ParamLabel" class="param-row" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

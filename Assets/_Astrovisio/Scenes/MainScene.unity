@@ -857,10 +857,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiManager: {fileID: 1328975545}
   projectManager: {fileID: 545608354}
+  uiManager: {fileID: 1869469690}
   mainCamera: {fileID: 794102724}
   dataRendererPrefab: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
     type: 3}
-  textMeshProUGUI: {fileID: 5061524304675062945}
+  isInspectorModeActive: 0
 --- !u!1 &1199827360
 GameObject:
   m_ObjectHideFlags: 0
@@ -1774,18 +1775,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5061524304675062943}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5061524304675062945 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1155642601330648720, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
-    type: 3}
-  m_PrefabInstance: {fileID: 5061524304675062943}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5061524304675062951 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 365629816261047350, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
