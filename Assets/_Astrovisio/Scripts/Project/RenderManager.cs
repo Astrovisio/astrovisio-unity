@@ -103,11 +103,11 @@ namespace Astrovisio
         //     kdTreeComponent.realtime = state;
         // }
 
-        public void SetDataInspector(bool state)
+        public void SetDataInspector(bool state, bool bebugSphereVisibility)
         {
             // Debug.Log("UpdateDataInspector " + state);
             KDTreeComponent kdTreeComponent = dataRenderer.GetKDTreeComponent();
-            kdTreeComponent.SetDebugSphereVisibility(true);
+            kdTreeComponent.SetDebugSphereVisibility(bebugSphereVisibility);
             kdTreeComponent.realtime = state;
         }
 
@@ -148,7 +148,7 @@ namespace Astrovisio
             dataRenderer.RenderDataContainer(dataContainer);
             // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
 
-            SetDataInspector(false);
+            SetDataInspector(false, true);
         }
 
         public void SetAxisSettings(AxisRenderSettings axisRenderSettings)

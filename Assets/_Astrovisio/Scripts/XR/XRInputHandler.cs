@@ -179,11 +179,11 @@ namespace Astrovisio
         {
             if (state)
             {
-                RenderManager.Instance.SetDataInspector(true);
+                RenderManager.Instance.SetDataInspector(true, true);
             }
             else
             {
-                RenderManager.Instance.SetDataInspector(false);
+                RenderManager.Instance.SetDataInspector(false, true);
             }
         }
 

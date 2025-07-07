@@ -143,7 +143,16 @@ namespace Astrovisio
                 VRActive = true;
                 worldCanvasGO.SetActive(true);
                 uiManager.SwitchEventSystemToVR();
-                RenderManager.Instance.SetDataInspector(false);
+
+                if (RenderManager.Instance.isInspectorModeActive)
+                {
+                    RenderManager.Instance.SetDataInspector(false, true);
+                }
+                else
+                {
+                    RenderManager.Instance.SetDataInspector(false, false);
+                }
+
                 Debug.Log("[XRManager] XR successfully initialized.");
             }
             catch (Exception ex)
@@ -171,11 +180,13 @@ namespace Astrovisio
 
             xrOrigin.SetActive(false);
             mainCamera.gameObject.SetActive(true);
-            VRActive = false;
             worldCanvasGO.SetActive(false);
             uiManager.SwitchEventSystemToDesktop();
             InitDesktopSettings();
-            RenderManager.Instance.SetDataInspector(true);
+            RenderManager.Instance.SetDataInspector(false, false);
+            uiManager.SetDataInspectorVisibility(false);
+
+            VRActive = false;
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 

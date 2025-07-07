@@ -77,23 +77,24 @@ namespace Astrovisio
 
         private void OnValuesButtonClick()
         {
-            Debug.Log("Bottone 'Values' cliccato!");
+            // Debug.Log("OnValuesButtonClick");
         }
 
         private void OnVrReelButtonClick()
         {
-            Debug.Log("Bottone 'VR Reel' cliccato!");
+            // Debug.Log("OnVrReelButtonClick");
         }
 
         private void OnHelpButtonClick()
         {
-            Debug.Log("Bottone 'Help' cliccato!");
+            // Debug.Log("OnHelpButtonClick");
         }
 
         private void OnExitVRButtonClick()
         {
-            Debug.Log("Bottone 'Exit VR' cliccato!");
+            Debug.Log("OnExitVRButtonClick");
             XRManager.Instance.ExitVR();
+            ClosePanel();
         }
 
         private void OnDestroy()

@@ -42,7 +42,7 @@ namespace Astrovisio
 
         private void UpdateDataInfoPanel()
         {
-            if (dataRenderer.GetDataContainer() == null)
+            if (dataRenderer == null || dataRenderer.GetDataContainer() == null)
             {
                 return;
             }
