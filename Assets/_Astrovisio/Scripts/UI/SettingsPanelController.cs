@@ -634,12 +634,11 @@ namespace Astrovisio
             colorMapContainer.style.display = DisplayStyle.None;
 
             VisualElement scalingContainer = Root.Q<VisualElement>("ScalingContainer");
-            scalingContainer.style.display = DisplayStyle.Flex;
+            scalingContainer.style.display = DisplayStyle.None;
 
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.None;
-
-            // SetMappingDropdownValue(mappingDropdown.choices[0]);
+            
         }
 
         private void SetNoneDisplayStyle()

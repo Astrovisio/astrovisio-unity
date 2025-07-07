@@ -142,6 +142,7 @@ namespace Astrovisio
                 InitVRSettings();
                 VRActive = true;
                 worldCanvasGO.SetActive(true);
+                uiManager.SwitchEventSystemToVR();
                 Debug.Log("[XRManager] XR successfully initialized.");
             }
             catch (Exception ex)
@@ -171,6 +172,7 @@ namespace Astrovisio
             mainCamera.gameObject.SetActive(true);
             VRActive = false;
             worldCanvasGO.SetActive(false);
+            uiManager.SwitchEventSystemToDesktop();
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 

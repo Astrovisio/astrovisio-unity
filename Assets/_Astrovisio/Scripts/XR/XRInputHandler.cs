@@ -42,33 +42,39 @@ namespace Astrovisio
 
         private void OnEnable()
         {
-            // Left
+            // Left Pressed
             xrInputController.OnLeftMenuButtonPressed += OnLeftMenuButtonPressed;
             xrInputController.OnLeftPrimaryButtonPressed += OnLeftPrimaryButtonPressed;
             xrInputController.OnLeftSecondaryButtonPressed += OnLeftSecondaryButtonPressed;
 
+            // Left Released
             xrInputController.OnLeftSecondaryButtonReleased += OnLeftSecondaryButtonReleased;
 
-            // Right
+            // Right Pressed
             xrInputController.OnRightPrimaryButtonPressed += OnRightPrimaryButtonPressed;
             xrInputController.OnRightSecondaryButtonPressed += OnRightSecondaryButtonPressed;
 
+            // Right Released
+            xrInputController.OnRightPrimaryButtonReleased += OnRightPrimaryButtonReleased;
             xrInputController.OnRightSecondaryButtonReleased += OnRightSecondaryButtonReleased;
         }
 
         private void OnDisable()
         {
-            // Left
+            // Left Pressed
             xrInputController.OnLeftMenuButtonPressed -= OnLeftMenuButtonPressed;
             xrInputController.OnLeftPrimaryButtonPressed -= OnLeftPrimaryButtonPressed;
             xrInputController.OnLeftSecondaryButtonPressed -= OnLeftSecondaryButtonPressed;
 
+            // Left Released
             xrInputController.OnLeftSecondaryButtonReleased -= OnLeftSecondaryButtonReleased;
 
-            // Right
+            // Right Pressed
             xrInputController.OnRightPrimaryButtonPressed -= OnRightPrimaryButtonPressed;
             xrInputController.OnRightSecondaryButtonPressed -= OnRightSecondaryButtonPressed;
 
+            // Right Released
+            xrInputController.OnRightPrimaryButtonReleased -= OnRightPrimaryButtonReleased;
             xrInputController.OnRightSecondaryButtonReleased -= OnRightSecondaryButtonReleased;
         }
 
@@ -90,6 +96,7 @@ namespace Astrovisio
 
         private void OnRightPrimaryButtonPressed()
         {
+            Debug.Log("START");
             // StartResetPosition();
             ToggleDataInspector();
         }
@@ -103,6 +110,11 @@ namespace Astrovisio
         private void OnLeftSecondaryButtonReleased()
         {
             StopResetPosition();
+        }
+
+        private void OnRightPrimaryButtonReleased()
+        {
+            Debug.Log("STOP");
         }
 
         private void OnRightSecondaryButtonReleased()
@@ -158,7 +170,6 @@ namespace Astrovisio
 
         private void ToggleMenu()
         {
-            // xrCanvas.gameObject.SetActive(xrCanvas.gameObject);
             xrMenuUIController.TogglePanel();
         }
 

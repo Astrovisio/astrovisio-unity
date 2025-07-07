@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UIElements;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 
 namespace Astrovisio
 {
@@ -21,8 +23,13 @@ namespace Astrovisio
         private DuplicateProjectViewController duplicateProjectViewController;
         private DeleteProjectViewController deleteProjectViewController;
 
+        // Event System
+        [SerializeField] private InputSystemUIInputModule desktopInputModule;
+        [SerializeField] private XRUIInputModule xrInputModule;
+
         // === Local ===
         private bool isInteractingWithUI = false;
+
 
         private void Start()
         {
@@ -54,6 +61,18 @@ namespace Astrovisio
         public ProjectManager GetProjectManager() => projectManager;
         public RenderManager GetRenderManager() => renderManager;
         public UIContextSO getUIContext() => uiContextSO;
+
+        public void SwitchEventSystemToVR()
+        {
+            desktopInputModule.enabled = false;
+            xrInputModule.enabled = true;
+        }
+
+        public void SwitchEventSystemToDesktop()
+        {
+            desktopInputModule.enabled = true;
+            xrInputModule.enabled = false;
+        }
 
         public bool IsInteractingWithUI()
         {
