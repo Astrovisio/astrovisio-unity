@@ -89,8 +89,8 @@ namespace Astrovisio
         public void ToggleDataInspector()
         {
             kdTreeComponent = dataRenderer.GetKDTreeComponent();
-            kdTreeComponent.ToggleDebugSphereVisibility();
-            isInspectorModeActive = kdTreeComponent.GetDebugSphereVisibility();
+            kdTreeComponent.ToggleDataInspectorVisibility();
+            isInspectorModeActive = kdTreeComponent.GetDataInspectorVisibility();
             uiManager.SetDataInspectorVisibility(isInspectorModeActive);
             kdTreeComponent.realtime = isInspectorModeActive;
         }
@@ -107,7 +107,7 @@ namespace Astrovisio
         {
             // Debug.Log("UpdateDataInspector " + state);
             KDTreeComponent kdTreeComponent = dataRenderer.GetKDTreeComponent();
-            kdTreeComponent.SetDebugSphereVisibility(bebugSphereVisibility);
+            kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
             kdTreeComponent.realtime = state;
         }
 

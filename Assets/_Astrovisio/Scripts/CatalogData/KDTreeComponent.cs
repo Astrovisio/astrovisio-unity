@@ -17,6 +17,7 @@ public readonly struct PointDistance
 
 public class KDTreeComponent : MonoBehaviour
 {
+
     [Header("Settings")]
     public bool realtime = true;
 
@@ -44,11 +45,9 @@ public class KDTreeComponent : MonoBehaviour
     private PointDistance? nearest;
     private bool running = false;
 
-    [Header("Debug Sphere (in game)")]
-    public bool debugSphereEnabled = true;
-    public Material sphereMaterial;
-    public float sphereRadius = 0.005f;
-    private GameObject debugSphere;
+    [Header("SphereDataInspector")]
+    [SerializeField] private SphereDataInspector sphereDataInspectorPrefab;
+     private SphereDataInspector sphereDataInspector;
 
 
     [ContextMenu("ComputeNearestPoint")]
@@ -65,35 +64,23 @@ public class KDTreeComponent : MonoBehaviour
             return;
         }
 
-
         if (realtime)
         {
             running = true;
             nearest = await ComputeNearestPoint(controllerTransform.position);
-            // Debug.Log("0");
-            // Debug.Log(nearest);
             running = false;
         }
 
-        // Debug.Log($"{nearest != null} - {debugSphereEnabled} - {debugSphere}");
-        if (nearest != null && debugSphereEnabled && debugSphere != null)
-        {
-            // Debug.Log("1");
-            if (!debugSphere.activeSelf)
-            {
-                debugSphere.SetActive(true);
-            }
-            debugSphere.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
-        }
-        else if (!debugSphereEnabled)
-        {
-            // Debug.Log("2");
-            if (debugSphere.activeSelf)
-            {
-                debugSphere.SetActive(false);
-            }
-        }
+        HandleSphereDataInspector();
+    }
 
+    private void HandleSphereDataInspector()
+    {
+        // Debug.Log($"{nearest != null} - {sphereDataInspector}");
+        if (nearest != null && sphereDataInspector != null)
+        {
+            sphereDataInspector.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
+        }
     }
 
     public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
@@ -107,16 +94,10 @@ public class KDTreeComponent : MonoBehaviour
             return;
         }
 
-        if (debugSphere == null)
+        if (sphereDataInspector == null)
         {
-            debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            SetDebugSphereVisibility(false);
-            // debugSphere.SetActive(false);
-            debugSphere.name = "DebugNearestPointSphere";
-            debugSphere.transform.localScale = Vector3.one * sphereRadius * 2f;
-            Renderer rend = debugSphere.GetComponent<Renderer>();
-            rend.material = sphereMaterial;
-            Destroy(debugSphere.GetComponent<Collider>());
+            sphereDataInspector = Instantiate(sphereDataInspectorPrefab);
+            sphereDataInspector.SetActiveState(false);
         }
     }
 
@@ -143,31 +124,29 @@ public class KDTreeComponent : MonoBehaviour
         return result;
     }
 
-    public void SetDebugSphereVisibility(bool state)
+    public void SetDataInspectorVisibility(bool state)
     {
-        if (debugSphere != null)
+        if (sphereDataInspector != null)
         {
-            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
-            meshRenderer.enabled = state;
-            // Debug.Log($"Toggled object '{debugSphere.name}' to {(debugSphere.activeSelf ? "visible" : "hidden")}");
+            sphereDataInspector.SetActiveState(state);
         }
     }
 
-    public bool GetDebugSphereVisibility()
+    public bool GetDataInspectorVisibility()
     {
-        if (debugSphere != null)
+        if (sphereDataInspector != null)
         {
-            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = sphereDataInspector.GetComponent<MeshRenderer>();
             return meshRenderer.enabled;
         }
         return false;
     }
 
-    public bool ToggleDebugSphereVisibility()
+    public bool ToggleDataInspectorVisibility()
     {
-        if (debugSphere != null)
+        if (sphereDataInspector != null)
         {
-            MeshRenderer meshRenderer = debugSphere.GetComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = sphereDataInspector.GetComponent<MeshRenderer>();
             bool currentState = meshRenderer.enabled;
             meshRenderer.enabled = !currentState;
             return meshRenderer.enabled;
@@ -281,18 +260,19 @@ public class KDTreeComponent : MonoBehaviour
         return Mathf.Lerp(to.x, to.y, t);
     }
 
-    private void OnDestroy()
-    {
-        Destroy(debugSphere);
-    }
-
     private float inverse_signed_sqrt(float y, float scale)
     {
         return Math.Sign(y) * scale * (y * y);
     }
+
     private float signed_sqrt(float x, float scale)
     {
         return Math.Sign(x) * (float)Math.Sqrt(Math.Abs(x) / scale);
+    }
+
+    private void OnDestroy()
+    {
+        DestroyImmediate(sphereDataInspector);
     }
 
 }

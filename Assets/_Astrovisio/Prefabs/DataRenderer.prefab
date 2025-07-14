@@ -48,7 +48,7 @@ MonoBehaviour:
   astrovidioDataSetRenderer: {fileID: 9054602126277597126}
   kdTreeComponent: {fileID: 884816262672831559}
   debugMode: 0
-  fileName: gas_illustris_filtered.csv
+  fileName: gas_illustris_342447_cut_output.csv
 --- !u!1 &8520159369413343584
 GameObject:
   m_ObjectHideFlags: 0
@@ -77,8 +77,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5304179595479019890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -97,10 +97,10 @@ MonoBehaviour:
   TableFileName: 
   MappingFileName: 
   DataMapping:
-    ColorMap: 12
+    ColorMap: 33
     Spherical: 0
     RenderType: 0
-    UniformColor: 1
+    UniformColor: 0
     UniformPointSize: 1
     UniformPointShape: 1
     UniformOpacity: 1
@@ -115,15 +115,15 @@ MonoBehaviour:
       NoiseStrength: 0.01
     Mapping:
       Cmap:
-        Clamped: 1
+        Clamped: 0
         DataMinVal: 0
-        DataMaxVal: 2097151
+        DataMaxVal: 0.0001
         TargetMinVal: 0
         TargetMaxVal: 1
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
-        Source: 
+        Source: size
       Lat:
         Clamped: 0
         DataMinVal: 0
@@ -145,11 +145,11 @@ MonoBehaviour:
         ScalingType: 0
         Source: 
       Opacity:
-        Clamped: 1
-        DataMinVal: 3.060184
-        DataMaxVal: 6501919
+        Clamped: 0
+        DataMinVal: 0
+        DataMaxVal: 0
         TargetMinVal: 0
-        TargetMaxVal: 1
+        TargetMaxVal: 0
         InverseMapping: 0
         Offset: 0
         ScalingType: 0
@@ -186,8 +186,8 @@ MonoBehaviour:
         Source: 
       X:
         Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 74272.14
+        DataMinVal: -0.5
+        DataMaxVal: 0.5
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
@@ -196,8 +196,8 @@ MonoBehaviour:
         Source: x
       Y:
         Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 74272.14
+        DataMinVal: -0.5
+        DataMaxVal: 0.5
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
@@ -206,8 +206,8 @@ MonoBehaviour:
         Source: y
       Z:
         Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 74272.125
+        DataMinVal: -0.5
+        DataMaxVal: 0.5
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
     MetaMapping:
       Name:
         Source: 
-  LoadMetaColumns: 1
+  LoadMetaColumns: 0
   ValueCutoffMin: 0
   ValueCutoffMax: 1
   ColorMapTexture: {fileID: 2800000, guid: 9e544ae8ea0eadb429edf5e73d7bcd2f, type: 3}
@@ -280,6 +280,5 @@ MonoBehaviour:
   XScale: 0
   YScale: 0
   ZScale: 0
-  debugSphereEnabled: 1
-  sphereMaterial: {fileID: 2100000, guid: c76156930453a994f9f6e6c9a47a08dc, type: 2}
-  sphereRadius: 0.005
+  sphereDataInspectorPrefab: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
+    type: 3}

@@ -305,12 +305,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &573990660 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6528833266872925955, guid: 4aad8470d81d77e47abf52cd6c427199,
-    type: 3}
-  m_PrefabInstance: {fileID: 887794974343065049}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &674078457
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,19 +1315,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
-      propertyPath: sphereRadius
-      value: 0.005
-      objectReference: {fileID: 0}
-    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
       propertyPath: controllerTransform
       value: 
       objectReference: {fileID: 2087590747}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
-      propertyPath: pointCloudTransform
+      propertyPath: sphereDataInspectorPrefab
       value: 
-      objectReference: {fileID: 573990660}
+      objectReference: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
+        type: 3}
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_Name
@@ -1343,16 +1333,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: fileName
-      value: gas_illustris_342447_cut_output.csv
-      objectReference: {fileID: 0}
-    - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: debugMode
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -1402,166 +1382,6 @@ PrefabInstance:
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6528833266872925955, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6528833266872925955, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6528833266872925955, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6528833266872925955, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8520159369413343584, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: ValueCutoffMax
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: LoadMetaColumns
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.ColorMap
-      value: 33
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Spherical
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.UniformColor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Cmap.Source
-      value: size
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Cmap.Clamped
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.X.DataMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.X.DataMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Y.DataMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Y.DataMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Z.DataMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Z.DataMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Opacity.Source
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.X.TargetMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.X.TargetMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Y.TargetMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Y.TargetMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Z.TargetMaxVal
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Z.TargetMinVal
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Cmap.DataMaxVal
-      value: 0.0001
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Opacity.Clamped
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Cmap.TargetMaxVal
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Cmap.TargetMinVal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Opacity.DataMaxVal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Opacity.DataMinVal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
-        type: 3}
-      propertyPath: DataMapping.Mapping.Opacity.TargetMaxVal
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
