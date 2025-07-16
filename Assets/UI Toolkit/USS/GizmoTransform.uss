@@ -1,8 +1,8 @@
-#GizmoTransformer {
+#Root {
     flex-grow: 1;
 }
 
-#GizmoTransformer > #RenderTarget {
+#Root > #RenderTarget {
     background-color: rgba(0, 0, 0, 0);
     background-image: url("project://database/Assets/_Astrovisio/Prefabs/GizmoRenderTexture.renderTexture?fileID=8400000&guid=888994c33c5156a4eb374961236317c6&type=2#GizmoRenderTexture");
     top: 0;
