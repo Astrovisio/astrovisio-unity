@@ -23,6 +23,7 @@ namespace Astrovisio
         private DuplicateProjectViewController duplicateProjectViewController;
         private DeleteProjectViewController deleteProjectViewController;
         private DataInspectorController dataInspectorController;
+        private GizmoTransformController gizmoTransformController;
 
         // Event System
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -54,6 +55,10 @@ namespace Astrovisio
 
             VisualElement dataInspector = uiDocument.rootVisualElement.Q<VisualElement>("DataInspector");
             dataInspectorController = new DataInspectorController(dataInspector);
+
+            VisualElement gizmoTransform = uiDocument.rootVisualElement.Q<VisualElement>("GizmoTransform");
+            Debug.Log(gizmoTransform);
+            gizmoTransformController = new GizmoTransformController(gizmoTransform);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -211,6 +216,11 @@ namespace Astrovisio
         public void SetDataInspector(string[] header, float[] dataInfo)
         {
             dataInspectorController.SetData(header, dataInfo);
+        }
+
+        public void SetGizmoTransformerVisibility(bool state)
+        {
+            gizmoTransformController.SetPanelVisibility(state);
         }
 
     }
