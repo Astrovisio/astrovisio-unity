@@ -135,6 +135,17 @@ namespace Astrovisio
             mainViewController.SetBackgroundVisibility(state);
         }
 
+        public void SetUIVisibility(bool state)
+        {
+            mainViewController.SetHeaderVisibility(state);
+            mainViewController.SetSideVisibility(state);
+            mainViewController.SetContentVisibility(state);
+            mainViewController.SetBackgroundVisibility(state);
+
+            SetGizmoTransformVisibility(state);
+            SetDataInspectorVisibility(state);
+        }
+
         public void SetLoading(bool state)
         {
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
@@ -217,9 +228,9 @@ namespace Astrovisio
             dataInspectorController.SetData(header, dataInfo);
         }
 
-        public void SetGizmoTransformerVisibility(bool state)
+        public void SetGizmoTransformVisibility(bool state)
         {
-            gizmoTransformController.SetPanelVisibility(state);
+            gizmoTransformController.SetVisibility(state);
         }
 
     }

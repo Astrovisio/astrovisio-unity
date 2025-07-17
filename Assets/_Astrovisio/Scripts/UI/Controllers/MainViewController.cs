@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -35,6 +36,32 @@ namespace Astrovisio
             else
             {
                 mainViewRoot.RemoveFromClassList("active");
+            }
+        }
+
+        public void SetHeaderVisibility(bool state)
+        {
+            // Debug.Log("SetHeaderVisibility");
+            if (state)
+            {
+                header.style.visibility = Visibility.Visible;
+            }
+            else
+            {
+                header.style.visibility = Visibility.Hidden;
+            }
+        }
+
+        public void SetSideVisibility(bool state)
+        {
+            // Debug.Log("SetSideVisibility");
+            if (state)
+            {
+                side.style.visibility = Visibility.Visible;
+            }
+            else
+            {
+                side.style.visibility = Visibility.Hidden;
             }
         }
 

@@ -13,10 +13,10 @@ namespace Astrovisio
         {
             Root = root;
 
-            SetPanelVisibility(false);
+            SetVisibility(false);
         }
 
-        public void SetPanelVisibility(bool visibility)
+        public void SetVisibility(bool visibility)
         {
             if (visibility)
             {
