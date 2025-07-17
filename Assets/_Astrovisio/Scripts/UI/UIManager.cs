@@ -57,7 +57,6 @@ namespace Astrovisio
             dataInspectorController = new DataInspectorController(dataInspector);
 
             VisualElement gizmoTransform = uiDocument.rootVisualElement.Q<VisualElement>("GizmoTransform");
-            Debug.Log(gizmoTransform);
             gizmoTransformController = new GizmoTransformController(gizmoTransform);
 
             projectManager.ProjectCreated += OnProjectCreated;

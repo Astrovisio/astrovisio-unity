@@ -18,9 +18,6 @@ namespace Astrovisio
 
         public void SetPanelVisibility(bool visibility)
         {
-            Debug.Log(visibility);
-            Debug.Log(Root);
-            Debug.Log(Root.style.display);
             if (visibility)
             {
                 Root.style.display = DisplayStyle.Flex;
@@ -29,7 +26,6 @@ namespace Astrovisio
             {
                 Root.style.display = DisplayStyle.None;
             }
-            Debug.Log(Root.style.display);
         }
 
     }

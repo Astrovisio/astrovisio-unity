@@ -104,6 +104,7 @@ namespace Astrovisio
         {
             SetActiveStep(ProjectSidebarStep.Data);
             UIManager.SetDataInspectorVisibility(false);
+            UIManager.SetGizmoTransformerVisibility(false);
         }
 
         private void OnRenderSettingsButtonClicked()
@@ -111,6 +112,7 @@ namespace Astrovisio
             // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
             SetActiveStep(ProjectSidebarStep.Render);
             RenderManager.Instance.RenderDataContainer(Project);
+            UIManager.SetGizmoTransformerVisibility(true);
         }
 
         private void OnGoToVRButtonClicked()

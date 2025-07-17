@@ -92,7 +92,7 @@ namespace Astrovisio
             kdTreeComponent.ToggleDataInspectorVisibility();
             isInspectorModeActive = kdTreeComponent.GetDataInspectorVisibility();
             uiManager.SetDataInspectorVisibility(isInspectorModeActive);
-            uiManager.SetGizmoTransformerVisibility(isInspectorModeActive);
+            // uiManager.SetGizmoTransformerVisibility(isInspectorModeActive);
             kdTreeComponent.realtime = isInspectorModeActive;
         }
 
