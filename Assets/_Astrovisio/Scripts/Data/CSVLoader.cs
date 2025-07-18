@@ -7,18 +7,6 @@ using System;
 
 public class CSVLoader : MonoBehaviour
 {
-    [SerializeField] private DataCubeRenderer dataCubeRenderer;
-
-    public void OnClickLoadCSV()
-    {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Seleziona un file CSV", "", "csv", false);
-        if (paths.Length > 0)
-        {
-            string filePath = paths[0];
-            string csvContent = LoadCSVFile(filePath);
-            dataCubeRenderer.LoadData(csvContent);
-        }
-    }
 
     private string LoadCSVFile(string path)
     {

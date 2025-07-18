@@ -29,5 +29,12 @@ namespace Astrovisio
             rotationAngle %= 360f;
             spinner.style.rotate = new Rotate(new Angle(rotationAngle, AngleUnit.Degree));
         }
+
+        public void SetLoaderValue(float value)
+        {
+            // TODO: set value to loader
+        }
+
     }
+
 }
