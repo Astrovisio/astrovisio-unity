@@ -3,35 +3,27 @@ using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    public class LoadingController : MonoBehaviour
-    {
-        [Header("Settings")]
-        [SerializeField] private float spinnerSpeed = 180f;
 
+    public class LoaderController
+    {
+        public VisualElement Root { get; }
         private VisualElement spinner;
         private VisualElement bar;
-        private float rotationAngle = 0f;
+        private Label barLabel;
+        private VisualElement barFill;
 
-        private void Start()
+        public LoaderController(VisualElement root)
         {
-            var uiDocument = GetComponentInParent<UIDocument>();
-            var loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            Root = root;
+
+            VisualElement loaderView = root.Q<VisualElement>("LoaderView");
             spinner = loaderView.Q<VisualElement>("LoadingSpinner");
             bar = loaderView.Q<VisualElement>("LoadingBar");
+            barLabel = bar.Q<Label>("Message");
+            barFill = bar.Q<VisualElement>("BarFill");
 
-            // SetLoaderValue(0.75f);
-        }
-
-        private void Update()
-        {
-            if (spinner == null)
-            {
-                return;
-            }
-
-            rotationAngle += spinnerSpeed * Time.deltaTime;
-            rotationAngle %= 360f;
-            spinner.style.rotate = new Rotate(new Angle(rotationAngle, AngleUnit.Degree));
+            SetSpinnerVisibility(false);
+            SetBarVisibility(false);
         }
 
         public void SetSpinnerVisibility(bool visibility)
@@ -58,13 +50,17 @@ namespace Astrovisio
             }
         }
 
-        public void SetLoaderValue(float value)
+        public void SetBarProgress(float value, string text, bool visibility)
         {
-            VisualElement barFill = bar.Q<VisualElement>("BarFill");
+            // Debug.Log("SetBarProgress");
+
+            barLabel.text = text;
 
             Vector3 scale = barFill.transform.scale;
             scale.x = value;
             barFill.transform.scale = scale;
+
+            SetBarVisibility(visibility);
         }
 
     }

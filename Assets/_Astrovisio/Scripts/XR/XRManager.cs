@@ -123,7 +123,7 @@ namespace Astrovisio
         private IEnumerator StartXR()
         {
             Debug.Log("[XRManager] Initializing XR...");
-            uiManager.SetLoading(true);
+            uiManager.SetLoadingBar(true);
 
             yield return XRGeneralSettings.Instance.Manager.InitializeLoader();
 
@@ -131,7 +131,7 @@ namespace Astrovisio
             {
                 Debug.LogWarning("[XRManager] Failed to initialize XR Loader. Make sure an XR Plug-in is enabled in Project Settings > XR Plug-in Management.");
                 OnXRFailed();
-                uiManager.SetLoading(false);
+                uiManager.SetLoadingBar(false);
                 yield break;
             }
 
@@ -162,7 +162,7 @@ namespace Astrovisio
             }
             finally
             {
-                uiManager.SetLoading(false);
+                uiManager.SetLoadingBar(false);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Astrovisio
         private void OnXRFailed()
         {
             VRActive = false;
-            uiManager.SetLoading(false);
+            uiManager.SetLoadingBar(false);
             uiManager.SetErrorVR(true);
             Debug.Log("[XRManager] Fallback to non-VR mode.");
 

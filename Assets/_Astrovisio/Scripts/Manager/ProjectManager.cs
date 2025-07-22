@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Astrovisio
@@ -65,19 +66,19 @@ namespace Astrovisio
 
 		public async void FetchAllProjects()
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 
 			await apiManager.ReadProjects(
 				projects =>
 				{
 					projectList = projects;
 					ProjectsFetched?.Invoke(projectList);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				});
 		}
 
@@ -117,7 +118,7 @@ namespace Astrovisio
 
 		public async void CreateProject(string name, string description, string[] paths)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 
 			CreateProjectRequest req = new CreateProjectRequest
 			{
@@ -132,18 +133,18 @@ namespace Astrovisio
 				{
 					projectList.Add(created);
 					ProjectCreated?.Invoke(created);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				});
 		}
 
 		public async void DuplicateProject(string name, string description, Project projectToDuplicate)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 
 			CreateProjectRequest createReq = new CreateProjectRequest
 			{
@@ -171,7 +172,7 @@ namespace Astrovisio
 
 			if (!createSuccess || createdProject == null)
 			{
-				uiManager.SetLoading(false);
+				uiManager.SetLoadingBar(false);
 				return;
 			}
 
@@ -189,12 +190,12 @@ namespace Astrovisio
 				{
 					createdProject.UpdateFrom(updated);
 					ProjectCreated?.Invoke(createdProject);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				});
 		}
 
@@ -240,7 +241,8 @@ namespace Astrovisio
 
 		public async void ProcessProject(int id, ConfigProcess configProcess)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
+			uiManager.SetLoadingBar(true);
 
 			ProcessProjectRequest req = new ProcessProjectRequest
 			{
@@ -248,22 +250,89 @@ namespace Astrovisio
 				ConfigParam = configProcess.Params
 			};
 
-			await apiManager.ProcessProject(id, req,
-				dataPack =>
-				{
-					Project project = GetProject(id);
-					if (project != null)
-					{
-						ProjectProcessed?.Invoke(project, dataPack);
-					}
-					uiManager.SetLoading(false);
-				},
-				error =>
+			try
+			{
+				// Get Job ID
+				int? jobID = await apiManager.ProcessProject(id, req, error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoading(false);
+					uiManager.SetLoadingBar(false);
 				});
+
+				if (jobID == null)
+				{
+					Debug.LogError("Job ID is null. Aborting process.");
+					return;
+				}
+				Debug.Log($"[ProjectManager] Job ID: {jobID}");
+
+
+				// Polling
+				try
+				{
+					float progress = 0f;
+					while (progress < 1.0f)
+					{
+						await Task.Delay(250);
+
+						JobStatusResponse statusResponse = await apiManager.GetProjectJobStatus(id, jobID.Value, error =>
+						{
+							ApiError?.Invoke(error);
+						});
+
+						if (statusResponse == null)
+						{
+							Debug.LogWarning("Null statusResponse");
+							continue;
+						}
+
+						progress = statusResponse.Progress;
+						// Debug.Log($"Polling job {jobID}: status={status.Status}, progress={progress}");
+
+						uiManager.SetLoadingBarProgress(progress, ProcessingStatusMessages.GetClientMessage(statusResponse.Status));
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
+					ApiError?.Invoke("Errore nel processamento: " + ex.Message);
+					uiManager.SetLoadingBar(false);
+				}
+
+
+				// Get DataPack
+				uiManager.SetLoadingBarProgress(1.0f, ProcessingStatusMessages.GetClientMessage("loading"));
+				DataPack dataPack = await apiManager.FetchProjectProcessedData(id, jobID.Value, error =>
+				{
+					ApiError?.Invoke(error);
+				});
+
+				if (dataPack == null)
+				{
+					Debug.LogError("DataPack is null. Aborting process.");
+					return;
+				}
+
+				Project project = GetProject(id);
+				if (project != null)
+				{
+					ProjectProcessed?.Invoke(project, dataPack);
+					Debug.Log($"[ProjectManager] Process completed, rows: {dataPack.Rows.Length}");
+				}
+
+				uiManager.SetLoadingBar(false);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
+				ApiError?.Invoke("Errore nel processamento: " + ex.Message);
+			}
+			finally
+			{
+				uiManager.SetLoadingBar(false);
+			}
 		}
+
 
 		private void OnDisable()
 		{

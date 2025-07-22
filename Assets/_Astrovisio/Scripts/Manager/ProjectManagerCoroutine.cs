@@ -375,7 +375,7 @@ namespace Astrovisio
 		private IEnumerator FetchAllProjectsCoroutine()
 		{
 			// Debug.Log("FetchAllProjectsCoroutine -> START");
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 			yield return apiManager.ReadProjects(
 			  onSuccess: fetched =>
 			  {
@@ -386,7 +386,7 @@ namespace Astrovisio
 			  },
 			  onError: err => ApiError?.Invoke(err)
 			);
-			uiManager.SetLoading(false);
+			uiManager.SetLoadingBar(false);
 			// Debug.Log("FetchAllProjectsCoroutine -> END");
 		}
 
@@ -460,7 +460,7 @@ namespace Astrovisio
 
 		private IEnumerator CreateProjectCoroutine(CreateProjectRequest createProjectRequest)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 			bool finished = false;
 
 			yield return apiManager.CreateNewProject(
@@ -483,7 +483,7 @@ namespace Astrovisio
 			while (!finished)
 				yield return null;
 
-			uiManager.SetLoading(false);
+			uiManager.SetLoadingBar(false);
 		}
 
 
@@ -503,7 +503,7 @@ namespace Astrovisio
 
 		private IEnumerator DuplicateProjectCoroutine(DuplicateProjectRequest duplicateProjectRequest)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 			// Debug.Log($"[Duplicate] Step 1: Creating '{duplicateProjectRequest.Name}'");
 
 			// Step 1: Crea un nuovo progetto base
@@ -533,7 +533,7 @@ namespace Astrovisio
 			// Se la creazione è fallita, termina
 			if (createdProject == null)
 			{
-				uiManager.SetLoading(false);
+				uiManager.SetLoadingBar(false);
 				yield break;
 			}
 
@@ -582,7 +582,7 @@ namespace Astrovisio
 				}
 			);
 
-			uiManager.SetLoading(false);
+			uiManager.SetLoadingBar(false);
 		}
 
 
@@ -666,26 +666,26 @@ namespace Astrovisio
 
 		private IEnumerator ProcessProjectCoroutine(int id, ProcessProjectRequest processProjectRequest)
 		{
-			uiManager.SetLoading(true);
+			uiManager.SetLoadingBar(true);
 			yield return apiManager.ProcessProject(
 				id,
 				processProjectRequest,
-				onSuccess: processed =>
-				{
-					Project project = GetProject(id);
-					// Debug.Log(project == projectList.FirstOrDefault(p => p.Id == id));
-					if (project is not null)
-					{
-						ProjectProcessed?.Invoke(project, processed);
-					}
-					else
-					{
-						Debug.LogWarning($"Project with ID {id} not found.");
-					}
-				},
+				// onSuccess: processed =>
+				// {
+				// 	Project project = GetProject(id);
+				// 	// Debug.Log(project == projectList.FirstOrDefault(p => p.Id == id));
+				// 	if (project is not null)
+				// 	{
+				// 		ProjectProcessed?.Invoke(project, processed);
+				// 	}
+				// 	else
+				// 	{
+				// 		Debug.LogWarning($"Project with ID {id} not found.");
+				// 	}
+				// },
 				onError: err => ApiError?.Invoke(err)
 			);
-			uiManager.SetLoading(false);
+			uiManager.SetLoadingBar(false);
 		}
 
 

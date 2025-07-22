@@ -24,6 +24,7 @@ namespace Astrovisio
         private DeleteProjectViewController deleteProjectViewController;
         private DataInspectorController dataInspectorController;
         private GizmoTransformController gizmoTransformController;
+        private LoaderController loaderController;
 
         // Event System
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -58,6 +59,9 @@ namespace Astrovisio
 
             VisualElement gizmoTransform = uiDocument.rootVisualElement.Q<VisualElement>("GizmoTransform");
             gizmoTransformController = new GizmoTransformController(gizmoTransform);
+
+            VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            loaderController = new LoaderController(loaderView);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -146,7 +150,7 @@ namespace Astrovisio
             SetDataInspectorVisibility(state);
         }
 
-        public void SetLoading(bool state)
+        public void SetLoadingBar(bool state)
         {
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
 
@@ -158,6 +162,11 @@ namespace Astrovisio
             {
                 loaderView.RemoveFromClassList("active");
             }
+        }
+
+        public void SetLoadingBarProgress(float value, string text = "", bool visibility = true)
+        {
+            loaderController.SetBarProgress(value, text, visibility);
         }
 
         public void SetErrorVR(bool state)
@@ -220,7 +229,7 @@ namespace Astrovisio
 
         public void SetDataInspectorVisibility(bool state)
         {
-            dataInspectorController.SetPanelVisibility(state);
+            dataInspectorController.SetVisibility(state);
         }
 
         public void SetDataInspector(string[] header, float[] dataInfo)

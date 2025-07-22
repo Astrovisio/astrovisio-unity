@@ -42,11 +42,11 @@ namespace Astrovisio
         }
 
         public async Task ReadProject(
-            int id,
+            int projectID,
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProjectById(projectID);
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 await SendWebRequestAsync(request);
@@ -139,12 +139,12 @@ namespace Astrovisio
         }
 
         public async Task UpdateProject(
-            int id,
+            int projectID,
             UpdateProjectRequest req,
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProjectById(projectID);
             string json = JsonConvert.SerializeObject(req);
             Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
 
@@ -173,11 +173,11 @@ namespace Astrovisio
         }
 
         public async Task DeleteProject(
-            int id,
+            int projectID,
             Action onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProjectById(projectID);
 
             using (UnityWebRequest request = UnityWebRequest.Delete(url))
             {
@@ -194,13 +194,12 @@ namespace Astrovisio
             }
         }
 
-        public async Task ProcessProject(
-            int id,
+        public async Task<int?> ProcessProject(
+            int projectID,
             ProcessProjectRequest req,
-            Action<DataPack> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.ProcessProject(id);
+            string url = APIEndpoints.ProcessProject(projectID);
             Debug.Log($"[APIManager] POST {url}");
 
             string jsonPayload = JsonConvert.SerializeObject(req, Formatting.None,
@@ -215,30 +214,130 @@ namespace Astrovisio
                 request.SetRequestHeader("Content-Type", "application/json");
 
                 await SendWebRequestAsync(request);
+                Debug.Log($"[APIManager] Raw response: {request.downloadHandler.text}");
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     Debug.LogError($"[APIManager] Error POST: {request.error}");
                     onError?.Invoke(request.downloadHandler.text);
-                    return;
+                    return null;
                 }
 
                 try
                 {
-                    byte[] rawBytes = request.downloadHandler.data;
-                    DataPack processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
-                    Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
-
-                    onSuccess?.Invoke(processedData);
+                    JobResponse jobResponse = JsonConvert.DeserializeObject<JobResponse>(request.downloadHandler.text);
+                    Debug.Log($"[APIManager] Received job_id: {jobResponse.JobID}");
+                    return jobResponse.JobID;
                 }
                 catch (Exception ex)
                 {
                     Debug.LogError($"[APIManager] Deserialization failed: {ex.Message}");
                     onError?.Invoke("Deserialization failed: " + ex.Message);
+                    return null;
                 }
             }
         }
-        
+
+
+        public async Task<JobStatusResponse> GetProjectJobStatus(
+            int projectID,
+            int jobID,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.GetProjectJobStatus(projectID, jobID);
+            // Debug.Log($"[APIManager] GET {url}");
+
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error GET JobStatus: {request.error}");
+                    onError?.Invoke(request.downloadHandler.text);
+                    return null;
+                }
+
+                // Debug.Log($"[APIManager] Job Status Raw response: {request.downloadHandler.text}");
+
+                try
+                {
+                    string json = request.downloadHandler.text;
+                    // Debug.Log(json);
+                    JobStatusResponse jobStatusResponse = JsonConvert.DeserializeObject<JobStatusResponse>(json);
+                    return jobStatusResponse;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[APIManager] Failed to parse job result: {ex.Message}");
+                    onError?.Invoke("Deserialization or parsing failed: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
+
+        public async Task<DataPack> FetchProjectProcessedData(
+            int projectID,
+            int jobID,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.FetchProjectProcessedData(projectID, jobID);
+            Debug.Log($"[APIManager] GET {url}");
+
+            const int maxRetries = 3;
+            const int retryDelayMs = 2000;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                using (UnityWebRequest request = UnityWebRequest.Get(url))
+                {
+                    request.downloadHandler = new DownloadHandlerBuffer();
+                    request.timeout = 10;
+
+                    await SendWebRequestAsync(request);
+
+                    Debug.LogWarning($"Attempt {attempt}: Request error = {request.error}");
+
+                    if (request.result == UnityWebRequest.Result.Success)
+                    {
+                        try
+                        {
+                            byte[] rawBytes = request.downloadHandler.data;
+                            DataPack processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
+                            Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
+                            return processedData;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError($"[APIManager] Deserialization failed: {ex.Message}");
+                            onError?.Invoke("Deserialization failed: " + ex.Message);
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"[APIManager] Error GET (attempt {attempt}): {request.error}");
+                        Debug.LogError($"[APIManager] Error Text: {request.downloadHandler.text}");
+
+                        if (attempt == maxRetries)
+                        {
+                            onError?.Invoke(request.downloadHandler.text);
+                            return null;
+                        }
+
+                        await Task.Delay(retryDelayMs);
+                    }
+                }
+            }
+
+            onError?.Invoke("Unknown error");
+            return null;
+        }
+
+
     }
 
 }

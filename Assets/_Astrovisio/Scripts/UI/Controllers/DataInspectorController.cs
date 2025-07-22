@@ -18,10 +18,10 @@ namespace Astrovisio
             paramScrollView = Root.Q<ScrollView>("ParamScrollView");
             // Debug.Log(paramScrollView);
 
-            SetPanelVisibility(false);
+            SetVisibility(false);
         }
 
-        public void SetPanelVisibility(bool visibility)
+        public void SetVisibility(bool visibility)
         {
             if (visibility)
             {
