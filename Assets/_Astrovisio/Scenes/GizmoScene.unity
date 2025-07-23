@@ -152,9 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1404605710}
-  distance: 5
-  rotationSpeed: 5
-  verticalLimits: {x: -90, y: 90}
 --- !u!114 &689560016
 MonoBehaviour:
   m_ObjectHideFlags: 0

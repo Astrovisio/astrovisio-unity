@@ -835,38 +835,38 @@ namespace CatalogData
         {
             if (Input.GetKeyDown(KeyCode.Alpha0))
             {
-                DataMapping.UseNoise = false;
+                SetNoise(false, 0f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.005f;
+                SetNoise(true, 0.005f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.010f;
+                SetNoise(true, 0.010f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.015f;
+                SetNoise(true, 0.015f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.020f;
+                SetNoise(true, 0.020f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.025f;
+                SetNoise(true, 0.025f);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha6))
             {
-                DataMapping.UseNoise = true;
-                DataMapping.Uniforms.NoiseStrength = 0.030f;
+                SetNoise(true, 0.030f);
             }
+        }
+
+        public void SetNoise(bool state, float value)
+        {
+            DataMapping.UseNoise = state;
+            DataMapping.Uniforms.NoiseStrength = value;
         }
 
         void OnDrawGizmosSelected()

@@ -241,6 +241,12 @@ namespace Astrovisio
             dataRenderer.RemoveOpacity();
         }
 
+        public void SetNoise(bool state, float value = 0f)
+        {
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+            astrovisioDataSetRenderer.SetNoise(state, value);
+        }
+
     }
 
 }

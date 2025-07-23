@@ -23,9 +23,10 @@
     padding-bottom: 0;
     padding-left: 0;
     right: 0;
-    bottom: 0;
+    bottom: auto;
     visibility: visible;
     display: none;
+    top: 250px;
 }
 
 #MainViewRoot > #Body > #Content > #GizmoTransform {
@@ -39,6 +40,17 @@
     min-height: 100px;
     max-width: 100px;
     max-height: 100px;
+    display: none;
+    visibility: visible;
+}
+
+#MainViewRoot > #Body > #Content > #SettingsView {
+    position: absolute;
+    flex-grow: 1;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     display: none;
     visibility: visible;
 }

@@ -24,9 +24,10 @@ namespace Astrovisio
         private DeleteProjectViewController deleteProjectViewController;
         private DataInspectorController dataInspectorController;
         private GizmoTransformController gizmoTransformController;
+        private SettingsViewController settingsViewController;
         private LoaderController loaderController;
 
-        // Event System
+        // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
         [SerializeField] private XRUIInputModule xrInputModule;
 
@@ -59,6 +60,9 @@ namespace Astrovisio
 
             VisualElement gizmoTransform = uiDocument.rootVisualElement.Q<VisualElement>("GizmoTransform");
             gizmoTransformController = new GizmoTransformController(gizmoTransform);
+
+            VisualElement settingsView = uiDocument.rootVisualElement.Q<VisualElement>("SettingsView");
+            settingsViewController = new SettingsViewController(settingsView);
 
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
             loaderController = new LoaderController(loaderView);
@@ -137,6 +141,7 @@ namespace Astrovisio
         {
             mainViewController.SetContentVisibility(state);
             mainViewController.SetBackgroundVisibility(state);
+            settingsViewController.SetSettingsVisibility(!state);
         }
 
         public void SetUIVisibility(bool state)

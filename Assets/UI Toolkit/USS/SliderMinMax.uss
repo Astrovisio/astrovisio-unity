@@ -5,19 +5,19 @@
 
 #SliderMinMaxRoot > #Label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
-    margin-bottom: 4px;
+    margin-bottom: 0;
     color: var(--grey-700);
 }
 
 #SliderMinMaxRoot > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__min-thumb {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/circle.svg?fileID=7388822144124034973&guid=5988f21993ac6dc4db7f0e7e716748dd&type=3#circle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=3a115059eff8c48b793bac65ee731d1c&type=3#slider-handle");
     background-color: var(--transparent);
-    height: 16px;
-    width: 16px;
-    min-width: 16px;
-    min-height: 16px;
-    max-height: 16px;
-    max-width: 16px;
+    height: 24px;
+    width: 8px;
+    min-width: 8px;
+    min-height: 24px;
+    max-height: 24px;
+    max-width: 8px;
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
@@ -29,7 +29,7 @@
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
-    margin-left: 2px;
+    margin-left: 0;
     padding-top: 0;
     padding-right: 0;
     padding-bottom: 0;
@@ -45,12 +45,12 @@
 }
 
 #SliderMinMaxRoot > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__max-thumb {
-    height: 16px;
-    width: 16px;
-    min-width: 16px;
-    max-width: 16px;
-    max-height: 16px;
-    min-height: 16px;
+    height: 24px;
+    width: 8px;
+    min-width: 8px;
+    max-width: 8px;
+    max-height: 24px;
+    min-height: 24px;
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
@@ -59,11 +59,11 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/circle.svg?fileID=7388822144124034973&guid=5988f21993ac6dc4db7f0e7e716748dd&type=3#circle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=3a115059eff8c48b793bac65ee731d1c&type=3#slider-handle");
     background-color: var(--transparent);
     -unity-background-image-tint-color: var(--grey-800);
     margin-left: 0;
-    margin-right: 2px;
+    margin-right: 0;
 }
 
 #SliderMinMaxRoot > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger {
@@ -81,6 +81,9 @@
     border-right-color: var(--transparent);
     border-top-color: var(--transparent);
     border-bottom-color: var(--transparent);
+    height: 8px;
+    min-height: 8px;
+    max-height: 8px;
 }
 
 #SliderMinMaxRoot > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__tracker {
@@ -94,14 +97,18 @@
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
     background-color: var(--grey-300);
-    margin-left: 2px;
-    margin-right: 2px;
+    margin-left: 0;
+    margin-right: 0;
+    height: 8px;
+    min-height: 8px;
+    max-height: 8px;
 }
 
 #SliderMinMaxRoot > #MinMaxSlider {
-    margin-right: -2px;
-    margin-left: -2px;
-    margin-bottom: 8px;
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: 5px;
+    margin-top: 13px;
 }
 
 #SliderMinMaxRoot > #FloatFieldsElement {
