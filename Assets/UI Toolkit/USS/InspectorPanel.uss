@@ -1,0 +1,23 @@
+#Root {
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background-color: var(--grey-200);
+}
+
+#Root > #TitleContainer {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#Root > #TitleContainer > #TitleLabel {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 14px;
+    -unity-text-align: middle-left;
+    color: var(--black);
+}

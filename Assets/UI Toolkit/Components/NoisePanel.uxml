@@ -1,0 +1,13 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
+    <engine:Template name="Slider" src="project://database/Assets/UI%20Toolkit/Components/Shared/Slider.uxml?fileID=9197481963319205126&amp;guid=02d1baae80c0d20428e83b2e2aee8725&amp;type=3#Slider" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/NoisePanel.uss?fileID=7433441132597879392&amp;guid=c2b6cd8ef4f26954fbf057b855472c5e&amp;type=3#NoisePanel" />
+    <engine:VisualElement name="Root" class="panel">
+        <engine:VisualElement name="TitleContainer">
+            <engine:Label text="Noise" name="TitleLabel" class="title-label" />
+            <engine:Instance template="CheckboxSimple" name="NoiseToggle" />
+        </engine:VisualElement>
+        <engine:Instance template="Slider" name="NoiseSlider" />
+        <engine:FloatField value="42.2" name="NoiseInputField" style="flex-grow: 1;" />
+    </engine:VisualElement>
+</engine:UXML>

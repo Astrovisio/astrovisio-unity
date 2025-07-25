@@ -1,0 +1,111 @@
+.recorder-button {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    background-color: var(--grey-150);
+}
+
+.recorder-button:hover {
+    background-color: var(--grey-300);
+}
+
+.recorder-button:active {
+    background-color: var(--grey-400);
+}
+
+#Root {
+    background-color: var(--grey-200);
+    padding-top: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+#Root > #TitleLabel {
+    margin-bottom: 12px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 14px;
+    color: var(--black);
+    -unity-text-align: middle-left;
+}
+
+#Root > #BodyContainer {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    max-height: 24px;
+    min-height: 24px;
+    height: 24px;
+}
+
+#Root > #BodyContainer > #RecButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/play_arrow_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&guid=cbbf24b36c8e6604ab3aa264160efbfe&type=3#play_arrow_24dp_000_FILL0_wght400_GRAD0_opsz24 1");
+    -unity-background-image-tint-color: var(--grey-700);
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+}
+
+#Root > #BodyContainer > #RecButton.active > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/stop_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&guid=5bbd436b9b21dc94189fa04523ef0a4b&type=3#stop_24dp_000_FILL0_wght400_GRAD0_opsz24 1");
+}
+
+#Root > #BodyContainer > #TimerContainer {
+    flex-direction: row;
+    width: 75px;
+    min-width: 75px;
+    max-width: 75px;
+    background-color: var(--grey-100);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(95, 95, 89);
+    border-right-color: rgb(95, 95, 89);
+    border-top-color: rgb(95, 95, 89);
+    border-bottom-color: rgb(95, 95, 89);
+}
+
+#Root > #BodyContainer > #TimerContainer > #TimerLabel {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 12px;
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+    color: var(--grey-600);
+}
+
+#Root > #BodyContainer > #ResetButton > #Icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/undo_24dp_000_FILL0_wght400_GRAD0_opsz24.svg?fileID=7388822144124034973&guid=dbb9907a59e3a2544a3663d519c600e7&type=3#undo_24dp_000_FILL0_wght400_GRAD0_opsz24");
+}

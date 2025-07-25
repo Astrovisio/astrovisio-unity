@@ -1,15 +1,3 @@
-#SettingsView {
-    visibility: visible;
-}
-
-#SettingsView > #Container {
-    flex-direction: column;
-    justify-content: center;
-    align-self: flex-end;
-    visibility: visible;
-    flex-grow: 1;
-}
-
 .button {
     width: 32px;
     height: 32px;
@@ -26,7 +14,6 @@
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
     background-color: var(--grey-150);
-    margin-top: 16px;
 }
 
 .button:hover {
@@ -38,181 +25,180 @@
 }
 
 .button.active {
-    background-color: var(--grey-300);
-}
-
-.button-icon {
-}
-
-.horizontal-button {
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
     background-color: var(--grey-200);
-    border-left-color: rgb(95, 95, 89);
-    border-right-color: rgb(95, 95, 89);
-    border-top-color: rgb(95, 95, 89);
-    border-bottom-color: rgb(95, 95, 89);
-    width: 138px;
-    height: 24px;
-    min-width: 138px;
-    max-width: 138px;
-    min-height: 24px;
-    max-height: 24px;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-right: 8px;
-    padding-left: 8px;
 }
 
-.horizontal-button-icon {
-    width: 16px;
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
-    max-width: 16px;
-    min-width: 16px;
-    -unity-background-image-tint-color: var(--grey-700);
-    margin-right: 3px;
-}
-
-.horizontal-button-label {
-    flex-grow: 1;
-    color: var(--grey-700);
+.title-label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    font-size: 12px;
-    -unity-text-align: middle-left;
+    font-size: 14px;
+    color: var(--black);
+    margin-bottom: 8px;
 }
 
-.panel {
-    position: absolute;
-    right: 40px;
-    bottom: 0;
+#SettingsView {
+    visibility: visible;
 }
 
-#SettingsView > #Container > #InspectorButton {
+#SettingsView > #Container {
+    flex-direction: column;
+    justify-content: center;
+    align-self: flex-end;
+    visibility: visible;
+    flex-grow: 1;
+}
+
+#SettingsView > #Container > #SettingsSidebar {
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    background-color: var(--grey-150);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    align-items: stretch;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #Line {
+    height: 1px;
+    min-height: 1px;
+    max-height: 1px;
+    background-color: var(--grey-300);
+    margin-bottom: 8px;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #InspectorContainer {
+}
+
+#SettingsView > #Container > #SettingsSidebar > #InspectorContainer > #InspectorButton {
     overflow: visible;
     display: flex;
+    margin-bottom: 8px;
 }
 
-#SettingsView > #Container > #InspectorButton > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/check_small.svg?fileID=7388822144124034973&guid=fa6e860a8373c4d4d95873dde3eb5813&type=3#check_small");
+#SettingsView > #Container > #SettingsSidebar > #InspectorContainer > #InspectorButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/datainspector-bar-icon.svg?fileID=7388822144124034973&guid=92636031600960d49856c0f1c008872f&type=3#datainspector-bar-icon");
 }
 
-#SettingsView > #Container > #InspectorButton > #Panel {
-    width: 100px;
-    height: 100px;
-    min-height: 100px;
-    max-height: 100px;
-    max-width: 100px;
-    min-width: 100px;
+#SettingsView > #Container > #SettingsSidebar > #InspectorContainer > #InspectorPanel {
+    width: 192px;
+    max-width: 192px;
+    min-width: 192px;
     overflow: visible;
     display: none;
     position: absolute;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    border-bottom-left-radius: 12px;
-    background-color: var(--grey-150);
+    right: 50px;
+    top: -8px;
 }
 
-#SettingsView > #Container > #InspectorButton.active > #Panel {
+#SettingsView > #Container > #SettingsSidebar > #InspectorContainer.active > #InspectorPanel {
     display: flex;
 }
 
-#SettingsView > #Container > #ScreenshotButton {
-    overflow: visible;
+#SettingsView > #Container > #SettingsSidebar > #NoiseContainer {
+    margin-bottom: 8px;
 }
 
-#SettingsView > #Container > #ScreenshotButton > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/HideUIIcon.svg?fileID=7388822144124034973&guid=703a2cd37fa498e40b18255d9c192984&type=3#HideUIIcon");
-}
-
-#SettingsView > #Container > #ScreenshotButton > #Panel {
-    position: absolute;
-    overflow: visible;
-    background-color: var(--grey-150);
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    border-bottom-left-radius: 12px;
-    display: none;
-    padding-top: 8px;
-    padding-right: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-}
-
-#SettingsView > #Container > #ScreenshotButton.active > #Panel {
-    display: flex;
-}
-
-#SettingsView > #Container > #NoiseButton {
+#SettingsView > #Container > #SettingsSidebar > #NoiseContainer > #NoiseButton {
     transform-origin: left;
     overflow: visible;
 }
 
-#SettingsView > #Container > #NoiseButton > #Icon {
+#SettingsView > #Container > #SettingsSidebar > #NoiseContainer > #NoiseButton > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/NoiseIcon.svg?fileID=7388822144124034973&guid=a9cd4f34ca26d7c48a6c66e70e7456dc&type=3#NoiseIcon");
     -unity-background-image-tint-color: var(--grey-700);
 }
 
-#SettingsView > #Container > #NoiseButton > #Panel {
+#SettingsView > #Container > #SettingsSidebar > #NoiseContainer > #NoisePanel {
     position: absolute;
-    transform-origin: left bottom;
-    translate: 0 0;
-    width: 144px;
-    height: 161px;
-    min-height: 161px;
-    max-height: 161px;
-    min-width: 144px;
-    max-width: 144px;
+    width: 161px;
+    min-width: 161px;
+    max-width: 161px;
     overflow: visible;
-    background-color: var(--grey-150);
+    display: none;
+    right: 50px;
+    top: -8px;
+    bottom: auto;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #NoiseContainer.active > #NoisePanel {
+    display: flex;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #HideUIContainer > #HideUIButton {
+    margin-bottom: 8px;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #HideUIContainer > #HideUIButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/hideui-bar-icon.svg?fileID=7388822144124034973&guid=678ef0045db73a944866460df2e46abe&type=3#hideui-bar-icon");
+    -unity-background-image-tint-color: var(--grey-700);
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenshotContainer > #ScreenshotButton {
+    overflow: visible;
+    margin-bottom: 8px;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenshotContainer > #ScreenshotButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/screenshot-bar-icon.svg?fileID=7388822144124034973&guid=5f74499e1d259e84a96f9b118a3ff505&type=3#screenshot-bar-icon");
+}
+
+.recorder-button {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    background-color: var(--grey-150);
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer {
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer > #ScreenrecorderButton {
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer > #ScreenrecorderButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/screenrecorder-bar-icon.svg?fileID=7388822144124034973&guid=ec159d5cc0865624f9b4e7b3e475d524&type=3#screenrecorder-bar-icon");
+}
+
+#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer > #ScreenrecorderPanel {
+    position: absolute;
+    bottom: -8px;
+    right: 50px;
+    visibility: visible;
     display: none;
-    padding-top: 16px;
-    padding-right: 16px;
-    padding-bottom: 16px;
-    padding-left: 16px;
+    width: 163px;
+    min-width: 163px;
+    max-width: 163px;
 }
 
-#SettingsView > #Container > #NoiseButton.active > #Panel {
+#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer.active > #ScreenrecorderPanel {
     display: flex;
-}
-
-#SettingsView > #Container > #NoiseButton > #Panel > #TitleContainer {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-#SettingsView > #Container > #NoiseButton > #Panel > #TitleContainer > #TitleLabel {
-    color: var(--grey-700);
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
-    font-size: 14px;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    -unity-text-align: upper-left;
-}
-
-#SettingsView > #Container > #HideUIButton {
-}
-
-#SettingsView > #Container > #HideUIButton > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&guid=c5d66e8c0fb897f47931091e0e7ace36&type=3#close_small");
-    -unity-background-image-tint-color: var(--grey-700);
+    visibility: visible;
 }

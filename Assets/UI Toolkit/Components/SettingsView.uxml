@@ -1,40 +1,42 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
-    <engine:Template name="Slider" src="project://database/Assets/UI%20Toolkit/Components/Shared/Slider.uxml?fileID=9197481963319205126&amp;guid=02d1baae80c0d20428e83b2e2aee8725&amp;type=3#Slider" />
+    <engine:Template name="NoisePanel" src="project://database/Assets/UI%20Toolkit/Components/NoisePanel.uxml?fileID=9197481963319205126&amp;guid=cf22b3d541cef3d49998261584aadce4&amp;type=3#NoisePanel" />
+    <engine:Template name="ScreenrecorderPanel" src="project://database/Assets/UI%20Toolkit/Components/ScreenrecorderPanel.uxml?fileID=9197481963319205126&amp;guid=210da0d065f7d6342a4341599632da09&amp;type=3#ScreenrecorderPanel" />
+    <engine:Template name="InspectorPanel" src="project://database/Assets/UI%20Toolkit/Components/InspectorPanel.uxml?fileID=9197481963319205126&amp;guid=cefa64c8d21650d4ebd5c02b7de68fd6&amp;type=3#InspectorPanel" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/SettingsView.uss?fileID=7433441132597879392&amp;guid=a0c4122496ab73c46a4ce6e70f2833fd&amp;type=3#SettingsView" />
     <engine:VisualElement name="SettingsView" picking-mode="Ignore" style="flex-grow: 1;">
         <engine:VisualElement name="Container" picking-mode="Ignore">
-            <engine:Button name="InspectorButton" class="button" style="overflow: visible;">
-                <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
-                <engine:VisualElement name="Panel" class="panel" />
-            </engine:Button>
-            <engine:Button name="ScreenshotButton" class="button" style="overflow: visible;">
-                <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
-                <engine:VisualElement name="Panel" class="panel" style="flex-grow: 1;">
-                    <engine:Button name="ScreenshotButton" class="horizontal-button" style="margin-bottom: 12px;">
-                        <engine:VisualElement name="Icon" class="horizontal-button-icon" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/ScreenshotIcon.svg?fileID=7388822144124034973&amp;guid=f9446de5005a4ef41939d124db1ac832&amp;type=3#ScreenshotIcon&quot;);" />
-                        <engine:Label name="Label" text="Screen capture" class="horizontal-button-label" />
+            <engine:VisualElement name="SettingsSidebar">
+                <engine:VisualElement name="InspectorContainer" class="active" style="flex-grow: 1;">
+                    <engine:Button name="InspectorButton" class="button" style="overflow: visible;">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
                     </engine:Button>
-                    <engine:Button name="RecorderButton" class="horizontal-button">
-                        <engine:VisualElement name="Icon" class="horizontal-button-icon" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/RecordingIcon.svg?fileID=7388822144124034973&amp;guid=d30c3c4e2f4c50c4a8a51930eb27abb7&amp;type=3#RecordingIcon&quot;);" />
-                        <engine:Label text="Screen recording" name="Label" class="horizontal-button-label" />
+                    <engine:Instance template="InspectorPanel" name="InspectorPanel" />
+                </engine:VisualElement>
+                <engine:VisualElement name="NoiseContainer" style="flex-grow: 1;">
+                    <engine:Button name="NoiseButton" class="button" style="overflow: visible;">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
+                    </engine:Button>
+                    <engine:Instance template="NoisePanel" name="NoisePanel" />
+                </engine:VisualElement>
+                <engine:VisualElement name="Line" />
+                <engine:VisualElement name="HideUIContainer" style="flex-grow: 1;">
+                    <engine:Button name="HideUIButton" class="button">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
                     </engine:Button>
                 </engine:VisualElement>
-            </engine:Button>
-            <engine:Button name="NoiseButton" class="button active" style="overflow: visible;">
-                <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
-                <engine:VisualElement name="Panel" class="panel">
-                    <engine:VisualElement name="TitleContainer">
-                        <engine:Label text="Noise" name="TitleLabel" />
-                        <engine:Instance template="CheckboxSimple" name="NoiseToggle" />
-                    </engine:VisualElement>
-                    <engine:Instance template="Slider" name="NoiseSlider" />
-                    <engine:FloatField value="42.2" name="NoiseInputField" style="flex-grow: 1;" />
+                <engine:VisualElement name="Line" />
+                <engine:VisualElement name="ScreenshotContainer" style="flex-grow: 1;">
+                    <engine:Button name="ScreenshotButton" class="button" style="overflow: visible;">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
+                    </engine:Button>
                 </engine:VisualElement>
-            </engine:Button>
-            <engine:Button name="HideUIButton" class="button">
-                <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
-            </engine:Button>
+                <engine:VisualElement name="ScreenrecorderContainer" style="flex-grow: 1;">
+                    <engine:Button name="ScreenrecorderButton" class="button active">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
+                    </engine:Button>
+                    <engine:Instance template="ScreenrecorderPanel" name="ScreenrecorderPanel" />
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

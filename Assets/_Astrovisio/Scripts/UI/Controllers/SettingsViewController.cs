@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
+using System;
 
 namespace Astrovisio
 {
@@ -7,19 +9,34 @@ namespace Astrovisio
     {
         public VisualElement Root { get; }
 
-        private Button inspectorButton;
-        private Button screenshotButton;
-        private Button noiseButton;
-        private Button hideUIButton;
+        private class ButtonAction
+        {
+            public string Name;
+            public Button Button;
+            public VisualElement Container;
+            public Action OnClick;
 
+            public ButtonAction(string name, Button button, VisualElement container = null, Action onClick = null)
+            {
+                Name = name;
+                Button = button;
+                Container = container;
+                OnClick = onClick;
+            }
+        }
+
+        private List<ButtonAction> buttonActions = new List<ButtonAction>();
+
+
+        // Controllers
         private ScreenshotSettingController screenshotSettingController;
         private NoiseSettingController noiseSettingController;
+
 
         public SettingsViewController(VisualElement root)
         {
             Root = root;
             Init();
-
             SetSettingsVisibility(false);
         }
 
@@ -29,160 +46,136 @@ namespace Astrovisio
             Root[0].pickingMode = PickingMode.Ignore;
             Root.Q<VisualElement>("Container").pickingMode = PickingMode.Ignore;
 
-            inspectorButton = Root.Q<Button>("InspectorButton");
-            screenshotButton = Root.Q<Button>("ScreenshotButton");
-            noiseButton = Root.Q<Button>("NoiseButton");
-            hideUIButton = Root.Q<Button>("HideUIButton");
+            // Containers
+            var inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
+            var noiseContainer = Root.Q<VisualElement>("NoiseContainer");
+            var hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
+            var screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
+            var screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
 
-            // Debug.Log(inspectorButton);
-            // Debug.Log(screenshotButton);
-            // Debug.Log(noiseButton);
-            // Debug.Log(hideUIButton);
+            // Buttons
+            var inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
+            var noiseButton = noiseContainer.Q<Button>("NoiseButton");
+            var hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
+            var screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
+            var screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
 
-            SetInspectorState(false);
-            SetScreenshotState(false);
-            SetNoiseState(false);
-            SetNoiseState(false);
 
-            inspectorButton.clicked += () =>
-            {
-                Debug.Log("inspectorButton");
+            // ButtonActions
 
-                bool newPanelState = !GetInspectorState();
-                if (newPanelState && IsAnyStateActive())
+            // 1. Panels
+            buttonActions.Add(new ButtonAction("Inspector", inspectorButton, inspectorContainer));
+            buttonActions.Add(new ButtonAction("Noise", noiseButton, noiseContainer));
+            buttonActions.Add(new ButtonAction("Screenrecorder", screenrecorderButton, screenrecorderContainer));
+
+            // 2. Action-only buttons
+            buttonActions.Add(new ButtonAction(
+                "Screenshot", screenshotButton, null,
+                () =>
                 {
-                    DeactivateAllStates();
+                    // Place screenshot logic here
+                    // Debug.Log("Screenshot button pressed.");
                 }
-                SetInspectorState(newPanelState);
-            };
-
-            screenshotButton.clicked += () =>
-            {
-                Debug.Log("screenshotButton");
-
-                bool newPanelState = !GetScreenshotState();
-                if (newPanelState && IsAnyStateActive())
+            ));
+            buttonActions.Add(new ButtonAction(
+                "HideUI", hideUIButton, null,
+                () =>
                 {
-                    DeactivateAllStates();
+                    // Place HideUI logic here
+                    // Debug.Log("Hide UI button pressed.");
                 }
-                SetScreenshotState(newPanelState);
-            };
+            ));
 
-            noiseButton.clicked += () =>
+            // Remove "active" from all at startup
+            foreach (var action in buttonActions)
             {
-                // Debug.Log("noiseButton");
-
-                bool newPanelState = !GetNoiseState();
-                if (newPanelState && IsAnyStateActive())
+                action.Button.RemoveFromClassList("active");
+                if (action.Container != null)
                 {
-                    DeactivateAllStates();
+                    action.Container.RemoveFromClassList("active");
                 }
-                SetNoiseState(newPanelState);
-            };
+            }
 
-            hideUIButton.clicked += () =>
+            // Bind all button events
+            foreach (ButtonAction buttonAction in buttonActions)
             {
-                Debug.Log("hideUIButton");
+                buttonAction.Button.clicked += () =>
+                {
+                    if (buttonAction.Container != null)
+                    {
+                        // Panel logic: toggle this tab, deactivate others if activating
+                        bool newState = !buttonAction.Button.ClassListContains("active");
+                        if (newState && IsAnyPanelActive())
+                        {
+                            DeactivateAllPanels();
+                        }
 
-                // bool newPanelState = !GetHideUIState();
-                // SetHideUIState(newPanelState);
-
-                Debug.Log(Root.pickingMode);
-                Debug.Log(Root.Q<VisualElement>("SettingsView").pickingMode);
-                Debug.Log(Root.Q<VisualElement>("Container").pickingMode);
-            };
+                        SetPanelActive(buttonAction, newState);
+                    }
+                    else
+                    {
+                        // Action-only button
+                        buttonAction.OnClick?.Invoke();
+                        // Optional: add highlight
+                        buttonAction.Button.AddToClassList("active");
+                        // Remove highlight after short delay for feedback
+                        Root.schedule.Execute(() => buttonAction.Button.RemoveFromClassList("active")).StartingIn(150);
+                    }
+                };
+            }
 
             screenshotSettingController = new ScreenshotSettingController(screenshotButton);
-            noiseSettingController = new NoiseSettingController(noiseButton);
+            noiseSettingController = new NoiseSettingController(noiseContainer);
         }
 
         public void SetSettingsVisibility(bool visibility)
         {
             Root.style.display = visibility ? DisplayStyle.Flex : DisplayStyle.None;
-            Debug.Log(Root.style.display);
         }
 
-        private void SetInspectorState(bool state)
+        private void SetPanelActive(ButtonAction action, bool active)
         {
-            if (state)
+            if (active)
             {
-                inspectorButton.AddToClassList("active");
+                action.Button.AddToClassList("active");
+                if (action.Container != null)
+                {
+                    action.Container.AddToClassList("active");
+                }
             }
             else
             {
-                inspectorButton.RemoveFromClassList("active");
+                action.Button.RemoveFromClassList("active");
+                if (action.Container != null)
+                {
+                    action.Container.RemoveFromClassList("active");
+                }
             }
         }
 
-        private void SetScreenshotState(bool state)
+        private bool IsAnyPanelActive()
         {
-            if (state)
+            foreach (var action in buttonActions)
             {
-                screenshotButton.AddToClassList("active");
+                if (action.Container != null && action.Button.ClassListContains("active"))
+                {
+                    return true;
+                }
             }
-            else
+            return false;
+        }
+
+        private void DeactivateAllPanels()
+        {
+            foreach (var action in buttonActions)
             {
-                screenshotButton.RemoveFromClassList("active");
+                if (action.Container != null)
+                {
+                    SetPanelActive(action, false);
+                }
             }
         }
-
-        private void SetNoiseState(bool state)
-        {
-            if (state)
-            {
-                noiseButton.AddToClassList("active");
-            }
-            else
-            {
-                noiseButton.RemoveFromClassList("active");
-            }
-        }
-
-        private void SetHideUIState(bool state)
-        {
-            if (state)
-            {
-                hideUIButton.AddToClassList("active");
-            }
-            else
-            {
-                hideUIButton.RemoveFromClassList("active");
-            }
-        }
-
-        private bool GetInspectorState()
-        {
-            return inspectorButton.ClassListContains("active");
-        }
-
-        private bool GetScreenshotState()
-        {
-            return screenshotButton.ClassListContains("active");
-        }
-
-        private bool GetNoiseState()
-        {
-            return noiseButton.ClassListContains("active");
-        }
-
-        private bool GetHideUIState()
-        {
-            return hideUIButton.ClassListContains("active");
-        }
-
-        private bool IsAnyStateActive()
-        {
-            return GetInspectorState() || GetScreenshotState() || GetNoiseState() || GetHideUIState();
-        }
-
-        private void DeactivateAllStates()
-        {
-            inspectorButton.RemoveFromClassList("active");
-            screenshotButton.RemoveFromClassList("active");
-            noiseButton.RemoveFromClassList("active");
-            hideUIButton.RemoveFromClassList("active");
-        }
-
+        
     }
 
 }

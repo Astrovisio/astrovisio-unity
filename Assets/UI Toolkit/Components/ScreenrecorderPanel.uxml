@@ -1,0 +1,17 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ScreenrecorderPanel.uss?fileID=7433441132597879392&amp;guid=6628e8e829be23240a72bbcfcb9da2f7&amp;type=3#ScreenrecorderPanel" />
+    <engine:VisualElement name="Root">
+        <engine:Label text="Screen recording" name="TitleLabel" class="title-label" />
+        <engine:VisualElement name="BodyContainer" style="flex-grow: 1;">
+            <engine:Button name="RecButton" class="recorder-button">
+                <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+            </engine:Button>
+            <engine:VisualElement name="TimerContainer" style="flex-grow: 1;">
+                <engine:Label text="00:05:23" name="TimerLabel" />
+            </engine:VisualElement>
+            <engine:Button name="ResetButton" class="recorder-button">
+                <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+            </engine:Button>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
