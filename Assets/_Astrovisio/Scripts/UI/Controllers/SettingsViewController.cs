@@ -8,6 +8,7 @@ namespace Astrovisio
     public class SettingsViewController
     {
         public VisualElement Root { get; }
+        public UIManager UIManager { get; }
 
         private class ButtonAction
         {
@@ -29,13 +30,14 @@ namespace Astrovisio
 
 
         // Controllers
-        private ScreenshotSettingController screenshotSettingController;
+        private ScreenrecorderSettingController screenrecorderSettingController;
         private NoiseSettingController noiseSettingController;
 
 
-        public SettingsViewController(VisualElement root)
+        public SettingsViewController(VisualElement root, UIManager uiManager)
         {
             Root = root;
+            UIManager = uiManager;
             Init();
             SetSettingsVisibility(false);
         }
@@ -73,16 +75,15 @@ namespace Astrovisio
                 "Screenshot", screenshotButton, null,
                 () =>
                 {
-                    // Place screenshot logic here
-                    // Debug.Log("Screenshot button pressed.");
+                    UIManager.TakeScreenshot();
                 }
             ));
             buttonActions.Add(new ButtonAction(
                 "HideUI", hideUIButton, null,
                 () =>
                 {
-                    // Place HideUI logic here
-                    // Debug.Log("Hide UI button pressed.");
+                    bool uiVisibility = UIManager.GetUIVisibility();
+                    UIManager.SetUIVisibility(!uiVisibility);
                 }
             ));
 
@@ -124,7 +125,7 @@ namespace Astrovisio
                 };
             }
 
-            screenshotSettingController = new ScreenshotSettingController(screenshotButton);
+            screenrecorderSettingController = new ScreenrecorderSettingController(screenrecorderContainer);
             noiseSettingController = new NoiseSettingController(noiseContainer);
         }
 
@@ -175,7 +176,7 @@ namespace Astrovisio
                 }
             }
         }
-        
+
     }
 
 }

@@ -32,6 +32,7 @@ namespace Astrovisio
         [SerializeField] private XRUIInputModule xrInputModule;
 
         // === Local ===
+        private bool uiVisibility = true;
         private bool isInteractingWithUI = false;
 
 
@@ -62,7 +63,7 @@ namespace Astrovisio
             gizmoTransformController = new GizmoTransformController(gizmoTransform);
 
             VisualElement settingsView = uiDocument.rootVisualElement.Q<VisualElement>("SettingsView");
-            settingsViewController = new SettingsViewController(settingsView);
+            settingsViewController = new SettingsViewController(settingsView, this);
 
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
             loaderController = new LoaderController(loaderView);
@@ -146,13 +147,20 @@ namespace Astrovisio
 
         public void SetUIVisibility(bool state)
         {
+            uiVisibility = state;
+
             mainViewController.SetHeaderVisibility(state);
             mainViewController.SetSideVisibility(state);
-            mainViewController.SetContentVisibility(state);
-            mainViewController.SetBackgroundVisibility(state);
+            // mainViewController.SetContentVisibility(state);
+            // mainViewController.SetBackgroundVisibility(state);
 
             SetGizmoTransformVisibility(state);
-            SetDataInspectorVisibility(state);
+            // SetDataInspectorVisibility(state);
+        }
+
+        public bool GetUIVisibility()
+        {
+            return uiVisibility;
         }
 
         public void SetLoadingBar(bool state)
@@ -246,6 +254,25 @@ namespace Astrovisio
         {
             gizmoTransformController.SetVisibility(state);
         }
+
+        public void TakeScreenshot()
+        {
+            string folderPath = Application.persistentDataPath + "/Screenshots";
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                System.IO.Directory.CreateDirectory(folderPath);
+                Debug.Log($"Created screenshot directory at: {folderPath}");
+            }
+
+            string timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string screenshotFilename = $"screenshot_{timestamp}.png";
+            string fullPath = System.IO.Path.Combine(folderPath, screenshotFilename);
+
+            ScreenCapture.CaptureScreenshot(fullPath);
+            Debug.Log($"Screenshot saved to: {fullPath}");
+        }
+
+
 
     }
 
