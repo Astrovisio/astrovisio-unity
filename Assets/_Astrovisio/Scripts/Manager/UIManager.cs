@@ -33,7 +33,7 @@ namespace Astrovisio
 
         // === Local ===
         private bool uiVisibility = true;
-        private bool isInteractingWithUI = false;
+        private bool clickStartedOnUI = false;
 
 
         private void Start()
@@ -75,9 +75,16 @@ namespace Astrovisio
             projectManager.FetchAllProjects();
         }
 
+
+        private void Update()
+        {
+            CheckClickStart();
+        }
+
+
         public ProjectManager GetProjectManager() => projectManager;
         public RenderManager GetRenderManager() => renderManager;
-        public UIContextSO getUIContext() => uiContextSO;
+        public UIContextSO GetUIContext() => uiContextSO;
 
         public void SwitchEventSystemToVR()
         {
@@ -91,10 +98,26 @@ namespace Astrovisio
             xrInputModule.enabled = false;
         }
 
-        public bool IsInteractingWithUI()
+        public void CheckClickStart()
         {
-            isInteractingWithUI = IsPointerOverVisibleUI();
-            return isInteractingWithUI;
+            if (Mouse.current.leftButton.wasPressedThisFrame ||
+                Mouse.current.rightButton.wasPressedThisFrame ||
+                Mouse.current.middleButton.wasPressedThisFrame)
+            {
+                clickStartedOnUI = IsPointerOverVisibleUI();
+            }
+
+            if (!Mouse.current.leftButton.isPressed &&
+                !Mouse.current.rightButton.isPressed &&
+                !Mouse.current.middleButton.isPressed)
+            {
+                clickStartedOnUI = false;
+            }
+        }
+
+        public bool HasClickStartedOnUI()
+        {
+            return clickStartedOnUI;
         }
 
         private bool IsPointerOverVisibleUI()
@@ -271,8 +294,6 @@ namespace Astrovisio
             ScreenCapture.CaptureScreenshot(fullPath);
             Debug.Log($"Screenshot saved to: {fullPath}");
         }
-
-
 
     }
 

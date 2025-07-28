@@ -24,7 +24,6 @@ namespace Astrovisio
 
         private void Init()
         {
-            Debug.Log(Root);
             noiseToggle = Root.Q<VisualElement>("NoiseToggle").Q<Toggle>();
             noiseSlider = Root.Q<VisualElement>("NoiseSlider").Q<MinMaxSlider>();
             noiseFloatField = Root.Q<FloatField>("NoiseInputField");
@@ -107,5 +106,7 @@ namespace Astrovisio
             noiseSlider.maxValue = noiseMinValue;
             noiseFloatField.value = noiseMinValue;
         }
+
     }
+    
 }

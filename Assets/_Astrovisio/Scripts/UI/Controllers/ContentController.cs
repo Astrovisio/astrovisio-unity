@@ -36,7 +36,7 @@ namespace Astrovisio
             sideController = transform.parent.GetComponentInChildren<SideController>();
 
             projectManager = uiManager.GetProjectManager();
-            uiContextSO = uiManager.getUIContext();
+            uiContextSO = uiManager.GetUIContext();
         }
 
         private void OnEnable()

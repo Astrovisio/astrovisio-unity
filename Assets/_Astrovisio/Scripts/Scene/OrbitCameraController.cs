@@ -56,7 +56,7 @@ public class OrbitCameraController : MonoBehaviour
     private void LateUpdate()
     {
 
-        if (uiManager.gameObject.activeSelf && uiManager.IsInteractingWithUI())
+        if (uiManager.gameObject.activeSelf && uiManager.HasClickStartedOnUI())
         {
             return;
         }

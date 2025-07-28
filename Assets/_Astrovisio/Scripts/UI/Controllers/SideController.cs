@@ -33,7 +33,7 @@ namespace Astrovisio
             uiManager = GetComponentInParent<UIManager>();
 
             projectManager = uiManager.GetProjectManager();
-            uiContextSO = uiManager.getUIContext();
+            uiContextSO = uiManager.GetUIContext();
 
             if (projectManager == null)
             {
