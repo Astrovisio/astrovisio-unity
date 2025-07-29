@@ -15,16 +15,16 @@
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="BodyContainer" style="flex-grow: 1; padding-right: 16px;">
-            <engine:VisualElement name="ProjectsHeaderContainer" style="flex-grow: 0; flex-direction: row; justify-content: space-between; padding-left: 48px; padding-top: 12px; padding-bottom: 12px; padding-right: 8px; height: 34px; min-height: 34px; max-height: 34px; border-bottom-width: 1px; border-left-color: rgb(138, 138, 128); border-right-color: rgb(138, 138, 128); border-top-color: rgb(138, 138, 128); border-bottom-color: rgb(138, 138, 128);">
-                <engine:Label text="Name" class="header-label" style="color: rgb(255, 255, 255); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left; width: 180px; min-width: 180px; max-width: 180px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
-                <engine:Label text="Files" class="header-label" style="color: rgb(255, 255, 255); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-center; height: 10px; min-height: 10px; max-height: 10px; width: 120px; min-width: 120px; max-width: 120px; background-color: rgba(255, 0, 0, 0);" />
-                <engine:Label text="Last opened" class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
-                <engine:Label text="Created" class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
-                <engine:Label class="header-label" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-center; width: 120px; min-width: 120px; max-width: 120px; height: 10px; min-height: 10px; max-height: 10px; background-color: rgba(255, 0, 0, 0);" />
+            <engine:VisualElement name="ProjectsHeaderContainer">
+                <engine:Label text="Name" name="LabeNamel" class="header-label" />
+                <engine:Label text="Files" name="LabelFile" class="header-label" />
+                <engine:Label text="Last opened" name="LabelLastOpened" class="header-label" />
+                <engine:Label text="Created" name="LabelCreated" class="header-label" />
+                <engine:Label name="LabelActions" class="header-label" />
             </engine:VisualElement>
             <engine:ScrollView name="ProjectScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
                 <engine:Instance template="ProjectRowHeader" name="LastWeekHeader" />
-                <engine:Instance template="ProjectRow" />
+                <engine:Instance template="ProjectRow" name="TemplateContainer" />
                 <engine:Instance template="ProjectRow" />
                 <engine:Instance template="ProjectRow" />
                 <engine:Instance template="ProjectRowHeader" name="LastMonthHeader">

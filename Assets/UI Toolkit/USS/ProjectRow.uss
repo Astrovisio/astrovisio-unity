@@ -1,26 +1,155 @@
+#ProjectRowRoot {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: var(--grey-600);
+}
+
 #ProjectRowRoot:hover {
     background-color: var(--bg-10);
 }
 
+#ProjectRowRoot > #RowButton > #NameContainer {
+    padding-right: 10px;
+    min-width: 240px;
+    flex-grow: 1;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    align-items: center;
+    flex-direction: row;
+}
+
+#ProjectRowRoot > #RowButton > #NameContainer > #IconContainer {
+    align-items: center;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    background-color: var(--grey-300);
+}
+
+#ProjectRowRoot > #RowButton > #NameContainer > #IconContainer > #Icon {
+    width: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    background-image: url("project://database/Assets/_Astrovisio/UI/Sprites/Icons/folder.png?fileID=2800000&guid=5ca3ace1820533f48b0f23083ecadbcd&type=3#folder");
+    -unity-background-image-tint-color: var(--grey-800);
+}
+
+#ProjectRowRoot > #RowButton > #NameContainer > #ProjectNameLabel {
+    font-size: 16px;
+    color: var(--grey-800);
+}
+
+#ProjectRowRoot > #RowButton > #FilesLabel {
+    min-width: 200px;
+    max-width: 200px;
+    height: 10px;
+    min-height: 10px;
+    max-height: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+#ProjectRowRoot > #RowButton > #LastOpenedLabel {
+    min-width: 200px;
+    max-width: 200px;
+    padding-right: 10px;
+    padding-left: 10px;
+    height: 10px;
+    min-height: 10px;
+    max-height: 10px;
+}
+
+#ProjectRowRoot > #RowButton > #CreatedLabel {
+    padding-right: 10px;
+    padding-left: 10px;
+    min-width: 200px;
+    max-width: 200px;
+    height: 10px;
+    min-height: 10px;
+    max-height: 10px;
+}
+
+#ProjectRowRoot > #RowButton > #FunctionContainer {
+    min-width: 176px;
+    max-width: 176px;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    padding-left: 10px;
+    padding-right: 0;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#ProjectRowRoot > #RowButton > #FunctionContainer > #FavouriteToggle {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+}
+
 #ProjectRowRoot > #RowButton > #FunctionContainer > #VRButton {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/head_mounted_device.svg?fileID=7388822144124034973&guid=b0c580ecf95b2444b9ba71f6f212ae88&type=3#head_mounted_device");
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    display: none;
+    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #ProjectRowRoot > #RowButton > #FunctionContainer > #MoreButton {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/more_vert.svg?fileID=7388822144124034973&guid=9a3422b4e43237e4eb57f9b72b793f49&type=3#more_vert");
+    -unity-background-image-tint-color: var(--grey-700);
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    display: none;
 }
 
 #ProjectRowRoot > #RowButton > #FunctionContainer > #EditButton {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/edit24.svg?fileID=7388822144124034973&guid=08002d67a1a75e54fbfab900982bcd96&type=3#edit24");
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #ProjectRowRoot > #RowButton > #FunctionContainer > #DuplicateButton {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/duplicate24.svg?fileID=7388822144124034973&guid=6750cd4bcb7a3c84ba2476108a01238f&type=3#duplicate24");
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    color: var(--grey-700);
+    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #ProjectRowRoot > #RowButton > #FunctionContainer > #DeleteButton {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete24.svg?fileID=7388822144124034973&guid=958041cea089f1b4d864224dc697c492&type=3#delete24");
     -unity-background-image-tint-color: var(--red);
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
 }
 
 .icon-button {
@@ -43,5 +172,5 @@
 }
 
 .icon-button:hover {
-    background-color: var(--bg-10);
+    background-color: var(--grey-200);
 }

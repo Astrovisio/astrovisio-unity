@@ -5,7 +5,13 @@
 #CheckboxRoot > .unity-toggle__input > #unity-checkmark {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
     flex-grow: 1;
-    -unity-background-image-tint-color: var(--grey-600);
+    -unity-background-image-tint-color: var(--grey-700);
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
 }
 
 #CheckboxRoot:checked > .unity-toggle__input > #unity-checkmark {
