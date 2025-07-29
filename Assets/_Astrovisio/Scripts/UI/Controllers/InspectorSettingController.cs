@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -33,24 +34,31 @@ namespace Astrovisio
 
         private void Init()
         {
+            RenderManager.Instance.OnDataInspectorChanged += OnDataInspectorChanged;
+
             inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
             sphereButton = Root.Q<Button>("SphereButton");
             cubeButton = Root.Q<Button>("CubeButton");
             sizeInputFloatField = Root.Q<FloatField>("SizeInputFloatField");
             mediaDropdownField = Root.Q<VisualElement>("MediaDropdown").Q<DropdownField>("DropdownField");
-            // inspectorScrollView = Root.Q<ScrollView>("InspectorScrollView"); TODO
+            inspectorScrollView = Root.Q<ScrollView>("DataInspectorScollView");
 
             sphereButton.parent.SetEnabled(false);
             sizeInputFloatField.parent.SetEnabled(false);
             mediaDropdownField.parent.SetEnabled(false);
+            inspectorScrollView.parent.SetEnabled(false);
 
             inspectorToggle.value = inspectorState;
             inspectorToggle.RegisterValueChangedCallback(evt =>
             {
                 inspectorState = evt.newValue;
 
+                RenderManager.Instance.SetDataInspector(inspectorState, inspectorState);
+
                 sphereButton.parent.SetEnabled(inspectorState);
                 sizeInputFloatField.parent.SetEnabled(inspectorState);
+                mediaDropdownField.parent.SetEnabled(inspectorState);
+                inspectorScrollView.parent.SetEnabled(inspectorState);
 
                 SetInspectorShape(inspectorShape);
             });
@@ -72,6 +80,15 @@ namespace Astrovisio
             }
         }
 
+        private void OnDataInspectorChanged(string[] obj)
+        {
+            // Debug.Log("OnDataInspectorChanged");
+            if (inspectorState)
+            {
+                SetInspectorScrollView(obj);
+            }
+        }
+
         private void SetInspectorShape(InspectorShape inspectorShape)
         {
             switch (inspectorShape)
@@ -86,6 +103,18 @@ namespace Astrovisio
                     sphereButton.RemoveFromClassList("active");
                     this.inspectorShape = InspectorShape.Cube;
                     break;
+            }
+        }
+
+        private void SetInspectorScrollView(string[] data)
+        {
+            inspectorScrollView.Clear();
+
+            foreach (string row in data)
+            {
+                Label label = new Label();
+                label.text = row;
+                inspectorScrollView.Add(label);
             }
         }
 

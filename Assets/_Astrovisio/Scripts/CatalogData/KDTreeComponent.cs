@@ -13,6 +13,26 @@ public readonly struct PointDistance
         this.index = index;
         this.squaredDistance = squaredDistance;
     }
+
+    public static bool operator ==(PointDistance a, PointDistance b)
+    {
+        return a.index == b.index && a.squaredDistance == b.squaredDistance;
+    }
+
+    public static bool operator !=(PointDistance a, PointDistance b)
+    {
+        return !(a == b);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is PointDistance other && this == other;
+    }
+
+    public override int GetHashCode()
+    {
+        return (index, squaredDistance).GetHashCode();
+    }
 }
 
 public class KDTreeComponent : MonoBehaviour

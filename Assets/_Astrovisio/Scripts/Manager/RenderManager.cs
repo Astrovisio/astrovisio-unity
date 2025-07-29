@@ -25,15 +25,19 @@ namespace Astrovisio
         private float initialCameraDistance;
         private OrbitCameraController orbitController;
 
+        // Events
+        public Action<Project> OnProjectReadyToGetRendered;
+        public Action<string[]> OnDataInspectorChanged;
+
         // Settings
         private DataRenderer dataRenderer;
         private KDTreeComponent kdTreeComponent;
         private ParamRenderSettings renderSettings;
         private Dictionary<Project, DataContainer> projectDataContainers = new();
-        public Action<Project> OnProjectReadyToGetRendered;
 
         // Local
         public bool isInspectorModeActive = false;
+        private PointDistance lastNearest;
 
 
         private void Awake()
@@ -77,10 +81,21 @@ namespace Astrovisio
             {
                 PointDistance? nearest = kdTreeComponent.GetLastNearest();
 
-                if (nearest != null)
+                if (nearest != null && nearest != lastNearest)
                 {
+                    string[] headers = dataRenderer.GetDataContainer().DataPack.Columns;
                     float[] dataInfo = kdTreeComponent.GetDataInfo(nearest.Value.index);
-                    uiManager.SetDataInspector(dataRenderer.GetDataContainer().DataPack.Columns, dataInfo);
+                    // uiManager.SetDataInspector(headers, dataInfo);
+
+                    string[] data = new string[dataInfo.Length];
+                    for (int i = 0; i < dataInfo.Length; i++)
+                    {
+                        data[i] = headers[i] + ": " + dataInfo[i];
+                    }
+
+                    OnDataInspectorChanged?.Invoke(data);
+
+                    lastNearest = nearest.Value;
                 }
             }
         }
@@ -107,9 +122,10 @@ namespace Astrovisio
         public void SetDataInspector(bool state, bool bebugSphereVisibility)
         {
             // Debug.Log("UpdateDataInspector " + state);
-            KDTreeComponent kdTreeComponent = dataRenderer.GetKDTreeComponent();
+            kdTreeComponent = dataRenderer.GetKDTreeComponent();
             kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
             kdTreeComponent.realtime = state;
+            isInspectorModeActive = state;
         }
 
         private void ResetCameraTransform()
