@@ -1,10 +1,50 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
+    <engine:Template name="DropdownSimple" src="project://database/Assets/UI%20Toolkit/Components/DropdownSimple.uxml?fileID=9197481963319205126&amp;guid=8ab5ade032c81ed45911a48ecd2265d5&amp;type=3#DropdownSimple" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/InspectorPanel.uss?fileID=7433441132597879392&amp;guid=4b9643e19f5c5d1478fab9f424745fb5&amp;type=3#InspectorPanel" />
     <engine:VisualElement name="Root" class="panel">
         <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
             <engine:Label text="Inspector mode" name="TitleLabel" />
-            <engine:Instance template="CheckboxSimple" name="Toggle" />
+            <engine:Instance template="CheckboxSimple" name="InspectorToggle" />
+        </engine:VisualElement>
+        <engine:VisualElement name="BodyContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="ShapeContainer" style="flex-grow: 1;">
+                <engine:Label text="Shape" name="ShapeTitle" class="title" />
+                <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; justify-content: space-between;">
+                    <engine:Button name="SphereButton" class="shape-button active">
+                        <engine:VisualElement name="Icon" class="shape-button-icon" style="background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/language_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&amp;guid=0d2865df0c60bc94a9ca358b5b1d814e&amp;type=3#language_24dp_000_FILL0_wght400_GRAD0_opsz24 1&quot;); width: 24px; height: 24px; min-width: 24px; min-height: 24px; max-width: 24px; max-height: 24px;" />
+                        <engine:Label text="Sphere" name="Label" class="shape-button-label" />
+                    </engine:Button>
+                    <engine:Button name="CubeButton" class="shape-button">
+                        <engine:VisualElement name="Icon" class="shape-button-icon" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/deployed_code_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&amp;guid=04e2efec6092391429ef3bebf432ba0c&amp;type=3#deployed_code_24dp_000_FILL0_wght400_GRAD0_opsz24 1&quot;); width: 24px; height: 24px; min-height: 24px; max-height: 24px; max-width: 24px; min-width: 24px;" />
+                        <engine:Label text="Cube" name="Label" class="shape-button-label" />
+                    </engine:Button>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="SizeContainer" style="flex-grow: 1;">
+                <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
+                    <engine:VisualElement name="Icon" style="flex-grow: 1;" />
+                    <engine:Label text="Radius" name="Title" class="title" />
+                </engine:VisualElement>
+                <engine:FloatField value="1.5" name="SizeInputFloatField" />
+            </engine:VisualElement>
+            <engine:VisualElement name="Line" class="line" />
+            <engine:VisualElement name="MediaContainer" style="flex-grow: 1;">
+                <engine:Label text="Media" name="MediaTitle" class="title" />
+                <engine:Instance template="DropdownSimple" name="MediaDropdown">
+                    <AttributeOverrides element-name="DropdownField" choices="Arithmetic mean" index="0" />
+                </engine:Instance>
+            </engine:VisualElement>
+            <engine:VisualElement name="DataInspectorContainer" style="flex-grow: 1;">
+                <engine:Label text="Data info" name="DataInpectorTitle" class="title" />
+                <engine:ScrollView name="DataInspectorScollView" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" touch-scroll-type="Clamped">
+                    <engine:Label text="Brightness: -231" />
+                    <engine:Label text="X: -231" />
+                    <engine:Label text="Y: -231" />
+                    <engine:Label text="Z: -231" />
+                    <engine:Label text="A: -231" />
+                </engine:ScrollView>
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

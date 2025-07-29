@@ -13,7 +13,7 @@ namespace Astrovisio
 
         private bool noiseState = false;
         private float noiseMinValue = 0.0f;
-        private float noiseMaxValue = 0.06f;
+        private float noiseMaxValue = 0.1f;
         private float noiseValue = 0.0f;
 
         public NoiseSettingController(VisualElement root)
@@ -28,6 +28,10 @@ namespace Astrovisio
             noiseSlider = Root.Q<VisualElement>("NoiseSlider").Q<MinMaxSlider>();
             noiseFloatField = Root.Q<FloatField>("NoiseInputField");
 
+            noiseSlider.SetEnabled(noiseState);
+            noiseFloatField.SetEnabled(noiseState);
+            noiseFloatField.formatString = "F3";
+
             // Debug.Log(noiseToggle);
             // Debug.Log(noiseSlider);
             // Debug.Log(noiseFloatField);
@@ -39,8 +43,8 @@ namespace Astrovisio
             {
                 noiseState = evt.newValue;
 
-                // noiseSlider.SetEnabled(noiseState);
-                // noiseFloatField.SetEnabled(noiseState);
+                noiseSlider.SetEnabled(noiseState);
+                noiseFloatField.SetEnabled(noiseState);
 
                 SetNoise(noiseState, noiseValue);
             });
@@ -105,6 +109,8 @@ namespace Astrovisio
             noiseToggle.value = false;
             noiseSlider.maxValue = noiseMinValue;
             noiseFloatField.value = noiseMinValue;
+            // noiseSlider.SetEnabled(noiseState);
+            // noiseFloatField.SetEnabled(noiseState);
         }
 
     }

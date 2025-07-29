@@ -30,8 +30,9 @@ namespace Astrovisio
 
 
         // Controllers
-        private ScreenrecorderSettingController screenrecorderSettingController;
+        private InspectorSettingController inspectorSettingController;
         private NoiseSettingController noiseSettingController;
+        private ScreenrecorderSettingController screenrecorderSettingController;
 
 
         public SettingsViewController(VisualElement root, UIManager uiManager)
@@ -125,8 +126,9 @@ namespace Astrovisio
                 };
             }
 
-            screenrecorderSettingController = new ScreenrecorderSettingController(screenrecorderContainer);
+            inspectorSettingController = new InspectorSettingController(inspectorContainer);
             noiseSettingController = new NoiseSettingController(noiseContainer);
+            screenrecorderSettingController = new ScreenrecorderSettingController(screenrecorderContainer);
         }
 
         public void SetSettingsVisibility(bool visibility)
