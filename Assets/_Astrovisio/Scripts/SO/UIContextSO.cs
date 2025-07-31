@@ -43,5 +43,8 @@ namespace Astrovisio
         [Header("- New Project")]
         public VisualTreeAsset listItemFileTemplate;
 
+        [Header("Cursor")]
+        public Texture2D linkCursor;
+
     }
 }

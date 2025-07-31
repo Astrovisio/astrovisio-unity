@@ -70,7 +70,7 @@ namespace Astrovisio
             loaderController = new LoaderController(loaderView);
 
             VisualElement aboutView = uiDocument.rootVisualElement.Q<VisualElement>("AboutView");
-            aboutViewController = new AboutViewController(aboutView);
+            aboutViewController = new AboutViewController(aboutView, this);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;

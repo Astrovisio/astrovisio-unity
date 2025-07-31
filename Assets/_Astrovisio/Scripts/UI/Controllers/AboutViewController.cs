@@ -8,12 +8,14 @@ namespace Astrovisio
     {
 
         public VisualElement Root { get; }
+        public UIManager UIManager { get; }
 
         private Button closeButton;
 
-        public AboutViewController(VisualElement root)
+        public AboutViewController(VisualElement root, UIManager uiManager)
         {
             Root = root;
+            UIManager = uiManager;
 
             closeButton = Root.Q<Button>("CloseButton");
             closeButton.clicked += Close;
@@ -45,10 +47,17 @@ namespace Astrovisio
 
         private void AddClickUrl(VisualElement element, string url)
         {
+            element.RegisterCallback<PointerEnterEvent>(evt =>
+                UnityEngine.Cursor.SetCursor(UIManager.GetUIContext().linkCursor, new Vector2(8, 2), CursorMode.Auto)
+            );
+
+            element.RegisterCallback<PointerLeaveEvent>(evt =>
+                UnityEngine.Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto)
+            );
+
             element.RegisterCallback<ClickEvent>(evt =>
-            {
-                Application.OpenURL(url);
-            });
+                Application.OpenURL(url)
+            );
         }
 
 
