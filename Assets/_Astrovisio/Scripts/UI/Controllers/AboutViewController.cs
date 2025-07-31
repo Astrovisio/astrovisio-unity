@@ -60,7 +60,6 @@ namespace Astrovisio
             );
         }
 
-
         public void Open()
         {
             Root.AddToClassList("active");

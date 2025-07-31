@@ -1,45 +1,50 @@
 using UnityEngine;
 
-public class Gizmo : MonoBehaviour
+namespace Astrovisio
 {
-    [SerializeField] private Canvas xPosCanvas;
-    [SerializeField] private Canvas yPosCanvas;
-    [SerializeField] private Canvas zPosCanvas;
-    [SerializeField] private Canvas xNegCanvas;
-    [SerializeField] private Canvas yNegCanvas;
-    [SerializeField] private Canvas zNegCanvas;
 
-    [SerializeField] private Camera gizmoCamera;
-
-    private void Update()
+    public class Gizmo : MonoBehaviour
     {
-        if (gizmoCamera == null)
+        [SerializeField] private Canvas xPosCanvas;
+        [SerializeField] private Canvas yPosCanvas;
+        [SerializeField] private Canvas zPosCanvas;
+        [SerializeField] private Canvas xNegCanvas;
+        [SerializeField] private Canvas yNegCanvas;
+        [SerializeField] private Canvas zNegCanvas;
+
+        [SerializeField] private Camera gizmoCamera;
+
+        private void Update()
         {
-            return;
+            if (gizmoCamera == null)
+            {
+                return;
+            }
+
+            BillboardToCamera(xPosCanvas);
+            BillboardToCamera(yPosCanvas);
+            BillboardToCamera(zPosCanvas);
+            BillboardToCamera(xNegCanvas);
+            BillboardToCamera(yNegCanvas);
+            BillboardToCamera(zNegCanvas);
         }
 
-        BillboardToCamera(xPosCanvas);
-        BillboardToCamera(yPosCanvas);
-        BillboardToCamera(zPosCanvas);
-        BillboardToCamera(xNegCanvas);
-        BillboardToCamera(yNegCanvas);
-        BillboardToCamera(zNegCanvas);
-    }
-
-    private void BillboardToCamera(Canvas canvas)
-    {
-        if (canvas == null)
+        private void BillboardToCamera(Canvas canvas)
         {
-            return;
+            if (canvas == null)
+            {
+                return;
+            }
+
+            Transform t = canvas.transform;
+
+            t.LookAt(
+                t.position + gizmoCamera.transform.rotation * Vector3.forward,
+                gizmoCamera.transform.rotation * Vector3.up
+            );
+
         }
 
-        Transform t = canvas.transform;
-
-        t.LookAt(
-            t.position + gizmoCamera.transform.rotation * Vector3.forward,
-            gizmoCamera.transform.rotation * Vector3.up
-        );
-
     }
-    
+
 }
