@@ -26,6 +26,7 @@ namespace Astrovisio
         private GizmoTransformController gizmoTransformController;
         private SettingsViewController settingsViewController;
         private LoaderController loaderController;
+        private AboutViewController aboutViewController;
 
         // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -67,6 +68,9 @@ namespace Astrovisio
 
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
             loaderController = new LoaderController(loaderView);
+
+            VisualElement aboutView = uiDocument.rootVisualElement.Q<VisualElement>("AboutView");
+            aboutViewController = new AboutViewController(aboutView);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -276,6 +280,18 @@ namespace Astrovisio
         public void SetGizmoTransformVisibility(bool state)
         {
             gizmoTransformController.SetVisibility(state);
+        }
+
+        public void SetAboutViewVisibility(bool state)
+        {
+            if (state)
+            {
+                aboutViewController.Open();
+            }
+            else
+            {
+                aboutViewController.Close();
+            }
         }
 
         public void TakeScreenshot()

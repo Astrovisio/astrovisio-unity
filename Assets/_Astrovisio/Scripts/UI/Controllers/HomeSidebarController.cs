@@ -12,6 +12,7 @@ namespace Astrovisio
         // === Dependencies ===
         private ProjectManager ProjectManager { get; }
         private VisualElement Root { get; }
+        private UIManager UIManager { get; }
         private UIContextSO UIContextSO { get; }
 
         public event Action<string> SearchValueChanged;
@@ -19,12 +20,13 @@ namespace Astrovisio
         private TextField searchTextField;
         private Button clearSearchButton;
         private ScrollView favouritesScrollView;
-        private Label versionLabel;
+        private Button creditsButton;
 
-        public HomeSidebarController(ProjectManager projectManager, VisualElement root, UIContextSO uiContextSO)
+        public HomeSidebarController(ProjectManager projectManager, VisualElement root, UIManager uiManager, UIContextSO uiContextSO)
         {
             ProjectManager = projectManager;
             Root = root;
+            UIManager = uiManager;
             UIContextSO = uiContextSO;
 
             ProjectManager.ProjectsFetched += OnProjectFetched;
@@ -34,7 +36,7 @@ namespace Astrovisio
 
             InitSearchField();
             InitFavouriteScrollView();
-            InitVersionLabel();
+            InitCreditsButton();
         }
 
         private void InitSearchField()
@@ -62,10 +64,12 @@ namespace Astrovisio
             SearchValueChanged?.Invoke(newValue);
         }
 
-        private void InitVersionLabel()
+        private void InitCreditsButton()
         {
-            versionLabel = Root.Q<Label>("AstrovisioLabel");
-            versionLabel.text = "<u>©INAF Astrovisio v " + Application.version + "</u>";
+            creditsButton = Root.Q<Button>("Credits");
+            creditsButton.text = "<u>Astrovisio v " + Application.version + " - Credits</u>";
+
+            creditsButton.clicked += () => UIManager.SetAboutViewVisibility(true);
         }
 
         private void InitFavouriteScrollView()

@@ -6,7 +6,7 @@
         <engine:VisualElement name="LoadingBar">
             <engine:Label text="Message..." name="Message" />
             <engine:VisualElement name="Bar" style="flex-grow: 1;">
-                <engine:VisualElement name="BarFill" />
+                <engine:VisualElement name="BarFill" style="scale: 0.78 1;" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>

@@ -62,7 +62,7 @@ namespace Astrovisio
         private void EnableHomeSidebar()
         {
             sidebarContainer = sideContainer.Q<VisualElement>("Sidebar");
-            sidebarController = new HomeSidebarController(projectManager, sidebarContainer, uiContextSO);
+            sidebarController = new HomeSidebarController(projectManager, sidebarContainer, uiManager, uiContextSO);
         }
 
         public HomeSidebarController GetHomeSidebarController()

@@ -1,0 +1,156 @@
+.line {
+    height: 1px;
+    min-height: 1px;
+    max-height: 1px;
+    background-color: var(--grey-200);
+    margin-bottom: 24px;
+}
+
+.logo {
+    margin-right: 32px;
+}
+
+#Root {
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+#Root > #Panel {
+    width: 1156px;
+    min-width: 1156px;
+    max-width: 1156px;
+    height: 677px;
+    min-height: 677px;
+    max-height: 677px;
+    background-color: var(--grey-150);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 24px;
+    padding-right: 32px;
+    padding-bottom: 24px;
+    padding-left: 32px;
+}
+
+#Root > #Panel > #Header {
+    flex-direction: row;
+    justify-content: space-between;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    margin-bottom: 24px;
+}
+
+#Root > #Panel > #Header > #Title {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+    font-size: 24px;
+    color: var(--grey-500);
+    -unity-text-align: middle-left;
+}
+
+#Root > #Panel > #Header > #CloseButton {
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-left-color: rgb(95, 95, 89);
+    border-right-color: rgb(95, 95, 89);
+    border-top-color: rgb(95, 95, 89);
+    border-bottom-color: rgb(95, 95, 89);
+    background-color: var(--grey-200);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 12px;
+    color: var(--black);
+    flex-direction: row;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
+    align-items: center;
+}
+
+#Root > #Panel > #Header > #CloseButton:hover {
+    background-color: var(--grey-300);
+}
+
+#Root > #Panel > #Header > #CloseButton:active {
+    background-color: var(--grey-400);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+#Root > #Panel > #Body {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+#Root > #Panel > #Body > #TeamsContainer > #Container {
+    flex-direction: row;
+}
+
+#Root > #Panel > #Body > #TeamsContainer > #Container > #Left {
+    width: 314px;
+    min-width: 314px;
+    max-width: 314px;
+    margin-right: 24px;
+}
+
+#Root > #Panel > #Footer {
+    flex-shrink: 0;
+    height: 90px;
+    min-height: 90px;
+    max-height: 90px;
+    flex-direction: row;
+}
+
+.title {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 14px;
+    color: var(--grey-800);
+    letter-spacing: 10px;
+    margin-bottom: 24px;
+}
+
+.h1 {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 14px;
+    color: var(--black);
+    margin-bottom: 8px;
+}
+
+.name {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 14px;
+    color: var(--black);
+    margin-right: 12px;
+}
+
+.role {
+    color: var(--grey-450);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 12px;
+}
+
+.name-container {
+    flex-direction: row;
+}
+
+.link:hover {
+    color: var(--grey-600);
+    cursor: link;
+}

@@ -42,6 +42,6 @@
                 <engine:Instance template="FavouriteButton" />
             </engine:ScrollView>
         </engine:VisualElement>
-        <engine:Label text="&lt;u&gt;©INAF Astrovisio v 0.12&lt;/u&gt;" name="AstrovisioLabel" style="-unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 8px; min-height: 8px; max-height: 8px; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&amp;guid=da4bbf1ce25304b43a0cbab5791f30fe&amp;type=3#SpaceGrotesk-Medium&quot;); font-size: 12px; color: rgb(215, 211, 203);" />
+        <engine:Button text="&lt;u&gt;Astrovisio v 0.12 - Credits&lt;/u&gt;" name="Credits" />
     </engine:VisualElement>
 </engine:UXML>

@@ -1,0 +1,114 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/AboutView.uss?fileID=7433441132597879392&amp;guid=bf1c9ecfafd533a489965cd82a4ee16a&amp;type=3#AboutView" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:VisualElement name="Panel" style="flex-grow: 1;">
+            <engine:VisualElement name="Header" style="flex-grow: 1;">
+                <engine:Label text="Astrovisio v 0.12" name="Title" />
+                <engine:Button name="CloseButton">
+                    <engine:Label text="Close" name="Label" style="margin-right: 4px;" />
+                    <engine:VisualElement name="Icon" style="flex-grow: 1; width: 16px; min-width: 16px; max-width: 16px; max-height: 16px; min-height: 16px; height: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/close_small.svg?fileID=7388822144124034973&amp;guid=c5d66e8c0fb897f47931091e0e7ace36&amp;type=3#close_small&quot;);" />
+                </engine:Button>
+            </engine:VisualElement>
+            <engine:VisualElement name="Line" class="line" />
+            <engine:VisualElement name="Body" style="flex-grow: 1;">
+                <engine:VisualElement name="CreditsContainer" style="flex-grow: 1; width: 415px; min-width: 415px; max-width: 415px; margin-right: 24px;">
+                    <engine:Label text="CREDITS" name="Title" class="title" />
+                    <engine:Label text="Designed by" name="DesignedBy" class="h1" />
+                    <engine:Label text="Alkemy, Design Group Italia, Metaverso" name="Label" class="name" style="margin-bottom: 24px;" />
+                    <engine:Label text="Developed by" name="DevelopedBy" class="h1" />
+                    <engine:Label text="Alkemy, Metaverso" name="Label" class="name" style="margin-bottom: 24px;" />
+                    <engine:Label text="Scientific supervision" name="ScientificSupervision" class="h1" />
+                    <engine:Label text="Dr. Andrea Pallottini" name="Label" class="name" style="margin-bottom: 24px;" />
+                    <engine:Label text="Powered by" name="PoweredBy" class="h1" />
+                    <engine:Label text="&lt;u&gt;iDaVIE&lt;/u&gt;" name="iDaVIELabel" class="name link" style="margin-bottom: 24px;" />
+                </engine:VisualElement>
+                <engine:VisualElement name="TeamsContainer" style="flex-grow: 1;">
+                    <engine:Label text="TEAMS" name="Title" class="title" />
+                    <engine:VisualElement name="Container" style="flex-grow: 1;">
+                        <engine:VisualElement name="Left">
+                            <engine:Label text="Alkemy" name="Alkemy" class="h1" />
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Davide Posillipo" name="Name" class="name" />
+                                <engine:Label text="Head of AI Evolution Hub" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Lorenzo Scendrate" name="Name" class="name" />
+                                <engine:Label text="Lead Data Scientist" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Christian Quaggio" name="Name" class="name" />
+                                <engine:Label text="Data Engineer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center; margin-bottom: 32px;">
+                                <engine:Label text="Tommaso Massaglia" name="Name" class="name" />
+                                <engine:Label text="ML Engineer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:Label text="Design Group Italia" name="DGI" class="h1" />
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Andrea Desiato" name="Name" class="name" />
+                                <engine:Label text="Digital Product Director" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Elisa Fabbian" name="Name" class="name" />
+                                <engine:Label text="Lead Digital Product Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Raffaele Bartoli" name="Name" class="name" />
+                                <engine:Label text="Digital Product Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="David Calabrò" name="Name" class="name" />
+                                <engine:Label text="Digital Product Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Simona Franchina" name="Name" class="name" />
+                                <engine:Label text="Digital Product Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Antonio Cappucci" name="Name" class="name" />
+                                <engine:Label text="Digital Product Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="Right" style="flex-grow: 1;">
+                            <engine:Label text="Metaverso" name="Metaverso" class="h1" />
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Andrea Celato" name="Name" class="name" />
+                                <engine:Label text="Project Manager / Digital Producer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Cosimo Mabilia" name="Name" class="name" />
+                                <engine:Label text="Lead Software Engineer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Gerard Baholli" name="Name" class="name" />
+                                <engine:Label text="3D Developer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Andrea Peron" name="Name" class="name" />
+                                <engine:Label text="Frontend Developer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Fabio Ferrero" name="Name" class="name" />
+                                <engine:Label text="UX/UI Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="NameContainer" class="name-container" style="flex-grow: 1; flex-direction: row; height: 20px; max-height: 20px; min-height: 20px; align-items: center;">
+                                <engine:Label text="Nicolò Lando" name="Name" class="name" />
+                                <engine:Label text="UX/UI Designer" name="Role" class="role" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement name="Line" class="line" />
+            <engine:VisualElement name="Footer" style="flex-grow: 1; align-items: center;">
+                <engine:VisualElement name="AlkemyLogo" class="logo" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/alkemylogo_3.png?fileID=2800000&amp;guid=8ef10c282aa7202479d7a22dba5ceccb&amp;type=3#alkemylogo_3&quot;); width: 114px; min-width: 114px; max-width: 114px; height: 45px; min-height: 45px; max-height: 45px;" />
+                <engine:VisualElement name="DGILogo" class="logo" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/dgi-logo.svg?fileID=7388822144124034973&amp;guid=0917f7b786da84f4986d880f6e8e5abe&amp;type=3#dgi-logo&quot;); width: 67px; height: 52px; min-height: 52px; max-height: 52px; min-width: 67px; max-width: 67px;" />
+                <engine:VisualElement name="MetaversoLogo" class="logo" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/metaverso-logo.svg?fileID=7388822144124034973&amp;guid=c49459beefdc3d849bf551bd20fad89f&amp;type=3#metaverso-logo&quot;); width: 220px; min-width: 220px; max-width: 220px; height: 16px; min-height: 16px; max-height: 16px;" />
+                <engine:VisualElement name="ScuolaNormaleLogo" class="logo" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/scuola-normale-superiore-pisa.png?fileID=2800000&amp;guid=6ec31a2bcf18d6540885bf986cd16b6c&amp;type=3#scuola-normale-superiore-pisa&quot;); width: 128px; min-width: 128px; max-width: 128px; height: 75px; min-height: 75px; max-height: 75px;" />
+                <engine:VisualElement name="IDIALogo" class="logo" style="flex-grow: 1; width: 73px; min-width: 73px; max-width: 73px; height: 55px; min-height: 55px; max-height: 55px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/IDIA_logo.png?fileID=2800000&amp;guid=5ddab974ecaa6c943b2aaf619618fa94&amp;type=3#IDIA_logo&quot;);" />
+                <engine:VisualElement name="VislabLogo" class="logo" style="flex-grow: 1; width: 85px; min-width: 85px; max-width: 85px; height: 90px; min-height: 90px; max-height: 90px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/Vislab_logo.png?fileID=2800000&amp;guid=06e7770f13cb6af4181c4b26d47e9e63&amp;type=3#Vislab_logo&quot;);" />
+                <engine:VisualElement name="INAFLogo" class="logo" style="flex-grow: 1; width: 74px; min-width: 74px; max-width: 74px; height: 75px; min-height: 75px; max-height: 75px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Graphics/INAF_logo-original.png?fileID=2800000&amp;guid=d6db690085963054d963bbea66a9b660&amp;type=3#INAF_logo-original&quot;);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

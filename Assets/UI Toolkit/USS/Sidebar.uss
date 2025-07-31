@@ -1,0 +1,18 @@
+#SidebarRoot > #Credits {
+    background-color: var(--transparent);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 12px;
+    color: var(--grey-500);
+}
+
+#SidebarRoot > #Credits:hover {
+    color: var(--grey-600);
+}
+
+#SidebarRoot > #Credits:active {
+    color: var(--grey-700);
+}

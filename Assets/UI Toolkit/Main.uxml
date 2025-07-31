@@ -8,7 +8,8 @@
     <engine:Template name="ToastMessageView" src="project://database/Assets/UI%20Toolkit/Components/ToastMessageView.uxml?fileID=9197481963319205126&amp;guid=813f1013f8332a24aaf1bc2f5506c566&amp;type=3#ToastMessageView" />
     <engine:Template name="EditProjectView" src="project://database/Assets/UI%20Toolkit/Components/EditProjectView.uxml?fileID=9197481963319205126&amp;guid=1a36427921001bc48817cf2533f74204&amp;type=3#EditProjectView" />
     <engine:Template name="DeleteProjectView" src="project://database/Assets/UI%20Toolkit/Components/DeleteProjectView.uxml?fileID=9197481963319205126&amp;guid=121e0b579a99b314f9ece2c1f96b6b3a&amp;type=3#DeleteProjectView" />
-    <Style src="project://database/Assets/UI%20Toolkit/USS/Main.uss?fileID=7433441132597879392&amp;guid=49037bf78035c6543944fe6235bf4690&amp;type=3#Main" />
+    <engine:Template name="AboutView" src="project://database/Assets/UI%20Toolkit/Components/AboutView.uxml?fileID=9197481963319205126&amp;guid=5e21571f140441e43922ee7e35c99ff4&amp;type=3#AboutView" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/Main.uss?fileID=7433441132597879392&amp;guid=49037bf78035c6543944fe6235bf4690&amp;type=3" />
     <engine:Instance template="MainView" name="MainView" />
     <engine:Instance template="NewProjectView" name="NewProjectView" />
     <engine:Instance template="SplashView" name="SplashView" />
@@ -18,4 +19,5 @@
     <engine:Instance template="ToastMessageView" name="ToastMessageView" />
     <engine:Instance template="EditProjectView" name="EditProjectView" />
     <engine:Instance template="DeleteProjectView" name="DeleteProjectView" />
+    <engine:Instance template="AboutView" name="AboutView" />
 </engine:UXML>

@@ -239,7 +239,7 @@ Camera:
   far clip plane: 10
   field of view: 60
   orthographic: 1
-  orthographic size: 1.5
+  orthographic size: 1.6
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -333,6 +333,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gizmo
       objectReference: {fileID: 0}
+    - target: {fileID: 5944275910357556109, guid: 49bfc296c58b60041a1a991d0fe11980,
+        type: 3}
+      propertyPath: gizmoCamera
+      value: 
+      objectReference: {fileID: 689560018}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
