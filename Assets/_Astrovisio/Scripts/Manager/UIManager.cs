@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using Hjg.Pngcs;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
@@ -294,21 +298,9 @@ namespace Astrovisio
             }
         }
 
-        public void TakeScreenshot()
+        public async void TakeScreenshot()
         {
-            string folderPath = Application.persistentDataPath + "/Screenshots";
-            if (!System.IO.Directory.Exists(folderPath))
-            {
-                System.IO.Directory.CreateDirectory(folderPath);
-                Debug.Log($"Created screenshot directory at: {folderPath}");
-            }
-
-            string timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string screenshotFilename = $"screenshot_{timestamp}.png";
-            string fullPath = System.IO.Path.Combine(folderPath, screenshotFilename);
-
-            ScreenCapture.CaptureScreenshot(fullPath);
-            Debug.Log($"Screenshot saved to: {fullPath}");
+            await ScreenshotUtils.TakeScreenshot();
         }
 
     }

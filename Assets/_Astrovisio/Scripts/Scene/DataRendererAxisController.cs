@@ -47,5 +47,7 @@ namespace Astrovisio
                 cameraToLookAt.transform.rotation * Vector3.up
             );
         }
+
     }
+    
 }
