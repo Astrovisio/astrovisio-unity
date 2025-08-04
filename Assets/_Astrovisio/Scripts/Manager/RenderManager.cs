@@ -65,6 +65,9 @@ namespace Astrovisio
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
 
+            // CameraSettings cameraSettings = new CameraSettings(Camera.main);
+            // Debug.Log(cameraSettings.Print());
+
         }
 
         // TO BE REMOVED ON FUTURE

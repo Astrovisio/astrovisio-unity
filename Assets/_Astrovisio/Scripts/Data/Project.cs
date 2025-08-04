@@ -152,11 +152,13 @@ namespace Astrovisio
             Created = other.Created;
             LastOpened = other.LastOpened;
 
-            // Copia i valori dei path
+            // Copy the values of the paths
             if (other.Paths != null)
+            {
                 Paths = other.Paths.ToArray();
+            }
 
-            // Copia i valori di ConfigProcess, ma senza creare una nuova istanza se non serve
+            // Copy the values of ConfigProcess, but without creating a new instance if not necessary
             if (ConfigProcess != null && other.ConfigProcess != null)
             {
                 ConfigProcess.UpdateFrom(other.ConfigProcess);

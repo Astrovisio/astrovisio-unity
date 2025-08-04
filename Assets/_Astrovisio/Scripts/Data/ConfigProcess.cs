@@ -60,11 +60,11 @@ namespace Astrovisio
             {
                 if (Params.ContainsKey(kvp.Key))
                 {
-                    Params[kvp.Key].UpdateFrom(kvp.Value); // aggiorna i valori
+                    Params[kvp.Key].UpdateFrom(kvp.Value);
                 }
                 else
                 {
-                    Params[kvp.Key] = kvp.Value.DeepCopy(); // nuovo parametro
+                    Params[kvp.Key] = kvp.Value.DeepCopy();
                 }
             }
         }
