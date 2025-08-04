@@ -154,7 +154,7 @@ namespace CatalogData
 
             int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
             // kdTreeComponent.Initialize(data, dataContainer.Center, xyzIndex);
-            kdTreeComponent.Initialize(data, Vector3.zero, new int[] {0, 1, 2});
+            kdTreeComponent.Initialize(data, Vector3.zero, new int[] { 0, 1, 2 });
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
@@ -818,50 +818,49 @@ namespace CatalogData
             {
                 _catalogMaterial.SetFloat(_idCutoffMin, ValueCutoffMin);
                 _catalogMaterial.SetFloat(_idCutoffMax, ValueCutoffMax);
+                _catalogMaterial.SetFloat(_idVignetteFadeStart, VignetteFadeStart);
+                _catalogMaterial.SetFloat(_idVignetteFadeEnd, VignetteFadeEnd);
+                _catalogMaterial.SetFloat(_idVignetteIntensity, VignetteIntensity);
+                _catalogMaterial.SetColor(_idVignetteColor, VignetteColor);
             }
 
-            _catalogMaterial.SetFloat(_idVignetteFadeStart, VignetteFadeStart);
-            _catalogMaterial.SetFloat(_idVignetteFadeEnd, VignetteFadeEnd);
-            _catalogMaterial.SetFloat(_idVignetteIntensity, VignetteIntensity);
-            _catalogMaterial.SetColor(_idVignetteColor, VignetteColor);
-
-            HandleNoizeCheck();
+            // HandleNoizeCheck();
             UpdateMappingValues();
 
             GetDataInfo();
         }
 
-        private void HandleNoizeCheck()
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                SetNoise(false, 0f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SetNoise(true, 0.005f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                SetNoise(true, 0.010f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                SetNoise(true, 0.015f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                SetNoise(true, 0.020f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                SetNoise(true, 0.025f);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                SetNoise(true, 0.030f);
-            }
-        }
+        // private void HandleNoizeCheck()
+        // {
+        //     if (Input.GetKeyDown(KeyCode.Alpha0))
+        //     {
+        //         SetNoise(false, 0f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha1))
+        //     {
+        //         SetNoise(true, 0.005f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha2))
+        //     {
+        //         SetNoise(true, 0.010f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha3))
+        //     {
+        //         SetNoise(true, 0.015f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha4))
+        //     {
+        //         SetNoise(true, 0.020f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha5))
+        //     {
+        //         SetNoise(true, 0.025f);
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Alpha6))
+        //     {
+        //         SetNoise(true, 0.030f);
+        //     }
+        // }
 
         public void SetNoise(bool state, float value)
         {

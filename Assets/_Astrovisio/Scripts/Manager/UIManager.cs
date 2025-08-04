@@ -298,9 +298,16 @@ namespace Astrovisio
             }
         }
 
-        public async void TakeScreenshot()
+        public async void TakeScreenshot(bool uiVisibility = false)
         {
-            await ScreenshotUtils.TakeScreenshot();
+            if (uiVisibility)
+            {
+                await ScreenshotUtils.TakeScreenshot();
+            }
+            else
+            {
+                await ScreenshotUtils.TakeScreenshot(Camera.main);
+            }
         }
 
     }

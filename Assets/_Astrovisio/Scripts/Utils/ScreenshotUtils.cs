@@ -14,33 +14,85 @@ namespace Astrovisio
         /// Takes a screenshot and writes metadata as soon as the file is ready.
         /// Fully async, does NOT block the main thread.
         /// </summary>
-        public static async Task TakeScreenshot(Dictionary<string, string> metadata = null, int timeoutSeconds = 10)
+        public static async Task<string> TakeScreenshot(
+            Camera camera = null,
+            bool transparentBackground = false,
+            Dictionary<string, string> metadata = null,
+            int timeoutSeconds = 10)
         {
-            string folderPath = Application.persistentDataPath + "/Screenshots";
+            string folderPath = Path.Combine(Application.persistentDataPath, "Screenshots");
             if (!Directory.Exists(folderPath))
-            {
                 Directory.CreateDirectory(folderPath);
-                // Debug.Log($"Created screenshot directory at: {folderPath}");
-            }
 
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string screenshotFilename = $"screenshot_{timestamp}.png";
-            string fullPath = Path.Combine(folderPath, screenshotFilename);
+            string filename = $"screenshot_{timestamp}.png";
+            string fullPath = Path.Combine(folderPath, filename);
 
-            ScreenCapture.CaptureScreenshot(fullPath);
-            Debug.Log($"Screenshot saved to: {fullPath}");
-
-            // Wait asynchronously for the file to be ready
-            await WaitForFile(fullPath, timeoutSeconds);
-
-            if (metadata == null)
+            if (camera == null)
             {
-                return;
+                ScreenCapture.CaptureScreenshot(fullPath);
+                Debug.Log($"Screenshot saved to: {fullPath}");
+                await WaitForFile(fullPath, timeoutSeconds);
+            }
+            else
+            {
+                int width = Screen.width;
+                int height = Screen.height;
+
+                // Save camera settings
+                var prevClearFlags = camera.clearFlags;
+                var prevBgColor = camera.backgroundColor;
+
+                RenderTexture prevRT = camera.targetTexture;
+
+                RenderTexture rt;
+                Texture2D tex;
+
+                if (transparentBackground)
+                {
+                    camera.clearFlags = CameraClearFlags.SolidColor;
+                    camera.backgroundColor = new Color(0, 0, 0, 0);
+
+                    rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+                    tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                }
+                else
+                {
+                    rt = new RenderTexture(width, height, 24, RenderTextureFormat.Default);
+                    tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+                }
+
+                camera.targetTexture = rt;
+                camera.Render();
+
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                tex.Apply();
+
+                byte[] bytes = tex.EncodeToPNG();
+                File.WriteAllBytes(fullPath, bytes);
+
+                // Reset camera settings
+                camera.targetTexture = prevRT;
+                camera.clearFlags = prevClearFlags;
+                camera.backgroundColor = prevBgColor;
+                RenderTexture.active = null;
+                UnityEngine.Object.Destroy(rt);
+                UnityEngine.Object.Destroy(tex);
+
+                Debug.Log($"Camera screenshot saved to: {fullPath} (transparent: {transparentBackground})");
             }
 
-            AddMetadataToPNG(fullPath, metadata);
-            // Debug.Log("Written to PNG: " + fullPath);
+            if (metadata != null)
+            {
+                AddMetadataToPNG(fullPath, metadata);
+                Debug.Log("Metadata written to PNG: " + fullPath);
+            }
+
+            return fullPath;
         }
+
+
 
         /// <summary>
         /// Asynchronously waits until the file exists and is accessible for reading.
@@ -134,5 +186,5 @@ namespace Astrovisio
         }
 
     }
-    
+
 }
