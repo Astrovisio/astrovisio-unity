@@ -1,13 +1,15 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="LoadingSpinner" src="project://database/Assets/UI%20Toolkit/Components/Spinner.uxml?fileID=9197481963319205126&amp;guid=6e777dec72cffee428a66cbecab63aaa&amp;type=3#Spinner" />
+    <engine:Template name="Slider" src="project://database/Assets/UI%20Toolkit/Components/Shared/Slider.uxml?fileID=9197481963319205126&amp;guid=02d1baae80c0d20428e83b2e2aee8725&amp;type=3#Slider" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/LoaderView.uss?fileID=7433441132597879392&amp;guid=86923ae654661b546a634a982fcc2eb2&amp;type=3#LoaderView" />
     <engine:VisualElement name="Root" class="active">
         <engine:Instance template="LoadingSpinner" name="LoadingSpinner" />
-        <engine:VisualElement name="LoadingBar">
-            <engine:Label text="Message..." name="Message" />
-            <engine:VisualElement name="Bar" style="flex-grow: 1;">
-                <engine:VisualElement name="BarFill" style="scale: 0.78 1;" />
-            </engine:VisualElement>
+        <engine:VisualElement name="LoadingBarContainer" style="flex-grow: 1;">
+            <engine:Label text="Processing data..." name="Message" style="margin-bottom: 10px;" />
+            <engine:Instance template="Slider" name="LoadingBar" picking-mode="Ignore">
+                <AttributeOverrides element-name="MinMaxSlider" high-limit="1" value="0,0.52" />
+                <AttributeOverrides element-name="RootSlider" picking-mode="Ignore" />
+            </engine:Instance>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

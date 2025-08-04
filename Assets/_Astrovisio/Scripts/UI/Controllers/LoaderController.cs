@@ -8,19 +8,24 @@ namespace Astrovisio
     {
         public VisualElement Root { get; }
         private VisualElement spinner;
-        private VisualElement bar;
-        private Label barLabel;
-        private VisualElement barFill;
+
+        private VisualElement loadingBarContainer;
+        private MinMaxSlider loadingBar;
+        private Label loadingBarMessage;
 
         public LoaderController(VisualElement root)
         {
             Root = root;
 
             VisualElement loaderView = root.Q<VisualElement>("LoaderView");
+
             spinner = loaderView.Q<VisualElement>("LoadingSpinner");
-            bar = loaderView.Q<VisualElement>("LoadingBar");
-            barLabel = bar.Q<Label>("Message");
-            barFill = bar.Q<VisualElement>("BarFill");
+
+            loadingBarContainer = loaderView.Q<VisualElement>("LoadingBarContainer");
+            loadingBarMessage = loadingBarContainer.Q<Label>("Message");
+            loadingBar = loadingBarContainer.Q<VisualElement>("LoadingBar")?.Q<MinMaxSlider>("MinMaxSlider");
+            loadingBar.lowLimit = 0f;
+            loadingBar.highLimit = 1f;
 
             SetSpinnerVisibility(false);
             SetBarVisibility(false);
@@ -42,24 +47,19 @@ namespace Astrovisio
         {
             if (visibility)
             {
-                bar.style.display = DisplayStyle.Flex;
+                loadingBarContainer.style.display = DisplayStyle.Flex;
             }
             else
             {
-                bar.style.display = DisplayStyle.None;
+                loadingBarContainer.style.display = DisplayStyle.None;
             }
         }
 
         public void SetBarProgress(float value, string text, bool visibility)
         {
             // Debug.Log("SetBarProgress");
-
-            barLabel.text = text;
-
-            Vector3 scale = barFill.transform.scale;
-            scale.x = value;
-            barFill.transform.scale = scale;
-
+            loadingBarMessage.text = text;
+            loadingBar.maxValue = value;
             SetBarVisibility(visibility);
         }
 

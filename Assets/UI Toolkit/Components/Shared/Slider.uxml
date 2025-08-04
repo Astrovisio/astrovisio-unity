@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/USS/Slider.uss?fileID=7433441132597879392&amp;guid=f863a56422d800447a5a51114efa3ad3&amp;type=3#Slider" />
-    <engine:VisualElement name="RootSlider" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">
+    <engine:VisualElement name="RootSlider" style="flex-grow: 1; justify-content: space-between; align-self: stretch; height: 24px; min-height: 24px; max-height: 24px;">
         <engine:MinMaxSlider value="0,100" low-limit="0" high-limit="100" name="MinMaxSlider" style="height: 16px; min-height: 16px; max-height: 16px;" />
     </engine:VisualElement>
 </engine:UXML>
