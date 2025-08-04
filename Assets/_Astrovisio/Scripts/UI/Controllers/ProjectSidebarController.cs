@@ -118,7 +118,16 @@ namespace Astrovisio
         private void OnGoToVRButtonClicked()
         {
             // Debug.Log("OnGoToVRButtonClicked");
-            XRManager.Instance.EnterVR();
+
+            if (!XRManager.Instance.IsVRActive)
+            {
+                XRManager.Instance.EnterVR(() => SetGoToVRButtonState(true));
+            }
+            else
+            {
+                XRManager.Instance.ExitVR();
+                SetGoToVRButtonState(false);
+            }
             // UIManager.SetErrorVR(true);
         }
 
@@ -154,6 +163,20 @@ namespace Astrovisio
             {
                 renderSettingsButton.style.opacity = 0.5f;
                 goToVRButton.style.opacity = 0.5f;
+            }
+        }
+
+        private void SetGoToVRButtonState(bool active)
+        {
+            Label label = goToVRButton.Q<Label>("Label");
+            if (active)
+            {
+
+                label.text = "Exit VR";
+            }
+            else
+            {
+                label.text = "Go To VR";
             }
         }
 

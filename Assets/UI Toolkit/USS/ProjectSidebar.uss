@@ -628,16 +628,6 @@
     transition-delay: 0s, 0s;
 }
 
-#ProjectSidebarRoot > #GoToVRButton {
-    height: 48px;
-    min-height: 48px;
-    max-height: 48px;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-}
-
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #ContentContainer > #ParamSettingsScrollView {
     flex-grow: 1;
 }
@@ -671,4 +661,14 @@
 
 .axis-button:hover {
     background-color: var(--bg-10);
+}
+
+#ProjectSidebarRoot > #GoToVRButton {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
 }

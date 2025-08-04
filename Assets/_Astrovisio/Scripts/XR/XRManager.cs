@@ -10,6 +10,8 @@ namespace Astrovisio
         public static XRManager Instance { get; private set; }
 
         private bool VRActive = false;
+        public bool IsVRActive => VRActive;
+
         private Coroutine startXRCoroutine;
 
         [Header("Dependencies")]
@@ -43,7 +45,7 @@ namespace Astrovisio
         {
             if (beginOnPlay)
             {
-                EnterVR();
+                EnterVR(() => {});
             }
 
             xrOriginOriginalPosition = xrOrigin.transform.position;
@@ -59,7 +61,7 @@ namespace Astrovisio
             StartCoroutine(StartDebugXR());
         }
 
-        public void EnterVR()
+        public void EnterVR(Action OnSuccess)
         {
             if (VRActive)
             {
@@ -68,7 +70,7 @@ namespace Astrovisio
 
             mainCamera.gameObject.SetActive(false);
             xrOrigin.SetActive(true);
-            startXRCoroutine = StartCoroutine(StartXR());
+            startXRCoroutine = StartCoroutine(StartXR(OnSuccess));
         }
 
         public void ResetXROriginTransform()
@@ -120,7 +122,7 @@ namespace Astrovisio
             }
         }
 
-        private IEnumerator StartXR()
+        private IEnumerator StartXR(Action OnSuccess)
         {
             Debug.Log("[XRManager] Initializing XR...");
             uiManager.SetLoadingBar(true);
@@ -163,6 +165,7 @@ namespace Astrovisio
             finally
             {
                 uiManager.SetLoadingBar(false);
+                OnSuccess();
             }
         }
 
