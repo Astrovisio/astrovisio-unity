@@ -75,6 +75,9 @@ namespace Astrovisio
             thresholdContainer = paramRow.Q<VisualElement>("ThresholdContainer");
             minInputField = thresholdContainer.Q<DoubleField>("MinInputField");
             maxInputField = thresholdContainer.Q<DoubleField>("MaxInputField");
+            // minInputField.SetValueWithoutNotify(double.Parse(minInputField.value.ToString("E5")));
+            // maxInputField.SetValueWithoutNotify(double.Parse(maxInputField.value.ToString("E5")));
+
             minErrorLabel = thresholdContainer.Q<Label>("MinErrorLabel");
             maxErrorLabel = thresholdContainer.Q<Label>("MaxErrorLabel");
             Param.ThrMinSel = Param.ThrMinSel ?? Param.ThrMin;
