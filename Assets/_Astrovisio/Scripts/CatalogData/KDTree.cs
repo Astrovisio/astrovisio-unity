@@ -113,4 +113,80 @@ public class KDTree
         if ((targetVal - nodeVal) * (targetVal - nodeVal) < (heap.Count < k ? float.MaxValue : heap.PeekPriority()))
             SearchKNearest(far, target, depth + 1, heap, k);
     }
+
+
+    public List<int> FindPointsInSphere(Vector3 center, float radius)
+    {
+        var result = new List<int>();
+        float radiusSq = radius * radius;
+        SearchSphere(root, center, radiusSq, 0, result);
+        return result;
+    }
+
+    private void SearchSphere(KDTreeNode node, Vector3 center, float radiusSq, int depth, List<int> result)
+    {
+        if (node == null) return;
+
+        float distSq = (node.point - center).sqrMagnitude;
+        if (distSq <= radiusSq)
+        {
+            result.Add(node.index);
+        }
+
+        int depthMod = depth % 3;
+        int axis = xyz[depthMod];
+        float centerVal = depthMod == 0 ? center.x : depthMod == 1 ? center.y : center.z;
+        float nodeVal = data[axis][node.index];
+
+        // Calculate distance from center to splitting plane
+        float planeDist = centerVal - nodeVal;
+        float planeDistSq = planeDist * planeDist;
+
+        // Visit near side
+        KDTreeNode near = planeDist < 0 ? node.left : node.right;
+        SearchSphere(near, center, radiusSq, depth + 1, result);
+
+        // Check if we need to visit far side
+        if (planeDistSq <= radiusSq)
+        {
+            KDTreeNode far = planeDist < 0 ? node.right : node.left;
+            SearchSphere(far, center, radiusSq, depth + 1, result);
+        }
+    }
+
+    public List<int> FindPointsInCube(Vector3 center, float halfSize)
+    {
+        var result = new List<int>();
+        Vector3 min = center - Vector3.one * halfSize;
+        Vector3 max = center + Vector3.one * halfSize;
+        SearchCube(root, min, max, 0, result);
+        return result;
+    }
+
+    private void SearchCube(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    {
+        if (node == null) return;
+
+        // Check if point is within cube
+        if (node.point.x >= min.x && node.point.x <= max.x &&
+            node.point.y >= min.y && node.point.y <= max.y &&
+            node.point.z >= min.z && node.point.z <= max.z)
+        {
+            result.Add(node.index);
+        }
+
+        int depthMod = depth % 3;
+        int axis = xyz[depthMod];
+        float nodeVal = data[axis][node.index];
+        float minVal = depthMod == 0 ? min.x : depthMod == 1 ? min.y : min.z;
+        float maxVal = depthMod == 0 ? max.x : depthMod == 1 ? max.y : max.z;
+
+        // Visit children if their regions overlap with the cube
+        if (minVal <= nodeVal)
+            SearchCube(node.left, min, max, depth + 1, result);
+
+        if (maxVal >= nodeVal)
+            SearchCube(node.right, min, max, depth + 1, result);
+    }
+
 }

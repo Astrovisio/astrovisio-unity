@@ -100,4 +100,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fresnelColor: {r: 1, g: 1, b: 1, a: 1}
-  fresnelPower: 0.1
+  fresnelPower: 1.901

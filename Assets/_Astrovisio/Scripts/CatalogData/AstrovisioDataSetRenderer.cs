@@ -266,16 +266,28 @@ namespace CatalogData
 
         public float[] GetDataInfo()
         {
-            if (kdTreeComponent.GetLastNearest() != null)
+            if (kdTreeComponent == null) return null;
+
+            // Check if we're in area selection mode
+            if (kdTreeComponent.selectionMode != AreaSelectionMode.SinglePoint)
             {
-                int index = kdTreeComponent.GetLastNearest().Value.index;
-
-                if (index >= 0)
+                var areaResult = kdTreeComponent.GetLastAreaSelection();
+                if (areaResult != null && areaResult.Count > 0)
                 {
-                    return kdTreeComponent.GetDataInfo(index);
+                    return areaResult.AggregatedValues;
                 }
-
-
+            }
+            else
+            {
+                // Original single point selection
+                if (kdTreeComponent.GetLastNearest() != null)
+                {
+                    int index = kdTreeComponent.GetLastNearest().Value.index;
+                    if (index >= 0)
+                    {
+                        return kdTreeComponent.GetDataInfo(index);
+                    }
+                }
             }
 
             return null;
@@ -866,6 +878,16 @@ namespace CatalogData
         {
             DataMapping.UseNoise = state;
             DataMapping.Uniforms.NoiseStrength = value;
+        }
+
+        // Add this method to get detailed info about area selection
+        public AreaSelectionResult GetAreaSelectionInfo()
+        {
+            if (kdTreeComponent != null && kdTreeComponent.selectionMode != AreaSelectionMode.SinglePoint)
+            {
+                return kdTreeComponent.GetLastAreaSelection();
+            }
+            return null;
         }
 
         void OnDrawGizmosSelected()

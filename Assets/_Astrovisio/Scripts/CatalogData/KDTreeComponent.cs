@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 using CatalogData;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public readonly struct PointDistance
 {
@@ -41,6 +43,13 @@ public class KDTreeComponent : MonoBehaviour
     [Header("Settings")]
     public bool realtime = true;
 
+    [Header("Area Selection Settings")]
+    public AreaSelectionMode selectionMode = AreaSelectionMode.SinglePoint;
+    public float selectionRadius = 0.05f; // For sphere selection
+    public float selectionCubeHalfSize = 0.05f; // For cube selection
+    public AggregationMode aggregationMode = AggregationMode.Average;
+    public bool showSelectionGizmo = true;
+
     [Header("Transforms")]
     public Transform pointCloudTransform;
     public Transform controllerTransform;
@@ -63,18 +72,32 @@ public class KDTreeComponent : MonoBehaviour
     private KDTreeManager manager;
     private float[][] data;
     private PointDistance? nearest;
+    private AreaSelectionResult areaSelectionResult;
     private bool running = false;
 
     [Header("SphereDataInspector")]
     [SerializeField] private SphereDataInspector sphereDataInspectorPrefab;
-     private SphereDataInspector sphereDataInspector;
+    private SphereDataInspector sphereDataInspector;
 
+    // Visual feedback for area selection
+    private GameObject selectionVisualizer;
+    
+    // Cached transform values for async operations
+    private Vector3 cachedWorldScale;
+    private bool needsScaleUpdate = true;
 
     [ContextMenu("ComputeNearestPoint")]
     public async Task<PointDistance?> ComputeNearestPoint()
     {
         nearest = await ComputeNearestPoint(controllerTransform.position);
         return nearest;
+    }
+
+    [ContextMenu("ComputeAreaSelection")]
+    public async Task<AreaSelectionResult> ComputeAreaSelection()
+    {
+        areaSelectionResult = await ComputeAreaSelection(controllerTransform.position);
+        return areaSelectionResult;
     }
 
     private async void Update()
@@ -84,22 +107,49 @@ public class KDTreeComponent : MonoBehaviour
             return;
         }
 
+        // Update cached scale values if needed
+        if (needsScaleUpdate || transform.hasChanged)
+        {
+            cachedWorldScale = pointCloudTransform.lossyScale;
+            needsScaleUpdate = false;
+        }
+
         if (realtime)
         {
             running = true;
-            nearest = await ComputeNearestPoint(controllerTransform.position);
+            
+            if (selectionMode == AreaSelectionMode.SinglePoint)
+            {
+                nearest = await ComputeNearestPoint(controllerTransform.position);
+            }
+            else
+            {
+                areaSelectionResult = await ComputeAreaSelection(controllerTransform.position);
+            }
+            
             running = false;
         }
 
         HandleSphereDataInspector();
+        UpdateSelectionVisualizer();
     }
 
     private void HandleSphereDataInspector()
     {
-        // Debug.Log($"{nearest != null} - {sphereDataInspector}");
-        if (nearest != null && sphereDataInspector != null)
+        if (selectionMode == AreaSelectionMode.SinglePoint)
         {
-            sphereDataInspector.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
+            if (nearest != null && sphereDataInspector != null)
+            {
+                sphereDataInspector.transform.position = GetNearestWorldSpaceCoordinates(nearest.Value.index);
+            }
+        }
+        else
+        {
+            // For area selection, position at the center of mass of selected points
+            if (areaSelectionResult != null && areaSelectionResult.Count > 0 && sphereDataInspector != null)
+            {
+                sphereDataInspector.transform.position = GetAreaCenterWorldSpace();
+            }
         }
     }
 
@@ -119,11 +169,80 @@ public class KDTreeComponent : MonoBehaviour
             sphereDataInspector = Instantiate(sphereDataInspectorPrefab);
             sphereDataInspector.SetActiveState(false);
         }
+
+        InitializeSelectionVisualizer();
+    }
+
+    private void InitializeSelectionVisualizer()
+    {
+        if (selectionVisualizer == null)
+        {
+            selectionVisualizer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            selectionVisualizer.name = "SelectionAreaVisualizer";
+            
+            // Remove collider
+            Destroy(selectionVisualizer.GetComponent<Collider>());
+            
+            // Set up material
+            var renderer = selectionVisualizer.GetComponent<Renderer>();
+            var mat = new Material(Shader.Find("Standard"));
+            mat.color = new Color(0, 1, 0, 0.2f);
+            mat.SetFloat("_Mode", 3); // Transparent
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = 3000;
+            renderer.material = mat;
+            
+            selectionVisualizer.SetActive(false);
+        }
+    }
+
+    private void UpdateSelectionVisualizer()
+    {
+        if (selectionVisualizer == null || !showSelectionGizmo) return;
+
+        if (selectionMode == AreaSelectionMode.SinglePoint)
+        {
+            selectionVisualizer.SetActive(false);
+        }
+        else
+        {
+            selectionVisualizer.SetActive(true);
+            selectionVisualizer.transform.position = controllerTransform.position;
+
+            if (selectionMode == AreaSelectionMode.Sphere)
+            {
+                selectionVisualizer.transform.localScale = Vector3.one * (selectionRadius * 2);
+                if (selectionVisualizer.GetComponent<MeshFilter>().sharedMesh.name != "Sphere")
+                {
+                    selectionVisualizer.GetComponent<MeshFilter>().sharedMesh = 
+                        GameObject.CreatePrimitive(PrimitiveType.Sphere).GetComponent<MeshFilter>().sharedMesh;
+                }
+            }
+            else if (selectionMode == AreaSelectionMode.Cube)
+            {
+                selectionVisualizer.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
+                if (selectionVisualizer.GetComponent<MeshFilter>().sharedMesh.name != "Cube")
+                {
+                    selectionVisualizer.GetComponent<MeshFilter>().sharedMesh = 
+                        GameObject.CreatePrimitive(PrimitiveType.Cube).GetComponent<MeshFilter>().sharedMesh;
+                }
+            }
+        }
     }
 
     public PointDistance? GetLastNearest()
     {
         return nearest;
+    }
+
+    public AreaSelectionResult GetLastAreaSelection()
+    {
+        return areaSelectionResult;
     }
 
     public float[] GetDataInfo(int index)
@@ -139,6 +258,57 @@ public class KDTreeComponent : MonoBehaviour
         for (int i = 0; i < rowCount; i++)
         {
             result[i] = data[i][index];
+        }
+
+        return result;
+    }
+
+    // NEW: Get aggregated data for area selection
+    public float[] GetAreaSelectionDataInfo()
+    {
+        if (areaSelectionResult == null || areaSelectionResult.Count == 0)
+        {
+            return null;
+        }
+
+        return areaSelectionResult.AggregatedValues;
+    }
+
+    private float[] AggregateData(List<int> indices)
+    {
+        if (data == null || data.Length == 0 || indices.Count == 0)
+        {
+            return null;
+        }
+
+        int rowCount = data.Length;
+        float[] result = new float[rowCount];
+
+        for (int row = 0; row < rowCount; row++)
+        {
+            var values = indices.Select(idx => data[row][idx]).ToList();
+            
+            switch (aggregationMode)
+            {
+                case AggregationMode.Average:
+                    result[row] = values.Average();
+                    break;
+                case AggregationMode.Sum:
+                    result[row] = values.Sum();
+                    break;
+                case AggregationMode.Min:
+                    result[row] = values.Min();
+                    break;
+                case AggregationMode.Max:
+                    result[row] = values.Max();
+                    break;
+                case AggregationMode.Median:
+                    values.Sort();
+                    int mid = values.Count / 2;
+                    result[row] = values.Count % 2 == 0 ? 
+                        (values[mid - 1] + values[mid]) / 2f : values[mid];
+                    break;
+            }
         }
 
         return result;
@@ -170,7 +340,6 @@ public class KDTreeComponent : MonoBehaviour
             bool currentState = meshRenderer.enabled;
             meshRenderer.enabled = !currentState;
             return meshRenderer.enabled;
-            // Debug.Log($"Toggled object '{debugSphere.name}' to {(debugSphere.activeSelf ? "visible" : "hidden")}");
         }
         return false;
     }
@@ -184,7 +353,7 @@ public class KDTreeComponent : MonoBehaviour
 
         int lastNearestIndex = index != null ? (int)index : nearest.Value.index;
 
-        if (lastNearestIndex > 0)
+        if (lastNearestIndex >= 0)
         {
             Vector3 pointOriginal = new Vector3(
                 data[xyz[0]][lastNearestIndex],
@@ -192,55 +361,152 @@ public class KDTreeComponent : MonoBehaviour
                 data[xyz[2]][lastNearestIndex]
             );
 
-            switch (XScale)
-            {
-                case ScalingType.Sqrt:
-                    pointOriginal.x = signed_sqrt(pointOriginal.x, 1);
-                    break;
-                default:
-                    break;
-            }
-
-            switch (YScale)
-            {
-                case ScalingType.Sqrt:
-                    pointOriginal.y = signed_sqrt(pointOriginal.y, 1);
-                    break;
-                default:
-                    break;
-            }
-
-            switch (ZScale)
-            {
-                case ScalingType.Sqrt:
-                    pointOriginal.z = signed_sqrt(pointOriginal.z, 1);
-                    break;
-                default:
-                    break;
-            }
-
-            pointOriginal.x = RemapInverse(pointOriginal.x, xRange, xTargetRange);
-            pointOriginal.y = RemapInverse(pointOriginal.y, yRange, yTargetRange);
-            pointOriginal.z = RemapInverse(pointOriginal.z, zRange, zTargetRange);
+            pointOriginal = ApplyScaling(pointOriginal);
+            pointOriginal = RemapPoint(pointOriginal);
 
             Vector3 worldPos = pointCloudTransform.TransformPoint(pointOriginal);
             return worldPos;
         }
 
         return new Vector3();
+    }
 
+    private Vector3 GetAreaCenterWorldSpace()
+    {
+        if (areaSelectionResult == null || areaSelectionResult.Count == 0 || pointCloudTransform == null)
+        {
+            return Vector3.zero;
+        }
+
+        // Calculate center of mass
+        Vector3 centerOfMass = Vector3.zero;
+        foreach (int idx in areaSelectionResult.SelectedIndices)
+        {
+            Vector3 point = new Vector3(
+                data[xyz[0]][idx],
+                data[xyz[1]][idx],
+                data[xyz[2]][idx]
+            );
+            centerOfMass += point;
+        }
+        centerOfMass /= areaSelectionResult.Count;
+
+        centerOfMass = ApplyScaling(centerOfMass);
+        centerOfMass = RemapPoint(centerOfMass);
+
+        return pointCloudTransform.TransformPoint(centerOfMass);
+    }
+
+    private Vector3 ApplyScaling(Vector3 point)
+    {
+        switch (XScale)
+        {
+            case ScalingType.Sqrt:
+                point.x = signed_sqrt(point.x, 1);
+                break;
+        }
+
+        switch (YScale)
+        {
+            case ScalingType.Sqrt:
+                point.y = signed_sqrt(point.y, 1);
+                break;
+        }
+
+        switch (ZScale)
+        {
+            case ScalingType.Sqrt:
+                point.z = signed_sqrt(point.z, 1);
+                break;
+        }
+
+        return point;
+    }
+
+    private Vector3 RemapPoint(Vector3 point)
+    {
+        point.x = RemapInverse(point.x, xRange, xTargetRange);
+        point.y = RemapInverse(point.y, yRange, yTargetRange);
+        point.z = RemapInverse(point.z, zRange, zTargetRange);
+        return point;
     }
 
     public async Task<PointDistance> ComputeNearestPoint(Vector3 point)
     {
-        Vector3 controllerLocal = pointCloudTransform.InverseTransformPoint(point);
+        Vector3 queryPoint = TransformWorldToDataSpace(point);
+
+        (int index, float distanceSquared) tuple = await Task.Run(() => manager.FindNearest(queryPoint));
+        PointDistance nearest = new PointDistance(tuple.index, tuple.distanceSquared);
+
+        return nearest;
+    }
+
+    public async Task<AreaSelectionResult> ComputeAreaSelection(Vector3 worldPoint)
+    {
+        Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
+        
+        // Calculate data space radius/size before entering the async task
+        float dataSpaceRadius = 0f;
+        float dataSpaceHalfSize = 0f;
+        
+        switch (selectionMode)
+        {
+            case AreaSelectionMode.Sphere:
+                dataSpaceRadius = TransformRadiusToDataSpace(selectionRadius);
+                break;
+            case AreaSelectionMode.Cube:
+                dataSpaceHalfSize = TransformRadiusToDataSpace(selectionCubeHalfSize);
+                break;
+        }
+        
+        List<int> indices = null;
+        
+        // Copy values for use in async context
+        var mode = selectionMode;
+        var radius = dataSpaceRadius;
+        var halfSize = dataSpaceHalfSize;
+        
+        await Task.Run(() =>
+        {
+            switch (mode)
+            {
+                case AreaSelectionMode.Sphere:
+                    indices = manager.FindPointsInSphere(queryPoint, radius);
+                    break;
+                    
+                case AreaSelectionMode.Cube:
+                    indices = manager.FindPointsInCube(queryPoint, halfSize);
+                    break;
+                    
+                default:
+                    indices = new List<int>();
+                    break;
+            }
+        });
+
+        var result = new AreaSelectionResult
+        {
+            SelectedIndices = indices,
+            CenterPoint = queryPoint,
+            SelectionRadius = selectionMode == AreaSelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize
+        };
+
+        if (indices.Count > 0)
+        {
+            result.AggregatedValues = AggregateData(indices);
+        }
+
+        return result;
+    }
+
+    private Vector3 TransformWorldToDataSpace(Vector3 worldPoint)
+    {
+        Vector3 controllerLocal = pointCloudTransform.InverseTransformPoint(worldPoint);
 
         switch (XScale)
         {
             case ScalingType.Sqrt:
                 controllerLocal.x = inverse_signed_sqrt(controllerLocal.x, 1);
-                break;
-            default:
                 break;
         }
 
@@ -249,8 +515,6 @@ public class KDTreeComponent : MonoBehaviour
             case ScalingType.Sqrt:
                 controllerLocal.y = inverse_signed_sqrt(controllerLocal.y, 1);
                 break;
-            default:
-                break;
         }
 
         switch (ZScale)
@@ -258,20 +522,34 @@ public class KDTreeComponent : MonoBehaviour
             case ScalingType.Sqrt:
                 controllerLocal.z = inverse_signed_sqrt(controllerLocal.z, 1);
                 break;
-            default:
-                break;
         }
 
         float x = RemapInverse(controllerLocal.x, xTargetRange, xRange);
         float y = RemapInverse(controllerLocal.y, yTargetRange, yRange);
         float z = RemapInverse(controllerLocal.z, zTargetRange, zRange);
 
-        Vector3 queryPoint = new Vector3(x, y, z);
+        return new Vector3(x, y, z);
+    }
 
-        (int index, float distanceSquared) tuple = await Task.Run(() => manager.FindNearest(queryPoint));
-        PointDistance nearest = new PointDistance(tuple.index, tuple.distanceSquared);
+    private float TransformRadiusToDataSpace(float worldRadius)
+    {
+        // Use cached scale or get it if on main thread
+        Vector3 worldScale = cachedWorldScale;
+        if (worldScale == Vector3.zero && pointCloudTransform != null)
+        {
+            worldScale = pointCloudTransform.lossyScale;
+        }
+        
+        float avgScale = (worldScale.x + worldScale.y + worldScale.z) / 3f;
+        float localRadius = worldRadius / avgScale;
 
-        return nearest;
+        // Apply inverse remapping (assuming uniform scaling for simplicity)
+        float xScale = (xRange.y - xRange.x) / (xTargetRange.y - xTargetRange.x);
+        float yScale = (yRange.y - yRange.x) / (yTargetRange.y - yTargetRange.x);
+        float zScale = (zRange.y - zRange.x) / (zTargetRange.y - zTargetRange.x);
+        float avgDataScale = (xScale + yScale + zScale) / 3f;
+
+        return localRadius * avgDataScale;
     }
 
     private float RemapInverse(float val, Vector2 from, Vector2 to)
@@ -292,7 +570,32 @@ public class KDTreeComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        DestroyImmediate(sphereDataInspector);
+        if (sphereDataInspector != null)
+        {
+            DestroyImmediate(sphereDataInspector);
+        }
+        
+        if (selectionVisualizer != null)
+        {
+            DestroyImmediate(selectionVisualizer);
+        }
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        if (controllerTransform == null) return;
+
+        Gizmos.color = new Color(0, 1, 0, 0.3f);
+        
+        switch (selectionMode)
+        {
+            case AreaSelectionMode.Sphere:
+                Gizmos.DrawWireSphere(controllerTransform.position, selectionRadius);
+                break;
+                
+            case AreaSelectionMode.Cube:
+                Gizmos.DrawWireCube(controllerTransform.position, Vector3.one * (selectionCubeHalfSize * 2));
+                break;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class KDTreeManager
 {
@@ -77,5 +78,89 @@ public class KDTreeManager
 
         list.Sort((a, b) => a.Item2.CompareTo(b.Item2));
         return list;
+    }
+
+    public List<int> FindPointsInSphere(Vector3 center, float radius)
+    {
+        var allResults = new HashSet<int>();
+
+        // Check which octants the sphere intersects
+        for (int i = 0; i < 8; i++)
+        {
+            if (SphereIntersectsOctant(center, radius, i))
+            {
+                var results = trees[i].FindPointsInSphere(center, radius);
+                foreach (var idx in results)
+                {
+                    allResults.Add(idx);
+                }
+            }
+        }
+
+        return allResults.ToList();
+    }
+
+    public List<int> FindPointsInCube(Vector3 center, float halfSize)
+    {
+        var allResults = new HashSet<int>();
+
+        // Check which octants the cube intersects
+        for (int i = 0; i < 8; i++)
+        {
+            if (CubeIntersectsOctant(center, halfSize, i))
+            {
+                var results = trees[i].FindPointsInCube(center, halfSize);
+                foreach (var idx in results)
+                {
+                    allResults.Add(idx);
+                }
+            }
+        }
+
+        return allResults.ToList();
+    }
+
+    private bool SphereIntersectsOctant(Vector3 center, float radius, int octantIndex)
+    {
+        // Calculate octant bounds based on pivot
+        Vector3 octantMin = new Vector3(
+            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
+            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
+            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
+        );
+
+        Vector3 octantMax = new Vector3(
+            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
+            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
+            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
+        );
+
+        // Check sphere-AABB intersection
+        Vector3 closest = Vector3.Max(octantMin, Vector3.Min(center, octantMax));
+        return (closest - center).sqrMagnitude <= radius * radius;
+    }
+
+    private bool CubeIntersectsOctant(Vector3 center, float halfSize, int octantIndex)
+    {
+        Vector3 cubeMin = center - Vector3.one * halfSize;
+        Vector3 cubeMax = center + Vector3.one * halfSize;
+
+        // Calculate octant bounds
+        Vector3 octantMin = new Vector3(
+            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
+            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
+            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
+        );
+
+        Vector3 octantMax = new Vector3(
+            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
+            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
+            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
+        );
+
+        // Check AABB-AABB intersection
+        return cubeMin.x <= octantMax.x && cubeMax.x >= octantMin.x &&
+               cubeMin.y <= octantMax.y && cubeMax.y >= octantMin.y &&
+               cubeMin.z <= octantMax.z && cubeMax.z >= octantMin.z;
     }
 }
