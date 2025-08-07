@@ -1,6 +1,6 @@
 ﻿#region Includes
+using System;
 using UnityEngine;
-using UnityEngine.Events;
 #endregion
 
 namespace TS.DoubleSlider
@@ -8,6 +8,12 @@ namespace TS.DoubleSlider
     [RequireComponent(typeof(RectTransform))]
     public class DoubleSlider : MonoBehaviour
     {
+
+        #region Events
+        public event Action<float, float> OnValueChanged;
+
+        #endregion
+
         #region Variables
 
         [Header("References")]
@@ -23,9 +29,6 @@ namespace TS.DoubleSlider
         [SerializeField] private bool _wholeNumbers;
         [SerializeField] private float _initialMinValue;
         [SerializeField] private float _initialMaxValue;
-
-        [Header("Events")]
-        public UnityEvent<float, float> OnValueChanged;
 
         public bool IsEnabled
         {
@@ -114,7 +117,7 @@ namespace TS.DoubleSlider
                 _sliderMin.Value = MaxValue - _minDistance;
             }
 
-            OnValueChanged.Invoke(MinValue, MaxValue);
+            OnValueChanged?.Invoke(MinValue, MaxValue);
         }
 
         private void MaxValueChanged(float value)
@@ -129,8 +132,10 @@ namespace TS.DoubleSlider
                 _sliderMax.Value = MinValue + _minDistance;
             }
 
-            OnValueChanged.Invoke(MinValue, MaxValue);
+            OnValueChanged?.Invoke(MinValue, MaxValue);
         }
+
+
 
     }
 
