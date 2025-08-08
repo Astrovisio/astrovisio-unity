@@ -171,13 +171,13 @@ namespace Astrovisio
             Label label = goToVRButton.Q<Label>("Label");
             if (active)
             {
-
                 label.text = "Exit VR";
             }
             else
             {
                 label.text = "Go To VR";
             }
+            goToVRButton.Blur();
         }
 
     }
