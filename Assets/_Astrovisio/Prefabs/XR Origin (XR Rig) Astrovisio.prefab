@@ -1219,7 +1219,7 @@ MonoBehaviour:
   leftPositionAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Left Position
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 21b09c80-db05-407d-951a-6fcf73d9e9e8
@@ -1231,7 +1231,7 @@ MonoBehaviour:
   rightPositionAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Right Position
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 51c05e33-03b1-4468-9f6a-ae3fc1523d65
@@ -1841,15 +1841,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.b
-      value: 0
+      value: 0.4056604
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.g
-      value: 0
+      value: 0.31175864
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.r
-      value: 0
+      value: 0.22005163
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_CullingMask.m_Bits
@@ -2024,7 +2024,7 @@ PrefabInstance:
         type: 3}
       propertyPath: 'm_ActionAssets.Array.data[0]'
       value: 
-      objectReference: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
+      objectReference: {fileID: -944628639613478452, guid: a7e753d1f47822745ab42e1d5f053c81,
         type: 3}
     - target: {fileID: 6520291404937146767, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
         type: 3}
