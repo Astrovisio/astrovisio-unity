@@ -1936,7 +1936,7 @@ PrefabInstance:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: selectionMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -1970,9 +1970,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: selectionRadius
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: controllerTransform
       value: 
       objectReference: {fileID: 2087590747}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: selectionCubeHalfSize
+      value: 0.025
+      objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: pointDataInspectorPrefab

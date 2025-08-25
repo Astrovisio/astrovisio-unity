@@ -132,7 +132,6 @@ public class KDTreeComponent : MonoBehaviour
                 // {
                 //     Debug.Log(string.Join(", ", areaSelectionResult.AggregatedValues));
                 // }
-
             }
 
             running = false;
