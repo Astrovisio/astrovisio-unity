@@ -1757,6 +1757,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UIManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2307568220249490968, guid: e41872235d2732946965b653b9ae13e9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4973116314143365544, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
       propertyPath: renderManager
@@ -1930,14 +1935,37 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: selectionMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: controllerTransform
       value: 
       objectReference: {fileID: 2087590747}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: pointDataInspectorPrefab
+      value: 
+      objectReference: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
+        type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: sphereDataInspectorPrefab
       value: 
       objectReference: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
+        type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: areaBoxDataInspectorPrefab
+      value: 
+      objectReference: {fileID: 1083773075067826380, guid: b507661d1348fae46996ad25c71740b9,
+        type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: areaSphereDataInspectorPrefab
+      value: 
+      objectReference: {fileID: 1083773075067826380, guid: 751ce84d33049274686ceec24f7db75b,
         type: 3}
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -1947,7 +1975,12 @@ PrefabInstance:
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: debugMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}

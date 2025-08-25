@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public class SphereDataInspector : MonoBehaviour
+public class DataInspector : MonoBehaviour
 {
 
     [Header("Fresenel")]

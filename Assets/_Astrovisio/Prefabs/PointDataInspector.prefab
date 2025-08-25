@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7616521499321961795}
   - component: {fileID: 1083773075067826380}
   m_Layer: 0
-  m_Name: SphereDataInspector
+  m_Name: PointDataInspector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -41,7 +41,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7701826227147962361}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 1173953472829005956, guid: 472b5a979c3dbd642aba27685f0ee219, type: 3}
 --- !u!23 &7616521499321961795
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -100,4 +100,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fresnelColor: {r: 1, g: 1, b: 1, a: 1}
-  fresnelPower: 1.901
+  fresnelPower: 0.1
