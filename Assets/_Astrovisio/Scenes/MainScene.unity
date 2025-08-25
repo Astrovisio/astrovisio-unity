@@ -1940,6 +1940,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: xTargetRange.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: xTargetRange.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: yTargetRange.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: yTargetRange.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: zTargetRange.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: zTargetRange.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: controllerTransform
       value: 
       objectReference: {fileID: 2087590747}
@@ -2031,6 +2061,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.TargetMaxVal
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.TargetMinVal
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Y.TargetMaxVal
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Y.TargetMinVal
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.TargetMaxVal
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.TargetMinVal
+      value: -0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -127,6 +127,12 @@ public class KDTreeComponent : MonoBehaviour
             else
             {
                 areaSelectionResult = await ComputeAreaSelection(controllerTransform.position);
+                // Debug.Log(TransformRadiusToDataSpace(selectionRadius) + ", " + areaSelectionResult.SelectedIndices.Count);
+                // if (areaSelectionResult.Count > 0)
+                // {
+                //     Debug.Log(string.Join(", ", areaSelectionResult.AggregatedValues));
+                // }
+
             }
 
             running = false;
@@ -186,70 +192,7 @@ public class KDTreeComponent : MonoBehaviour
             areaBoxDataInspector.SetActiveState(false);
         }
 
-        // InitializeSelectionVisualizer();
     }
-
-    // private void InitializeSelectionVisualizer()
-    // {
-    //     if (selectionVisualizer == null)
-    //     {
-    //         selectionVisualizer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    //         selectionVisualizer.name = "SelectionAreaVisualizer";
-
-    //         // Remove collider
-    //         Destroy(selectionVisualizer.GetComponent<Collider>());
-
-    //         // Set up material
-    //         var renderer = selectionVisualizer.GetComponent<Renderer>();
-    //         var mat = new Material(Shader.Find("Standard"));
-    //         mat.color = new Color(0, 1, 0, 0.2f);
-    //         mat.SetFloat("_Mode", 3); // Transparent
-    //         mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-    //         mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-    //         mat.SetInt("_ZWrite", 0);
-    //         mat.DisableKeyword("_ALPHATEST_ON");
-    //         mat.EnableKeyword("_ALPHABLEND_ON");
-    //         mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-    //         mat.renderQueue = 3000;
-    //         renderer.material = mat;
-
-    //         selectionVisualizer.SetActive(false);
-    //     }
-    // }
-
-    // private void UpdateSelectionVisualizer()
-    // {
-    //     if (selectionVisualizer == null || !showSelectionGizmo) return;
-
-    //     if (selectionMode == AreaSelectionMode.SinglePoint)
-    //     {
-    //         selectionVisualizer.SetActive(false);
-    //     }
-    //     else
-    //     {
-    //         selectionVisualizer.SetActive(true);
-    //         selectionVisualizer.transform.position = controllerTransform.position;
-
-    //         if (selectionMode == AreaSelectionMode.Sphere)
-    //         {
-    //             selectionVisualizer.transform.localScale = Vector3.one * (selectionRadius * 2);
-    //             if (selectionVisualizer.GetComponent<MeshFilter>().sharedMesh.name != "Sphere")
-    //             {
-    //                 selectionVisualizer.GetComponent<MeshFilter>().sharedMesh =
-    //                     GameObject.CreatePrimitive(PrimitiveType.Sphere).GetComponent<MeshFilter>().sharedMesh;
-    //             }
-    //         }
-    //         else if (selectionMode == AreaSelectionMode.Cube)
-    //         {
-    //             selectionVisualizer.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
-    //             if (selectionVisualizer.GetComponent<MeshFilter>().sharedMesh.name != "Cube")
-    //             {
-    //                 selectionVisualizer.GetComponent<MeshFilter>().sharedMesh =
-    //                     GameObject.CreatePrimitive(PrimitiveType.Cube).GetComponent<MeshFilter>().sharedMesh;
-    //             }
-    //         }
-    //     }
-    // }
 
     private void UpdateSelectionVisualizer()
     {
@@ -473,9 +416,9 @@ public class KDTreeComponent : MonoBehaviour
 
     private Vector3 RemapPoint(Vector3 point)
     {
-        point.x = RemapInverse(point.x, xRange, xTargetRange);
-        point.y = RemapInverse(point.y, yRange, yTargetRange);
-        point.z = RemapInverse(point.z, zRange, zTargetRange);
+        point.x = RemapInverseUnclamped(point.x, xRange, xTargetRange);
+        point.y = RemapInverseUnclamped(point.y, yRange, yTargetRange);
+        point.z = RemapInverseUnclamped(point.z, zRange, zTargetRange);
         return point;
     }
 
@@ -492,6 +435,8 @@ public class KDTreeComponent : MonoBehaviour
     public async Task<AreaSelectionResult> ComputeAreaSelection(Vector3 worldPoint)
     {
         Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
+
+        Debug.Log(queryPoint);
 
         // Calculate data space radius/size before entering the async task
         float dataSpaceRadius = 0f;
@@ -572,9 +517,9 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        float x = RemapInverse(controllerLocal.x, xTargetRange, xRange);
-        float y = RemapInverse(controllerLocal.y, yTargetRange, yRange);
-        float z = RemapInverse(controllerLocal.z, zTargetRange, zRange);
+        float x = RemapInverseUnclamped(controllerLocal.x, xTargetRange, xRange);
+        float y = RemapInverseUnclamped(controllerLocal.y, yTargetRange, yRange);
+        float z = RemapInverseUnclamped(controllerLocal.z, zTargetRange, zRange);
 
         return new Vector3(x, y, z);
     }
@@ -600,10 +545,27 @@ public class KDTreeComponent : MonoBehaviour
         return localRadius * avgDataScale;
     }
 
+    public float InverseLerpUnclamped(float a, float b, float value)
+    {
+        // Gestione del caso degenere dove a == b
+        if (Mathf.Approximately(a, b))
+        {
+            return 0f; // Oppure potresti voler restituire float.NaN o gestire diversamente
+        }
+
+        return (value - a) / (b - a);
+    }
+
     private float RemapInverse(float val, Vector2 from, Vector2 to)
     {
         float t = Mathf.InverseLerp(from.x, from.y, val);
         return Mathf.Lerp(to.x, to.y, t);
+    }
+
+    private float RemapInverseUnclamped(float val, Vector2 from, Vector2 to)
+    {
+        float t = InverseLerpUnclamped(from.x, from.y, val);
+        return Mathf.LerpUnclamped(to.x, to.y, t);
     }
 
     private float inverse_signed_sqrt(float y, float scale)
