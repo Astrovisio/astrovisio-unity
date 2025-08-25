@@ -436,8 +436,6 @@ public class KDTreeComponent : MonoBehaviour
     {
         Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
 
-        Debug.Log(queryPoint);
-
         // Calculate data space radius/size before entering the async task
         float dataSpaceRadius = 0f;
         float dataSpaceHalfSize = 0f;
