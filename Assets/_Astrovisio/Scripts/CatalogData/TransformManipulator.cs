@@ -62,6 +62,17 @@ public class TransformManipulator : MonoBehaviour
     {
         if (targetObject == null) return;
 
+        bool isComputingAreaSelection = targetObject.gameObject.GetComponent<KDTreeComponent>().IsComputingAreaSelection();
+        if (isComputingAreaSelection)
+        {
+            initializedSingleGrip = false;
+            initializedDualGrip = false;
+            isLeftGripping = false;
+            isRightGripping = false;
+            UpdateLines();
+            return;
+        }
+
         isLeftGripping = leftGripAction.action.ReadValue<float>() > 0.5f;
         isRightGripping = rightGripAction.action.ReadValue<float>() > 0.5f;
 

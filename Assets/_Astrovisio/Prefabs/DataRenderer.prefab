@@ -342,7 +342,6 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6528833266872925955}
-  - {fileID: 7326927556941298493}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1770384898517674952
@@ -1690,7 +1689,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6614540646215087856}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1711,7 +1710,7 @@ Transform:
   - {fileID: 1201534132078309695}
   - {fileID: 5717724493454399491}
   - {fileID: 2698438116099182908}
-  m_Father: {fileID: 5304179595479019890}
+  m_Father: {fileID: 6528833266872925955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7221875655879780732
 GameObject:
@@ -2104,7 +2103,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 7326927556941298493}
   m_Father: {fileID: 5304179595479019890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9054602126277597126
@@ -2294,6 +2294,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   realtime: 1
+  selectionMode: 1
+  selectionRadius: 0.05
+  selectionCubeHalfSize: 0.05
+  aggregationMode: 0
+  showSelectionGizmo: 1
   pointCloudTransform: {fileID: 6528833266872925955}
   controllerTransform: {fileID: 0}
   xRange: {x: -0.5, y: 0.5}
@@ -2305,8 +2310,21 @@ MonoBehaviour:
   XScale: 0
   YScale: 0
   ZScale: 0
-  sphereDataInspectorPrefab: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
-    type: 3}
+  pointDataInspectorPrefab: {fileID: 0}
+  areaSphereDataInspectorPrefab: {fileID: 0}
+  areaBoxDataInspectorPrefab: {fileID: 0}
+  selectAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 056b35e7-5e27-457f-98d9-5454f8ddf1f2
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
 --- !u!1 &8527399573741917539
 GameObject:
   m_ObjectHideFlags: 0

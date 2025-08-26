@@ -29,15 +29,18 @@ namespace Astrovisio
         private void Update()
         {
             dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
-            atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
-            kdTreeComponent = dataRenderer.GetKDTreeComponent();
-
-            if (kdTreeComponent.GetLastNearest() == null || dataRenderer.GetDataContainer() == null)
+            if (dataRenderer != null)
             {
-                return;
-            }
+                atrovidioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+                kdTreeComponent = dataRenderer.GetKDTreeComponent();
 
-            UpdateDataInfoPanel();
+                if (kdTreeComponent.GetLastNearest() == null || dataRenderer.GetDataContainer() == null)
+                {
+                    return;
+                }
+
+                UpdateDataInfoPanel();
+            }
         }
 
         private void UpdateDataInfoPanel()

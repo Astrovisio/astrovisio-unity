@@ -1941,7 +1941,7 @@ PrefabInstance:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: selectionMode
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -2223,6 +2223,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4294704123
+      objectReference: {fileID: 0}
+    - target: {fileID: 4916186618688842690, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+        type: 3}
+      propertyPath: leftPositionAction.m_Action.m_Name
+      value: Left Position
+      objectReference: {fileID: 0}
+    - target: {fileID: 4916186618688842690, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+        type: 3}
+      propertyPath: rightPositionAction.m_Action.m_Name
+      value: Right Position
       objectReference: {fileID: 0}
     - target: {fileID: 6975681398861624189, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
         type: 3}

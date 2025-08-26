@@ -75,6 +75,7 @@ public class KDTreeComponent : MonoBehaviour
     private PointDistance? nearest;
     private SelectionResult areaSelectionResult;
     private bool running = false;
+    private bool computingAreaSelection = false;
 
     [Header("DataInspectors")]
     [SerializeField] private DataInspector pointDataInspectorPrefab;
@@ -107,6 +108,11 @@ public class KDTreeComponent : MonoBehaviour
     {
         areaSelectionResult = await ComputeAreaSelection(controllerTransform.position);
         return areaSelectionResult;
+    }
+
+    public bool IsComputingAreaSelection()
+    {
+        return computingAreaSelection;
     }
 
     private void OnEnable()
@@ -191,19 +197,27 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
+        Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
+        Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
+        GameObject cloned;
 
         switch (selectionMode)
         {
             case SelectionMode.SinglePoint:
-                GameObject cloned = CloneAndAttach(pointDataInspector.gameObject, gameObject.transform);
+                cloned = CloneAndAttach(pointDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = GetNearestWorldSpaceCoordinates(areaSelectionResult.SelectedIndices[0]);
+                cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Sphere:
-                CloneAndAttach(areaSphereDataInspector.gameObject, gameObject.transform);
+                cloned = CloneAndAttach(areaSphereDataInspector.gameObject, gameObject.transform);
+                cloned.transform.position = positionAtAction + Vector3.zero;
+                cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Cube:
-                CloneAndAttach(areaBoxDataInspector.gameObject, gameObject.transform);
+                cloned = CloneAndAttach(areaBoxDataInspector.gameObject, gameObject.transform);
+                cloned.transform.position = positionAtAction + Vector3.zero;
+                cloned.transform.rotation = rotationAtAction;
                 break;
         }
 
@@ -563,6 +577,7 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
     {
+        computingAreaSelection = true;
         Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
 
         // Calculate data space radius/size before entering the async task
@@ -618,7 +633,7 @@ public class KDTreeComponent : MonoBehaviour
                 result.AggregatedValues = AggregateData(indices);
             }
         });
-
+        computingAreaSelection = false;
         return result;
     }
 
