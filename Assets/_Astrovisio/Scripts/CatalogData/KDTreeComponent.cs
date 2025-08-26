@@ -191,7 +191,6 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
-
         areaSelectionResult = await ComputeSelection();
 
         switch (selectionMode)
@@ -587,6 +586,8 @@ public class KDTreeComponent : MonoBehaviour
         var radius = dataSpaceRadius;
         var halfSize = dataSpaceHalfSize;
 
+        SelectionResult result = null;
+
         await Task.Run(() =>
         {
             switch (mode)
@@ -603,20 +604,20 @@ public class KDTreeComponent : MonoBehaviour
                     indices = new List<int>();
                     break;
             }
+
+            result = new SelectionResult
+            {
+                SelectedIndices = indices,
+                CenterPoint = queryPoint,
+                SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
+                SelectionMode = selectionMode
+            };
+
+            if (indices.Count > 0)
+            {
+                result.AggregatedValues = AggregateData(indices);
+            }
         });
-
-        var result = new SelectionResult
-        {
-            SelectedIndices = indices,
-            CenterPoint = queryPoint,
-            SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
-            SelectionMode = selectionMode
-        };
-
-        if (indices.Count > 0)
-        {
-            result.AggregatedValues = AggregateData(indices);
-        }
 
         return result;
     }
