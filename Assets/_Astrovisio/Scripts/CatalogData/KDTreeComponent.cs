@@ -92,6 +92,9 @@ public class KDTreeComponent : MonoBehaviour
     [Header("Input Actions")]
     public InputActionProperty selectAction;
 
+    private GameObject selectionGameObject;
+    private SelectionResult latestSelectionResult;
+
 
     [ContextMenu("ComputeNearestPoint")]
     public async Task<PointDistance?> ComputeNearestPoint()
@@ -124,40 +127,63 @@ public class KDTreeComponent : MonoBehaviour
 
     private void OnSpacebarPressed(InputAction.CallbackContext context)
     {
-        _ = OnSpacebarPressed();
+        _ = PerformSelection();
     }
 
-    private async Task<float[]> OnSpacebarPressed()
+    private GameObject CloneAndAttach(GameObject original, Transform newParent)
     {
-        SelectionResult result = await PerformSelection();
 
-        Debug.Log(string.Join(", ", result.AggregatedValues));
+        if (selectionGameObject != null)
+        {
+            Destroy(selectionGameObject);
+        }
 
-        return result.AggregatedValues;
+        if (original == null)
+        {
+            Debug.LogError("Original GameObject is null");
+            return null;
+        }
+
+        if (newParent == null)
+        {
+            Debug.LogError("New parent Transform is null");
+            return null;
+        }
+
+        // Clona l'oggetto
+        GameObject cloned = Instantiate(original);
+
+        // Imposta il parent
+        cloned.transform.SetParent(newParent, true);
+
+        selectionGameObject = cloned;
+
+        return cloned;
     }
 
     public async Task<SelectionResult> PerformSelection()
     {
-        SelectionResult result;
 
         switch (selectionMode)
         {
             case SelectionMode.SinglePoint:
                 nearest = await ComputeNearestPoint(controllerTransform.position);
-                result = new SelectionResult
+                List<int> indices = new List<int>(new int[1] { nearest.Value.index });
+                latestSelectionResult = new SelectionResult
                 {
-                    SelectedIndices = new List<int>(new int[1] { nearest.Value.index }),
-                    CenterPoint = controllerTransform.position,
+                    SelectedIndices = indices,
+                    CenterPoint = GetNearestWorldSpaceCoordinates(nearest.Value.index),
                     SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : (selectionMode == SelectionMode.Cube ? selectionCubeHalfSize : 0),
-                    AggregatedValues = AggregateData(new List<int>(new int[1] { nearest.Value.index }))
+                    AggregatedValues = AggregateData(indices),
+                    SelectionMode = selectionMode
                 };
                 break;
             case SelectionMode.Sphere:
             case SelectionMode.Cube:
-                result = await ComputeAreaSelection(controllerTransform.position);
+                latestSelectionResult = await ComputeAreaSelection(controllerTransform.position);
                 break;
             default:
-                result = new SelectionResult
+                latestSelectionResult = new SelectionResult
                 {
                     SelectedIndices = new List<int>(),
                     SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : (selectionMode == SelectionMode.Cube ? selectionCubeHalfSize : 0)
@@ -166,7 +192,23 @@ public class KDTreeComponent : MonoBehaviour
 
         }
 
-        return result;
+        switch (selectionMode)
+        {
+            case SelectionMode.SinglePoint:
+                GameObject cloned = CloneAndAttach(pointDataInspector.gameObject, gameObject.transform);
+                cloned.transform.position = GetNearestWorldSpaceCoordinates(latestSelectionResult.SelectedIndices[0]);
+                break;
+            case SelectionMode.Sphere:
+                CloneAndAttach(areaSphereDataInspector.gameObject, gameObject.transform);
+                break;
+            case SelectionMode.Cube:
+                CloneAndAttach(areaBoxDataInspector.gameObject, gameObject.transform);
+                break;
+        }
+
+        Debug.Log(string.Join(", ", latestSelectionResult.AggregatedValues));
+
+        return latestSelectionResult;
     }
 
     private async void Update()
@@ -297,38 +339,45 @@ public class KDTreeComponent : MonoBehaviour
     private void UpdateSelectionVisualizer()
     {
 
-        if (!showSelectionGizmo) return;
-
         if (currentDataInspector)
         {
             currentDataInspector.SetActiveState(false);
             currentDataInspector = null;
         }
 
+        if (selectionGameObject != null)
+        {
+            selectionGameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
+
+        if (!showSelectionGizmo) return;
+
         if (selectionMode == SelectionMode.SinglePoint)
         {
             currentDataInspector = pointDataInspector;
         }
-        else
+
+        if (selectionMode == SelectionMode.Sphere && areaSphereDataInspector != null)
         {
-
-            if (selectionMode == SelectionMode.Sphere && areaSphereDataInspector != null)
-            {
-                areaSphereDataInspector.transform.localScale = Vector3.one * (selectionRadius * 2);
-                currentDataInspector = areaSphereDataInspector;
-            }
-
-            if (selectionMode == SelectionMode.Cube && areaBoxDataInspector != null)
-            {
-                areaBoxDataInspector.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
-                currentDataInspector = areaBoxDataInspector;
-            }
-
+            areaSphereDataInspector.transform.localScale = Vector3.one * (selectionRadius * 2);
+            currentDataInspector = areaSphereDataInspector;
         }
+
+        if (selectionMode == SelectionMode.Cube && areaBoxDataInspector != null)
+        {
+            areaBoxDataInspector.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
+            currentDataInspector = areaBoxDataInspector;
+        }
+
 
         if (currentDataInspector != null)
         {
             currentDataInspector.SetActiveState(true);
+
+            if (selectionGameObject != null)
+            {
+                selectionGameObject.GetComponent<MeshRenderer>().enabled = true;
+            }
         }
     }
 
@@ -585,7 +634,8 @@ public class KDTreeComponent : MonoBehaviour
         {
             SelectedIndices = indices,
             CenterPoint = queryPoint,
-            SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize
+            SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
+            SelectionMode = selectionMode
         };
 
         if (indices.Count > 0)

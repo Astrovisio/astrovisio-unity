@@ -28,6 +28,7 @@ namespace CatalogData
         public int Count => SelectedIndices?.Count ?? 0;
         public Vector3 CenterPoint { get; set; }
         public float SelectionRadius { get; set; }
+        public SelectionMode SelectionMode { get;  set; }
 
         public SelectionResult()
         {

@@ -6,7 +6,7 @@ public class DataInspector : MonoBehaviour
 {
 
     [Header("Fresenel")]
-    [SerializeField] private Color fresnelColor = Color.white;
+    [SerializeField] private Color fresnelColor;
     [SerializeField][Range(0.1f, 2f)] private float fresnelPower = 1f;
 
     public bool IsActive { private set; get; }
