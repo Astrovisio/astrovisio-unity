@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace CatalogData
 {
-    public enum AreaSelectionMode
+    public enum SelectionMode
     {
+        None,
         SinglePoint,
         Sphere,
         Cube
@@ -20,7 +21,7 @@ namespace CatalogData
         Median
     }
 
-    public class AreaSelectionResult
+    public class SelectionResult
     {
         public List<int> SelectedIndices { get; set; }
         public float[] AggregatedValues { get; set; }
@@ -28,7 +29,7 @@ namespace CatalogData
         public Vector3 CenterPoint { get; set; }
         public float SelectionRadius { get; set; }
 
-        public AreaSelectionResult()
+        public SelectionResult()
         {
             SelectedIndices = new List<int>();
         }

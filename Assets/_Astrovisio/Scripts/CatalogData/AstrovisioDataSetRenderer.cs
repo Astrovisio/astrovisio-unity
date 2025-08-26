@@ -91,7 +91,8 @@ namespace CatalogData
             cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
 
             kdTreeComponent = GetComponent<KDTreeComponent>();
-            kdTreeComponent.controllerTransform = cameraTarget;
+            // kdTreeComponent.controllerTransform = cameraTarget;
+            // kdTreeComponent.setControllerTransform(cameraTarget);
         }
 
         private void GetPropertyIds()
@@ -269,7 +270,7 @@ namespace CatalogData
             if (kdTreeComponent == null) return null;
 
             // Check if we're in area selection mode
-            if (kdTreeComponent.selectionMode != AreaSelectionMode.SinglePoint)
+            if (kdTreeComponent.selectionMode != SelectionMode.SinglePoint)
             {
                 var areaResult = kdTreeComponent.GetLastAreaSelection();
                 if (areaResult != null && areaResult.Count > 0)
@@ -881,9 +882,9 @@ namespace CatalogData
         }
 
         // Add this method to get detailed info about area selection
-        public AreaSelectionResult GetAreaSelectionInfo()
+        public SelectionResult GetAreaSelectionInfo()
         {
-            if (kdTreeComponent != null && kdTreeComponent.selectionMode != AreaSelectionMode.SinglePoint)
+            if (kdTreeComponent != null && kdTreeComponent.selectionMode != SelectionMode.SinglePoint)
             {
                 return kdTreeComponent.GetLastAreaSelection();
             }

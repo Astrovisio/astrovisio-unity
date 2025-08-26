@@ -1935,8 +1935,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
-      propertyPath: selectionMode
+      propertyPath: realtime
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: selectionMode
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -1991,6 +1996,12 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: selectAction.m_Reference
+      value: 
+      objectReference: {fileID: -5693716862375346751, guid: cc602a71100aabf4483e1a2a13344c00,
+        type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: sphereDataInspectorPrefab
       value: 
       objectReference: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
@@ -2003,10 +2014,36 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: spacebarAction.m_Reference
+      value: 
+      objectReference: {fileID: -5693716862375346751, guid: cc602a71100aabf4483e1a2a13344c00,
+        type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: selectAction.m_UseReference
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: selectAction.m_Action.m_Name
+      value: Select
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: areaSphereDataInspectorPrefab
       value: 
       objectReference: {fileID: 1083773075067826380, guid: 751ce84d33049274686ceec24f7db75b,
         type: 3}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: spacebarAction.m_UseReference
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: spacebarAction.m_Action.m_Name
+      value: Spacebar
+      objectReference: {fileID: 0}
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_Name

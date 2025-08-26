@@ -216,6 +216,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Keyboard",
+            "id": "6f937211-3a3e-4cec-abb2-ffeef55632e1",
+            "actions": [
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "e69a06f9-6534-4f99-acf5-ce9d8dad2438",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4a87b3ad-36a7-4621-8b66-8dc807e24887",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
