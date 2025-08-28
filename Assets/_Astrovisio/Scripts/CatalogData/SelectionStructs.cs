@@ -24,6 +24,7 @@ namespace CatalogData
     public class SelectionResult
     {
         public List<int> SelectedIndices { get; set; }
+        public int[] SelectedArray { get; set; }
         public float[] AggregatedValues { get; set; }
         public int Count => SelectedIndices?.Count ?? 0;
         public Vector3 CenterPoint { get; set; }

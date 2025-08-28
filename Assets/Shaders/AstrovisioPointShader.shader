@@ -70,6 +70,7 @@ Shader "Astrovisio/PointShader"
             StructuredBuffer<float> dataZ;
             StructuredBuffer<float> dataCmap;
             StructuredBuffer<float> dataOpacity;
+            StructuredBuffer<int> dataVisible;
             StructuredBuffer<MappingConfig> mappingConfigs;
             // Color maps
             uniform sampler2D colorMap;
@@ -159,6 +160,11 @@ Shader "Astrovisio/PointShader"
                 UNITY_SETUP_INSTANCE_ID(v);
                 v2f o;
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
+                if (!dataVisible[v.vertexID]) {
+                    o.mustDiscard = 1.0;
+                    return o;
+                }
 
                 if ((dataX[v.vertexID] > mappingConfigs[X_INDEX].DataMaxVal) || (dataX[v.vertexID] < mappingConfigs[X_INDEX].DataMinVal)) {
                     o.mustDiscard = 1.0;

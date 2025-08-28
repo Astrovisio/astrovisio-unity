@@ -95,6 +95,8 @@ public class KDTreeComponent : MonoBehaviour
 
     private GameObject currentDataSelectionGameObject;
 
+    private AstrovisioDataSetRenderer astrovisioDatasetRenderer;
+
 
     [ContextMenu("ComputeNearestPoint")]
     public async Task<PointDistance?> ComputeNearestPoint()
@@ -123,6 +125,11 @@ public class KDTreeComponent : MonoBehaviour
     private void OnDisable()
     {
         selectAction.action.Disable();
+    }
+
+    private void Awake()
+    {
+        astrovisioDatasetRenderer = GetComponent<AstrovisioDataSetRenderer>();
     }
 
     private void Start()
@@ -200,8 +207,12 @@ public class KDTreeComponent : MonoBehaviour
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
         Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
-        GameObject cloned;
 
+        // Update Visible Items
+        // astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
+        ///////////////////////
+
+        GameObject cloned;
         switch (selectionMode)
         {
             case SelectionMode.SinglePoint:
@@ -577,6 +588,7 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
     {
+        int dataCount = data[0].Length;
         computingAreaSelection = true;
         Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
 
@@ -620,13 +632,21 @@ public class KDTreeComponent : MonoBehaviour
                     break;
             }
 
+            int[] visibilityArray = new int[dataCount];
+            for (int i = 0; i < indices.Count; i++) {
+                visibilityArray[indices[i]] = 1;
+            }
+
             result = new SelectionResult
             {
                 SelectedIndices = indices,
+                SelectedArray = visibilityArray,
                 CenterPoint = queryPoint,
                 SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
                 SelectionMode = selectionMode
             };
+
+            // astrovisioDatasetRenderer.UpdateDataVisibility(visibilityArray);
 
             if (indices.Count > 0)
             {

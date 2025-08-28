@@ -75,7 +75,7 @@ namespace CatalogData
         #region Material Property IDs
 
         private int _idSpriteSheet, _idNumSprites, _idColorMap, _idColorMapIndex, _idNumColorMaps, _idDataSetMatrix, _idScalingFactor;
-        private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape;
+        private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape, _idDataVisible;
         private int _idCutoffMin, _idCutoffMax;
         private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise;
         private int _idColor, _idOpacity, _idPointSize, _idPointShape, _idNoiseStrength;
@@ -115,6 +115,7 @@ namespace CatalogData
             _idDataOpacity = Shader.PropertyToID("dataOpacity");
             _idDataPointSize = Shader.PropertyToID("dataPointSize");
             _idDataPointShape = Shader.PropertyToID("dataPointShape");
+            _idDataVisible = Shader.PropertyToID("dataVisible");
 
             _idCutoffMin = Shader.PropertyToID("cutoffMin");
             _idCutoffMax = Shader.PropertyToID("cutoffMax");
@@ -247,6 +248,16 @@ namespace CatalogData
                 _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
                 _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
 
+                // Initialize the selected array to 1 (true)
+                int dataCount = _dataSet.DataColumns[0].Length;
+                ComputeBuffer dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
+                int[] trueArray = new int[dataCount];
+                for (int i = 0; i < dataCount; i++) {
+                    trueArray[i] = 1;
+                }
+                dataVisibleBuffer.SetData(trueArray);
+                _catalogMaterial.SetBuffer(_idDataVisible, dataVisibleBuffer);
+
                 // Apply scaling from data set space to world space
                 // transform.localScale *= DataMapping.Uniforms.Scale;
                 // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
@@ -263,6 +274,19 @@ namespace CatalogData
             _initialLocalRotation = transform.localRotation;
             _initialLocalScale = transform.localScale;
             _initialOpacity = DataMapping.Uniforms.Opacity;
+        }
+
+        public Material GetMaterial()
+        {
+            return _catalogMaterial;
+        }
+
+        public void UpdateDataVisibility(int[] visibilityArray)
+        {
+                int dataCount = _dataSet.DataColumns[0].Length;
+                ComputeBuffer dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
+                dataVisibleBuffer.SetData(visibilityArray);
+                _catalogMaterial.SetBuffer(_idDataVisible, dataVisibleBuffer);
         }
 
         public float[] GetDataInfo()
