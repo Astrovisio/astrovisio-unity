@@ -13,6 +13,20 @@ namespace Astrovisio
             this.name = name;
             this.size = size;
         }
-        
+
     }
+
+    public struct FileState
+    {
+        public FileInfo fileInfo;
+        public bool state;
+
+        public FileState(FileInfo fileInfo)
+        {
+            this.fileInfo = fileInfo;
+            state = false;
+        }
+
+    }
+
 }

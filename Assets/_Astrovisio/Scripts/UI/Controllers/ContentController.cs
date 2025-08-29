@@ -129,7 +129,7 @@ namespace Astrovisio
             contentContainer.Add(projectViewInstance);
 
             // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), uiContextSO.paramRowTemplate);
-            var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, project, uiContextSO.paramRowTemplate);
+            ProjectViewController newProjectViewController = new ProjectViewController(projectManager, uiManager, projectViewInstance, project);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
         }
 

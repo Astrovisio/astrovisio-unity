@@ -1,0 +1,236 @@
+#SliderMinMaxHistogramRoot {
+    flex-grow: 1;
+    justify-content: flex-start;
+    width: 408px;
+    min-width: 408px;
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 408px;
+}
+
+#SliderMinMaxHistogramRoot > #MinContainer {
+    width: 96px;
+    min-width: 96px;
+    max-width: 96px;
+}
+
+#SliderMinMaxHistogramRoot > #MaxContainer {
+    width: 96px;
+    min-width: 96px;
+    max-width: 96px;
+}
+
+#SliderMinMaxHistogramRoot > #MinContainer > #Label {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--grey-500);
+    -unity-text-align: upper-center;
+    height: 8px;
+    min-height: 8px;
+    max-height: 8px;
+    margin-top: -5px;
+}
+
+#SliderMinMaxHistogramRoot > #MaxContainer > #Label {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--grey-500);
+    -unity-text-align: upper-center;
+    min-height: 8px;
+    max-height: 8px;
+    margin-top: -5px;
+}
+
+#SliderMinMaxHistogramRoot > #MaxContainer > .min-max-slider-input {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#SliderMinMaxHistogramRoot > #MinContainer > .min-max-slider-input {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#SliderMinMaxHistogramRoot > #MaxContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
+    -unity-text-align: middle-center;
+}
+
+#SliderMinMaxHistogramRoot > #MinContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
+    -unity-text-align: middle-center;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer {
+    margin-right: 8px;
+    margin-left: 8px;
+    width: 199px;
+    min-width: 199px;
+    max-width: 199px;
+    padding-top: 11px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphicBg {
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/bg-histogram.svg?fileID=7388822144124034973&guid=5d6d6f0c7b0b64078b0a37885aa602c7&type=3#bg-histogram");
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphic {
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
+    position: absolute;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphic > .line {
+    height: 50%;
+    width: 1px;
+    background-color: var(--accent-200);
+    min-width: 1px;
+    max-width: 1px;
+    margin-right: 1px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider {
+    position: absolute;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__min-thumb {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-histogram-handle.svg?fileID=8742538545776668643&guid=e8267aa67909c6141a47971551e7bc46&type=3#slider-histogram-handle");
+    background-color: var(--transparent);
+    height: 40px;
+    width: 8px;
+    min-width: 8px;
+    min-height: 40px;
+    max-height: 40px;
+    max-width: 8px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    justify-content: center;
+    align-items: auto;
+    align-content: auto;
+    border-left-color: var(--transparent);
+    border-right-color: var(--transparent);
+    border-top-color: var(--transparent);
+    border-bottom-color: var(--transparent);
+    -unity-background-image-tint-color: var(--grey-800);
+    background-size: 8px 100%;
+    background-position-x: center 0;
+    background-position-y: center 0;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__max-thumb {
+    height: 40px;
+    width: 8px;
+    min-width: 8px;
+    max-width: 8px;
+    max-height: 40px;
+    min-height: 40px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-histogram-handle.svg?fileID=8742538545776668643&guid=e8267aa67909c6141a47971551e7bc46&type=3#slider-histogram-handle");
+    background-color: var(--transparent);
+    -unity-background-image-tint-color: var(--grey-800);
+    background-size: 8px 100%;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > #unity-dragger.unity-min-max-slider__dragger {
+    -unity-text-align: middle-left;
+    justify-content: center;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-left-color: var(--transparent);
+    border-right-color: var(--transparent);
+    border-top-color: var(--transparent);
+    border-bottom-color: var(--transparent);
+    left: -10px;
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
+    margin-top: -13px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__tracker {
+    -unity-background-image-tint-color: var(--grey-300);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    background-color: var(--grey-300);
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider > .unity-min-max-slider__input > #unity-tracker {
+    opacity: 0;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider > .unity-min-max-slider__input > #unity-dragger {
+    background-color: rgba(0, 0, 0, 0);
+    cursor: url('project://database/Assets/UI%20Toolkit/Graphics/cursor-hand-grab.png?fileID=2800000&guid=80e8cb4b43eb94dcd8a419f88e0435e1&type=3#cursor-hand-grab');
+}
+
+#SliderMinMaxHistogramRoot > #MinMaxSlider {
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: 8px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+}
+
+#SliderMinMaxHistogramRoot > #FloatFieldsElement {
+    flex-direction: row;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider > .unity-min-max-slider__input > #unity-dragger > #unity-thumb-min {
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/Slider%20Handle.png?fileID=2800000&guid=8eabff3f498a04a4bad0f4d2da7b9f43&type=3#Slider Handle");
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider > .unity-min-max-slider__input > #unity-dragger > #unity-thumb-max {
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/Slider%20Handle.png?fileID=2800000&guid=8eabff3f498a04a4bad0f4d2da7b9f43&type=3#Slider Handle");
+}

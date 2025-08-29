@@ -108,8 +108,8 @@ namespace Astrovisio
                 TemplateContainer projectRow = UIContextSO.projectRowTemplate.CloneTree();
 
                 // Debug.Log("AddProjectRows " + project.Name + " " + project.Id);
-                ProjectRowController controller = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
-                projectControllers[project.Id] = controller;
+                ProjectRowController projectRowController = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
+                projectControllers[project.Id] = projectRowController;
 
                 projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
                 target.Add(projectRow);

@@ -11,3 +11,7 @@
 #DropdownRoot > #DropdownField {
     color: var(--black);
 }
+
+#DropdownRoot > #DropdownField > .unity-popup-field__label {
+    text-overflow: ellipsis;
+}

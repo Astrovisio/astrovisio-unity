@@ -121,7 +121,7 @@ namespace Astrovisio
                         continue;
                     }
 
-                    var sysInfo = new System.IO.FileInfo(path);
+                    System.IO.FileInfo sysInfo = new System.IO.FileInfo(path);
                     FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
                     selectedFiles.Add(fileInfo);
                     Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");

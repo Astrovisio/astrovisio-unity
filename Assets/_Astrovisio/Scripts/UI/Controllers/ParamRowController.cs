@@ -58,8 +58,6 @@ namespace Astrovisio
             // Name
             nameContainer = paramRow.Q<VisualElement>("NameContainer");
             nameLabel = nameContainer.Q<Label>("Label");
-            filesLabel = nameContainer.Q<VisualElement>("FilesContainer")?.Q<Label>("Label");
-            InitName();
 
             // XYZ Axes
             xyzAxisContainer = paramRow.Q<VisualElement>("XYZAxisContainer");
@@ -110,11 +108,6 @@ namespace Astrovisio
             });
             SetSelected(Param.Selected);
 
-        }
-
-        private void InitName()
-        {
-            filesLabel.text = Param.Files.Length.ToString();
         }
 
         private void InitAxis()

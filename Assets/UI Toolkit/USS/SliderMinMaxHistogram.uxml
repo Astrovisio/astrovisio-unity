@@ -1,0 +1,119 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/SliderMinMaxHistogram.uss?fileID=7433441132597879392&amp;guid=1a055ba2965af4327bf20a861d1d5163&amp;type=3#SliderMinMaxHistogram" />
+    <engine:VisualElement name="SliderMinMaxHistogramRoot">
+        <engine:VisualElement name="MinContainer" style="flex-grow: 1;">
+            <engine:Label text="Min" name="Label" />
+            <engine:DoubleField name="MinFloatField" placeholder-text="0" class="min-max-slider-input" />
+        </engine:VisualElement>
+        <engine:VisualElement name="HistogramContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="HistogramGraphicBg" style="flex-grow: 1;" />
+            <engine:VisualElement name="HistogramGraphic" style="flex-grow: 0; flex-direction: row; flex-shrink: 0; flex-wrap: nowrap;">
+                <engine:VisualElement name="line-1" class="line" />
+                <engine:VisualElement name="line-2" class="line" />
+                <engine:VisualElement name="line-3" class="line" />
+                <engine:VisualElement name="line-4" class="line" />
+                <engine:VisualElement name="line-5" class="line" />
+                <engine:VisualElement name="line-6" class="line" />
+                <engine:VisualElement name="line-7" class="line" />
+                <engine:VisualElement name="line-8" class="line" />
+                <engine:VisualElement name="line-9" class="line" />
+                <engine:VisualElement name="line-10" class="line" />
+                <engine:VisualElement name="line-11" class="line" />
+                <engine:VisualElement name="line-12" class="line" />
+                <engine:VisualElement name="line-13" class="line" />
+                <engine:VisualElement name="line-14" class="line" />
+                <engine:VisualElement name="line-15" class="line" />
+                <engine:VisualElement name="line-16" class="line" />
+                <engine:VisualElement name="line-17" class="line" />
+                <engine:VisualElement name="line-18" class="line" />
+                <engine:VisualElement name="line-19" class="line" />
+                <engine:VisualElement name="line-20" class="line" />
+                <engine:VisualElement name="line-21" class="line" />
+                <engine:VisualElement name="line-22" class="line" />
+                <engine:VisualElement name="line-23" class="line" />
+                <engine:VisualElement name="line-24" class="line" />
+                <engine:VisualElement name="line-25" class="line" />
+                <engine:VisualElement name="line-26" class="line" />
+                <engine:VisualElement name="line-27" class="line" />
+                <engine:VisualElement name="line-28" class="line" />
+                <engine:VisualElement name="line-29" class="line" />
+                <engine:VisualElement name="line-30" class="line" />
+                <engine:VisualElement name="line-31" class="line" />
+                <engine:VisualElement name="line-32" class="line" />
+                <engine:VisualElement name="line-33" class="line" />
+                <engine:VisualElement name="line-34" class="line" />
+                <engine:VisualElement name="line-35" class="line" />
+                <engine:VisualElement name="line-36" class="line" />
+                <engine:VisualElement name="line-37" class="line" />
+                <engine:VisualElement name="line-38" class="line" />
+                <engine:VisualElement name="line-39" class="line" />
+                <engine:VisualElement name="line-40" class="line" />
+                <engine:VisualElement name="line-41" class="line" />
+                <engine:VisualElement name="line-42" class="line" />
+                <engine:VisualElement name="line-43" class="line" />
+                <engine:VisualElement name="line-44" class="line" />
+                <engine:VisualElement name="line-45" class="line" />
+                <engine:VisualElement name="line-46" class="line" />
+                <engine:VisualElement name="line-47" class="line" />
+                <engine:VisualElement name="line-48" class="line" />
+                <engine:VisualElement name="line-49" class="line" />
+                <engine:VisualElement name="line-50" class="line" />
+                <engine:VisualElement name="line-51" class="line" />
+                <engine:VisualElement name="line-52" class="line" />
+                <engine:VisualElement name="line-53" class="line" />
+                <engine:VisualElement name="line-54" class="line" />
+                <engine:VisualElement name="line-55" class="line" />
+                <engine:VisualElement name="line-56" class="line" />
+                <engine:VisualElement name="line-57" class="line" />
+                <engine:VisualElement name="line-58" class="line" />
+                <engine:VisualElement name="line-59" class="line" />
+                <engine:VisualElement name="line-60" class="line" />
+                <engine:VisualElement name="line-61" class="line" />
+                <engine:VisualElement name="line-62" class="line" />
+                <engine:VisualElement name="line-63" class="line" />
+                <engine:VisualElement name="line-64" class="line" />
+                <engine:VisualElement name="line-65" class="line" />
+                <engine:VisualElement name="line-66" class="line" />
+                <engine:VisualElement name="line-67" class="line" />
+                <engine:VisualElement name="line-68" class="line" />
+                <engine:VisualElement name="line-69" class="line" />
+                <engine:VisualElement name="line-70" class="line" />
+                <engine:VisualElement name="line-71" class="line" />
+                <engine:VisualElement name="line-72" class="line" />
+                <engine:VisualElement name="line-73" class="line" />
+                <engine:VisualElement name="line-74" class="line" />
+                <engine:VisualElement name="line-75" class="line" />
+                <engine:VisualElement name="line-76" class="line" />
+                <engine:VisualElement name="line-77" class="line" />
+                <engine:VisualElement name="line-78" class="line" />
+                <engine:VisualElement name="line-79" class="line" />
+                <engine:VisualElement name="line-80" class="line" />
+                <engine:VisualElement name="line-81" class="line" />
+                <engine:VisualElement name="line-82" class="line" />
+                <engine:VisualElement name="line-83" class="line" />
+                <engine:VisualElement name="line-84" class="line" />
+                <engine:VisualElement name="line-85" class="line" />
+                <engine:VisualElement name="line-86" class="line" />
+                <engine:VisualElement name="line-87" class="line" />
+                <engine:VisualElement name="line-88" class="line" />
+                <engine:VisualElement name="line-89" class="line" />
+                <engine:VisualElement name="line-90" class="line" />
+                <engine:VisualElement name="line-91" class="line" />
+                <engine:VisualElement name="line-92" class="line" />
+                <engine:VisualElement name="line-93" class="line" />
+                <engine:VisualElement name="line-94" class="line" />
+                <engine:VisualElement name="line-95" class="line" />
+                <engine:VisualElement name="line-96" class="line" />
+                <engine:VisualElement name="line-97" class="line" />
+                <engine:VisualElement name="line-98" class="line" />
+                <engine:VisualElement name="line-99" class="line" />
+                <engine:VisualElement name="line-100" class="line" />
+            </engine:VisualElement>
+            <engine:MinMaxSlider value="10,90" low-limit="0" high-limit="100" name="MinMaxHistogramSlider" />
+        </engine:VisualElement>
+        <engine:VisualElement name="MaxContainer" style="flex-grow: 1;">
+            <engine:Label text="Max" name="Label" />
+            <engine:DoubleField name="MaxFloatField" placeholder-text="100" class="min-max-slider-input" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
