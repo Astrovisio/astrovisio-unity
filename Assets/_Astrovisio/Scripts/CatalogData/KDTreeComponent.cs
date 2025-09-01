@@ -193,6 +193,12 @@ public class KDTreeComponent : MonoBehaviour
                     AggregatedValues = AggregateData(indices),
                     SelectionMode = selectionMode
                 };
+                int[] visibilityArray = new int[data[0].Length];
+                for (int i = 0; i < indices.Count; i++)
+                {
+                    visibilityArray[indices[i]] = 1;
+                }
+                selectionResult.SelectedArray = visibilityArray;
                 break;
             case SelectionMode.Sphere:
             case SelectionMode.Cube:
@@ -205,7 +211,7 @@ public class KDTreeComponent : MonoBehaviour
     public async Task<SelectionResult> PerformSelection()
     {
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
-        Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
+        // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
 
         // Update Visible Items
@@ -217,18 +223,18 @@ public class KDTreeComponent : MonoBehaviour
         {
             case SelectionMode.SinglePoint:
                 cloned = CloneAndAttach(pointDataInspector.gameObject, gameObject.transform);
-                cloned.transform.position = GetNearestWorldSpaceCoordinates(areaSelectionResult.SelectedIndices[0]);
-                cloned.transform.rotation = rotationAtAction;
+                cloned.transform.position = areaSelectionResult.CenterPoint;
+                //cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Sphere:
                 cloned = CloneAndAttach(areaSphereDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = positionAtAction + Vector3.zero;
-                cloned.transform.rotation = rotationAtAction;
+                //cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Cube:
                 cloned = CloneAndAttach(areaBoxDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = positionAtAction + Vector3.zero;
-                cloned.transform.rotation = rotationAtAction;
+                //cloned.transform.rotation = rotationAtAction;
                 break;
         }
 
@@ -351,20 +357,23 @@ public class KDTreeComponent : MonoBehaviour
 
         if (!showSelectionGizmo) return;
 
-        if (selectionMode == SelectionMode.SinglePoint)
+        if (selectionMode == SelectionMode.SinglePoint && pointDataInspector != null)
         {
+            pointDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = pointDataInspector;
         }
 
         if (selectionMode == SelectionMode.Sphere && areaSphereDataInspector != null)
         {
             areaSphereDataInspector.transform.localScale = Vector3.one * (selectionRadius * 2);
+            areaSphereDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaSphereDataInspector;
         }
 
         if (selectionMode == SelectionMode.Cube && areaBoxDataInspector != null)
         {
             areaBoxDataInspector.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
+            areaBoxDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaBoxDataInspector;
         }
 
@@ -633,7 +642,8 @@ public class KDTreeComponent : MonoBehaviour
             }
 
             int[] visibilityArray = new int[dataCount];
-            for (int i = 0; i < indices.Count; i++) {
+            for (int i = 0; i < indices.Count; i++)
+            {
                 visibilityArray[indices[i]] = 1;
             }
 

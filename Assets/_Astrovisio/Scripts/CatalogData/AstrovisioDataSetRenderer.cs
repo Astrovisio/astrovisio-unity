@@ -251,11 +251,11 @@ namespace CatalogData
                 // Initialize the selected array to 1 (true)
                 int dataCount = _dataSet.DataColumns[0].Length;
                 ComputeBuffer dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
-                int[] trueArray = new int[dataCount];
+                int[] selectedArray = new int[dataCount];
                 for (int i = 0; i < dataCount; i++) {
-                    trueArray[i] = 1;
+                    selectedArray[i] = 1;
                 }
-                dataVisibleBuffer.SetData(trueArray);
+                dataVisibleBuffer.SetData(selectedArray);
                 _catalogMaterial.SetBuffer(_idDataVisible, dataVisibleBuffer);
 
                 // Apply scaling from data set space to world space
