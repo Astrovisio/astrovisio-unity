@@ -1,7 +1,7 @@
 #NewProjectRoot {
     max-height: 80%;
     overflow: hidden;
-    min-height: 760px;
+    min-height: 807px;
 }
 
 #NewProjectRoot > #ProjectInfoContainer {
@@ -58,17 +58,18 @@
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #UploadYourFilesLabel {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer > #AddFileButton > .btn-tertiary > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/upload.svg?fileID=7388822144124034973&guid=241c81af96d148f45ab42d03d5812f13&type=3#upload");
+    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer {
-    height: 304px;
-    min-height: 304px;
-    max-height: 304px;
+    height: 350px;
+    min-height: 350px;
+    max-height: 350px;
     flex-grow: 1;
     background-color: var(--grey-100);
     border-top-left-radius: 16px;
@@ -77,9 +78,10 @@
     border-bottom-left-radius: 16px;
     padding-top: 8px;
     padding-right: 8px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
     padding-left: 8px;
     justify-content: space-between;
+    overflow: hidden;
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer {
@@ -89,28 +91,63 @@
     border-bottom-left-radius: 12px;
     background-color: var(--bg-10);
     flex-grow: 1;
+    margin-bottom: 8px;
+    height: 58px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    max-height: 58px;
+    min-height: 58px;
     align-items: center;
-    justify-content: center;
+    flex-direction: row;
+    padding-right: 12px;
+    padding-left: 16px;
+    justify-content: space-between;
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer > #ContainerTitleChoseFile {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    color: var(--grey-600);
+    flex-direction: row;
+    align-items: center;
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer > #ContainerTitleChoseFile > #IconTitleChooseFile {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/draft.svg?fileID=7388822144124034973&guid=30d433be46ec93d41a374e79e87f0835&type=3#draft");
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    -unity-background-image-tint-color: var(--grey-600);
+    min-width: 24px;
+    max-width: 24px;
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #AddFilesContainer > #ContainerTitleChoseFile > #ContainerTextChooseFile > #LabelDescChooseFile {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: var(--grey-400);
+    font-size: 12px;
+    -unity-paragraph-spacing: -10px;
+}
+
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #LabelUploadedFiles {
+    color: var(--grey-500);
     margin-bottom: 8px;
 }
 
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer {
-    height: 160px;
-    min-height: 160px;
-    max-height: 160px;
+    height: 230px;
+    min-height: 230px;
+    max-height: 230px;
     flex-grow: 1;
-    background-color: var(--bg-10);
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-right: 8px;
-    padding-left: 8px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     border-bottom-left-radius: 12px;
+    margin-right: -6px;
 }
 
-#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView {
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > .unity-collection-view__scroll-view {
     flex-grow: 0;
     flex-direction: row;
     flex-wrap: wrap;
@@ -121,6 +158,12 @@
     margin-top: 0;
 }
 
+#NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > .unity-collection-view__scroll-view > #unity-content-and-vertical-scroll-container {
+    height: 230px;
+    min-height: 230px;
+    max-height: 230px;
+}
+
 #NewProjectRoot > #UploadYourFilesContainer > #FilesContainer > #ViewFilesContainer > #FilesScrollView > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
     flex-direction: row;
     flex-wrap: wrap;
@@ -129,9 +172,9 @@
 .ColListItem {
     flex-grow: 1;
     flex-shrink: 1;
-    width: 33.333%;
-    min-width: 33.333%;
-    max-width: 33.333%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
 }
 
 #NewProjectRoot > #BottomContainer > #RightContainer > #ContinueButton > .btn-primary > #Icon {

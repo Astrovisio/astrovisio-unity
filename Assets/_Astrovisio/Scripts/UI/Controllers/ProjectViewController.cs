@@ -45,7 +45,7 @@ namespace Astrovisio
 
             // Files Scroll View
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
-            FilesController filesController = new FilesController(filesContainer, UIManager.GetUIContext());
+            FilesController<FileState> filesController = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
             // ScrollView projectScrollView = filesContainer.Q<ScrollView>("ScrollFiles");
             // projectScrollView.Clear();
             // filesContainer.SetEnabled(false);

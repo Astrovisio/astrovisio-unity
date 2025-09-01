@@ -32,9 +32,9 @@
     padding-right: 16px;
     padding-bottom: 16px;
     padding-left: 16px;
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
+    width: 400px;
+    min-width: 400px;
+    max-width: 400px;
 }
 
 #Root > #TopContainer > #InfoContainer > #HeaderContainer {
@@ -42,11 +42,15 @@
     min-height: 16px;
     max-height: 16px;
     margin-bottom: 16px;
+    flex-direction: row;
+    align-self: stretch;
+    align-items: center;
+    justify-content: space-between;
 }
 
 #Root > #TopContainer > #InfoContainer > #HeaderContainer > #ProjectNameLabel {
     margin-top: 0;
-    margin-right: 0;
+    margin-right: 12px;
     margin-bottom: 0;
     margin-left: 0;
     padding-top: 0;
@@ -61,9 +65,16 @@
     overflow: hidden;
 }
 
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer {
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
 #Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #FavouriteButton {
     margin-top: 0;
-    margin-right: 0;
     margin-bottom: 0;
     margin-left: 0;
     padding-top: 0;
@@ -86,9 +97,38 @@
     max-width: 16px;
     min-width: 16px;
     background-color: var(--transparent);
+    margin-right: 6px;
 }
 
-#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #MoreButton {
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #EditButton {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 6px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--transparent);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/edit.svg?fileID=7388822144124034973&guid=40407f72016e1ea4cb4e5d50f7d53206&type=3#edit");
+    -unity-background-image-tint-color: var(--black);
+    margin-right: 6px;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #DeleteButton {
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -112,17 +152,8 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     background-color: var(--transparent);
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/more_horiz.svg?fileID=7388822144124034973&guid=6a727c40db254c641bfcf81c566ea58a&type=3#more_horiz");
-    -unity-background-image-tint-color: var(--black);
-}
-
-#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer {
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete_forever.svg?fileID=7388822144124034973&guid=1531116fb0bc97a45b728ed7e3ecefb4&type=3#delete_forever");
+    -unity-background-image-tint-color: var(--red);
 }
 
 #Root > #TopContainer > #InfoContainer > #DescriptionContainer > #DescriptionLabel {

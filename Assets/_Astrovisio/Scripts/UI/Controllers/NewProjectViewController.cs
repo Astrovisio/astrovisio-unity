@@ -4,33 +4,38 @@ using SFB;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System;
 
 namespace Astrovisio
 {
 
     public class NewProjectViewController
     {
-        private readonly ProjectManager projectManager;
-        private readonly VisualTreeAsset listItemFileTemplate;
+        public ProjectManager ProjectManager { get; }
+        private UIManager UIManager { get; }
+
+        // private readonly VisualTreeAsset listItemFileTemplate;
+
         private VisualElement root;
 
         // === UI ===
         private TextField projectNameField;
         private TextField projectDescriptionField;
         private Button addFileButton;
-        private ScrollView filesScrollView;
+        // private ListView filesListView;
         private Label filesSizeLabel;
         private Button continueButton;
         private Button cancelButton;
 
         // === Local ===
+        private FilesController<FileInfo> filesController;
         private List<FileInfo> selectedFiles;
 
-        public NewProjectViewController(ProjectManager projectManager, VisualTreeAsset listItemFileTemplate)
+        public NewProjectViewController(ProjectManager projectManager, UIManager uiManager)
         {
-            this.projectManager = projectManager;
-            this.listItemFileTemplate = listItemFileTemplate;
+            ProjectManager = projectManager;
+            UIManager = uiManager;
+
+            // this.listItemFileTemplate = listItemFileTemplate;
         }
 
         public void Initialize(VisualElement root)
@@ -39,7 +44,13 @@ namespace Astrovisio
             projectNameField = root.Q<VisualElement>("ProjectNameInputField")?.Q<TextField>();
             projectDescriptionField = root.Q<VisualElement>("ProjectDescriptionInputField")?.Q<TextField>();
             addFileButton = root.Q<VisualElement>("AddFileButton").Q<Button>();
-            filesScrollView = root.Q<ScrollView>("FilesScrollView");
+
+
+            VisualElement filesContainer = this.root.Q<VisualElement>("FilesContainer");
+            filesController = new FilesController<FileInfo>(filesContainer, UIManager.GetUIContext());
+            selectedFiles = new();
+            UpdateFilesContainer();
+
             filesSizeLabel = root.Q<VisualElement>("MemorySizeInfo")?.Q<Label>("SizeLabel");
             continueButton = root.Q<VisualElement>("ContinueButton")?.Q<Button>();
             cancelButton = root.Q<VisualElement>("CancelButton")?.Q<Button>();
@@ -50,12 +61,6 @@ namespace Astrovisio
             if (addFileButton != null)
             {
                 addFileButton.clicked += OnAddFileClicked;
-            }
-
-            if (filesScrollView != null)
-            {
-                selectedFiles = new();
-                UpdateFilesContainer();
             }
 
             if (filesSizeLabel != null)
@@ -92,13 +97,12 @@ namespace Astrovisio
             }
         }
 
-
         private void OnAddFileClicked()
         {
-            var paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", true);
+            string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", true);
             if (paths.Length > 0)
             {
-                foreach (var path in paths)
+                foreach (string path in paths)
                 {
                     if (!File.Exists(path))
                     {
@@ -115,7 +119,7 @@ namespace Astrovisio
                     }
 
                     // Skip if the file is already in the list
-                    if (selectedFiles.Any(f => f.path == path))
+                    if (selectedFiles.Any(file => file.path == path))
                     {
                         Debug.Log($"File already added: {path}");
                         continue;
@@ -128,22 +132,8 @@ namespace Astrovisio
                 }
 
                 UpdateFilesContainer();
-                UpdateFilesSizeLabel();
             }
         }
-
-
-
-        private void UpdateFilesSizeLabel()
-        {
-            long totalSize = selectedFiles.Sum(file => file.size);
-
-            if (filesSizeLabel != null)
-            {
-                filesSizeLabel.text = $"{FormatFileSize(totalSize)}";
-            }
-        }
-
 
         private void OnContinueClicked()
         {
@@ -151,7 +141,7 @@ namespace Astrovisio
             string description = projectDescriptionField?.value ?? "<empty>";
             string[] paths = selectedFiles.Select(file => $"data/{Path.GetFileName(file.path)}").ToArray();
             // Debug.Log($"Create project: {name}, {description} with {paths.Length} files.");
-            projectManager.CreateProject(name, description, paths);
+            ProjectManager.CreateProject(name, description, paths);
             OnExit();
         }
 
@@ -174,87 +164,22 @@ namespace Astrovisio
 
         private void UpdateFilesContainer()
         {
-            filesScrollView.Clear();
-
-            // const int maxPerRow = 3;
-            // int count = 0;
-
-            // VisualElement rowContainer = null;
-
             for (int i = 0; i < selectedFiles.Count; i++)
             {
-                // if (count == 0)
+                FileInfo fileInfo = selectedFiles[i];
+                filesController.AddFile(fileInfo);
+
+                Debug.Log(fileInfo.Name + " " + fileInfo.Size + " " + fileInfo.Path);
+
+                // Button fileItemButton = fileItem.Q<Button>();
+                // fileItemButton.clicked += () =>
                 // {
-                //     rowContainer = new VisualElement();
-                //     rowContainer.style.flexDirection = FlexDirection.Row;
-                //     rowContainer.style.marginBottom = 8;
-                //     filesScrollView.Add(rowContainer);
-                // }
-
-                FileInfo file = selectedFiles[i];
-                TemplateContainer fileItem = listItemFileTemplate.CloneTree();
-
-                // Name
-                Label nameLabel = fileItem.Q<Label>("NameLabel");
-                if (nameLabel != null)
-                {
-                    nameLabel.text = Path.GetFileName(file.path);
-                }
-
-                // Size
-                Label sizeLabel = fileItem.Q<Label>("SizeLabel");
-                if (sizeLabel != null)
-                {
-                    sizeLabel.text = FormatFileSize(file.size);
-                }
-
-                Button fileItemButton = fileItem.Q<Button>();
-                fileItemButton.clicked += () =>
-                {
-                    // Debug.Log("Removing " + nameLabel.text);
-                    selectedFiles.Remove(file);
-                    UpdateFilesContainer();
-                    UpdateFilesSizeLabel();
-                };
-
-                fileItem.AddToClassList("ColListItem");
-                filesScrollView.Add(fileItem);
-                // count++;
-
-                // if (count == maxPerRow)
-                // {
-                //     count = 0;
-                // }
-            }
-
-            // Remove margin-bottom to the last row
-            // if (filesScrollView.childCount > 0)
-            // {
-            //     filesScrollView.ElementAt(filesScrollView.childCount - 1).style.marginBottom = 0;
-            // }
-        }
-
-        private string FormatFileSize(long sizeInBytes)
-        {
-            const long KB = 1024;
-            const long MB = KB * 1024;
-            const long GB = MB * 1024;
-
-            if (sizeInBytes >= GB)
-            {
-                return $"{sizeInBytes / (float)GB:F2}GB";
-            }
-            else if (sizeInBytes >= MB)
-            {
-                return $"{sizeInBytes / (float)MB:F2}MB";
-            }
-            else
-            {
-                return $"{sizeInBytes / (float)KB:F2}KB";
+                //     selectedFiles.Remove(fileInfo);
+                //     UpdateFilesContainer();
+                //     UpdateFilesSizeLabel();
+                // };
             }
         }
-
-
 
     }
 

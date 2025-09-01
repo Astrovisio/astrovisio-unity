@@ -68,7 +68,7 @@ namespace Astrovisio
 
         private void EnableNewProjectButton()
         {
-            newProjectController = new NewProjectViewController(projectManager, uiContextSO.listItemFileTemplate);
+            newProjectController = new NewProjectViewController(projectManager, uiManager);
             VisualElement root = uiDocument.rootVisualElement;
             VisualElement newProjectButtonInstance = root.Q<VisualElement>("NewProjectButton");
             newProjectButton = newProjectButtonInstance?.Q<Button>();

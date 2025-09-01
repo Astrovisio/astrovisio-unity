@@ -1,11 +1,18 @@
-
 namespace Astrovisio
 {
-    public struct FileInfo
+
+    public interface IFileEntry
     {
-        public string path;
-        public string name;
-        public long size;
+        string Path { get; }
+        string Name { get; }
+        long Size { get; }
+    }
+
+    public readonly struct FileInfo : IFileEntry
+    {
+        public readonly string path;
+        public readonly string name;
+        public readonly long size;
 
         public FileInfo(string path, string name, long size)
         {
@@ -14,9 +21,12 @@ namespace Astrovisio
             this.size = size;
         }
 
+        public string Path => path;
+        public string Name => name;
+        public long Size => size;
     }
 
-    public struct FileState
+    public struct FileState : IFileEntry
     {
         public FileInfo fileInfo;
         public bool state;
@@ -27,6 +37,9 @@ namespace Astrovisio
             state = false;
         }
 
+        public string Path => fileInfo.path;
+        public string Name => fileInfo.name;
+        public long Size => fileInfo.size;
     }
 
 }

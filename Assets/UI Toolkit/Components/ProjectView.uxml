@@ -8,11 +8,12 @@
         <engine:VisualElement name="TopContainer">
             <engine:Instance template="ProjectFilesContainer" name="FilesContainer" />
             <engine:VisualElement name="InfoContainer" style="flex-grow: 1;">
-                <engine:VisualElement name="HeaderContainer" style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center;">
+                <engine:VisualElement name="HeaderContainer">
                     <engine:Label text="Project Serra Project Serra Project Serra Project Serra " name="ProjectNameLabel" style="flex-shrink: 1;" />
-                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center;">
+                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 1;">
                         <engine:Button name="FavouriteButton" />
-                        <engine:Button name="MoreButton" />
+                        <engine:Button name="EditButton" />
+                        <engine:Button name="DeleteButton" />
                     </engine:VisualElement>
                 </engine:VisualElement>
                 <engine:VisualElement name="DescriptionContainer" style="flex-grow: 1;">
@@ -28,7 +29,7 @@
             <engine:Label text="poi3311asfds22931ax31e1fdds22931ax31e1aaadddewwcc" name="SubtitleLabel" />
         </engine:VisualElement>
         <engine:VisualElement name="ParamsContainer" style="flex-grow: 1;">
-            <engine:VisualElement name="ParamsTitleContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="ParamsTitleContainer" style="flex-grow: 1; flex-shrink: 0;">
                 <engine:Label text="Select the values you want to render (X, Y, and Z are required)" name="ParamsTitleLabel" />
                 <engine:Instance template="TertiaryButton" name="LoadSettingsButton">
                     <AttributeOverrides element-name="Label" text="Load settings" />
