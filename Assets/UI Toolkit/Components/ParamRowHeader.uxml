@@ -2,10 +2,7 @@
     <engine:Template name="CheckboxSimple" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxSimple.uxml?fileID=9197481963319205126&amp;guid=e82bf63331c9546489b51f3c5ded8fbc&amp;type=3#CheckboxSimple" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/ParamRowHeader.uss?fileID=7433441132597879392&amp;guid=8eb2a9ab35a516347906ea75d3402428&amp;type=3#ParamRowHeader" />
     <engine:VisualElement name="Root">
-        <engine:Label text="Name" name="Name" />
-        <engine:Label text="Select XYZ axis" name="XYZAxis" />
-        <engine:Label text="Thresholds" name="Thresholds" />
-        <engine:VisualElement name="AllCheck" style="flex-grow: 1;">
+        <engine:VisualElement name="AllCheck" style="flex-grow: 1; margin-right: 12px;">
             <engine:VisualElement name="LeftContainer" style="flex-grow: 1;">
                 <engine:Label text="All" name="Label" />
             </engine:VisualElement>
@@ -13,5 +10,12 @@
                 <engine:Instance template="CheckboxSimple" name="AllCheckbox" />
             </engine:VisualElement>
         </engine:VisualElement>
+        <engine:Label text="Name" name="Name" />
+        <engine:Label text="# Files" name="Files" />
+        <engine:VisualElement name="XYZAxis" style="flex-grow: 1; justify-content: center;">
+            <engine:Label text="XYZ axis" name="XYZAxisLabel" />
+            <engine:VisualElement name="XYZAxisIcon" style="background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/xyz.svg?fileID=7388822144124034973&amp;guid=c3a072b38126d4fcf948ba7dcb422ba4&amp;type=3#xyz&quot;);" />
+        </engine:VisualElement>
+        <engine:Label text="Thresholds" name="Thresholds" />
     </engine:VisualElement>
 </engine:UXML>

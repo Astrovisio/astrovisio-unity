@@ -1,15 +1,21 @@
-#RootListiItemFile {
-    margin-top: 8px;
+#RootListItemFile {
     padding: 8px;
     border-radius: 8px;
     color: var(--grey-800);
     flex-direction: row;
     flex-grow: 1;
     flex-shrink: 1;
-    margin-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    background-color: var(--bg-04);
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    margin-bottom: 1px;
 }
 
-#RootListiItemFile:hover {
+#RootListItemFile:hover {
     background-color: var(--bg-10);
 }
 
@@ -17,10 +23,9 @@
     width: 32px;
     height: 32px;
     border-radius: 4px;
-    background-size: 16px 16px;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/home_storage.svg?fileID=7388822144124034973&guid=1c5ff924fd1d043c6ac24a5884c10360&type=3#home_storage");
+    background-size: 24px 24px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/dragReorder.svg?fileID=7388822144124034973&guid=a9d6400e50a3e4b4c812e8e377bd38c6&type=3#dragReorder");
     background-position: center center;
-    background-color: var(--grey-300);
     margin-right: 8px;
     min-width: 32px;
     max-width: 32px;
@@ -28,47 +33,100 @@
     max-height: 32px;
 }
 
-#RootListiItemFile > #ContainerInfo {
-    flex-direction: column;
+#RootListItemFile > #ContainerInfo {
+    flex-direction: row;
     flex-wrap: nowrap;
+    width: 100%;
+    justify-content: space-between;
+    align-self: center;
+    padding-right: 0;
+    transition-property: padding-right;
+    transition-duration: 0.1s;
+    transition-timing-function: linear;
+    transition-delay: 0.1s;
 }
 
-#RootListiItemFile > #ContainerInfo > #NameLabel {
+#RootListItemFile:hover > #ContainerInfo {
+    padding-right: 40px;
+    transition-property: padding-right;
+    transition-duration: 0.1s;
+    transition-timing-function: linear;
+}
+
+#RootListItemFile > #ContainerInfo > #NameLabel {
     margin: 0;
     padding: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     overflow: hidden;
     background: red;
-    margin-top: -3px;
     text-overflow: ellipsis;
+    -unity-text-align: middle-left;
+    max-width: 455px;
+    transition-property: max-width;
+    transition-duration: 0.1s;
+    transition-timing-function: linear;
+    transition-delay: 0.1s;
 }
 
-#RootListiItemFile > #ContainerInfo > #SizeLabel {
+#RootListItemFile:hover > #ContainerInfo > #NameLabel {
+    max-width: 415px;
+    transition-property: max-width;
+    transition-timing-function: linear;
+    transition-duration: 0.1s;
+}
+
+#RootListItemFile > #ContainerInfo > #SizeLabel {
     margin: 0;
     padding: 0;
     margin-top: -1px;
     font-size: 12px;
     -unity-font-definition: url("project://database/Assets/_Astrovisio/Fonts/SpaceMono-Regular.ttf?fileID=12800000&guid=f7940a46bc2c48347a9df98e3e05c8db&type=3#SpaceMono-Regular");
     color: var(--grey-500);
+    -unity-text-align: middle-left;
 }
 
-#RootListiItemFile > #CloseButton {
+#RootListItemFile > #CloseButton {
     opacity: 0;
     border-radius: 50%;
-    background-size: 8px 8px;
-    background-image: url("project://database/Assets/_Astrovisio/UI/Sprites/Icons/Close.png?fileID=2800000&guid=1189c808d72583445a0713c47d558f27&type=3#Close");
-    width: 16px;
-    height: 16px;
-    -unity-background-image-tint-color: var(--grey-700);
-    background-color: var(--grey-200);
+    background-size: 24px 24px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete_forever.svg?fileID=7388822144124034973&guid=1531116fb0bc97a45b728ed7e3ecefb4&type=3#delete_forever");
+    width: 32px;
+    height: 32px;
+    -unity-background-image-tint-color: var(--error);
+    background-color: var(--transparent);
     position: absolute;
-    top: -6px;
-    right: -6px;
     border-width: 3px;
     border-color: var(--grey-100);
-    transition: opacity 0.3s linear;
+    transition: opacity 0.1s linear;
+    top: 50%;
+    right: 8px;
+    translate: 0 -50%;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    transition-property: opacity, background-color;
+    transition-duration: 0.1s, 0.1s;
+    transition-timing-function: linear, linear;
+    transition-delay: 0s, 0s;
 }
 
-#RootListiItemFile:hover #CloseButton {
+#RootListItemFile:hover #CloseButton {
     opacity: 1;
+    transition-duration: 0.1s;
+    transition-delay: 0.3s;
+    transition-property: opacity;
+    transition-timing-function: linear;
+}
+
+#RootListItemFile > #CloseButton:hover {
+    background-color: var(--grey-200);
+}
+
+.unity-collection-view__item--selected #RootListItemFile {
+    background-color: var(--bg-10);
 }

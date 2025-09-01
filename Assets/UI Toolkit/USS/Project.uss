@@ -1,14 +1,28 @@
-#Root > #LeftContainer > #FilesContainer {
-    height: 220px;
-    min-height: 220px;
-    max-height: 220px;
-    margin-bottom: 40px;
+#Root {
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-#Root > #RightContainer > #InfoContainer {
+#Root > #TopContainer {
+    flex-direction: row;
+    margin-bottom: 40px;
     height: 220px;
     min-height: 220px;
     max-height: 220px;
+}
+
+#Root > #TopContainer > #FilesContainer {
+    height: 226px;
+    min-height: 226px;
+    max-height: 226px;
+    margin-right: 40px;
+    flex-grow: 1;
+}
+
+#Root > #TopContainer > #InfoContainer {
+    height: 226px;
+    min-height: 226px;
+    max-height: 226px;
     background-color: var(--grey-150);
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
@@ -18,13 +32,132 @@
     padding-right: 16px;
     padding-bottom: 16px;
     padding-left: 16px;
-    margin-bottom: 24px;
+    width: 400px;
+    min-width: 400px;
+    max-width: 400px;
 }
 
-#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #DescriptionLabel {
-    height: 138px;
-    min-height: 138px;
-    max-height: 138px;
+#Root > #TopContainer > #InfoContainer > #HeaderContainer {
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    margin-bottom: 16px;
+    flex-direction: row;
+    align-self: stretch;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ProjectNameLabel {
+    margin-top: 0;
+    margin-right: 12px;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 16px;
+    -unity-text-align: middle-left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer {
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #FavouriteButton {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    background-color: var(--transparent);
+    margin-right: 6px;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #EditButton {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 6px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--transparent);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/edit.svg?fileID=7388822144124034973&guid=40407f72016e1ea4cb4e5d50f7d53206&type=3#edit");
+    -unity-background-image-tint-color: var(--black);
+    margin-right: 6px;
+}
+
+#Root > #TopContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #DeleteButton {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 6px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--transparent);
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/delete_forever.svg?fileID=7388822144124034973&guid=1531116fb0bc97a45b728ed7e3ecefb4&type=3#delete_forever");
+    -unity-background-image-tint-color: var(--red);
+}
+
+#Root > #TopContainer > #InfoContainer > #DescriptionContainer > #DescriptionLabel {
+    height: 144px;
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -51,9 +184,21 @@
     font-size: 14px;
     align-self: stretch;
     align-items: stretch;
+    min-height: 144px;
+    max-height: 144px;
 }
 
-#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #BottomContainer > #ReadMoreButton {
+#Root > #TopContainer > #InfoContainer > #DescriptionContainer > #BottomContainer {
+    margin-top: 10px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    height: 8px;
+    min-height: 8px;
+    max-height: 8px;
+}
+
+#Root > #TopContainer > #InfoContainer > #DescriptionContainer > #BottomContainer > #ReadMoreButton {
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -76,107 +221,14 @@
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
 }
 
-#Root > #RightContainer > #InfoContainer > #DescriptionContainer > #BottomContainer {
-    margin-top: 10px;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-}
-
-#Root > #RightContainer > #InfoContainer > #DescriptionContainer {
+#Root > #TopContainer > #InfoContainer > #DescriptionContainer {
     height: 156px;
     min-height: 156px;
     max-height: 156px;
 }
 
-#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ProjectNameLabel {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    color: var(--grey-800);
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
-    font-size: 16px;
-    -unity-text-align: middle-left;
-}
-
-#Root > #RightContainer > #InfoContainer > #HeaderContainer {
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
-    margin-bottom: 16px;
-}
-
-#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #FavouriteButton {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/favourite.svg?fileID=7388822144124034973&guid=03268763f02511843876db696bebdd3f&type=3#favourite");
-    width: 16px;
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
-    max-width: 16px;
-    min-width: 16px;
-    background-color: var(--transparent);
-}
-
-#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer > #MoreButton {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    width: 16px;
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
-    max-width: 16px;
-    min-width: 6px;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: var(--transparent);
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/more_horiz.svg?fileID=7388822144124034973&guid=6a727c40db254c641bfcf81c566ea58a&type=3#more_horiz");
-    -unity-background-image-tint-color: var(--black);
-}
-
-#Root > #RightContainer > #InfoContainer > #HeaderContainer > #ButtonContainer {
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
-    height: 16px;
-    min-height: 16px;
-    max-height: 16px;
-}
-
-#Root > #LeftContainer > #LabelContainer {
-    margin-bottom: 24px;
+#Root > #LabelContainer {
+    margin-bottom: 40px;
     height: 29px;
     min-height: 29px;
     max-height: 29px;
@@ -184,10 +236,29 @@
     padding-right: 16px;
 }
 
-#Root > #LeftContainer > #ParamsContainer {
+#Root > #ParamsContainer {
 }
 
-#Root > #LeftContainer > #ParamsContainer > #ParamRowHeader {
+#Root > #ParamsContainer > #ParamsTitleContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+#Root > #ParamsContainer > #ParamsTitleContainer > #ParamsTitleLabel {
+    color: var(--grey-500);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    margin-right: 12px;
+}
+
+#Root > #ParamsContainer > #ParamsTitleContainer > #LoadSettingsButton {
+}
+
+#Root > #ParamsContainer > #ParamsTitleContainer > #LoadSettingsButton > .btn-tertiary > #Icon {
+    background-image: url("project://database/Assets/_Astrovisio/UI/Sprites/Icons/upload.png?fileID=2800000&guid=5c68e7828190ea44a8e01333c4f41ee2&type=3#upload");
+}
+
+#Root > #ParamsContainer > #ParamRowHeader {
     width: auto;
     min-width: auto;
     max-width: none;
@@ -196,7 +267,25 @@
     max-height: 48px;
 }
 
-#Root > #LeftContainer > #LabelContainer > #TitleLabel {
+#Root > #LabelContainer > #TitleLabel {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 12px;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: var(--grey-500);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    font-size: 12px;
+    -unity-text-align: middle-left;
+    height: 8px;
+    min-height: 8px;
+    max-height: 8px;
+}
+
+#Root > #LabelContainer > #SubtitleLabel {
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -207,20 +296,9 @@
     padding-left: 0;
     color: var(--grey-800);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
+    -unity-text-align: middle-left;
+    height: 11px;
+    min-height: 11px;
+    max-height: 11px;
     font-size: 16px;
-    -unity-text-align: middle-left;
-}
-
-#Root > #LeftContainer > #LabelContainer > #SubtitleLabel {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    color: var(--grey-500);
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    -unity-text-align: middle-left;
 }

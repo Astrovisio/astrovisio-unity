@@ -1,0 +1,12 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/ListItemFileState.uss?fileID=7433441132597879392&amp;guid=3a9cccb06c9cd4d49bd7bbbca3a5eefa&amp;type=3#ListItemFileState" />
+    <engine:VisualElement name="RootListItemFileState" focusable="false" style="align-items: center;">
+        <engine:VisualElement name="Icon" style="flex-grow: 0;" />
+        <engine:VisualElement name="State" class="active" />
+        <engine:VisualElement name="InfoContainer" style="flex-grow: 0;">
+            <engine:Label text="Sperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdf.hdf5Sperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdf.hdf5" name="NameLabel" />
+            <engine:Label text="25MB" name="SizeLabel" style="margin-top: 0;" />
+        </engine:VisualElement>
+        <engine:Button text="&#10;" name="CloseButton" />
+    </engine:VisualElement>
+</engine:UXML>

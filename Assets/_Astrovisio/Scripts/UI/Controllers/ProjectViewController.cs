@@ -12,7 +12,7 @@ namespace Astrovisio
 
         // === Dependencies ===
         public ProjectManager ProjectManager { get; }
-        private readonly VisualTreeAsset paramRowTemplate;
+        public UIManager UIManager { get; }
 
         // === Local ===
         public Project Project { get; }
@@ -27,54 +27,42 @@ namespace Astrovisio
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly Dictionary<string, ParamRowController> paramControllers = new();
 
-        public ProjectViewController(ProjectManager projectManager, VisualElement root, Project project, VisualTreeAsset paramRowTemplate)
+        public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project)
         {
             ProjectManager = projectManager;
+            UIManager = uiManager;
             Root = root;
             Project = project;
-            this.paramRowTemplate = paramRowTemplate;
 
             ProjectManager.ProjectUpdated += OnProjectUpdated;
 
             Init();
         }
 
-        private void OnProjectUpdated(Project project)
-        {
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-
-            projectNameLabel.text = project.Name;
-            descriptionLabel.text = project.Description;
-        }
-
         private void Init()
         {
-            var rootContainer = Root.Children().First();
-            var leftContainer = rootContainer.Children().FirstOrDefault(child => child.name == "LeftContainer");
-            var rightContainer = rootContainer.Children().FirstOrDefault(child => child.name == "RightContainer");
+            VisualElement topContainer = Root.Query<VisualElement>("TopContainer");
 
             // Files Scroll View
-            var filesContainer = leftContainer.Q<VisualElement>("FilesContainer");
-            var projectScrollView = filesContainer.Q<ScrollView>("ScrollFiles");
-            projectScrollView.Clear();
-            filesContainer.SetEnabled(false);
+            VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
+            FilesController<FileState> filesController = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
+            // ScrollView projectScrollView = filesContainer.Q<ScrollView>("ScrollFiles");
+            // projectScrollView.Clear();
+            // filesContainer.SetEnabled(false);
 
             // Project Name
-            projectNameLabel = rightContainer.Q<Label>("ProjectNameLabel");
+            projectNameLabel = topContainer.Q<Label>("ProjectNameLabel");
             projectNameLabel.text = Project.Name;
 
             // Project Description
-            descriptionLabel = rightContainer.Q<Label>("DescriptionLabel");
+            descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
             // VR Reels
-            var vrReels = rightContainer.Q<VisualElement>("VRReels");
-            var scrollVRReels = vrReels.Q<ScrollView>("ScrollVrReels");
-            scrollVRReels.Clear();
-            vrReels.SetEnabled(false);
+            // var vrReels = topContainer.Q<VisualElement>("VRReels");
+            // var scrollVRReels = vrReels.Q<ScrollView>("ScrollVrReels");
+            // scrollVRReels.Clear();
+            // vrReels.SetEnabled(false);
 
             // Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
@@ -91,6 +79,17 @@ namespace Astrovisio
             InitCheckAllToggle();
         }
 
+        private void OnProjectUpdated(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            projectNameLabel.text = project.Name;
+            descriptionLabel.text = project.Description;
+        }
+
         private void OnCheckAllToggled(bool isChecked)
         {
             foreach (var kvp in paramControllers.ToList())
@@ -101,10 +100,9 @@ namespace Astrovisio
 
         private void InitScrollView()
         {
-            var rootContainer = Root.Children().First();
-            var leftContainer = rootContainer.Children().FirstOrDefault(child => child.name == "LeftContainer");
+            VisualElement paramsContainer = Root.Query<VisualElement>("ParamsContainer");
 
-            var paramScrollView = leftContainer.Q<ScrollView>("ParamScrollView");
+            ScrollView paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
             paramScrollView.contentContainer.Clear();
             paramControllers.Clear();
 
@@ -119,7 +117,7 @@ namespace Astrovisio
                 string paramName = kvp.Key;
                 ConfigParam param = kvp.Value;
 
-                TemplateContainer paramRow = paramRowTemplate.CloneTree();
+                TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = paramName;
 

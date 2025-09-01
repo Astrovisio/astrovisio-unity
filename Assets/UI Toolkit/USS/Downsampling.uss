@@ -7,24 +7,19 @@
     padding-right: 8px;
     padding-bottom: 8px;
     padding-left: 8px;
-    justify-content: space-between;
-    flex-grow: 1;
+    justify-content: flex-start;
     background-color: var(--grey-100);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
     border-left-color: var(--grey-200);
     border-right-color: var(--grey-200);
     border-top-color: var(--grey-200);
     border-bottom-color: var(--grey-200);
-    height: 144px;
-    min-height: 144px;
-    max-height: 144px;
+    height: 242px;
+    min-height: 242px;
+    max-height: 242px;
 }
 
 #DownsamplingRoot > #TotalContainer {
@@ -40,14 +35,20 @@
     min-height: 10px;
     max-height: 10px;
     flex-direction: row;
-    justify-content: space-between;
 }
 
 #DownsamplingRoot > #TotalContainer > #Label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     color: var(--grey-600);
-    font-size: 10px;
+    font-size: 12px;
     -unity-text-align: middle-left;
+}
+
+#DownsamplingRoot > #TotalContainer > #PointsNumber {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: var(--grey-600);
+    -unity-text-align: middle-left;
+    font-size: 12px;
 }
 
 #DownsamplingRoot > #TotalContainer > #SizeContainer {
@@ -70,25 +71,11 @@
 }
 
 #DownsamplingRoot > #DownsamplingContainer {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 4px;
-    padding-right: 8.5px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-    height: 42px;
-    min-height: 42px;
-    max-height: 42px;
-    background-color: var(--grey-200);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+    flex-direction: column;
+    margin-bottom: 16px;
 }
 
 #DownsamplingRoot > #DownsamplingContainer > #Label {
@@ -96,6 +83,22 @@
     font-size: 14px;
     -unity-text-align: middle-left;
     color: var(--grey-700);
+    margin-bottom: 8px;
+}
+
+#DownsamplingRoot > #MethodContainer {
+    flex-direction: column;
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+    margin-bottom: 12px;
+}
+
+#DownsamplingRoot > #MethodContainer > #Label {
+    color: var(--grey-700);
+    -unity-text-align: middle-left;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    margin-bottom: 8px;
 }
 
 #DownsamplingRoot > #ProcessDataButton {
@@ -120,4 +123,8 @@
     font-size: 16px;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
     opacity: 0.5;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
 }

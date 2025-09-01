@@ -38,6 +38,7 @@ namespace Astrovisio
         [Header("- Project")]
         public VisualTreeAsset projectViewTemplate;
         public VisualTreeAsset paramRowTemplate;
+        public VisualTreeAsset listItemFileStateTemplate;
 
         [Space(1)]
         [Header("- New Project")]

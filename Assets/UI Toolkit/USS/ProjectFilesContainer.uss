@@ -34,27 +34,16 @@
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/upload.svg?fileID=7388822144124034973&guid=241c81af96d148f45ab42d03d5812f13&type=3#upload");
 }
 
-#FilesContainerRoot > #ContentFiles {
+#FilesContainerRoot > #FileStateListView {
+    padding-top: 8px;
+    padding-right: 2px;
+    padding-bottom: 0;
+    padding-left: 8px;
     background-color: var(--grey-100);
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     border-bottom-left-radius: 12px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    overflow: hidden;
     flex-grow: 1;
-}
-
-#FilesContainerRoot > #ContentFiles > #ScrollFiles > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-#FilesContainerRoot > #ContentFiles > #ScrollFiles {
-    border-left-width: 8px;
-    border-right-width: 8px;
-}
-
-#FilesContainerRoot > #ContentFiles > #ScrollFiles > .col {
-    width: 25%;
 }

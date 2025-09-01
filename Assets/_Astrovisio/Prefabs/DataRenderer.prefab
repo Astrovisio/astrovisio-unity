@@ -2293,7 +2293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0420587223217749bf6419732c89671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realtime: 1
+  realtime: 0
   selectionMode: 1
   selectionRadius: 0.05
   selectionCubeHalfSize: 0.05
@@ -2310,13 +2310,16 @@ MonoBehaviour:
   XScale: 0
   YScale: 0
   ZScale: 0
-  pointDataInspectorPrefab: {fileID: 0}
-  areaSphereDataInspectorPrefab: {fileID: 0}
-  areaBoxDataInspectorPrefab: {fileID: 0}
+  pointDataInspectorPrefab: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
+    type: 3}
+  areaSphereDataInspectorPrefab: {fileID: 1083773075067826380, guid: 751ce84d33049274686ceec24f7db75b,
+    type: 3}
+  areaBoxDataInspectorPrefab: {fileID: 1083773075067826380, guid: b507661d1348fae46996ad25c71740b9,
+    type: 3}
   selectAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: 
+      m_Name: Select
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 056b35e7-5e27-457f-98d9-5454f8ddf1f2
@@ -2324,7 +2327,8 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -5693716862375346751, guid: cc602a71100aabf4483e1a2a13344c00,
+      type: 3}
 --- !u!1 &8527399573741917539
 GameObject:
   m_ObjectHideFlags: 0

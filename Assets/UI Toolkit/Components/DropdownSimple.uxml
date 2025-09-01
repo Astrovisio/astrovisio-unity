@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/USS/DropdownSimple.uss?fileID=7433441132597879392&amp;guid=800901c4054132f42b3e7e6a2b49efc6&amp;type=3#DropdownSimple" />
     <engine:VisualElement name="DropdownRoot">
-        <engine:DropdownField label="&#10;" choices="0%,10%,20%,30%" index="0" name="DropdownField" class="dropdown-small" style="flex-direction: column; align-items: center;" />
+        <engine:DropdownField label="&#10;" choices="Pandas.DataFrame.sample" index="0" name="DropdownField" class="dropdown-small" style="flex-direction: column; align-items: center;" />
     </engine:VisualElement>
 </engine:UXML>

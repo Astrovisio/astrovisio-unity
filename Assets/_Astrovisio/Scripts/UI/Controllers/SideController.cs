@@ -91,7 +91,7 @@ namespace Astrovisio
 
             // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
             // Debug.Log("@@@" + (projectManager.GetProject(project.Id) == project));
-            var newProjectViewController = new ProjectSidebarController(uiManager, projectManager, uiContextSO, project, projectSidebarInstance);
+            ProjectSidebarController newProjectViewController = new ProjectSidebarController(uiManager, projectManager, uiContextSO, project, projectSidebarInstance);
             projectSidebarControllerDictionary[project.Id] = newProjectViewController;
         }
 

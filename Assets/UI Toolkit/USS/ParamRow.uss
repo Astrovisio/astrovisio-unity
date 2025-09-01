@@ -3,7 +3,7 @@
     padding-right: 16px;
     padding-top: 8px;
     padding-bottom: 12px;
-    flex-direction: row-reverse;
+    flex-direction: row;
     justify-content: space-between;
     flex-grow: 1;
     border-bottom-width: 1px;
@@ -24,16 +24,19 @@
 }
 
 #RootButton > #NameContainer {
-    width: 160px;
-    min-width: 160px;
-    max-width: 160px;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
     flex-direction: row;
     align-items: center;
     padding-top: 0;
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
-    justify-content: space-between;
+    justify-content: center;
+    margin-right: 12px;
+    margin-left: 12px;
+    -unity-text-align: upper-center;
 }
 
 #RootButton > #NameContainer > #Label {
@@ -42,7 +45,16 @@
     font-size: 16px;
 }
 
-#RootButton > #NameContainer > #FilesContainer {
+#RootButton > #FilesMainContainer {
+    width: 105px;
+    min-width: 105px;
+    max-width: 105px;
+    align-items: center;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+#RootButton > #FilesMainContainer > #FilesContainer {
     background-color: var(--bg-10);
     width: 52px;
     min-width: 52px;
@@ -63,7 +75,15 @@
     align-items: center;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #Icon {
+#RootButton > #FilesMainContainer > #FilesContainer > #Label {
+    color: var(--grey-700);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 14px;
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+}
+
+#RootButton > #FilesMainContainer > #FilesContainer > #Icon {
     width: 16px;
     height: 16px;
     min-height: 16px;
@@ -75,14 +95,6 @@
     margin-right: 4px;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #Label {
-    color: var(--grey-700);
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    font-size: 14px;
-    -unity-text-align: middle-center;
-    flex-grow: 1;
-}
-
 #RootButton > #XYZAxisContainer {
     flex-direction: row;
     justify-content: space-between;
@@ -92,6 +104,8 @@
     max-width: 136px;
     min-height: 24px;
     max-height: 24px;
+    margin-right: 12px;
+    margin-left: 12px;
 }
 
 #RootButton > #XYZAxisContainer > .btn-chip {
@@ -104,8 +118,12 @@
 #RootButton > #ThresholdContainer {
     flex-direction: row;
     align-items: center;
-    padding-left: 20px;
-    padding-right: 20px;
+    width: 432px;
+    min-width: 432px;
+    max-width: 432px;
+    margin-left: 12px;
+    align-self: center;
+    justify-content: flex-start;
 }
 
 #RootButton > #ThresholdContainer > #ResetButton {
@@ -115,8 +133,7 @@
     min-width: 16px;
     max-width: 16px;
     max-height: 16px;
-    position: absolute;
-    right: -2px;
+    position: relative;
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/replay.svg?fileID=7388822144124034973&guid=bc2af4aa70cc82e47a1ee92cf74b7daa&type=3#replay");
     -unity-background-image-tint-color: var(--grey-700);
     background-color: var(--transparent);
@@ -125,6 +142,8 @@
     border-bottom-width: 0;
     border-left-width: 0;
     border-radius: 50%;
+    margin-left: 8px;
+    top: 8px;
 }
 
 #RootButton > #ThresholdContainer > #ResetButton:hover {
@@ -178,9 +197,9 @@
 }
 
 #RootButton > #CheckboxContainer {
-    width: 64px;
-    min-width: 64px;
-    max-width: 64px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
     height: 24px;
     min-height: 24px;
     max-height: 24px;
@@ -190,19 +209,20 @@
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
     padding-top: 4px;
-    padding-right: 4px;
+    padding-right: 0;
     padding-bottom: 4px;
-    padding-left: 4px;
+    padding-left: 0;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    margin-right: 12px;
 }
 
 #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #TooltipFiles {
+#RootButton > #FilesMainContainer > #FilesContainer > #TooltipFiles {
     width: 129px;
     position: absolute;
     background-color: var(--grey-200);
@@ -227,7 +247,7 @@
     transition-timing-function: ease-in-out, ease;
 }
 
-#RootButton > #NameContainer > #FilesContainer:hover > #TooltipFiles {
+#RootButton > #FilesMainContainer > #FilesContainer:hover > #TooltipFiles {
     opacity: 1;
     visibility: visible;
     transition-property: visibility, opacity;
@@ -236,19 +256,19 @@
     transition-delay: 0s, 0s;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #NameTooltipLabel {
+#RootButton > #FilesMainContainer > #FilesContainer > #TooltipFiles > #NameTooltipLabel {
     -unity-text-align: upper-left;
     margin-bottom: 4px;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #DescriptionTooltipLabel {
+#RootButton > #FilesMainContainer > #FilesContainer > #TooltipFiles > #DescriptionTooltipLabel {
     font-size: 10px;
     -unity-text-align: upper-left;
     color: var(--grey-400);
     margin-bottom: 8px;
 }
 
-#RootButton > #NameContainer > #FilesContainer > #TooltipFiles > #FilesTooltipLabel {
+#RootButton > #FilesMainContainer > #FilesContainer > #TooltipFiles > #FilesTooltipLabel {
     -unity-paragraph-spacing: 12px;
 }
 
