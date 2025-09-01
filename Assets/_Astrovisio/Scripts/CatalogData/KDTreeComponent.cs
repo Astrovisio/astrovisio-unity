@@ -175,10 +175,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private async Task<SelectionResult> ComputeSelection()
     {
-        SelectionResult selectionResult = new SelectionResult
-        {
-            SelectedIndices = new List<int>()
-        };
+        SelectionResult selectionResult = null;
 
         switch (selectionMode)
         {
