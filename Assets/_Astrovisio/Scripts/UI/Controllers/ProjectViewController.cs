@@ -22,10 +22,19 @@ namespace Astrovisio
         private Label projectNameLabel;
         private Label descriptionLabel;
         private Toggle checkAllToggle;
+        private Button headerNameButton;
 
         // === Local ===
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly Dictionary<string, ParamRowController> paramControllers = new();
+        private enum ScrollViewOrderType
+        {
+            None,
+            AZ,
+            ZA
+        }
+        private ScrollViewOrderType scrollViewOrderType = ScrollViewOrderType.None;
+
 
         public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project)
         {
@@ -58,13 +67,7 @@ namespace Astrovisio
             descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
-            // VR Reels
-            // var vrReels = topContainer.Q<VisualElement>("VRReels");
-            // var scrollVRReels = vrReels.Q<ScrollView>("ScrollVrReels");
-            // scrollVRReels.Clear();
-            // vrReels.SetEnabled(false);
-
-            // Checkbox
+            // Header Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
             if (checkAllToggle != null)
             {
@@ -74,6 +77,11 @@ namespace Astrovisio
                     OnCheckAllToggled(isChecked);
                 });
             }
+
+            // Header Name
+            headerNameButton = Root.Q<Button>("Name");
+            Debug.Log(headerNameButton);
+            headerNameButton.clicked += ChangeScrollViewOrderType;
 
             InitScrollView();
             InitCheckAllToggle();
@@ -270,6 +278,95 @@ namespace Astrovisio
 
             checkAllToggle.value = areAllSelected;
         }
+
+        private void ChangeScrollViewOrderType()
+        {
+            switch (scrollViewOrderType)
+            {
+                case ScrollViewOrderType.None:
+                    scrollViewOrderType = ScrollViewOrderType.AZ;
+                    break;
+                case ScrollViewOrderType.AZ:
+                    scrollViewOrderType = ScrollViewOrderType.ZA;
+                    break;
+                case ScrollViewOrderType.ZA:
+                    scrollViewOrderType = ScrollViewOrderType.None;
+                    break;
+            }
+
+            // Debug.Log("New order type: " + scrollViewOrderType);
+            ApplyScrollViewOrderType();
+        }
+
+        private void ApplyScrollViewOrderType()
+        {
+            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
+            ScrollView paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
+
+            if (paramScrollView == null || Project.ConfigProcess?.Params == null)
+            {
+                return;
+            }
+
+            paramScrollView.contentContainer.Clear();
+
+            IEnumerable<KeyValuePair<string, ConfigParam>> ordered;
+
+            switch (scrollViewOrderType)
+            {
+                case ScrollViewOrderType.AZ:
+                    ordered = Project.ConfigProcess.Params.OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase);
+                    break;
+
+                case ScrollViewOrderType.ZA:
+                    ordered = Project.ConfigProcess.Params.OrderByDescending(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase);
+                    break;
+
+                default: // None
+                    ordered = Project.ConfigProcess.Params;
+                    break;
+            }
+
+            UpdateOrderTypeLabel();
+
+            foreach (var kvp in ordered)
+            {
+                string paramName = kvp.Key;
+                ConfigParam param = kvp.Value;
+
+                TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
+                VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
+                nameContainer.Q<Label>("Label").text = paramName;
+
+                ParamRowController controller = new ParamRowController(ProjectManager, paramRow, paramName, param);
+                paramControllers[paramName] = controller;
+
+                controller.OnAxisChanged += HandleOnAxisChanged;
+                controller.OnThresholdChanged += HandleOnThresholdChanged;
+
+                paramScrollView.Add(paramRow);
+            }
+
+        }
+
+        private void UpdateOrderTypeLabel()
+        {
+            switch (scrollViewOrderType)
+            {
+                case ScrollViewOrderType.AZ:
+                    headerNameButton.text = "Name (A-Z)";
+                    break;
+
+                case ScrollViewOrderType.ZA:
+                    headerNameButton.text = "Name (Z-A)";
+                    break;
+
+                default: // None
+                    headerNameButton.text = "Name";
+                    break;
+            }
+        }
+
 
     }
 

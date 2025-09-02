@@ -24,9 +24,6 @@
 }
 
 #RootButton > #NameContainer {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
     flex-direction: row;
     align-items: center;
     padding-top: 0;
@@ -43,6 +40,10 @@
     color: var(--grey-800);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     font-size: 16px;
+    flex-grow: 1;
+    -unity-text-align: upper-left;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #RootButton > #FilesMainContainer {

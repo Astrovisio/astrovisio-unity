@@ -10,7 +10,7 @@
                 <engine:Instance template="CheckboxSimple" name="AllCheckbox" />
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Label text="Name" name="Name" />
+        <engine:Button text="Name" name="Name" />
         <engine:Label text="# Files" name="Files" />
         <engine:VisualElement name="XYZAxis" style="flex-grow: 1; justify-content: center;">
             <engine:Label text="XYZ axis" name="XYZAxisLabel" />

@@ -10,7 +10,7 @@
             </engine:Instance>
         </engine:VisualElement>
         <engine:VisualElement name="NameContainer" style="flex-grow: 1;">
-            <engine:Label text="Temperature&#10;" name="Label" />
+            <engine:Label text="Temperature" name="Label" />
         </engine:VisualElement>
         <engine:VisualElement name="FilesMainContainer" style="flex-grow: 1; display: none;">
             <engine:VisualElement name="FilesContainer">
