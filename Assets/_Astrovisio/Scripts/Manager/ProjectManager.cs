@@ -66,19 +66,19 @@ namespace Astrovisio
 
 		public async void FetchAllProjects()
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 
 			await apiManager.ReadProjects(
 				projects =>
 				{
 					projectList = projects;
 					ProjectsFetched?.Invoke(projectList);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				});
 		}
 
@@ -118,7 +118,7 @@ namespace Astrovisio
 
 		public async void CreateProject(string name, string description, string[] paths)
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 
 			CreateProjectRequest req = new CreateProjectRequest
 			{
@@ -133,18 +133,18 @@ namespace Astrovisio
 				{
 					projectList.Add(created);
 					ProjectCreated?.Invoke(created);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				});
 		}
 
 		public async void DuplicateProject(string name, string description, Project projectToDuplicate)
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 
 			CreateProjectRequest createReq = new CreateProjectRequest
 			{
@@ -172,7 +172,7 @@ namespace Astrovisio
 
 			if (!createSuccess || createdProject == null)
 			{
-				uiManager.SetLoadingBar(false);
+				uiManager.SetLoadingView(false);
 				return;
 			}
 
@@ -190,12 +190,12 @@ namespace Astrovisio
 				{
 					createdProject.UpdateFrom(updated);
 					ProjectCreated?.Invoke(createdProject);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				});
 		}
 
@@ -242,7 +242,7 @@ namespace Astrovisio
 		public async void ProcessProject(int id, ConfigProcess configProcess)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true, LoaderType.Bar);
 
 			ProcessProjectRequest req = new ProcessProjectRequest
 			{
@@ -256,7 +256,7 @@ namespace Astrovisio
 				int? jobID = await apiManager.ProcessProject(id, req, error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				});
 
 				if (jobID == null)
@@ -296,7 +296,7 @@ namespace Astrovisio
 				{
 					Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
 					ApiError?.Invoke("Errore nel processamento: " + ex.Message);
-					uiManager.SetLoadingBar(false);
+					uiManager.SetLoadingView(false);
 				}
 
 
@@ -320,7 +320,7 @@ namespace Astrovisio
 					Debug.Log($"[ProjectManager] Process completed, rows: {dataPack.Rows.Length}");
 				}
 
-				uiManager.SetLoadingBar(false);
+				uiManager.SetLoadingView(false);
 			}
 			catch (Exception ex)
 			{
@@ -329,7 +329,7 @@ namespace Astrovisio
 			}
 			finally
 			{
-				uiManager.SetLoadingBar(false);
+				uiManager.SetLoadingView(false);
 			}
 		}
 

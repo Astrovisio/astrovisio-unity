@@ -375,7 +375,7 @@ namespace Astrovisio
 		private IEnumerator FetchAllProjectsCoroutine()
 		{
 			// Debug.Log("FetchAllProjectsCoroutine -> START");
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 			yield return apiManager.ReadProjects(
 			  onSuccess: fetched =>
 			  {
@@ -386,7 +386,7 @@ namespace Astrovisio
 			  },
 			  onError: err => ApiError?.Invoke(err)
 			);
-			uiManager.SetLoadingBar(false);
+			uiManager.SetLoadingView(false);
 			// Debug.Log("FetchAllProjectsCoroutine -> END");
 		}
 
@@ -460,7 +460,7 @@ namespace Astrovisio
 
 		private IEnumerator CreateProjectCoroutine(CreateProjectRequest createProjectRequest)
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 			bool finished = false;
 
 			yield return apiManager.CreateNewProject(
@@ -483,7 +483,7 @@ namespace Astrovisio
 			while (!finished)
 				yield return null;
 
-			uiManager.SetLoadingBar(false);
+			uiManager.SetLoadingView(false);
 		}
 
 
@@ -503,7 +503,7 @@ namespace Astrovisio
 
 		private IEnumerator DuplicateProjectCoroutine(DuplicateProjectRequest duplicateProjectRequest)
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 			// Debug.Log($"[Duplicate] Step 1: Creating '{duplicateProjectRequest.Name}'");
 
 			// Step 1: Crea un nuovo progetto base
@@ -533,7 +533,7 @@ namespace Astrovisio
 			// Se la creazione è fallita, termina
 			if (createdProject == null)
 			{
-				uiManager.SetLoadingBar(false);
+				uiManager.SetLoadingView(false);
 				yield break;
 			}
 
@@ -582,7 +582,7 @@ namespace Astrovisio
 				}
 			);
 
-			uiManager.SetLoadingBar(false);
+			uiManager.SetLoadingView(false);
 		}
 
 
@@ -666,7 +666,7 @@ namespace Astrovisio
 
 		private IEnumerator ProcessProjectCoroutine(int id, ProcessProjectRequest processProjectRequest)
 		{
-			uiManager.SetLoadingBar(true);
+			uiManager.SetLoadingView(true);
 			yield return apiManager.ProcessProject(
 				id,
 				processProjectRequest,
@@ -685,7 +685,7 @@ namespace Astrovisio
 				// },
 				onError: err => ApiError?.Invoke(err)
 			);
-			uiManager.SetLoadingBar(false);
+			uiManager.SetLoadingView(false);
 		}
 
 

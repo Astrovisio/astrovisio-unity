@@ -8,7 +8,6 @@
 
 #Root > #LoadingSpinner {
     scale: 2 2;
-    display: none;
 }
 
 #Root > #LoadingBarContainer {

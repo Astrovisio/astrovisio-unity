@@ -194,13 +194,26 @@ namespace Astrovisio
             return uiVisibility;
         }
 
-        public void SetLoadingBar(bool state)
+        public void SetLoadingView(bool state, LoaderType loaderType = LoaderType.Spinner)
         {
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            VisualElement loadingSpinner = loaderView.Q<VisualElement>("LoadingSpinner");
+            VisualElement loadingBar = loaderView.Q<VisualElement>("LoadingBar");
 
             if (state)
             {
                 loaderView.AddToClassList("active");
+
+                if (loaderType == LoaderType.Spinner)
+                {
+                    loadingSpinner.style.display = DisplayStyle.Flex;
+                    loadingBar.style.display = DisplayStyle.None;
+                }
+                else
+                {
+                    loadingSpinner.style.display = DisplayStyle.None;
+                    loadingBar.style.display = DisplayStyle.Flex;
+                }
             }
             else
             {
