@@ -1,12 +1,11 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using System;
 
 namespace Astrovisio
 {
-
     public class ProjectViewController
     {
 
@@ -23,16 +22,14 @@ namespace Astrovisio
         private Label descriptionLabel;
         private Toggle checkAllToggle;
         private Button headerNameButton;
+        private ScrollView paramScrollView;
 
         // === Local ===
+        private float _nextAllowedUpdate;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly Dictionary<string, ParamRowController> paramControllers = new();
-        private enum ScrollViewOrderType
-        {
-            None,
-            AZ,
-            ZA
-        }
+
+        private enum ScrollViewOrderType { None, AZ, ZA }
         private ScrollViewOrderType scrollViewOrderType = ScrollViewOrderType.None;
 
 
@@ -50,14 +47,11 @@ namespace Astrovisio
 
         private void Init()
         {
-            VisualElement topContainer = Root.Query<VisualElement>("TopContainer");
+            VisualElement topContainer = Root.Q<VisualElement>("TopContainer");
 
-            // Files Scroll View
+            // Files (se servisse altrove)
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
-            FilesController<FileState> filesController = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
-            // ScrollView projectScrollView = filesContainer.Q<ScrollView>("ScrollFiles");
-            // projectScrollView.Clear();
-            // filesContainer.SetEnabled(false);
+            _ = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
 
             // Project Name
             projectNameLabel = topContainer.Q<Label>("ProjectNameLabel");
@@ -80,8 +74,16 @@ namespace Astrovisio
 
             // Header Name
             headerNameButton = Root.Q<Button>("Name");
-            Debug.Log(headerNameButton);
-            headerNameButton.clicked += ChangeScrollViewOrderType;
+            headerNameButton.clicked += () =>
+            {
+                scrollViewOrderType = scrollViewOrderType switch
+                {
+                    ScrollViewOrderType.None => ScrollViewOrderType.AZ,
+                    ScrollViewOrderType.AZ => ScrollViewOrderType.ZA,
+                    _ => ScrollViewOrderType.None
+                };
+                ApplyScrollViewOrderType();
+            };
 
             InitScrollView();
             InitCheckAllToggle();
@@ -100,7 +102,7 @@ namespace Astrovisio
 
         private void OnCheckAllToggled(bool isChecked)
         {
-            foreach (var kvp in paramControllers.ToList())
+            foreach (var kvp in paramControllers)
             {
                 kvp.Value.SetSelected(isChecked);
             }
@@ -108,9 +110,8 @@ namespace Astrovisio
 
         private void InitScrollView()
         {
-            VisualElement paramsContainer = Root.Query<VisualElement>("ParamsContainer");
-
-            ScrollView paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
+            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
+            paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
             paramScrollView.contentContainer.Clear();
             paramControllers.Clear();
 
@@ -129,15 +130,13 @@ namespace Astrovisio
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = paramName;
 
-                ParamRowController controller = new ParamRowController(ProjectManager, paramRow, paramName, param);
-                paramControllers[paramName] = controller;
+                ParamRowController paramRowController = new ParamRowController(paramRow, paramName, param);
+                paramControllers[paramName] = paramRowController;
 
-                controller.OnAxisChanged += HandleOnAxisChanged;
-                controller.OnThresholdChanged += HandleOnThresholdChanged;
+                paramRowController.OnAxisChanged += HandleOnAxisChanged;
+                paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
 
-                // controller.OnParamStateChanged += () => Debug.Log($"{paramName} disabled."); // TODO: update project request?
-
-                paramScrollView.Add(paramRow);
+                paramScrollView.Add(paramRowController.Root);
             }
 
             InitializeSelectedAxes();
@@ -153,17 +152,14 @@ namespace Astrovisio
                 if (param.XAxis)
                 {
                     selectedAxis[Axis.X] = controller;
-                    // Debug.Log($"[Init] Axis X set to {controller.ParamName}");
                 }
                 if (param.YAxis)
                 {
                     selectedAxis[Axis.Y] = controller;
-                    // Debug.Log($"[Init] Axis Y set to {controller.ParamName}");
                 }
                 if (param.ZAxis)
                 {
                     selectedAxis[Axis.Z] = controller;
-                    // Debug.Log($"[Init] Axis Z set to {controller.ParamName}");
                 }
             }
         }
@@ -172,16 +168,11 @@ namespace Astrovisio
         {
             if (axis == null)
             {
-                // Caso: l'utente ha cliccato su un chip già attivo → lo sta deselezionando
-                // Verifica se 'newly' era registrato in uno degli assi attivi, e rimuovilo
                 foreach (var kvp in selectedAxis.ToList())
                 {
                     if (kvp.Value == newly)
                     {
                         selectedAxis.Remove(kvp.Key);
-                        // Debug.Log($"[AxisSelection] Deselected axis {kvp.Key} from {newly.ParamName}");
-
-                        // Aggiorna il modello
                         switch (kvp.Key)
                         {
                             case Axis.X:
@@ -196,20 +187,12 @@ namespace Astrovisio
                         }
                     }
                 }
-
                 return;
             }
 
-            // 1) se c’è già un selezionato per quell’asse, deselezionalo
             if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != newly)
             {
-                // Debug.Log($"[AxisSelection] New axis selected: {axis} → {newly.ParamName}");
-                // if (previous != null)
-                // Debug.Log($"[AxisSelection] Previous selection for {axis} was: {previous.ParamName}");
-
                 previous.DeselectAxis(axis.Value);
-
-                // Aggiorna il modello dell'asse precedente
                 switch (axis.Value)
                 {
                     case Axis.X:
@@ -224,10 +207,8 @@ namespace Astrovisio
                 }
             }
 
-            // 2) registra il nuovo selezionato
             selectedAxis[axis.Value] = newly;
 
-            // 3) aggiorna il modello del nuovo selezionato
             switch (axis.Value)
             {
                 case Axis.X:
@@ -257,96 +238,42 @@ namespace Astrovisio
 
         private void UpdateProject()
         {
+            if (Time.unscaledTime < _nextAllowedUpdate)
+            {
+                return;
+            }
+
+            _nextAllowedUpdate = Time.unscaledTime + 0.05f; // 50ms
             ProjectManager.UpdateProject(Project.Id, Project);
         }
 
         private void InitCheckAllToggle()
         {
-
-            bool areAllSelected = true;
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                var paramName = kvp.Key;
-                var param = kvp.Value;
-
-                if (param.Selected == false)
-                {
-                    areAllSelected = false;
-                }
-                // Debug.Log($"{paramName} - {param.Selected}");
-            }
-
-            checkAllToggle.value = areAllSelected;
-        }
-
-        private void ChangeScrollViewOrderType()
-        {
-            switch (scrollViewOrderType)
-            {
-                case ScrollViewOrderType.None:
-                    scrollViewOrderType = ScrollViewOrderType.AZ;
-                    break;
-                case ScrollViewOrderType.AZ:
-                    scrollViewOrderType = ScrollViewOrderType.ZA;
-                    break;
-                case ScrollViewOrderType.ZA:
-                    scrollViewOrderType = ScrollViewOrderType.None;
-                    break;
-            }
-
-            // Debug.Log("New order type: " + scrollViewOrderType);
-            ApplyScrollViewOrderType();
+            checkAllToggle.value = Project.ConfigProcess?.Params != null &&
+                                   Project.ConfigProcess.Params.All(kv => kv.Value.Selected);
         }
 
         private void ApplyScrollViewOrderType()
         {
-            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
-            ScrollView paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
-
             if (paramScrollView == null || Project.ConfigProcess?.Params == null)
             {
                 return;
             }
 
-            paramScrollView.contentContainer.Clear();
-
-            IEnumerable<KeyValuePair<string, ConfigParam>> ordered;
-
-            switch (scrollViewOrderType)
+            IEnumerable<KeyValuePair<string, ConfigParam>> ordered = scrollViewOrderType switch
             {
-                case ScrollViewOrderType.AZ:
-                    ordered = Project.ConfigProcess.Params.OrderBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase);
-                    break;
-
-                case ScrollViewOrderType.ZA:
-                    ordered = Project.ConfigProcess.Params.OrderByDescending(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase);
-                    break;
-
-                default: // None
-                    ordered = Project.ConfigProcess.Params;
-                    break;
-            }
+                ScrollViewOrderType.AZ => Project.ConfigProcess.Params.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase),
+                ScrollViewOrderType.ZA => Project.ConfigProcess.Params.OrderByDescending(k => k.Key, StringComparer.OrdinalIgnoreCase),
+                _ => Project.ConfigProcess.Params
+            };
 
             UpdateOrderTypeLabel();
 
+            paramScrollView.contentContainer.Clear();
             foreach (var kvp in ordered)
             {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
-
-                TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
-                VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
-                nameContainer.Q<Label>("Label").text = paramName;
-
-                ParamRowController controller = new ParamRowController(ProjectManager, paramRow, paramName, param);
-                paramControllers[paramName] = controller;
-
-                controller.OnAxisChanged += HandleOnAxisChanged;
-                controller.OnThresholdChanged += HandleOnThresholdChanged;
-
-                paramScrollView.Add(paramRow);
+                paramScrollView.Add(paramControllers[kvp.Key].Root);
             }
-
         }
 
         private void UpdateOrderTypeLabel()
@@ -356,17 +283,14 @@ namespace Astrovisio
                 case ScrollViewOrderType.AZ:
                     headerNameButton.text = "Name (A-Z)";
                     break;
-
                 case ScrollViewOrderType.ZA:
                     headerNameButton.text = "Name (Z-A)";
                     break;
-
-                default: // None
+                default:
                     headerNameButton.text = "Name";
                     break;
             }
         }
-
 
     }
 

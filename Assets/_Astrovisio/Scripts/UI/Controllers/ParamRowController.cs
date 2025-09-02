@@ -1,6 +1,4 @@
 using System;
-using System.ComponentModel;
-using System.Globalization;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,7 +12,7 @@ namespace Astrovisio
     public class ParamRowController
     {
         // === Dependencies ===
-        private readonly VisualElement paramRow;
+        public VisualElement Root { get; }
 
         // === Events ===
         public event Action<Axis?, ParamRowController> OnAxisChanged;
@@ -42,9 +40,9 @@ namespace Astrovisio
         public string ParamName { get; set; }
         public ConfigParam Param { get; set; }
 
-        public ParamRowController(ProjectManager projectManager, VisualElement paramRow, string paramName, ConfigParam param)
+        public ParamRowController(VisualElement root, string paramName, ConfigParam param)
         {
-            this.paramRow = paramRow;
+            Root = root;
             ParamName = paramName;
             Param = param;
 
@@ -53,14 +51,14 @@ namespace Astrovisio
 
         private void Init()
         {
-            rootButton = paramRow.Q<Button>("RootButton");
+            rootButton = Root.Q<Button>("RootButton");
 
             // Name
-            nameContainer = paramRow.Q<VisualElement>("NameContainer");
+            nameContainer = Root.Q<VisualElement>("NameContainer");
             nameLabel = nameContainer.Q<Label>("Label");
 
             // XYZ Axes
-            xyzAxisContainer = paramRow.Q<VisualElement>("XYZAxisContainer");
+            xyzAxisContainer = Root.Q<VisualElement>("XYZAxisContainer");
             xChipButton = xyzAxisContainer.Q<VisualElement>("ChipX")?.Q<Button>("ChipRoot");
             yChipButton = xyzAxisContainer.Q<VisualElement>("ChipY")?.Q<Button>("ChipRoot");
             zChipButton = xyzAxisContainer.Q<VisualElement>("ChipZ")?.Q<Button>("ChipRoot");
@@ -70,14 +68,22 @@ namespace Astrovisio
             InitAxis();
 
             // Threshold
-            thresholdContainer = paramRow.Q<VisualElement>("ThresholdContainer");
-            minInputField = thresholdContainer.Q<DoubleField>("MinInputField");
-            maxInputField = thresholdContainer.Q<DoubleField>("MaxInputField");
+            thresholdContainer = Root.Q<VisualElement>("ThresholdContainer");
+            VisualElement histogramSlider = thresholdContainer.Q<VisualElement>("HistogramSlider");
+            minInputField = histogramSlider.Q<DoubleField>("MinFloatField");
+            maxInputField = histogramSlider.Q<DoubleField>("MaxFloatField");
+            Debug.Log(histogramSlider);
+            Debug.Log(minInputField);
+            Debug.Log(maxInputField);
+            minInputField.value = 10d;
+            maxInputField.value = 20d;
             // minInputField.SetValueWithoutNotify(double.Parse(minInputField.value.ToString("E5")));
             // maxInputField.SetValueWithoutNotify(double.Parse(maxInputField.value.ToString("E5")));
 
-            minErrorLabel = thresholdContainer.Q<Label>("MinErrorLabel");
-            maxErrorLabel = thresholdContainer.Q<Label>("MaxErrorLabel");
+            minErrorLabel = histogramSlider.Q<Label>("MinErrorLabel");
+            maxErrorLabel = histogramSlider.Q<Label>("MaxErrorLabel");
+            Debug.Log(minErrorLabel);
+            Debug.Log(maxErrorLabel);
             Param.ThrMinSel = Param.ThrMinSel ?? Param.ThrMin;
             Param.ThrMaxSel = Param.ThrMaxSel ?? Param.ThrMax;
             minInputField.RegisterValueChangedCallback(evt =>
@@ -85,21 +91,21 @@ namespace Astrovisio
                 Param.ThrMinSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Min);
                 OnThresholdChanged?.Invoke(Threshold.Min, this);
-                // Debug.Log($"[UI] {ParamName} → ThrMin aggiornato a {evt.newValue}");
+                Debug.Log($"[UI] {ParamName} → ThrMin aggiornato a {evt.newValue}");
             });
             maxInputField.RegisterValueChangedCallback(evt =>
             {
                 Param.ThrMaxSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Max);
                 OnThresholdChanged?.Invoke(Threshold.Max, this);
-                // Debug.Log($"[UI] {ParamName} → ThrMax aggiornato a {evt.newValue}");
+                Debug.Log($"[UI] {ParamName} → ThrMax aggiornato a {evt.newValue}");
             });
             resetButton = thresholdContainer.Q<Button>("ResetButton");
             resetButton.clicked += OnResetButtonClicked;
             InitThresholds();
 
             // Select
-            checkbox = paramRow.Q<Toggle>("CheckboxRoot");
+            checkbox = Root.Q<Toggle>("CheckboxRoot");
             checkbox?.RegisterValueChangedCallback(evt =>
             {
                 Param.Selected = evt.newValue;

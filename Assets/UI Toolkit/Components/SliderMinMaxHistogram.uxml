@@ -1,9 +1,10 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/USS/SliderMinMaxHistogram.uss?fileID=7433441132597879392&amp;guid=1a055ba2965af4327bf20a861d1d5163&amp;type=3#SliderMinMaxHistogram" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/SliderMinMaxHistogram.uss?fileID=7433441132597879392&amp;guid=334debab2d157c84ab718c1776c80b32&amp;type=3#SliderMinMaxHistogram" />
     <engine:VisualElement name="SliderMinMaxHistogramRoot">
-        <engine:VisualElement name="MinContainer" style="flex-grow: 1;">
+        <engine:VisualElement name="MinContainer">
             <engine:Label text="Min" name="Label" />
             <engine:DoubleField name="MinFloatField" placeholder-text="0" class="min-max-slider-input" />
+            <engine:Label text="Value too low" name="MinErrorLabel" class="error-label" />
         </engine:VisualElement>
         <engine:VisualElement name="HistogramContainer" style="flex-grow: 1;">
             <engine:VisualElement name="HistogramGraphicBg" style="flex-grow: 1;" />
@@ -111,9 +112,10 @@
             </engine:VisualElement>
             <engine:MinMaxSlider value="10,90" low-limit="0" high-limit="100" name="MinMaxHistogramSlider" />
         </engine:VisualElement>
-        <engine:VisualElement name="MaxContainer" style="flex-grow: 1;">
+        <engine:VisualElement name="MaxContainer">
             <engine:Label text="Max" name="Label" />
             <engine:DoubleField name="MaxFloatField" placeholder-text="100" class="min-max-slider-input" />
+            <engine:Label text="Value too high" name="MaxErrorLabel" class="error-label" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

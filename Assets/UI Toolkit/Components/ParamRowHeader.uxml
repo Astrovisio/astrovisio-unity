@@ -16,6 +16,6 @@
             <engine:Label text="XYZ axis" name="XYZAxisLabel" />
             <engine:VisualElement name="XYZAxisIcon" style="background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/xyz.svg?fileID=7388822144124034973&amp;guid=c3a072b38126d4fcf948ba7dcb422ba4&amp;type=3#xyz&quot;);" />
         </engine:VisualElement>
-        <engine:Label text="Thresholds" name="Thresholds" />
+        <engine:Label text="Thresholds" name="Thresholds" style="width: 632px; min-width: 632px; max-width: 632px;" />
     </engine:VisualElement>
 </engine:UXML>

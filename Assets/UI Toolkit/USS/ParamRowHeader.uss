@@ -28,8 +28,8 @@
     border-bottom-width: 0;
     border-left-width: 0;
     flex-grow: 1;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #Root > #Files {
@@ -38,8 +38,8 @@
     min-width: 105px;
     max-width: 105px;
     -unity-text-align: upper-center;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
     display: none;
 }
 
@@ -52,8 +52,8 @@
     min-width: 136px;
     max-width: 136px;
     flex-direction: row;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #Root > #XYZAxis > #XYZAxisLabel {
