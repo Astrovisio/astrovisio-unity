@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using SFB;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,32 +9,26 @@ namespace Astrovisio
 
     public class NewProjectViewController
     {
+        // === Dependencies ===
         public ProjectManager ProjectManager { get; }
         private UIManager UIManager { get; }
-
-        // private readonly VisualTreeAsset listItemFileTemplate;
-
-        private VisualElement root;
 
         // === UI ===
         private TextField projectNameField;
         private TextField projectDescriptionField;
-        private Button addFileButton;
-        // private ListView filesListView;
+        private Button uploadFileButton;
         private Label filesSizeLabel;
         private Button continueButton;
         private Button cancelButton;
 
         // === Local ===
+        private VisualElement root;
         private FilesController<FileInfo> filesController;
-        private List<FileInfo> selectedFiles;
 
         public NewProjectViewController(ProjectManager projectManager, UIManager uiManager)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
-
-            // this.listItemFileTemplate = listItemFileTemplate;
         }
 
         public void Initialize(VisualElement root)
@@ -43,13 +36,15 @@ namespace Astrovisio
             this.root = root;
             projectNameField = root.Q<VisualElement>("ProjectNameInputField")?.Q<TextField>();
             projectDescriptionField = root.Q<VisualElement>("ProjectDescriptionInputField")?.Q<TextField>();
-            addFileButton = root.Q<VisualElement>("AddFileButton").Q<Button>();
+            uploadFileButton = root.Q<VisualElement>("AddFileButton").Q<Button>();
 
 
             VisualElement filesContainer = this.root.Q<VisualElement>("FilesContainer");
-            filesController = new FilesController<FileInfo>(filesContainer, UIManager.GetUIContext());
-            selectedFiles = new();
-            UpdateFilesContainer();
+            filesController = new FilesController<FileInfo>(
+                filesContainer,
+                UIManager.GetUIContext(),
+                () => UpdateFilesSizeLabel()
+            );
 
             filesSizeLabel = root.Q<VisualElement>("MemorySizeInfo")?.Q<Label>("SizeLabel");
             continueButton = root.Q<VisualElement>("ContinueButton")?.Q<Button>();
@@ -58,14 +53,14 @@ namespace Astrovisio
             projectNameField.value = string.Empty;
             projectDescriptionField.value = string.Empty;
 
-            if (addFileButton != null)
+            if (uploadFileButton != null)
             {
-                addFileButton.clicked += OnAddFileClicked;
+                uploadFileButton.clicked += OnUploadFileClicked;
             }
 
             if (filesSizeLabel != null)
             {
-                filesSizeLabel.text = "";
+                filesSizeLabel.text = "0.00KB";
             }
 
             if (continueButton != null)
@@ -81,9 +76,9 @@ namespace Astrovisio
 
         public void Dispose()
         {
-            if (addFileButton != null)
+            if (uploadFileButton != null)
             {
-                addFileButton.clicked -= OnAddFileClicked;
+                uploadFileButton.clicked -= OnUploadFileClicked;
             }
 
             if (continueButton != null)
@@ -97,7 +92,7 @@ namespace Astrovisio
             }
         }
 
-        private void OnAddFileClicked()
+        private void OnUploadFileClicked()
         {
             string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", true);
             if (paths.Length > 0)
@@ -119,7 +114,7 @@ namespace Astrovisio
                     }
 
                     // Skip if the file is already in the list
-                    if (selectedFiles.Any(file => file.path == path))
+                    if (filesController.Items.Any(file => file.path == path))
                     {
                         Debug.Log($"File already added: {path}");
                         continue;
@@ -127,19 +122,35 @@ namespace Astrovisio
 
                     System.IO.FileInfo sysInfo = new System.IO.FileInfo(path);
                     FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
-                    selectedFiles.Add(fileInfo);
+                    filesController.AddFile(fileInfo);
                     Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");
                 }
-
-                UpdateFilesContainer();
             }
+
+            UpdateFilesSizeLabel();
+        }
+
+        private void UpdateFilesSizeLabel()
+        {
+            filesSizeLabel.text = filesController.GetFormattedTotalSize();
+
+            bool overLimit = IsSizeOverLimit();
+
+            continueButton.SetEnabled(!overLimit);
+            filesSizeLabel.EnableInClassList("over", overLimit);
+        }
+
+        private bool IsSizeOverLimit()
+        {
+            const long maxSize = 5L * 1024 * 1024 * 1024;
+            return filesController.GetTotalSizeBytes() > maxSize;
         }
 
         private void OnContinueClicked()
         {
             string name = projectNameField?.value ?? "<empty>";
             string description = projectDescriptionField?.value ?? "<empty>";
-            string[] paths = selectedFiles.Select(file => $"data/{Path.GetFileName(file.path)}").ToArray();
+            string[] paths = filesController.Items.Select(file => $"data/{Path.GetFileName(file.path)}").ToArray();
             // Debug.Log($"Create project: {name}, {description} with {paths.Length} files.");
             ProjectManager.CreateProject(name, description, paths);
             OnExit();
@@ -160,25 +171,6 @@ namespace Astrovisio
                 projectDescriptionField?.SetValueWithoutNotify(string.Empty);
                 // projectManager.FetchAllProjects();
             }).StartingIn(400);
-        }
-
-        private void UpdateFilesContainer()
-        {
-            for (int i = 0; i < selectedFiles.Count; i++)
-            {
-                FileInfo fileInfo = selectedFiles[i];
-                filesController.AddFile(fileInfo);
-
-                Debug.Log(fileInfo.Name + " " + fileInfo.Size + " " + fileInfo.Path);
-
-                // Button fileItemButton = fileItem.Q<Button>();
-                // fileItemButton.clicked += () =>
-                // {
-                //     selectedFiles.Remove(fileInfo);
-                //     UpdateFilesContainer();
-                //     UpdateFilesSizeLabel();
-                // };
-            }
         }
 
     }

@@ -10,7 +10,7 @@
             <engine:VisualElement name="InfoContainer" style="flex-grow: 1;">
                 <engine:VisualElement name="HeaderContainer">
                     <engine:Label text="Project Serra Project Serra Project Serra Project Serra " name="ProjectNameLabel" style="flex-shrink: 1;" />
-                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 1;">
+                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 0;">
                         <engine:Button name="FavouriteButton" />
                         <engine:Button name="EditButton" />
                         <engine:Button name="DeleteButton" />
