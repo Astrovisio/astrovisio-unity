@@ -47,10 +47,12 @@
 
 #SliderMinMaxHistogramRoot > #MaxContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+    color: var(--grey-700);
 }
 
 #SliderMinMaxHistogramRoot > #MinContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+    color: var(--grey-700);
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer {

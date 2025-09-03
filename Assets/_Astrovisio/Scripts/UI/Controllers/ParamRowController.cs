@@ -70,20 +70,15 @@ namespace Astrovisio
             // Threshold
             thresholdContainer = Root.Q<VisualElement>("ThresholdContainer");
             VisualElement histogramSlider = thresholdContainer.Q<VisualElement>("HistogramSlider");
+            HistogramController histogramController = new HistogramController(histogramSlider);
+            MinMaxSlider minMaxSlider = histogramSlider.Q<MinMaxSlider>("MinMaxHistogramSlider");
             minInputField = histogramSlider.Q<DoubleField>("MinFloatField");
             maxInputField = histogramSlider.Q<DoubleField>("MaxFloatField");
-            Debug.Log(histogramSlider);
-            Debug.Log(minInputField);
-            Debug.Log(maxInputField);
-            minInputField.value = 10d;
-            maxInputField.value = 20d;
             // minInputField.SetValueWithoutNotify(double.Parse(minInputField.value.ToString("E5")));
             // maxInputField.SetValueWithoutNotify(double.Parse(maxInputField.value.ToString("E5")));
 
             minErrorLabel = histogramSlider.Q<Label>("MinErrorLabel");
             maxErrorLabel = histogramSlider.Q<Label>("MaxErrorLabel");
-            Debug.Log(minErrorLabel);
-            Debug.Log(maxErrorLabel);
             Param.ThrMinSel = Param.ThrMinSel ?? Param.ThrMin;
             Param.ThrMaxSel = Param.ThrMaxSel ?? Param.ThrMax;
             minInputField.RegisterValueChangedCallback(evt =>

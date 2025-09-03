@@ -11,6 +11,7 @@
 }
 
 #Root > #LoadingBarContainer {
+    flex-grow: 1;
 }
 
 #Root > #LoadingBarContainer > #Message {
