@@ -3,7 +3,7 @@
     <engine:VisualElement name="Root" style="flex-grow: 1;">
         <engine:VisualElement name="ReadMorePanel">
             <engine:VisualElement name="HeaderContainer" style="flex-grow: 1;">
-                <engine:Label text="Title" name="TitleLabel" />
+                <engine:Label text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" name="TitleLabel" />
                 <engine:Button name="CloseButton" style="background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/Close.svg?fileID=7388822144124034973&amp;guid=8edc35042da8fba46be3b10c3f76bb6a&amp;type=3#Close&quot;);" />
             </engine:VisualElement>
             <engine:ScrollView name="DescriptionScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" touch-scroll-type="Clamped">

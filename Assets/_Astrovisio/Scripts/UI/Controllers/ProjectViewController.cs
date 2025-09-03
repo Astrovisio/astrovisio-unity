@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using NUnit.Framework.Internal;
 
 namespace Astrovisio
 {
@@ -20,6 +21,7 @@ namespace Astrovisio
         // === UI ===
         private Label projectNameLabel;
         private Label descriptionLabel;
+        private Button readMoreButton;
         private Toggle checkAllToggle;
         private Button headerNameButton;
         private ScrollView paramScrollView;
@@ -60,6 +62,10 @@ namespace Astrovisio
             // Project Description
             descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
+
+            // Project Read More
+            readMoreButton = topContainer.Q<Button>("ReadMoreButton");
+            readMoreButton.clicked += () => UIManager.SetReadMoreViewVisibility(true, Project.Name, Project.Description);
 
             // Header Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");

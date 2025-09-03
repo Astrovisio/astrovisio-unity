@@ -232,9 +232,9 @@ namespace Astrovisio
 			await apiManager.DeleteProject(id,
 				() =>
 				{
-					ProjectDeleted?.Invoke(project);
 					projectList.Remove(project);
 					openedProjectList.Remove(project);
+					ProjectDeleted?.Invoke(project);
 				},
 				error => ApiError?.Invoke(error));
 		}
@@ -332,7 +332,6 @@ namespace Astrovisio
 				uiManager.SetLoadingView(false);
 			}
 		}
-
 
 		private void OnDisable()
 		{

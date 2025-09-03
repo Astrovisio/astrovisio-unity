@@ -31,6 +31,7 @@ namespace Astrovisio
         private SettingsViewController settingsViewController;
         private LoaderController loaderController;
         private AboutViewController aboutViewController;
+        private ReadMoreViewController readMoreViewController;
 
         // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -75,6 +76,9 @@ namespace Astrovisio
 
             VisualElement aboutView = uiDocument.rootVisualElement.Q<VisualElement>("AboutView");
             aboutViewController = new AboutViewController(aboutView, this);
+
+            VisualElement readMoreView = uiDocument.rootVisualElement.Q<VisualElement>("ReadMoreView");
+            readMoreViewController = new ReadMoreViewController(readMoreView, this);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -174,6 +178,7 @@ namespace Astrovisio
             mainViewController.SetContentVisibility(state);
             mainViewController.SetBackgroundVisibility(state);
             settingsViewController.SetSettingsVisibility(!state);
+            SetGizmoTransformVisibility(false);
         }
 
         public void SetUIVisibility(bool state)
@@ -206,13 +211,17 @@ namespace Astrovisio
 
                 if (loaderType == LoaderType.Spinner)
                 {
-                    loadingSpinner.style.display = DisplayStyle.Flex;
-                    loadingBar.style.display = DisplayStyle.None;
+                    // loadingSpinner.style.display = DisplayStyle.Flex;
+                    // loadingBar.style.display = DisplayStyle.None;
+                    loaderController.SetSpinnerVisibility(true);
+                    loaderController.SetBarVisibility(false);
                 }
                 else
                 {
-                    loadingSpinner.style.display = DisplayStyle.None;
-                    loadingBar.style.display = DisplayStyle.Flex;
+                    // loadingSpinner.style.display = DisplayStyle.None;
+                    // loadingBar.style.display = DisplayStyle.Flex;
+                    loaderController.SetSpinnerVisibility(false);
+                    loaderController.SetBarVisibility(true);
                 }
             }
             else
@@ -308,6 +317,18 @@ namespace Astrovisio
             else
             {
                 aboutViewController.Close();
+            }
+        }
+
+        public void SetReadMoreViewVisibility(bool state, string title, string description)
+        {
+            if (state)
+            {
+                readMoreViewController.Open(title, description);
+            }
+            else
+            {
+                readMoreViewController.Close();
             }
         }
 
