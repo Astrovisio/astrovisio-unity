@@ -62,6 +62,7 @@ namespace Astrovisio
             VisualElement deleteProjectView = uiDocument.rootVisualElement.Q<VisualElement>("DeleteProjectView");
             deleteProjectViewController = new DeleteProjectViewController(projectManager, deleteProjectView);
 
+            // Deprecated ?
             VisualElement dataInspector = uiDocument.rootVisualElement.Q<VisualElement>("DataInspector");
             dataInspectorController = new DataInspectorController(dataInspector);
 

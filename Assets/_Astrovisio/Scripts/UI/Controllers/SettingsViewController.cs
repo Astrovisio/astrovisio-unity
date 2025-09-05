@@ -39,8 +39,19 @@ namespace Astrovisio
         {
             Root = root;
             UIManager = uiManager;
+
+            RenderManager.Instance.OnProjectRenderEnd += OnProjectRendered;
+
             Init();
             SetSettingsVisibility(false);
+        }
+
+        private void OnProjectRendered(Project project)
+        {
+            inspectorSettingController.Reset();
+            noiseSettingController.Reset();
+            // screenrecorderSettingController.Reset();
+            DeactivateAllPanels();
         }
 
         private void Init()
@@ -49,19 +60,20 @@ namespace Astrovisio
             Root[0].pickingMode = PickingMode.Ignore;
             Root.Q<VisualElement>("Container").pickingMode = PickingMode.Ignore;
 
+
             // Containers
-            var inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
-            var noiseContainer = Root.Q<VisualElement>("NoiseContainer");
-            var hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
-            var screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
-            var screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
+            VisualElement inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
+            VisualElement noiseContainer = Root.Q<VisualElement>("NoiseContainer");
+            VisualElement hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
+            VisualElement screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
+            VisualElement screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
 
             // Buttons
-            var inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
-            var noiseButton = noiseContainer.Q<Button>("NoiseButton");
-            var hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
-            var screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
-            var screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
+            Button inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
+            Button noiseButton = noiseContainer.Q<Button>("NoiseButton");
+            Button hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
+            Button screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
+            Button screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
 
 
             // ButtonActions

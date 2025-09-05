@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 namespace Astrovisio
 {
 
+    // Deprecated ?
     public class DataInspectorController
     {
         public VisualElement Root { get; }

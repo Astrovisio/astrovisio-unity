@@ -40,7 +40,7 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            RenderManager.Instance.OnProjectReadyToGetRendered += OnProjectReadyToGetRendered;
+            RenderManager.Instance.OnProjectRenderReady += OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened += OnProjectOpened;
 
             Init();

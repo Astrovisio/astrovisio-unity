@@ -104,7 +104,7 @@ namespace Astrovisio
             RenderManager.Instance.SetNoise(state, value);
         }
 
-        private void Reset()
+        public void Reset()
         {
             noiseToggle.value = false;
             noiseSlider.maxValue = noiseMinValue;

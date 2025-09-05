@@ -26,8 +26,10 @@ namespace Astrovisio
         private OrbitCameraController orbitController;
 
         // Events
-        public Action<Project> OnProjectReadyToGetRendered;
-        public Action<string[]> OnDataInspectorChanged;
+        // public Action<KDTreeComponent> OnKDTreeComponentChanged;
+        public Action<Project> OnProjectRenderReady;
+        public Action<Project> OnProjectRenderStart;
+        public Action<Project> OnProjectRenderEnd;
 
         // Settings
         private DataRenderer dataRenderer;
@@ -37,7 +39,6 @@ namespace Astrovisio
 
         // Local
         public bool isInspectorModeActive = false;
-        private PointDistance lastNearest;
 
 
         private void Awake()
@@ -64,63 +65,7 @@ namespace Astrovisio
                 initialCameraRotation = orbitController.transform.rotation.eulerAngles;
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
-
-            // CameraSettings cameraSettings = new CameraSettings(Camera.main);
-            // Debug.Log(cameraSettings.Print());
-
         }
-
-        // TO BE REMOVED ON FUTURE
-        private void Update()
-        {
-            // TO BE REMOVED ON FUTURE
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                ToggleDataInspector();
-            }
-
-
-            if (isInspectorModeActive)
-            {
-                PointDistance? nearest = kdTreeComponent.GetLastNearest();
-
-                if (nearest != null && nearest != lastNearest)
-                {
-                    string[] headers = dataRenderer.GetDataContainer().DataPack.Columns;
-                    float[] dataInfo = kdTreeComponent.GetDataInfo(nearest.Value.index);
-                    // uiManager.SetDataInspector(headers, dataInfo);
-
-                    string[] data = new string[dataInfo.Length];
-                    for (int i = 0; i < dataInfo.Length; i++)
-                    {
-                        data[i] = headers[i] + ": " + dataInfo[i];
-                    }
-
-                    OnDataInspectorChanged?.Invoke(data);
-
-                    lastNearest = nearest.Value;
-                }
-            }
-        }
-
-        // TO BE REMOVED ON FUTURE
-        public void ToggleDataInspector()
-        {
-            kdTreeComponent = dataRenderer.GetKDTreeComponent();
-            kdTreeComponent.ToggleDataInspectorVisibility();
-            isInspectorModeActive = kdTreeComponent.GetDataInspectorVisibility();
-            uiManager.SetDataInspectorVisibility(isInspectorModeActive);
-            // uiManager.SetGizmoTransformerVisibility(isInspectorModeActive);
-            kdTreeComponent.realtime = isInspectorModeActive;
-        }
-
-        // public void SetDataInspector(bool state)
-        // {
-        //     kdTreeComponent = dataRenderer.GetKDTreeComponent();
-        //     kdTreeComponent.SetDebugSphereVisibility(state);
-        //     isInspectorModeActive = kdTreeComponent.GetDebugSphereVisibility();
-        //     kdTreeComponent.realtime = state;
-        // }
 
         public void SetDataInspector(bool state, bool bebugSphereVisibility)
         {
@@ -129,6 +74,16 @@ namespace Astrovisio
             kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
             kdTreeComponent.realtime = state;
             isInspectorModeActive = state;
+
+            if (!XRManager.Instance.IsVRActive)
+            {
+                Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
+                dataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
+            }
+            else
+            {
+                // VR Controller...
+            }
         }
 
         private void ResetCameraTransform()
@@ -143,14 +98,19 @@ namespace Astrovisio
         {
             DataContainer dataContainer = new DataContainer(pack, project);
             projectDataContainers[project] = dataContainer;
-            OnProjectReadyToGetRendered?.Invoke(project);
+            OnProjectRenderReady?.Invoke(project);
             // Debug.Log("OnProjectReadyToGetRendered");
         }
 
-        public DataRenderer GetCurrentDataRenderer() => dataRenderer;
+        public DataRenderer GetCurrentDataRenderer()
+        {
+            return dataRenderer;
+        }
 
         public void RenderDataContainer(Project project)
         {
+            OnProjectRenderStart?.Invoke(project);
+
             ResetCameraTransform();
 
             DataContainer dataContainer = projectDataContainers[project];
@@ -166,9 +126,10 @@ namespace Astrovisio
             // Debug.Log("Length :" + dataContainer.DataPack.Rows.Length);
             dataRenderer = Instantiate(dataRendererPrefab);
             dataRenderer.RenderDataContainer(dataContainer);
-            // Debug.Log("RenderDataContainer -> Nuovo DataRenderer instanziato e dati renderizzati.");
-
+            
             SetDataInspector(false, true);
+
+            OnProjectRenderEnd?.Invoke(project);
         }
 
         public void SetAxisSettings(AxisRenderSettings axisRenderSettings)
@@ -205,11 +166,6 @@ namespace Astrovisio
                 dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
             }
         }
-
-        // private void SetNone()
-        // {
-        //     dataRenderer.SetNone();
-        // }
 
         private void SetColorMap(ParamRenderSettings renderSettings)
         {
