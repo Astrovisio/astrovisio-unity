@@ -60,6 +60,7 @@ namespace CatalogData
         // The mapping buffer is used to store mapping configuration. Since each mapping has a similar set of options,
         // it's less verbose than storing a huge number of options individually
         private ComputeBuffer _mappingConfigBuffer;
+        private ComputeBuffer _dataVisibleBuffer;
         private readonly GPUMappingConfig[] _mappingConfigs = new GPUMappingConfig[7];
 
         private CatalogDataSet _dataSet;
@@ -144,6 +145,7 @@ namespace CatalogData
 
         public void SetCatalogData(DataContainer dataContainer, bool debug = false)
         {
+            ReleaseAllGpuResources();
 
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
@@ -250,13 +252,23 @@ namespace CatalogData
 
                 // Initialize the selected array to 1 (true)
                 int dataCount = _dataSet.DataColumns[0].Length;
-                ComputeBuffer dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
+
+                // Release and recreate
+                if (_dataVisibleBuffer != null)
+                {
+                    _dataVisibleBuffer.Release();
+                    _dataVisibleBuffer = null;
+                }
+                _dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
+
                 int[] selectedArray = new int[dataCount];
-                for (int i = 0; i < dataCount; i++) {
+                for (int i = 0; i < dataCount; i++)
+                {
                     selectedArray[i] = 1;
                 }
-                dataVisibleBuffer.SetData(selectedArray);
-                _catalogMaterial.SetBuffer(_idDataVisible, dataVisibleBuffer);
+
+                _dataVisibleBuffer.SetData(selectedArray);
+                _catalogMaterial.SetBuffer(_idDataVisible, _dataVisibleBuffer);
 
                 // Apply scaling from data set space to world space
                 // transform.localScale *= DataMapping.Uniforms.Scale;
@@ -283,11 +295,24 @@ namespace CatalogData
 
         public void UpdateDataVisibility(int[] visibilityArray)
         {
-                int dataCount = _dataSet.DataColumns[0].Length;
-                ComputeBuffer dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
-                dataVisibleBuffer.SetData(visibilityArray);
-                _catalogMaterial.SetBuffer(_idDataVisible, dataVisibleBuffer);
+            if (_dataSet == null || _catalogMaterial == null || visibilityArray == null)
+            {
+                return;
+            }
+
+            // Release the old one and recreate
+            if (_dataVisibleBuffer != null)
+            {
+                _dataVisibleBuffer.Release();
+                _dataVisibleBuffer = null;
+            }
+
+            int dataCount = _dataSet.DataColumns[0].Length;
+            _dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
+            _dataVisibleBuffer.SetData(visibilityArray);
+            _catalogMaterial.SetBuffer(_idDataVisible, _dataVisibleBuffer);
         }
+
 
         public float[] GetDataInfo()
         {
@@ -934,20 +959,51 @@ namespace CatalogData
             GL.PopMatrix();
         }
 
-        void OnDestroy()
+        private void ReleaseAllGpuResources()
         {
-            _mappingConfigBuffer.Release();
+            // Columns
             if (_buffers != null)
             {
-                for (var i = 0; i < _buffers.Length; i++)
+                for (int i = 0; i < _buffers.Length; i++)
                 {
                     if (_buffers[i] != null)
                     {
                         _buffers[i].Release();
+                        _buffers[i] = null;
                     }
                 }
+                _buffers = null;
+            }
+
+            // Mapping config
+            if (_mappingConfigBuffer != null)
+            {
+                _mappingConfigBuffer.Release();
+                _mappingConfigBuffer = null;
+            }
+
+            // Visibility
+            if (_dataVisibleBuffer != null)
+            {
+                _dataVisibleBuffer.Release();
+                _dataVisibleBuffer = null;
+            }
+
+            // Material
+            if (_catalogMaterial != null)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(_catalogMaterial);
+#else
+                Destroy(_catalogMaterial);
+#endif
+                _catalogMaterial = null;
             }
         }
+
+        void OnDisable() => ReleaseAllGpuResources();
+        void OnDestroy() => ReleaseAllGpuResources();
+
 
     }
 
