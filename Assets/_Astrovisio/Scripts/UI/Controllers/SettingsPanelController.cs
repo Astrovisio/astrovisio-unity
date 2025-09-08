@@ -50,9 +50,9 @@ namespace Astrovisio
         private Action cancelButtonCallback;
 
         // === Events ===
-        public Action<AxisRowSettingsController> OnApplyAxisSetting;
-        public Action<ParamRowSettingsController> OnApplyParamSetting;
-        public Action OnCancelSetting;
+        public event Action<AxisRowSettingsController> OnApplyAxisSetting;
+        public event Action<ParamRowSettingsController> OnApplyParamSetting;
+        public event Action OnCancelSetting;
 
         public SettingsPanelController(Project project, VisualElement root, UIContextSO uiContextSO)
         {
@@ -79,6 +79,8 @@ namespace Astrovisio
             invertToggle = Root.Q<VisualElement>("InvertMappingToggleContainer")?.Q<Toggle>("CheckboxRoot");
             applyButton = Root.Q<VisualElement>("ApplyButton")?.Q<Button>();
             cancelButton = Root.Q<VisualElement>("CancelButton")?.Q<Button>();
+
+            Debug.Log(mappingDropdown);
 
             // cancelButton.clicked += () =>
             // {

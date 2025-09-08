@@ -29,11 +29,15 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
+    border-left-color: rgb(255, 103, 28);
+    border-right-color: rgb(255, 103, 28);
+    border-top-color: rgb(255, 103, 28);
+    border-bottom-color: rgb(255, 103, 28);
     background-color: var(--grey-200);
+}
+
+.button > #Icon.active {
+    -unity-background-image-tint-color: var(--accent-100);
 }
 
 .title-label {
@@ -118,7 +122,6 @@
 
 #SettingsView > #Container > #SettingsSidebar > #NoiseContainer > #NoiseButton > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/NoiseIcon.svg?fileID=7388822144124034973&guid=a9cd4f34ca26d7c48a6c66e70e7456dc&type=3#NoiseIcon");
-    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #SettingsView > #Container > #SettingsSidebar > #NoiseContainer > #NoisePanel {
@@ -143,7 +146,6 @@
 
 #SettingsView > #Container > #SettingsSidebar > #HideUIContainer > #HideUIButton > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/hideui-bar-icon.svg?fileID=7388822144124034973&guid=678ef0045db73a944866460df2e46abe&type=3#hideui-bar-icon");
-    -unity-background-image-tint-color: var(--grey-700);
 }
 
 #SettingsView > #Container > #SettingsSidebar > #ScreenshotContainer > #ScreenshotButton {

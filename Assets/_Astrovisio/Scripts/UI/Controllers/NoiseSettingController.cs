@@ -99,12 +99,17 @@ namespace Astrovisio
             });
         }
 
+        public bool GetState()
+        {
+            return noiseState;
+        }
+
         private void SetNoise(bool state, float value)
         {
             RenderManager.Instance.SetNoise(state, value);
         }
 
-        private void Reset()
+        public void Reset()
         {
             noiseToggle.value = false;
             noiseSlider.maxValue = noiseMinValue;

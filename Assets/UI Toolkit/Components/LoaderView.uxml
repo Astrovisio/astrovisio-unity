@@ -4,7 +4,7 @@
     <Style src="project://database/Assets/UI%20Toolkit/USS/LoaderView.uss?fileID=7433441132597879392&amp;guid=86923ae654661b546a634a982fcc2eb2&amp;type=3#LoaderView" />
     <engine:VisualElement name="Root" class="active">
         <engine:Instance template="LoadingSpinner" name="LoadingSpinner" />
-        <engine:VisualElement name="LoadingBarContainer" style="flex-grow: 1;">
+        <engine:VisualElement name="LoadingBarContainer">
             <engine:Label text="Processing data..." name="Message" style="margin-bottom: 10px;" />
             <engine:Instance template="Slider" name="LoadingBar" picking-mode="Ignore">
                 <AttributeOverrides element-name="MinMaxSlider" high-limit="1" value="0,0.52" />

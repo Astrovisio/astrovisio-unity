@@ -8,10 +8,10 @@
 
 #Root > #LoadingSpinner {
     scale: 2 2;
-    display: none;
 }
 
 #Root > #LoadingBarContainer {
+    flex-grow: 1;
 }
 
 #Root > #LoadingBarContainer > #Message {

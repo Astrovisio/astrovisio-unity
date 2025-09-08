@@ -741,6 +741,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiManager: {fileID: 1328975545}
   uiManager: {fileID: 1869469690}
+  saveProjectCSV: 0
 --- !u!1 &553139021
 GameObject:
   m_ObjectHideFlags: 0
@@ -2560,7 +2561,7 @@ PrefabInstance:
     - target: {fileID: 2307568220249490968, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4973116314143365544, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
@@ -3780,6 +3781,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: XScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: YScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: ZScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: realtime
       value: 0
       objectReference: {fileID: 0}
@@ -3831,7 +3847,7 @@ PrefabInstance:
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3841,7 +3857,7 @@ PrefabInstance:
     - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: debugMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3942,6 +3958,21 @@ PrefabInstance:
         type: 3}
       propertyPath: DataMapping.Mapping.Z.DataMinVal
       value: -847.4055
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.ScalingType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Y.ScalingType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.ScalingType
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}

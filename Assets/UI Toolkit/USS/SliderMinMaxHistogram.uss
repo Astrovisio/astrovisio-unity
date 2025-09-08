@@ -1,46 +1,34 @@
 #SliderMinMaxHistogramRoot {
-    flex-grow: 1;
-    justify-content: flex-start;
-    width: 408px;
-    min-width: 408px;
     flex-direction: row;
-    align-items: flex-start;
-    max-width: 408px;
+    width: 600px;
+    min-width: 600px;
+    max-width: 600px;
 }
 
 #SliderMinMaxHistogramRoot > #MinContainer {
-    width: 96px;
-    min-width: 96px;
-    max-width: 96px;
+    width: 192px;
+    min-width: 192px;
+    max-width: 192px;
 }
 
 #SliderMinMaxHistogramRoot > #MaxContainer {
-    width: 96px;
-    min-width: 96px;
-    max-width: 96px;
+    width: 192px;
+    min-width: 192px;
+    max-width: 192px;
 }
 
 #SliderMinMaxHistogramRoot > #MinContainer > #Label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
-    margin-bottom: 8px;
     font-size: 12px;
     color: var(--grey-500);
     -unity-text-align: upper-center;
-    height: 8px;
-    min-height: 8px;
-    max-height: 8px;
-    margin-top: -5px;
 }
 
 #SliderMinMaxHistogramRoot > #MaxContainer > #Label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
-    margin-bottom: 8px;
     font-size: 12px;
     color: var(--grey-500);
     -unity-text-align: upper-center;
-    min-height: 8px;
-    max-height: 8px;
-    margin-top: -5px;
 }
 
 #SliderMinMaxHistogramRoot > #MaxContainer > .min-max-slider-input {
@@ -59,10 +47,12 @@
 
 #SliderMinMaxHistogramRoot > #MaxContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+    color: var(--grey-700);
 }
 
 #SliderMinMaxHistogramRoot > #MinContainer > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+    color: var(--grey-700);
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer {
@@ -71,7 +61,7 @@
     width: 199px;
     min-width: 199px;
     max-width: 199px;
-    padding-top: 11px;
+    padding-top: 20px;
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphicBg {
@@ -113,7 +103,7 @@
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__min-thumb {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-histogram-handle.svg?fileID=8742538545776668643&guid=e8267aa67909c6141a47971551e7bc46&type=3#slider-histogram-handle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/Slider%20Handle.svg?fileID=7388822144124034973&guid=de9bb7cf1dda9234d8a745cb150aa03d&type=3#Slider Handle");
     background-color: var(--transparent);
     height: 40px;
     width: 8px;
@@ -138,8 +128,8 @@
     border-bottom-color: var(--transparent);
     -unity-background-image-tint-color: var(--grey-800);
     background-size: 8px 100%;
-    background-position-x: center 0;
-    background-position-y: center 0;
+    background-position-x: center;
+    background-position-y: center;
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__max-thumb {
@@ -157,7 +147,7 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-histogram-handle.svg?fileID=8742538545776668643&guid=e8267aa67909c6141a47971551e7bc46&type=3#slider-histogram-handle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Graphics/Slider%20Handle.svg?fileID=7388822144124034973&guid=de9bb7cf1dda9234d8a745cb150aa03d&type=3#Slider Handle");
     background-color: var(--transparent);
     -unity-background-image-tint-color: var(--grey-800);
     background-size: 8px 100%;
@@ -233,4 +223,11 @@
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider > .unity-min-max-slider__input > #unity-dragger > #unity-thumb-max {
     background-image: url("project://database/Assets/UI%20Toolkit/Graphics/Slider%20Handle.png?fileID=2800000&guid=8eabff3f498a04a4bad0f4d2da7b9f43&type=3#Slider Handle");
+}
+
+.error-label {
+    -unity-text-align: upper-center;
+    color: var(--red);
+    font-size: 10px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
 }

@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     flex-grow: 1;
-    padding-left: 0;
+    padding-left: 16px;
     padding-right: 16px;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -18,15 +18,18 @@
 }
 
 #Root > #Name {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
     -unity-text-align: middle-left;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
     font-size: 14px;
     color: var(--grey-700);
-    margin-right: 12px;
-    margin-left: 12px;
+    background-color: var(--transparent);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    flex-grow: 1;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #Root > #Files {
@@ -35,8 +38,8 @@
     min-width: 105px;
     max-width: 105px;
     -unity-text-align: upper-center;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
     display: none;
 }
 
@@ -48,9 +51,9 @@
     width: 136px;
     min-width: 136px;
     max-width: 136px;
-    margin-right: 12px;
-    margin-left: 12px;
     flex-direction: row;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #Root > #XYZAxis > #XYZAxisLabel {
@@ -69,14 +72,14 @@
 }
 
 #Root > #Thresholds {
-    width: 240px;
-    min-width: 240px;
-    max-width: 240px;
+    width: 432px;
+    min-width: 432px;
+    max-width: 432px;
     -unity-text-align: middle-center;
     color: var(--grey-700);
     font-size: 14px;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
-    margin-left: 12px;
+    margin-right: 16px;
 }
 
 #Root > #AllCheck {

@@ -1,33 +1,37 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
-    public enum FilesContainerType
-    {
-        State,
-        Info
-    }
 
     public class FilesController<T> where T : IFileEntry
     {
         public VisualElement Root { get; }
         public UIContextSO UIContextSO { get; }
 
-        private readonly FilesContainerType containerType;
+        public IReadOnlyList<T> Items => fileList;
+
         private readonly List<T> fileList = new();
         private readonly ListView listView;
 
+        private readonly Action onUpdateAction;
 
-        public FilesController(VisualElement root, UIContextSO ctx, FilesContainerType type = FilesContainerType.Info)
+
+        public FilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null)
         {
             Root = root;
             UIContextSO = ctx;
-            containerType = type;
+            this.onUpdateAction = onUpdateAction;
 
             listView = Root.Q<ListView>();
-            if (listView == null) { Debug.LogError("ListView not found."); return; }
+            if (listView == null)
+            {
+                Debug.LogError("ListView not found.");
+                return;
+            }
 
             listView.itemsSource = fileList;
             listView.selectionType = SelectionType.None;
@@ -35,54 +39,64 @@ namespace Astrovisio
             listView.reorderMode = ListViewReorderMode.Animated;
 
             listView.makeItem = () =>
-                (containerType == FilesContainerType.State ?
-                    UIContextSO.listItemFileStateTemplate :
-                    UIContextSO.listItemFileTemplate).CloneTree();
+                (typeof(T) == typeof(FileState)
+                    ? UIContextSO.listItemFileStateTemplate
+                    : (UIContextSO.listItemFileTemplate ?? UIContextSO.listItemFileStateTemplate)
+                ).CloneTree();
 
             listView.bindItem = (listItemVisualElement, i) =>
             {
                 T entry = fileList[i];
 
+                // Name
                 Label name = listItemVisualElement.Q<Label>("NameLabel");
                 if (name != null)
                 {
                     name.text = entry.Name;
                 }
 
+                // Size
                 Label size = listItemVisualElement.Q<Label>("SizeLabel");
                 if (size != null)
                 {
                     size.text = FormatFileSize(entry.Size);
                 }
 
-                VisualElement badge = listItemVisualElement.Q<VisualElement>("State");
-                Button close = listItemVisualElement.Q<Button>("CloseButton");
-
-                if (entry is FileState fs)
+                // State
+                VisualElement listItemState = listItemVisualElement.Q<VisualElement>("State");
+                if (entry is FileState fileState)
                 {
-                    bool state = fs.state;
-                    if (badge != null)
+                    bool state = fileState.state;
+                    if (listItemState != null)
                     {
                         if (state)
                         {
-                            badge.AddToClassList("active");
+                            listItemState.AddToClassList("active");
                         }
                         else
                         {
-                            badge.RemoveFromClassList("active");
+                            listItemState.RemoveFromClassList("active");
                         }
-                    }
-                    if (close != null)
-                    {
-                        close.clicked -= () => { };
-                        close.clicked += () => RemoveFile(fileList[i]);
                     }
                 }
                 else
                 {
-                    badge?.RemoveFromClassList("active");
-                    if (close != null) close.SetEnabled(false);
+                    listItemState?.RemoveFromClassList("active");
                 }
+
+                // Delete
+                Button deleteButton = listItemVisualElement.Q<Button>("CloseButton");
+                if (deleteButton != null)
+                {
+                    deleteButton.clickable = null;
+                    T current = entry;
+                    deleteButton.clickable = new Clickable(() =>
+                    {
+                        RemoveFile(current);
+                        // PrintListView();
+                    });
+                }
+
             };
         }
 
@@ -118,6 +132,7 @@ namespace Astrovisio
         private void Refresh()
         {
             listView.RefreshItems();
+            onUpdateAction?.Invoke();
         }
 
         private string FormatFileSize(long sizeInBytes)
@@ -140,74 +155,43 @@ namespace Astrovisio
             }
         }
 
-        // private void TestFileStateListView()
-        // {
-        //     FileState fileStateA = new FileState(new FileInfo("./FileA.fits", "FileA.fits", 1111L));
-        //     FileState fileStateB = new FileState(new FileInfo("./FileB.fits", "FileB.fits", 2222L));
-        //     FileState fileStateC = new FileState(new FileInfo("./FileC.fits", "FileC.fits", 3333L));
-        //     FileState fileStateD = new FileState(new FileInfo("./FileD.fits", "FileD.fits", 4444L));
-        //     FileState fileStateE = new FileState(new FileInfo("./FileE.fits", "FileE.fits", 5555L));
-        //     FileState fileStateF = new FileState(new FileInfo("./FileF.fits", "FileF.fits", 6666L));
+        public long GetTotalSizeBytes()
+        {
+            return fileList.Sum(file => file.Size);
+        }
 
-        //     fileList.Add(fileStateA);
-        //     fileList.Add(fileStateB);
-        //     fileList.Add(fileStateC);
-        //     fileList.Add(fileStateD);
-        //     fileList.Add(fileStateE);
-        //     fileList.Add(fileStateF);
+        public string GetFormattedTotalSize()
+        {
+            return FormatFileSize(GetTotalSizeBytes());
+        }
 
-        //     listView = Root.Query<ListView>().First();
-        //     listView.itemsSource = fileList;
-        //     listView.reorderable = true;
-        //     listView.reorderMode = ListViewReorderMode.Animated;
-        //     listView.selectionType = SelectionType.None;
+        public void PrintListView()
+        {
+            if (listView?.itemsSource == null)
+            {
+                Debug.LogWarning("ListView or itemsSource is null.");
+                return;
+            }
 
+            Debug.Log($"[ListView] Count = {listView.itemsSource.Count}");
 
-        //     listView.makeItem = () =>
-        //     {
-        //         return UIContextSO.listItemFileStateTemplate.CloneTree();
-        //     };
+            for (int i = 0; i < listView.itemsSource.Count; i++)
+            {
+                if (listView.itemsSource[i] is FileInfo fileInfo)
+                {
+                    Debug.Log($"[{i}] FileInfo -> Name={fileInfo.name}, Size={fileInfo.size}, Path={fileInfo.path}");
+                }
+                else if (listView.itemsSource[i] is FileState fs)
+                {
+                    Debug.Log($"[{i}] FileState -> Name={fs.fileInfo.name}, Size={fs.fileInfo.size}, Path={fs.fileInfo.path}, State={fs.state}");
+                }
+                else
+                {
+                    Debug.Log($"[{i}] {listView.itemsSource[i]}");
+                }
+            }
+        }
 
-        //     listView.bindItem = (ve, index) =>
-        //     {
-        //         FileState fileState = fileList[index];
-
-        //         Label nameLabel = ve.Q<Label>("NameLabel");
-        //         Label sizeLabel = ve.Q<Label>("SizeLabel");
-        //         VisualElement state = ve.Q<VisualElement>("State");
-        //         Button closeButton = ve.Q<Button>("CloseButton");
-
-        //         if (nameLabel != null)
-        //         {
-        //             nameLabel.text = fileState.fileInfo.name;
-        //         }
-
-        //         if (sizeLabel != null)
-        //         {
-        //             sizeLabel.text = fileState.fileInfo.size.ToString();
-        //         }
-
-        //         if (state != null)
-        //         {
-        //             if (fileState.state)
-
-        //             {
-        //                 state.AddToClassList("active");
-        //             }
-        //             else
-        //             {
-        //                 state.RemoveFromClassList("active");
-        //             }
-        //         }
-
-        //         if (closeButton != null)
-        //         {
-        //             closeButton.clickable = new Clickable(() => RemoveListViewItemState(fileState));
-        //         }
-        //     };
-
-        //     listView.Rebuild();
-        // }
 
     }
 

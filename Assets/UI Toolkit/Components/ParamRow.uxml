@@ -10,7 +10,7 @@
             </engine:Instance>
         </engine:VisualElement>
         <engine:VisualElement name="NameContainer" style="flex-grow: 1;">
-            <engine:Label text="Temperature&#10;" name="Label" />
+            <engine:Label text="Temperature" name="Label" />
         </engine:VisualElement>
         <engine:VisualElement name="FilesMainContainer" style="flex-grow: 1; display: none;">
             <engine:VisualElement name="FilesContainer">
@@ -32,17 +32,7 @@
                 <AttributeOverrides element-name="ChipRoot" text="Z" />
             </engine:Instance>
         </engine:VisualElement>
-        <engine:VisualElement name="ThresholdContainer" style="flex-grow: 1; height: 49px; min-height: 49px; max-height: 49px;">
-            <engine:VisualElement name="MinContainer" class="threshold-container" style="flex-grow: 1; display: none;">
-                <engine:Label text="Min" name="MinLabel" class="threshold-label" />
-                <engine:DoubleField value="10000" name="MinInputField" class="threshold-input-field" />
-                <engine:Label text="Value too low" name="MinErrorLabel" class="threshold-error-label" />
-            </engine:VisualElement>
-            <engine:VisualElement name="MaxContainer" class="threshold-container" style="flex-grow: 1; display: none;">
-                <engine:Label text="Max" name="MaxLabel" class="threshold-label" />
-                <engine:DoubleField value="10000" name="MaxInputField" max-length="1000" class="threshold-input-field" />
-                <engine:Label text="Value too low" name="MaxErrorLabel" class="threshold-error-label" />
-            </engine:VisualElement>
+        <engine:VisualElement name="ThresholdContainer" style="flex-grow: 1;">
             <engine:Instance template="SliderMinMaxHistogram" name="HistogramSlider" />
             <engine:Button name="ResetButton" />
         </engine:VisualElement>

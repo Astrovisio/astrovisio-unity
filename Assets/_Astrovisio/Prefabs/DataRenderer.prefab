@@ -2294,13 +2294,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   realtime: 0
-  selectionMode: 1
+  selectionMode: 2
   selectionRadius: 0.05
   selectionCubeHalfSize: 0.05
   aggregationMode: 0
   showSelectionGizmo: 1
   pointCloudTransform: {fileID: 6528833266872925955}
-  controllerTransform: {fileID: 0}
+  controllerTransform: {fileID: 6528833266872925955}
   xRange: {x: -0.5, y: 0.5}
   yRange: {x: -0.5, y: 0.5}
   zRange: {x: -0.5, y: 0.5}

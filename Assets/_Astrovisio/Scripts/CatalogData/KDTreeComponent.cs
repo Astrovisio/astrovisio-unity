@@ -41,11 +41,14 @@ public readonly struct PointDistance
 public class KDTreeComponent : MonoBehaviour
 {
 
+    // Events
+    public event Action<float[]> OnSelectionPerformed;
+
     [Header("Settings")]
-    public bool realtime = true;
+    public bool realtime = false;
 
     [Header("Area Selection Settings")]
-    public SelectionMode selectionMode = SelectionMode.SinglePoint;
+    public SelectionMode selectionMode = SelectionMode.Sphere;
     public float selectionRadius = 0.05f; // For sphere selection
     public float selectionCubeHalfSize = 0.05f; // For cube selection
     public AggregationMode aggregationMode = AggregationMode.Average;
@@ -94,7 +97,6 @@ public class KDTreeComponent : MonoBehaviour
     public InputActionProperty selectAction;
 
     private GameObject currentDataSelectionGameObject;
-
     private AstrovisioDataSetRenderer astrovisioDatasetRenderer;
 
 
@@ -207,9 +209,14 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
+        Debug.Log("PerformSelection");
+
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
         // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
+
+        Debug.Log("areaSelectionResult");
+        Debug.Log(areaSelectionResult);
 
         // Update Visible Items Array in shader
         astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
@@ -234,15 +241,22 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
+        Debug.Log("areaSelectionResult.AggregatedValues");
+        Debug.Log(areaSelectionResult.AggregatedValues);
+
         if (areaSelectionResult.SelectedIndices.Count > 0)
         {
             Debug.Log(string.Join(", ", areaSelectionResult.AggregatedValues));
         }
 
+        Debug.Log(areaSelectionResult.AggregatedValues);
+
+        OnSelectionPerformed?.Invoke(areaSelectionResult.AggregatedValues);
+
         return areaSelectionResult;
     }
 
-    private async void Update()
+    private void Update()
     {
         if (manager == null || running || controllerTransform == null || pointCloudTransform == null)
         {
@@ -254,15 +268,6 @@ public class KDTreeComponent : MonoBehaviour
         {
             cachedWorldScale = pointCloudTransform.lossyScale;
             needsScaleUpdate = false;
-        }
-
-        if (realtime)
-        {
-            running = true;
-
-            areaSelectionResult = await ComputeSelection();
-
-            running = false;
         }
 
         HandleDataInspectorPosition();
@@ -376,9 +381,11 @@ public class KDTreeComponent : MonoBehaviour
 
         if (currentDataInspector != null)
         {
+
             currentDataInspector.SetActiveState(true);
 
-            if (currentDataSelectionGameObject != null)
+
+            if (!astrovisioDatasetRenderer.DataMapping.isolateSelection && currentDataSelectionGameObject != null)
             {
                 currentDataSelectionGameObject.GetComponent<MeshRenderer>().enabled = true;
             }
@@ -852,17 +859,18 @@ public class KDTreeComponent : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Debug.Log("OnDestroy");
         if (pointDataInspector != null)
         {
-            DestroyImmediate(pointDataInspector);
+            Destroy(pointDataInspector.gameObject);
         }
         if (areaSphereDataInspector != null)
         {
-            DestroyImmediate(areaSphereDataInspector);
+            Destroy(areaSphereDataInspector.gameObject);
         }
         if (areaBoxDataInspector != null)
         {
-            DestroyImmediate(areaBoxDataInspector);
+            Destroy(areaBoxDataInspector.gameObject);
         }
 
         // Rimuovi il listener per evitare memory leak

@@ -31,6 +31,7 @@ namespace Astrovisio
         private SettingsViewController settingsViewController;
         private LoaderController loaderController;
         private AboutViewController aboutViewController;
+        private ReadMoreViewController readMoreViewController;
 
         // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -61,6 +62,7 @@ namespace Astrovisio
             VisualElement deleteProjectView = uiDocument.rootVisualElement.Q<VisualElement>("DeleteProjectView");
             deleteProjectViewController = new DeleteProjectViewController(projectManager, deleteProjectView);
 
+            // Deprecated ?
             VisualElement dataInspector = uiDocument.rootVisualElement.Q<VisualElement>("DataInspector");
             dataInspectorController = new DataInspectorController(dataInspector);
 
@@ -75,6 +77,9 @@ namespace Astrovisio
 
             VisualElement aboutView = uiDocument.rootVisualElement.Q<VisualElement>("AboutView");
             aboutViewController = new AboutViewController(aboutView, this);
+
+            VisualElement readMoreView = uiDocument.rootVisualElement.Q<VisualElement>("ReadMoreView");
+            readMoreViewController = new ReadMoreViewController(readMoreView, this);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -174,6 +179,7 @@ namespace Astrovisio
             mainViewController.SetContentVisibility(state);
             mainViewController.SetBackgroundVisibility(state);
             settingsViewController.SetSettingsVisibility(!state);
+            SetGizmoTransformVisibility(false);
         }
 
         public void SetUIVisibility(bool state)
@@ -194,13 +200,30 @@ namespace Astrovisio
             return uiVisibility;
         }
 
-        public void SetLoadingBar(bool state)
+        public void SetLoadingView(bool state, LoaderType loaderType = LoaderType.Spinner)
         {
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
+            VisualElement loadingSpinner = loaderView.Q<VisualElement>("LoadingSpinner");
+            VisualElement loadingBar = loaderView.Q<VisualElement>("LoadingBar");
 
             if (state)
             {
                 loaderView.AddToClassList("active");
+
+                if (loaderType == LoaderType.Spinner)
+                {
+                    // loadingSpinner.style.display = DisplayStyle.Flex;
+                    // loadingBar.style.display = DisplayStyle.None;
+                    loaderController.SetSpinnerVisibility(true);
+                    loaderController.SetBarVisibility(false);
+                }
+                else
+                {
+                    // loadingSpinner.style.display = DisplayStyle.None;
+                    // loadingBar.style.display = DisplayStyle.Flex;
+                    loaderController.SetSpinnerVisibility(false);
+                    loaderController.SetBarVisibility(true);
+                }
             }
             else
             {
@@ -295,6 +318,18 @@ namespace Astrovisio
             else
             {
                 aboutViewController.Close();
+            }
+        }
+
+        public void SetReadMoreViewVisibility(bool state, string title, string description)
+        {
+            if (state)
+            {
+                readMoreViewController.Open(title, description);
+            }
+            else
+            {
+                readMoreViewController.Close();
             }
         }
 

@@ -1,0 +1,84 @@
+#Root {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+}
+
+#Root > #ReadMorePanel {
+    width: 600px;
+    min-width: 600px;
+    max-width: 600px;
+    height: 400px;
+    min-height: 400px;
+    max-height: 400px;
+    background-color: var(--grey-150);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    flex-direction: column;
+    align-self: center;
+    padding-top: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    padding-left: 24px;
+}
+
+#Root > #ReadMorePanel > #HeaderContainer {
+    margin-bottom: 24px;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+}
+
+#Root > #ReadMorePanel > #HeaderContainer > #TitleLabel {
+    color: var(--grey-800);
+    font-size: 20px;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    flex-grow: 1;
+    margin-right: 12px;
+}
+
+#Root > #ReadMorePanel > #HeaderContainer > #CloseButton {
+    background-color: rgba(0, 0, 0, 0);
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+#Root > #ReadMorePanel > #HeaderContainer > #CloseButton:hover {
+    background-color: var(--grey-200);
+}
+
+#Root > #ReadMorePanel > #HeaderContainer > #CloseButton:active {
+    background-color: var(--grey-300);
+}
+
+#Root > #ReadMorePanel > #DescriptionScrollView {
+    flex-grow: 1;
+}
+
+#Root > #ReadMorePanel > #DescriptionScrollView > #DescriptionLabel {
+    flex-grow: 1;
+    color: var(--grey-700);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 12px;
+    white-space: pre-wrap;
+}

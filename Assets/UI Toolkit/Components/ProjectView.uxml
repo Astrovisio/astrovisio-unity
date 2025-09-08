@@ -10,13 +10,13 @@
             <engine:VisualElement name="InfoContainer" style="flex-grow: 1;">
                 <engine:VisualElement name="HeaderContainer">
                     <engine:Label text="Project Serra Project Serra Project Serra Project Serra " name="ProjectNameLabel" style="flex-shrink: 1;" />
-                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 1;">
-                        <engine:Button name="FavouriteButton" />
-                        <engine:Button name="EditButton" />
-                        <engine:Button name="DeleteButton" />
+                    <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 0;">
+                        <engine:Button name="FavouriteButton" class="icon-btn" />
+                        <engine:Button name="EditButton" class="icon-btn" />
+                        <engine:Button name="DeleteButton" class="icon-btn" />
                     </engine:VisualElement>
                 </engine:VisualElement>
-                <engine:VisualElement name="DescriptionContainer" style="flex-grow: 1;">
+                <engine:VisualElement name="DescriptionContainer">
                     <engine:Label name="DescriptionLabel" text="We introduce SERRA, a suite of zoom-in high-resolution (∼10pc) cosmological simulations including non-equilibrium chemistry and on-the-fly radiative transfer. The outputs are post-processed to derive galaxy UV+FIR continuum and emission line properties. eccccccccccccccccccccccccccc &#10;" />
                     <engine:VisualElement name="BottomContainer" style="flex-grow: 1; flex-direction: row;">
                         <engine:Button text="Read more" name="ReadMoreButton" />

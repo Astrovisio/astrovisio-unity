@@ -4,6 +4,12 @@ using UnityEngine.UIElements;
 namespace Astrovisio
 {
 
+    public enum LoaderType
+    {
+        Spinner,
+        Bar
+    }
+
     public class LoaderController
     {
         public VisualElement Root { get; }

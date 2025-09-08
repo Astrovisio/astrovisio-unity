@@ -12,18 +12,54 @@ namespace Astrovisio
 
         private class ButtonAction
         {
-            public string Name;
-            public Button Button;
-            public VisualElement Container;
-            public Action OnClick;
+            public string Name { get; }
+            public Button Button { get; }
+            public VisualElement Container { get; }
+            public VisualElement Icon { get; }
+            public Action OnClick { get; }
 
-            public ButtonAction(string name, Button button, VisualElement container = null, Action onClick = null)
+            public bool State { get; private set; } = false;
+
+            public ButtonAction(string name, Button button, VisualElement container = null, VisualElement icon = null, Action onClick = null)
             {
                 Name = name;
                 Button = button;
                 Container = container;
+                Icon = icon;
                 OnClick = onClick;
             }
+
+            public void SetState(bool state)
+            {
+                if (Container != null)
+                {
+                    Container.EnableInClassList("active", state);
+                }
+
+                SetIconState(state);
+
+                if (Button != null)
+                {
+                    Button.EnableInClassList("active", state);
+                }
+
+                State = state;
+            }
+
+            public void SetIconState(bool state)
+            {
+                if (Icon != null)
+                {
+                    Icon.EnableInClassList("active", state);
+                }
+            }
+
+            public void ToggleState()
+            {
+                State = !State;
+                SetState(State);
+            }
+
         }
 
         private List<ButtonAction> buttonActions = new List<ButtonAction>();
@@ -39,8 +75,19 @@ namespace Astrovisio
         {
             Root = root;
             UIManager = uiManager;
+
+            RenderManager.Instance.OnProjectRenderEnd += OnProjectRendered;
+
             Init();
             SetSettingsVisibility(false);
+        }
+
+        private void OnProjectRendered(Project project)
+        {
+            inspectorSettingController.Reset();
+            noiseSettingController.Reset();
+            // screenrecorderSettingController.Reset();
+            DeactivateAllPanels();
         }
 
         private void Init()
@@ -49,38 +96,46 @@ namespace Astrovisio
             Root[0].pickingMode = PickingMode.Ignore;
             Root.Q<VisualElement>("Container").pickingMode = PickingMode.Ignore;
 
+
             // Containers
-            var inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
-            var noiseContainer = Root.Q<VisualElement>("NoiseContainer");
-            var hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
-            var screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
-            var screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
+            VisualElement inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
+            VisualElement noiseContainer = Root.Q<VisualElement>("NoiseContainer");
+            VisualElement hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
+            VisualElement screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
+            VisualElement screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
 
             // Buttons
-            var inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
-            var noiseButton = noiseContainer.Q<Button>("NoiseButton");
-            var hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
-            var screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
-            var screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
+            Button inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
+            Button noiseButton = noiseContainer.Q<Button>("NoiseButton");
+            Button hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
+            Button screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
+            Button screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
+
+            // Icons
+            VisualElement inspectorIcon = inspectorContainer.Q<VisualElement>("Icon");
+            VisualElement noiseIcon = noiseContainer.Q<VisualElement>("Icon");
+            VisualElement hideUIIcon = hideUIContainer.Q<VisualElement>("Icon");
+            VisualElement screenshotIcon = screenshotContainer.Q<VisualElement>("Icon");
+            VisualElement screenrecorderIcon = screenrecorderContainer.Q<VisualElement>("Icon");
 
 
             // ButtonActions
 
             // 1. Panels
-            buttonActions.Add(new ButtonAction("Inspector", inspectorButton, inspectorContainer));
-            buttonActions.Add(new ButtonAction("Noise", noiseButton, noiseContainer));
-            buttonActions.Add(new ButtonAction("Screenrecorder", screenrecorderButton, screenrecorderContainer));
+            buttonActions.Add(new ButtonAction("Inspector", inspectorButton, inspectorContainer, inspectorIcon));
+            buttonActions.Add(new ButtonAction("Noise", noiseButton, noiseContainer, noiseIcon));
+            buttonActions.Add(new ButtonAction("Screenrecorder", screenrecorderButton, screenrecorderContainer, screenrecorderIcon));
 
             // 2. Action-only buttons
             buttonActions.Add(new ButtonAction(
-                "Screenshot", screenshotButton, null,
+                "Screenshot", screenshotButton, null, screenshotIcon,
                 () =>
                 {
                     UIManager.TakeScreenshot();
                 }
             ));
             buttonActions.Add(new ButtonAction(
-                "HideUI", hideUIButton, null,
+                "HideUI", hideUIButton, hideUIContainer, hideUIIcon,
                 () =>
                 {
                     bool uiVisibility = UIManager.GetUIVisibility();
@@ -89,13 +144,9 @@ namespace Astrovisio
             ));
 
             // Remove "active" from all at startup
-            foreach (var action in buttonActions)
+            foreach (ButtonAction buttonAction in buttonActions)
             {
-                action.Button.RemoveFromClassList("active");
-                if (action.Container != null)
-                {
-                    action.Container.RemoveFromClassList("active");
-                }
+                SetPanelActive(buttonAction, false);
             }
 
             // Bind all button events
@@ -105,23 +156,46 @@ namespace Astrovisio
                 {
                     if (buttonAction.Container != null)
                     {
-                        // Panel logic: toggle this tab, deactivate others if activating
                         bool newState = !buttonAction.Button.ClassListContains("active");
                         if (newState && IsAnyPanelActive())
                         {
                             DeactivateAllPanels();
                         }
 
+                        if (buttonAction.OnClick != null)
+                        {
+                            // Action-only button
+                            buttonAction.OnClick?.Invoke();
+                            // Optional: add highlight
+                            buttonAction.ToggleState();
+                        }
+
                         SetPanelActive(buttonAction, newState);
+
+                        // Only for Inspector Button
+                        if (buttonAction.Name == "Inspector")
+                        {
+                            bool selectionState = inspectorSettingController.GetState();
+                            bool newSelectionState = !selectionState;
+                            inspectorSettingController.SetInspectorState(newSelectionState);
+                            // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
+                        }
+
+                        // Only for Noise Button
+                        if (buttonAction.Name == "Noise" && buttonAction.State == false)
+                        {
+                            bool noiseState = noiseSettingController.GetState();
+                            buttonAction.SetIconState(noiseState);
+                        }
                     }
                     else
                     {
                         // Action-only button
                         buttonAction.OnClick?.Invoke();
                         // Optional: add highlight
-                        buttonAction.Button.AddToClassList("active");
+                        buttonAction.SetState(true);
                         // Remove highlight after short delay for feedback
-                        Root.schedule.Execute(() => buttonAction.Button.RemoveFromClassList("active")).StartingIn(150);
+                        Root.schedule.Execute(() => buttonAction.SetState(false)).StartingIn(150);
                     }
                 };
             }
@@ -136,24 +210,9 @@ namespace Astrovisio
             Root.style.display = visibility ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        private void SetPanelActive(ButtonAction action, bool active)
+        private void SetPanelActive(ButtonAction buttonAction, bool active)
         {
-            if (active)
-            {
-                action.Button.AddToClassList("active");
-                if (action.Container != null)
-                {
-                    action.Container.AddToClassList("active");
-                }
-            }
-            else
-            {
-                action.Button.RemoveFromClassList("active");
-                if (action.Container != null)
-                {
-                    action.Container.RemoveFromClassList("active");
-                }
-            }
+            buttonAction.SetState(active);
         }
 
         private bool IsAnyPanelActive()
@@ -170,11 +229,25 @@ namespace Astrovisio
 
         private void DeactivateAllPanels()
         {
-            foreach (var action in buttonActions)
+            foreach (ButtonAction buttonAction in buttonActions)
             {
-                if (action.Container != null)
+                if (buttonAction.Container != null)
                 {
-                    SetPanelActive(action, false);
+                    SetPanelActive(buttonAction, false);
+
+                    // Only for Inspector Button
+                    if (buttonAction.Name == "Inspector")
+                    {
+                        inspectorSettingController.SetInspectorState(false);
+                        // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
+                    }
+
+                    // Only for Noise Button
+                    if (buttonAction.Name == "Noise" && buttonAction.State == false)
+                    {
+                        bool noiseState = noiseSettingController.GetState();
+                        buttonAction.SetIconState(noiseState);
+                    }
                 }
             }
         }

@@ -24,9 +24,6 @@
 }
 
 #RootButton > #NameContainer {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
     flex-direction: row;
     align-items: center;
     padding-top: 0;
@@ -34,8 +31,8 @@
     padding-bottom: 0;
     padding-left: 0;
     justify-content: center;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
     -unity-text-align: upper-center;
 }
 
@@ -43,6 +40,10 @@
     color: var(--grey-800);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     font-size: 16px;
+    flex-grow: 1;
+    -unity-text-align: upper-left;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #RootButton > #FilesMainContainer {
@@ -50,8 +51,8 @@
     min-width: 105px;
     max-width: 105px;
     align-items: center;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: 24px;
+    margin-right: 24px;
 }
 
 #RootButton > #FilesMainContainer > #FilesContainer {
@@ -104,8 +105,8 @@
     max-width: 136px;
     min-height: 24px;
     max-height: 24px;
-    margin-right: 12px;
-    margin-left: 12px;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #RootButton > #XYZAxisContainer > .btn-chip {
@@ -118,12 +119,15 @@
 #RootButton > #ThresholdContainer {
     flex-direction: row;
     align-items: center;
-    width: 432px;
-    min-width: 432px;
-    max-width: 432px;
-    margin-left: 12px;
+    margin-left: 24px;
     align-self: center;
     justify-content: flex-start;
+    width: 632px;
+    min-width: 632px;
+    max-width: 632px;
+}
+
+#RootButton > #ThresholdContainer > #HistogramSlider {
 }
 
 #RootButton > #ThresholdContainer > #ResetButton {
@@ -143,7 +147,7 @@
     border-left-width: 0;
     border-radius: 50%;
     margin-left: 8px;
-    top: 8px;
+    top: auto;
 }
 
 #RootButton > #ThresholdContainer > #ResetButton:hover {
@@ -215,7 +219,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    margin-right: 12px;
+    margin-right: 24px;
 }
 
 #unity-text-input > .unity-text-element--inner-input-field-component {
@@ -235,7 +239,7 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
-    font-size: 12px;
+    font-size: 24px;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
     color: var(--black);
     -unity-text-align: upper-left;
