@@ -26,10 +26,10 @@ namespace Astrovisio
         private OrbitCameraController orbitController;
 
         // Events
-        // public Action<KDTreeComponent> OnKDTreeComponentChanged;
-        public Action<Project> OnProjectRenderReady;
-        public Action<Project> OnProjectRenderStart;
-        public Action<Project> OnProjectRenderEnd;
+        // public event Action<KDTreeComponent> OnKDTreeComponentChanged;
+        public event Action<Project> OnProjectRenderReady;
+        public event Action<Project> OnProjectRenderStart;
+        public event Action<Project> OnProjectRenderEnd;
 
         // Settings
         private DataRenderer dataRenderer;

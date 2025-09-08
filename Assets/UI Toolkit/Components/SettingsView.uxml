@@ -7,7 +7,7 @@
         <engine:VisualElement name="Container" picking-mode="Ignore">
             <engine:VisualElement name="SettingsSidebar">
                 <engine:VisualElement name="InspectorContainer" class="active" style="flex-grow: 1;">
-                    <engine:Button name="InspectorButton" class="button active" style="overflow: visible;">
+                    <engine:Button name="InspectorButton" class="button" style="overflow: visible;">
                         <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
                     </engine:Button>
                     <engine:Instance template="InspectorPanel" name="InspectorPanel" style="top: -120px;" />

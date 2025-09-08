@@ -152,7 +152,7 @@ namespace Astrovisio
 
             _subscribedKDTree = kd;
             _subscribedKDTree.OnSelectionPerformed += OnSelectionPerformed;
-            Debug.Log("Hook to " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Hook to " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
         }
 
         private void Unhook()
@@ -162,7 +162,7 @@ namespace Astrovisio
                 return;
             }
             _subscribedKDTree.OnSelectionPerformed -= OnSelectionPerformed;
-            Debug.Log("Unhook from " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Unhook from " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
             _subscribedKDTree = null;
         }
 

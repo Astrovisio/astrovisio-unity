@@ -42,7 +42,7 @@ public class KDTreeComponent : MonoBehaviour
 {
 
     // Events
-    public Action<float[]> OnSelectionPerformed;
+    public event Action<float[]> OnSelectionPerformed;
 
     [Header("Settings")]
     public bool realtime = false;
@@ -757,7 +757,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("OnDestroy");
+        // Debug.Log("OnDestroy");
         if (pointDataInspector != null)
         {
             Destroy(pointDataInspector.gameObject);

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -11,6 +13,9 @@ namespace Astrovisio
 		[Header("Dependencies")]
 		[SerializeField] private APIManager apiManager;
 		[SerializeField] private UIManager uiManager;
+
+		[Header("Debug")]
+		[SerializeField] private bool saveProjectCSV = false;
 
 		public event Action<List<Project>> ProjectsFetched;
 		public event Action<Project> ProjectOpened;
@@ -313,6 +318,11 @@ namespace Astrovisio
 					return;
 				}
 
+				if (saveProjectCSV)
+				{
+					SaveProjectCSV(dataPack);
+				}
+
 				Project project = GetProject(id);
 				if (project != null)
 				{
@@ -331,6 +341,46 @@ namespace Astrovisio
 			{
 				uiManager.SetLoadingView(false);
 			}
+		}
+
+		private void SaveProjectCSV(DataPack dataPack)
+		{
+			if (dataPack == null)
+			{
+				Debug.LogError("DataPack nullo, impossibile salvare il CSV");
+				return;
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			// 1. Intestazioni (columns)
+			if (dataPack.Columns != null && dataPack.Columns.Length > 0)
+			{
+				sb.AppendLine(string.Join(",", dataPack.Columns));
+			}
+
+			// 2. Righe (rows)
+			if (dataPack.Rows != null)
+			{
+				foreach (var row in dataPack.Rows)
+				{
+					// row è double[], convertiamolo in stringhe
+					string[] values = new string[row.Length];
+					for (int i = 0; i < row.Length; i++)
+					{
+						// Usa ToString con InvariantCulture per evitare problemi con la virgola decimale
+						values[i] = row[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
+					}
+					sb.AppendLine(string.Join(",", values));
+				}
+			}
+
+			// 3. Percorso del file (Unity: cartella scrivibile sicura)
+			string filePath = Path.Combine(Application.persistentDataPath, "project.csv");
+
+			File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+
+			Debug.Log("CSV salvato in: " + filePath);
 		}
 
 		private void OnDisable()

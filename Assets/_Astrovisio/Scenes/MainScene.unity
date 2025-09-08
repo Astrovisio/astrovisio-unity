@@ -741,6 +741,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiManager: {fileID: 1328975545}
   uiManager: {fileID: 1869469690}
+  saveProjectCSV: 0
 --- !u!1 &553139021
 GameObject:
   m_ObjectHideFlags: 0
