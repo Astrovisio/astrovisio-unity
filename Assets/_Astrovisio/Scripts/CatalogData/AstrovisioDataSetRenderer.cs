@@ -77,7 +77,7 @@ namespace CatalogData
         private int _idSpriteSheet, _idNumSprites, _idColorMap, _idColorMapIndex, _idNumColorMaps, _idDataSetMatrix, _idScalingFactor;
         private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape, _idDataVisible;
         private int _idCutoffMin, _idCutoffMax;
-        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise;
+        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise, _idIsolateSelection;
         private int _idColor, _idOpacity, _idPointSize, _idPointShape, _idNoiseStrength;
         private int _idMappingConfigs;
         private int _idVignetteFadeStart, _idVignetteFadeEnd, _idVignetteIntensity, _idVignetteColor;
@@ -125,6 +125,7 @@ namespace CatalogData
             _idUseUniformPointSize = Shader.PropertyToID("useUniformPointSize");
             _idUseUniformPointShape = Shader.PropertyToID("useUniformPointShape");
             _idUseNoise = Shader.PropertyToID("useNoise");
+            _idIsolateSelection = Shader.PropertyToID("isolateSelection");
 
             _idColor = Shader.PropertyToID("color");
             _idOpacity = Shader.PropertyToID("opacity");
@@ -733,6 +734,7 @@ namespace CatalogData
             }
 
             _catalogMaterial.SetInt(_idUseNoise, DataMapping.UseNoise ? 1 : 0);
+            _catalogMaterial.SetInt(_idIsolateSelection, DataMapping.isolateSelection ? 1 : 0);
             _catalogMaterial.SetFloat(_idNoiseStrength, DataMapping.Uniforms.NoiseStrength);
 
             if (!DataMapping.UniformPointSize && DataMapping.Mapping.PointSize != null && !string.IsNullOrEmpty(DataMapping.Mapping.PointSize.Source))

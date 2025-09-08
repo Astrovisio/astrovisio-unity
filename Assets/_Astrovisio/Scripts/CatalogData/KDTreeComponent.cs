@@ -211,9 +211,8 @@ public class KDTreeComponent : MonoBehaviour
         // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
 
-        // Update Visible Items
+        // Update Visible Items Array in shader
         astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
-        ///////////////////////
 
         GameObject cloned;
         switch (selectionMode)
@@ -550,24 +549,36 @@ public class KDTreeComponent : MonoBehaviour
 
     private Vector3 ApplyScaling(Vector3 point)
     {
+
+        float scale = 1.0f; // Matching shader scale
+
         switch (XScale)
         {
             case ScalingType.Sqrt:
-                point.x = signed_sqrt(point.x, 1);
+                point.x = signed_sqrt(point.x, scale);
+                break;
+            case ScalingType.Log:
+                point.x = signed_log10(point.x, scale);
                 break;
         }
 
         switch (YScale)
         {
             case ScalingType.Sqrt:
-                point.y = signed_sqrt(point.y, 1);
+                point.y = signed_sqrt(point.y, scale);
+                break;
+            case ScalingType.Log:
+                point.y = signed_log10(point.y, scale);
                 break;
         }
 
         switch (ZScale)
         {
             case ScalingType.Sqrt:
-                point.z = signed_sqrt(point.z, 1);
+                point.z = signed_sqrt(point.z, scale);
+                break;
+            case ScalingType.Log:
+                point.z = signed_log10(point.z, scale);
                 break;
         }
 
@@ -591,78 +602,6 @@ public class KDTreeComponent : MonoBehaviour
 
         return nearest;
     }
-
-    // public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
-    // {
-    //     int dataCount = data[0].Length;
-    //     computingAreaSelection = true;
-    //     Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
-
-    //     // Calculate data space radius/size before entering the async task
-    //     float dataSpaceRadius = 0f;
-    //     float dataSpaceHalfSize = 0f;
-
-    //     switch (selectionMode)
-    //     {
-    //         case SelectionMode.Sphere:
-    //             dataSpaceRadius = TransformRadiusToDataSpace(selectionRadius);
-    //             break;
-    //         case SelectionMode.Cube:
-    //             dataSpaceHalfSize = TransformRadiusToDataSpace(selectionCubeHalfSize);
-    //             break;
-    //     }
-
-    //     List<int> indices = null;
-
-    //     // Copy values for use in async context
-    //     var mode = selectionMode;
-    //     var radius = dataSpaceRadius;
-    //     var halfSize = dataSpaceHalfSize;
-
-    //     SelectionResult result = null;
-
-    //     await Task.Run(() =>
-    //     {
-    //         switch (mode)
-    //         {
-    //             case SelectionMode.Sphere:
-    //                 indices = manager.FindPointsInSphere(queryPoint, radius);
-    //                 break;
-
-    //             case SelectionMode.Cube:
-    //                 indices = manager.FindPointsInCube(queryPoint, halfSize);
-    //                 break;
-
-    //             default:
-    //                 indices = new List<int>();
-    //                 break;
-    //         }
-
-    //         int[] visibilityArray = new int[dataCount];
-    //         for (int i = 0; i < indices.Count; i++)
-    //         {
-    //             visibilityArray[indices[i]] = 1;
-    //         }
-
-    //         result = new SelectionResult
-    //         {
-    //             SelectedIndices = indices,
-    //             SelectedArray = visibilityArray,
-    //             CenterPoint = queryPoint,
-    //             SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
-    //             SelectionMode = selectionMode
-    //         };
-
-    //         // astrovisioDatasetRenderer.UpdateDataVisibility(visibilityArray);
-
-    //         if (indices.Count > 0)
-    //         {
-    //             result.AggregatedValues = AggregateData(indices);
-    //         }
-    //     });
-    //     computingAreaSelection = false;
-    //     return result;
-    // }
 
     public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
     {
@@ -734,62 +673,137 @@ public class KDTreeComponent : MonoBehaviour
 
     private Vector3 TransformWorldToDataSpace(Vector3 worldPoint)
     {
-        Vector3 controllerLocal = pointCloudTransform.InverseTransformPoint(worldPoint);
+        // Transform from world space to local space of the point cloud
+        Vector3 localPoint = pointCloudTransform.InverseTransformPoint(worldPoint);
 
-        switch (XScale)
+        float scale = 1.0f;
+        Vector3 result = new Vector3();
+
+        // X axis
+        result.x = TransformAxisToDataSpace(localPoint.x, xRange, xTargetRange, XScale, scale);
+
+        // Y axis
+        result.y = TransformAxisToDataSpace(localPoint.y, yRange, yTargetRange, YScale, scale);
+
+        // Z axis
+        result.z = TransformAxisToDataSpace(localPoint.z, zRange, zTargetRange, ZScale, scale);
+
+        return result;
+    }
+
+    // New helper method to handle axis transformation with zero-crossing ranges
+    private float TransformAxisToDataSpace(float localValue, Vector2 dataRange, Vector2 targetRange, ScalingType scalingType, float scale)
+    {
+        if (scalingType == ScalingType.Linear)
         {
-            case ScalingType.Sqrt:
-                controllerLocal.x = inverse_signed_sqrt(controllerLocal.x, 1);
-                break;
+            return RemapInverseUnclamped(localValue, targetRange, dataRange);
         }
 
-        switch (YScale)
+        // Check if the range crosses zero
+        bool crossesZero = dataRange.x < 0 && dataRange.y > 0;
+
+        if (crossesZero && (scalingType == ScalingType.Log || scalingType == ScalingType.Sqrt))
         {
-            case ScalingType.Sqrt:
-                controllerLocal.y = inverse_signed_sqrt(controllerLocal.y, 1);
-                break;
-        }
+            // Handle zero-crossing ranges specially
+            // We need to find where zero maps to in the target range
 
-        switch (ZScale)
+            // Scale the data range boundaries
+            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
+            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
+            float scaledZero = ApplyScalingFunction(0f, scalingType, scale); // This should be 0
+
+            // Find where zero maps to in target space
+            float zeroInTarget = Mathf.Lerp(targetRange.x, targetRange.y,
+                Mathf.InverseLerp(scaledMin, scaledMax, scaledZero));
+
+            // Determine which side of zero we're on in target space
+            if (localValue < zeroInTarget)
+            {
+                // We're in the negative part
+                // Map from [targetRange.x, zeroInTarget] to [dataRange.x, 0]
+                float t = Mathf.InverseLerp(targetRange.x, zeroInTarget, localValue);
+                float scaledValue = Mathf.Lerp(scaledMin, scaledZero, t);
+                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
+            }
+            else
+            {
+                // We're in the positive part
+                // Map from [zeroInTarget, targetRange.y] to [0, dataRange.y]
+                float t = Mathf.InverseLerp(zeroInTarget, targetRange.y, localValue);
+                float scaledValue = Mathf.Lerp(scaledZero, scaledMax, t);
+                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
+            }
+        }
+        else
         {
-            case ScalingType.Sqrt:
-                controllerLocal.z = inverse_signed_sqrt(controllerLocal.z, 1);
-                break;
+            // Standard case: range doesn't cross zero or using squared scaling
+            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
+            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
+            float unmappedScaled = RemapInverseUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
+            return ApplyInverseScalingFunction(unmappedScaled, scalingType, scale);
         }
+    }
 
-        float x = RemapInverseUnclamped(controllerLocal.x, xTargetRange, xRange);
-        float y = RemapInverseUnclamped(controllerLocal.y, yTargetRange, yRange);
-        float z = RemapInverseUnclamped(controllerLocal.z, zTargetRange, zRange);
+    // Helper function to apply scaling
+    private float ApplyScalingFunction(float value, ScalingType scalingType, float scale)
+    {
+        switch (scalingType)
+        {
+            case ScalingType.Log:
+                return signed_log10(value, scale);
+            case ScalingType.Sqrt:
+                return signed_sqrt(value, scale);
+            default:
+                return value;
+        }
+    }
 
-        return new Vector3(x, y, z);
+    // Helper function to apply inverse scaling
+    private float ApplyInverseScalingFunction(float value, ScalingType scalingType, float scale)
+    {
+        switch (scalingType)
+        {
+            case ScalingType.Log:
+                return inverse_signed_log10(value, scale);
+            case ScalingType.Sqrt:
+                return inverse_signed_sqrt(value, scale);
+            default:
+                return value;
+        }
     }
 
     private Vector3 TransformRadiusToDataSpace(float worldRadius)
     {
-        // Use cached scale or get it if on main thread
-        Vector3 worldScale = cachedWorldScale;
-        if (worldScale == Vector3.zero && pointCloudTransform != null)
+        Vector3 center = TransformWorldToDataSpace(controllerTransform.position);
+
+        // For more accuracy, sample more points around the sphere
+        List<Vector3> samplePoints = new List<Vector3>();
+
+        // Add axis-aligned points
+        samplePoints.Add(controllerTransform.position + Vector3.right * worldRadius);
+        samplePoints.Add(controllerTransform.position - Vector3.right * worldRadius);
+        samplePoints.Add(controllerTransform.position + Vector3.up * worldRadius);
+        samplePoints.Add(controllerTransform.position - Vector3.up * worldRadius);
+        samplePoints.Add(controllerTransform.position + Vector3.forward * worldRadius);
+        samplePoints.Add(controllerTransform.position - Vector3.forward * worldRadius);
+
+        // Add diagonal points for better approximation
+        samplePoints.Add(controllerTransform.position + (Vector3.right + Vector3.up).normalized * worldRadius);
+        samplePoints.Add(controllerTransform.position + (Vector3.right - Vector3.up).normalized * worldRadius);
+        samplePoints.Add(controllerTransform.position + (Vector3.forward + Vector3.up).normalized * worldRadius);
+        samplePoints.Add(controllerTransform.position + (Vector3.forward - Vector3.up).normalized * worldRadius);
+
+        float maxRadiusX = 0, maxRadiusY = 0, maxRadiusZ = 0;
+
+        foreach (var point in samplePoints)
         {
-            worldScale = pointCloudTransform.lossyScale;
+            Vector3 transformedPoint = TransformWorldToDataSpace(point);
+            maxRadiusX = Mathf.Max(maxRadiusX, Mathf.Abs(transformedPoint.x - center.x));
+            maxRadiusY = Mathf.Max(maxRadiusY, Mathf.Abs(transformedPoint.y - center.y));
+            maxRadiusZ = Mathf.Max(maxRadiusZ, Mathf.Abs(transformedPoint.z - center.z));
         }
 
-        // Calculate local radius for each axis
-        Vector3 localRadius = new Vector3(
-            worldRadius / worldScale.x,
-            worldRadius / worldScale.y,
-            worldRadius / worldScale.z
-        );
-
-        // Apply inverse remapping for each axis
-        float xScale = (xRange.y - xRange.x) / (xTargetRange.y - xTargetRange.x);
-        float yScale = (yRange.y - yRange.x) / (yTargetRange.y - yTargetRange.x);
-        float zScale = (zRange.y - zRange.x) / (zTargetRange.y - zTargetRange.x);
-
-        return new Vector3(
-            localRadius.x * xScale,
-            localRadius.y * yScale,
-            localRadius.z * zScale
-        );
+        return new Vector3(maxRadiusX, maxRadiusY, maxRadiusZ);
     }
 
     public float InverseLerpUnclamped(float a, float b, float value)
@@ -815,14 +829,25 @@ public class KDTreeComponent : MonoBehaviour
         return Mathf.LerpUnclamped(to.x, to.y, t);
     }
 
-    private float inverse_signed_sqrt(float y, float scale)
+    private float signed_log10(float x, float scale)
     {
-        return Math.Sign(y) * scale * (y * y);
+        return Math.Sign(x) * (float)Math.Log10(1 + Math.Abs(x) / scale);
+    }
+
+    private float inverse_signed_log10(float y, float scale)
+    {
+        return Math.Sign(y) * scale * ((float)Math.Pow(10, Math.Abs(y)) - 1);
     }
 
     private float signed_sqrt(float x, float scale)
     {
         return Math.Sign(x) * (float)Math.Sqrt(Math.Abs(x) / scale);
+    }
+
+    private float inverse_signed_sqrt(float y, float scale)
+    {
+        float absY = Math.Abs(y);
+        return Math.Sign(y) * scale * absY * absY;
     }
 
     private void OnDestroy()

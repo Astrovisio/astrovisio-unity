@@ -64,6 +64,7 @@ Shader "Astrovisio/PointShader"
             uniform int useUniformColor;
             uniform int useUniformOpacity;
             uniform int useNoise;
+            uniform int isolateSelection;
             // Data buffers for positions and values
             StructuredBuffer<float> dataX;
             StructuredBuffer<float> dataY;
@@ -161,7 +162,7 @@ Shader "Astrovisio/PointShader"
                 v2f o;
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-                if (!dataVisible[v.vertexID]) {
+                if (isolateSelection && !dataVisible[v.vertexID]) {
                     o.mustDiscard = 1.0;
                     return o;
                 }

@@ -36,6 +36,7 @@ namespace CatalogData
         public bool UniformPointShape;
         public bool UniformOpacity;
         public bool UseNoise;
+        public bool isolateSelection = false;
         public MappingUniforms Uniforms = new MappingUniforms();
 
         public Mapping Mapping;
@@ -81,6 +82,7 @@ namespace CatalogData
                     UniformPointShape = true,
                     UniformOpacity = true,
                     UseNoise = false,
+                    isolateSelection = false,
                     Uniforms = new MappingUniforms
                     {
                         Scale = 0.001f,
@@ -230,9 +232,7 @@ namespace CatalogData
     {
         Linear,
         Log,
-        Sqrt,
-        Squared,
-        Exp
+        Sqrt
     };
 
     [Serializable]
