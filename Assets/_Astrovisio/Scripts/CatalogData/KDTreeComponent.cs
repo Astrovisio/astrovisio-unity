@@ -209,14 +209,9 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
-        Debug.Log("PerformSelection");
-
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
         // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
-
-        Debug.Log("areaSelectionResult");
-        Debug.Log(areaSelectionResult);
 
         // Update Visible Items Array in shader
         astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
@@ -241,15 +236,10 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        Debug.Log("areaSelectionResult.AggregatedValues");
-        Debug.Log(areaSelectionResult.AggregatedValues);
-
         if (areaSelectionResult.SelectedIndices.Count > 0)
         {
             Debug.Log(string.Join(", ", areaSelectionResult.AggregatedValues));
         }
-
-        Debug.Log(areaSelectionResult.AggregatedValues);
 
         OnSelectionPerformed?.Invoke(areaSelectionResult.AggregatedValues);
 

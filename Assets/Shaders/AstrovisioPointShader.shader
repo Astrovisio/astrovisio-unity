@@ -31,8 +31,6 @@ Shader "Astrovisio/PointShader"
             #define LINEAR 0
             #define LOG 1
             #define SQRT 2
-            #define SQUARED 3
-            #define EXP 4
 
             #define X_INDEX 0
             #define Y_INDEX 1
@@ -99,10 +97,6 @@ Shader "Astrovisio/PointShader"
             float signed_sqrt(float x, float scale) {
                 return sign(x) * sqrt(abs(x) / scale);
             }
-
-            float signed_squared(float x, float scale) {
-                return sign(x) * (abs(x * x) / scale);
-            }
             
             float map(float value, float min1, float max1, float min2, float max2) {
                 return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
@@ -132,14 +126,6 @@ Shader "Astrovisio/PointShader"
                     case SQRT:
                         scaledValue = signed_sqrt(input, 1.0);
                         scaledValue = map(scaledValue, signed_sqrt(config.DataMinVal, 1.0), signed_sqrt(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
-                        break;
-                    case SQUARED:
-                        scaledValue = signed_squared(input, 1.0);
-                        scaledValue = map(scaledValue, signed_squared(config.DataMinVal, 1.0), signed_squared(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
-                        break;
-                    case EXP:
-                        scaledValue = exp(input);
-                        scaledValue = map(scaledValue, exp(config.DataMinVal), exp(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     default:
                         scaledValue = input;
