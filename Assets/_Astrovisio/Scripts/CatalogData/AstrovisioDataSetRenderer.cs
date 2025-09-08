@@ -27,6 +27,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using Astrovisio;
 using UnityEditor;
 using UnityEngine;
@@ -165,7 +166,12 @@ namespace CatalogData
             }
 
             int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
-            kdTreeComponent.Initialize(data, Vector3.negativeInfinity, xyzIndex);
+
+            Debug.Log("KDTree Start");
+            kdTreeComponent.Initialize(data, Vector3.negativeInfinity, xyzIndex).GetAwaiter().OnCompleted(() =>
+            {
+                Debug.Log("KDTree Creation Completed");
+            });
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];

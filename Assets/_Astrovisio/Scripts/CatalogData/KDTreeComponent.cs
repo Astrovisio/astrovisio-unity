@@ -301,7 +301,7 @@ public class KDTreeComponent : MonoBehaviour
         }
     }
 
-    public async void Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
+    public async Task Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
     {
         data = pointData;
         this.xyz = xyz;
