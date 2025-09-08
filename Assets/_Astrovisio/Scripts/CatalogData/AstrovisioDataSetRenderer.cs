@@ -257,26 +257,6 @@ namespace CatalogData
                 _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
                 _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
 
-                // Initialize the selected array to 1 (true)
-                int dataCount = _dataSet.DataColumns[0].Length;
-
-                // Release and recreate
-                if (_dataVisibleBuffer != null)
-                {
-                    _dataVisibleBuffer.Release();
-                    _dataVisibleBuffer = null;
-                }
-                _dataVisibleBuffer = new ComputeBuffer(dataCount, sizeof(int));
-
-                int[] selectedArray = new int[dataCount];
-                for (int i = 0; i < dataCount; i++)
-                {
-                    selectedArray[i] = 1;
-                }
-
-                _dataVisibleBuffer.SetData(selectedArray);
-                _catalogMaterial.SetBuffer(_idDataVisible, _dataVisibleBuffer);
-
                 // Apply scaling from data set space to world space
                 // transform.localScale *= DataMapping.Uniforms.Scale;
                 // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
