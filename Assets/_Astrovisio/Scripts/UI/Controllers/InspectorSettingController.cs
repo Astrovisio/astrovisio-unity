@@ -12,7 +12,7 @@ namespace Astrovisio
         // === Dependencies ===
         public VisualElement Root { get; }
 
-        private Toggle inspectorToggle;
+        // private Toggle inspectorToggle;
         private Button sphereButton;
         private Button cubeButton;
         private FloatField sizeInputFloatField;
@@ -28,7 +28,6 @@ namespace Astrovisio
         private AggregationMode aggregationMode = AggregationMode.Average;
 
 
-
         public InspectorSettingController(VisualElement root)
         {
             Root = root;
@@ -42,7 +41,7 @@ namespace Astrovisio
 
         private void Init()
         {
-            inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
+            // inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
             sphereButton = Root.Q<Button>("SphereButton");
             cubeButton = Root.Q<Button>("CubeButton");
             sizeInputFloatField = Root.Q<FloatField>("SizeInputFloatField");
@@ -54,20 +53,20 @@ namespace Astrovisio
             mediaDropdownField.parent.SetEnabled(false);
             inspectorInfoScrollView.parent.SetEnabled(false);
 
-            inspectorToggle.value = selectionState;
-            inspectorToggle.RegisterValueChangedCallback(evt =>
-            {
-                selectionState = evt.newValue;
+            // inspectorToggle.value = selectionState;
+            // inspectorToggle.RegisterValueChangedCallback(evt =>
+            // {
+            //     selectionState = evt.newValue;
 
-                RenderManager.Instance.SetDataInspector(selectionState, selectionState);
-                sphereButton.parent.SetEnabled(selectionState);
-                sizeInputFloatField.parent.SetEnabled(selectionState);
-                mediaDropdownField.parent.SetEnabled(selectionState);
-                inspectorInfoScrollView.parent.SetEnabled(selectionState);
+            //     RenderManager.Instance.SetDataInspector(selectionState, selectionState);
+            //     sphereButton.parent.SetEnabled(selectionState);
+            //     sizeInputFloatField.parent.SetEnabled(selectionState);
+            //     mediaDropdownField.parent.SetEnabled(selectionState);
+            //     inspectorInfoScrollView.parent.SetEnabled(selectionState);
 
-                SetSelectionMode(selectionMode);
-                ShowSelectionGizmo(selectionState);
-            });
+            //     SetSelectionMode(selectionMode);
+            //     ShowSelectionGizmo(selectionState);
+            // });
 
 
             // Shape
@@ -116,6 +115,23 @@ namespace Astrovisio
             SetSelectionMode(selectionMode);
             SetSelectionSize(selectionSize);
             SetSelectionFunction(selectionFunction);
+        }
+
+        public bool GetState()
+        {
+            return selectionState;
+        }
+
+        public void SetInspectorState(bool state)
+        {
+            selectionState = state;
+            RenderManager.Instance.SetDataInspector(selectionState, selectionState);
+            sphereButton.parent.SetEnabled(selectionState);
+            sizeInputFloatField.parent.SetEnabled(selectionState);
+            mediaDropdownField.parent.SetEnabled(selectionState);
+            inspectorInfoScrollView.parent.SetEnabled(selectionState);
+            SetSelectionMode(selectionMode);
+            ShowSelectionGizmo(selectionState);
         }
 
         private void OnProjectRenderStart(Project project)
@@ -292,7 +308,7 @@ namespace Astrovisio
             SetSelectionSize(defaultSectionSize);
             SetAggregationMode(AggregationMode.Average);
             ShowSelectionGizmo(false);
-            inspectorToggle.value = false;
+            // inspectorToggle.value = false;
         }
 
     }

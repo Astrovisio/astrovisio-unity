@@ -80,6 +80,8 @@ namespace Astrovisio
             applyButton = Root.Q<VisualElement>("ApplyButton")?.Q<Button>();
             cancelButton = Root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
+            Debug.Log(mappingDropdown);
+
             // cancelButton.clicked += () =>
             // {
             //     // Debug.Log("CancelButton clicked");

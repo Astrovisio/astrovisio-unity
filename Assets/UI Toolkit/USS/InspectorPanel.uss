@@ -87,6 +87,10 @@
     color: var(--black);
 }
 
+#Root > #TitleContainer > #InspectorToggle {
+    display: none;
+}
+
 #Root > #BodyContainer > #ShapeContainer {
     margin-bottom: 16px;
 }

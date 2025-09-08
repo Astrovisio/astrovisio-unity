@@ -172,6 +172,15 @@ namespace Astrovisio
 
                         SetPanelActive(buttonAction, newState);
 
+                        // Only for Inspector Button
+                        if (buttonAction.Name == "Inspector")
+                        {
+                            bool selectionState = inspectorSettingController.GetState();
+                            bool newSelectionState = !selectionState;
+                            inspectorSettingController.SetInspectorState(newSelectionState);
+                            // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
+                        }
+
                         // Only for Noise Button
                         if (buttonAction.Name == "Noise" && buttonAction.State == false)
                         {
@@ -206,7 +215,6 @@ namespace Astrovisio
             buttonAction.SetState(active);
         }
 
-
         private bool IsAnyPanelActive()
         {
             foreach (var action in buttonActions)
@@ -226,6 +234,13 @@ namespace Astrovisio
                 if (buttonAction.Container != null)
                 {
                     SetPanelActive(buttonAction, false);
+
+                    // Only for Inspector Button
+                    if (buttonAction.Name == "Inspector")
+                    {
+                        inspectorSettingController.SetInspectorState(false);
+                        // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
+                    }
 
                     // Only for Noise Button
                     if (buttonAction.Name == "Noise" && buttonAction.State == false)
