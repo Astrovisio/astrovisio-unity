@@ -189,4 +189,82 @@ public class KDTree
             SearchCube(node.right, min, max, depth + 1, result);
     }
 
+    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
+    {
+        var result = new List<int>();
+        SearchEllipsoid(root, center, radii, 0, result);
+        return result;
+    }
+
+    private void SearchEllipsoid(KDTreeNode node, Vector3 center, Vector3 radii, int depth, List<int> result)
+    {
+        if (node == null) return;
+
+        // Check if point is within ellipsoid
+        Vector3 distance = node.point - center;
+        float normalizedDistSq = (distance.x * distance.x) / (radii.x * radii.x) +
+                                (distance.y * distance.y) / (radii.y * radii.y) +
+                                (distance.z * distance.z) / (radii.z * radii.z);
+
+        if (normalizedDistSq <= 1.0f)
+        {
+            result.Add(node.index);
+        }
+
+        int depthMod = depth % 3;
+        int axis = xyz[depthMod];
+        float centerVal = depthMod == 0 ? center.x : depthMod == 1 ? center.y : center.z;
+        float radiusVal = depthMod == 0 ? radii.x : depthMod == 1 ? radii.y : radii.z;
+        float nodeVal = data[axis][node.index];
+
+        // Calculate distance from center to splitting plane
+        float planeDist = centerVal - nodeVal;
+
+        // Visit near side
+        KDTreeNode near = planeDist < 0 ? node.left : node.right;
+        SearchEllipsoid(near, center, radii, depth + 1, result);
+
+        // Check if we need to visit far side (using appropriate radius for this axis)
+        if (Mathf.Abs(planeDist) <= radiusVal)
+        {
+            KDTreeNode far = planeDist < 0 ? node.right : node.left;
+            SearchEllipsoid(far, center, radii, depth + 1, result);
+        }
+    }
+
+    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
+    {
+        var result = new List<int>();
+        Vector3 min = center - halfSizes;
+        Vector3 max = center + halfSizes;
+        SearchBox(root, min, max, 0, result);
+        return result;
+    }
+
+    private void SearchBox(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    {
+        if (node == null) return;
+
+        // Check if point is within box
+        if (node.point.x >= min.x && node.point.x <= max.x &&
+            node.point.y >= min.y && node.point.y <= max.y &&
+            node.point.z >= min.z && node.point.z <= max.z)
+        {
+            result.Add(node.index);
+        }
+
+        int depthMod = depth % 3;
+        int axis = xyz[depthMod];
+        float nodeVal = data[axis][node.index];
+        float minVal = depthMod == 0 ? min.x : depthMod == 1 ? min.y : min.z;
+        float maxVal = depthMod == 0 ? max.x : depthMod == 1 ? max.y : max.z;
+
+        // Visit children if their regions overlap with the box
+        if (minVal <= nodeVal)
+            SearchBox(node.left, min, max, depth + 1, result);
+
+        if (maxVal >= nodeVal)
+            SearchBox(node.right, min, max, depth + 1, result);
+    }
+
 }

@@ -150,13 +150,12 @@ namespace CatalogData
 
             // Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
 
-            kdTreeComponent.xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
-            kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
-            kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
+            // kdTreeComponent.xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
+            // kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
+            // kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
 
             int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
-            // kdTreeComponent.Initialize(data, dataContainer.Center, xyzIndex);
-            kdTreeComponent.Initialize(data, Vector3.zero, new int[] { 0, 1, 2 });
+            kdTreeComponent.Initialize(data, Vector3.negativeInfinity, xyzIndex);
 
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];

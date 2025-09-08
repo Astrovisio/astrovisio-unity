@@ -212,7 +212,7 @@ public class KDTreeComponent : MonoBehaviour
         areaSelectionResult = await ComputeSelection();
 
         // Update Visible Items
-        // astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
+        astrovisioDatasetRenderer.UpdateDataVisibility(areaSelectionResult.SelectedArray);
         ///////////////////////
 
         GameObject cloned;
@@ -592,6 +592,78 @@ public class KDTreeComponent : MonoBehaviour
         return nearest;
     }
 
+    // public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
+    // {
+    //     int dataCount = data[0].Length;
+    //     computingAreaSelection = true;
+    //     Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
+
+    //     // Calculate data space radius/size before entering the async task
+    //     float dataSpaceRadius = 0f;
+    //     float dataSpaceHalfSize = 0f;
+
+    //     switch (selectionMode)
+    //     {
+    //         case SelectionMode.Sphere:
+    //             dataSpaceRadius = TransformRadiusToDataSpace(selectionRadius);
+    //             break;
+    //         case SelectionMode.Cube:
+    //             dataSpaceHalfSize = TransformRadiusToDataSpace(selectionCubeHalfSize);
+    //             break;
+    //     }
+
+    //     List<int> indices = null;
+
+    //     // Copy values for use in async context
+    //     var mode = selectionMode;
+    //     var radius = dataSpaceRadius;
+    //     var halfSize = dataSpaceHalfSize;
+
+    //     SelectionResult result = null;
+
+    //     await Task.Run(() =>
+    //     {
+    //         switch (mode)
+    //         {
+    //             case SelectionMode.Sphere:
+    //                 indices = manager.FindPointsInSphere(queryPoint, radius);
+    //                 break;
+
+    //             case SelectionMode.Cube:
+    //                 indices = manager.FindPointsInCube(queryPoint, halfSize);
+    //                 break;
+
+    //             default:
+    //                 indices = new List<int>();
+    //                 break;
+    //         }
+
+    //         int[] visibilityArray = new int[dataCount];
+    //         for (int i = 0; i < indices.Count; i++)
+    //         {
+    //             visibilityArray[indices[i]] = 1;
+    //         }
+
+    //         result = new SelectionResult
+    //         {
+    //             SelectedIndices = indices,
+    //             SelectedArray = visibilityArray,
+    //             CenterPoint = queryPoint,
+    //             SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
+    //             SelectionMode = selectionMode
+    //         };
+
+    //         // astrovisioDatasetRenderer.UpdateDataVisibility(visibilityArray);
+
+    //         if (indices.Count > 0)
+    //         {
+    //             result.AggregatedValues = AggregateData(indices);
+    //         }
+    //     });
+    //     computingAreaSelection = false;
+    //     return result;
+    // }
+
     public async Task<SelectionResult> ComputeAreaSelection(Vector3 worldPoint)
     {
         int dataCount = data[0].Length;
@@ -599,16 +671,15 @@ public class KDTreeComponent : MonoBehaviour
         Vector3 queryPoint = TransformWorldToDataSpace(worldPoint);
 
         // Calculate data space radius/size before entering the async task
-        float dataSpaceRadius = 0f;
-        float dataSpaceHalfSize = 0f;
+        Vector3 dataSpaceSize = Vector3.zero;
 
         switch (selectionMode)
         {
             case SelectionMode.Sphere:
-                dataSpaceRadius = TransformRadiusToDataSpace(selectionRadius);
-                break;
             case SelectionMode.Cube:
-                dataSpaceHalfSize = TransformRadiusToDataSpace(selectionCubeHalfSize);
+                dataSpaceSize = TransformRadiusToDataSpace(
+                    selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize
+                );
                 break;
         }
 
@@ -616,8 +687,7 @@ public class KDTreeComponent : MonoBehaviour
 
         // Copy values for use in async context
         var mode = selectionMode;
-        var radius = dataSpaceRadius;
-        var halfSize = dataSpaceHalfSize;
+        var size = dataSpaceSize;
 
         SelectionResult result = null;
 
@@ -626,11 +696,11 @@ public class KDTreeComponent : MonoBehaviour
             switch (mode)
             {
                 case SelectionMode.Sphere:
-                    indices = manager.FindPointsInSphere(queryPoint, radius);
+                    indices = manager.FindPointsInEllipsoid(queryPoint, size);
                     break;
 
                 case SelectionMode.Cube:
-                    indices = manager.FindPointsInCube(queryPoint, halfSize);
+                    indices = manager.FindPointsInBox(queryPoint, size);
                     break;
 
                 default:
@@ -652,8 +722,6 @@ public class KDTreeComponent : MonoBehaviour
                 SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize,
                 SelectionMode = selectionMode
             };
-
-            // astrovisioDatasetRenderer.UpdateDataVisibility(visibilityArray);
 
             if (indices.Count > 0)
             {
@@ -696,7 +764,7 @@ public class KDTreeComponent : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
-    private float TransformRadiusToDataSpace(float worldRadius)
+    private Vector3 TransformRadiusToDataSpace(float worldRadius)
     {
         // Use cached scale or get it if on main thread
         Vector3 worldScale = cachedWorldScale;
@@ -705,16 +773,23 @@ public class KDTreeComponent : MonoBehaviour
             worldScale = pointCloudTransform.lossyScale;
         }
 
-        float avgScale = (worldScale.x + worldScale.y + worldScale.z) / 3f;
-        float localRadius = worldRadius / avgScale;
+        // Calculate local radius for each axis
+        Vector3 localRadius = new Vector3(
+            worldRadius / worldScale.x,
+            worldRadius / worldScale.y,
+            worldRadius / worldScale.z
+        );
 
-        // Apply inverse remapping (assuming uniform scaling for simplicity)
+        // Apply inverse remapping for each axis
         float xScale = (xRange.y - xRange.x) / (xTargetRange.y - xTargetRange.x);
         float yScale = (yRange.y - yRange.x) / (yTargetRange.y - yTargetRange.x);
         float zScale = (zRange.y - zRange.x) / (zTargetRange.y - zTargetRange.x);
-        float avgDataScale = (xScale + yScale + zScale) / 3f;
 
-        return localRadius * avgDataScale;
+        return new Vector3(
+            localRadius.x * xScale,
+            localRadius.y * yScale,
+            localRadius.z * zScale
+        );
     }
 
     public float InverseLerpUnclamped(float a, float b, float value)

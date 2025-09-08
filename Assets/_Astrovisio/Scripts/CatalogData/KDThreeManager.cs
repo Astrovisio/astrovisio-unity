@@ -80,16 +80,16 @@ public class KDTreeManager
         return list;
     }
 
-    public List<int> FindPointsInSphere(Vector3 center, float radius)
+    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
         var allResults = new HashSet<int>();
 
-        // Check which octants the sphere intersects
+        // Check which octants the ellipsoid intersects
         for (int i = 0; i < 8; i++)
         {
-            if (SphereIntersectsOctant(center, radius, i))
+            if (EllipsoidIntersectsOctant(center, radii, i))
             {
-                var results = trees[i].FindPointsInSphere(center, radius);
+                var results = trees[i].FindPointsInEllipsoid(center, radii);
                 foreach (var idx in results)
                 {
                     allResults.Add(idx);
@@ -100,16 +100,16 @@ public class KDTreeManager
         return allResults.ToList();
     }
 
-    public List<int> FindPointsInCube(Vector3 center, float halfSize)
+    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
         var allResults = new HashSet<int>();
 
-        // Check which octants the cube intersects
+        // Check which octants the box intersects
         for (int i = 0; i < 8; i++)
         {
-            if (CubeIntersectsOctant(center, halfSize, i))
+            if (BoxIntersectsOctant(center, halfSizes, i))
             {
-                var results = trees[i].FindPointsInCube(center, halfSize);
+                var results = trees[i].FindPointsInBox(center, halfSizes);
                 foreach (var idx in results)
                 {
                     allResults.Add(idx);
@@ -118,6 +118,57 @@ public class KDTreeManager
         }
 
         return allResults.ToList();
+    }
+
+    private bool EllipsoidIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)
+    {
+        // Calculate octant bounds based on pivot
+        Vector3 octantMin = new Vector3(
+            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
+            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
+            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
+        );
+
+        Vector3 octantMax = new Vector3(
+            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
+            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
+            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
+        );
+
+        // Check ellipsoid-AABB intersection
+        Vector3 closest = Vector3.Max(octantMin, Vector3.Min(center, octantMax));
+        Vector3 distance = closest - center;
+
+        // Normalize by radii for ellipsoid test
+        float normalizedDistSq = (distance.x * distance.x) / (radii.x * radii.x) +
+                                (distance.y * distance.y) / (radii.y * radii.y) +
+                                (distance.z * distance.z) / (radii.z * radii.z);
+
+        return normalizedDistSq <= 1.0f;
+    }
+
+    private bool BoxIntersectsOctant(Vector3 center, Vector3 halfSizes, int octantIndex)
+    {
+        Vector3 boxMin = center - halfSizes;
+        Vector3 boxMax = center + halfSizes;
+
+        // Calculate octant bounds
+        Vector3 octantMin = new Vector3(
+            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
+            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
+            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
+        );
+
+        Vector3 octantMax = new Vector3(
+            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
+            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
+            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
+        );
+
+        // Check AABB-AABB intersection
+        return boxMin.x <= octantMax.x && boxMax.x >= octantMin.x &&
+               boxMin.y <= octantMax.y && boxMax.y >= octantMin.y &&
+               boxMin.z <= octantMax.z && boxMax.z >= octantMin.z;
     }
 
     private bool SphereIntersectsOctant(Vector3 center, float radius, int octantIndex)
@@ -163,4 +214,5 @@ public class KDTreeManager
                cubeMin.y <= octantMax.y && cubeMax.y >= octantMin.y &&
                cubeMin.z <= octantMax.z && cubeMax.z >= octantMin.z;
     }
+
 }

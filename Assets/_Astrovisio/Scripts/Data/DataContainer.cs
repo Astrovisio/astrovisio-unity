@@ -78,6 +78,9 @@ namespace Astrovisio
         {
             if (Project == null)
             {
+                XAxisIndex = 0;
+                YAxisIndex = 1;
+                ZAxisIndex = 3;
                 return;
             }
 

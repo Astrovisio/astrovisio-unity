@@ -2560,7 +2560,7 @@ PrefabInstance:
     - target: {fileID: 2307568220249490968, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4973116314143365544, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
@@ -3778,6 +3778,51 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: realtime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: xRange.x
+      value: 16413.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: xRange.y
+      value: 17212.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: yRange.x
+      value: 28980.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: yRange.y
+      value: 29779.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: zRange.x
+      value: -847.4055
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: zRange.y
+      value: 864.3684
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: selectionMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 884816262672831559, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: controllerTransform
+      value: 
+      objectReference: {fileID: 2087590747}
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_Name
@@ -3786,7 +3831,17 @@ PrefabInstance:
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: fileName
+      value: test-kev.csv
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: debugMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3837,6 +3892,66 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.Source
+      value: x
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.Source
+      value: vel-0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.Clamped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Cmap.Source
+      value: x
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.DataMaxVal
+      value: 17212.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.DataMinVal
+      value: 16413.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Y.DataMaxVal
+      value: 29779.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Y.DataMinVal
+      value: 28980.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.DataMaxVal
+      value: 864.3684
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.DataMinVal
+      value: -847.4055
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Cmap.DataMaxVal
+      value: 17212.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Cmap.DataMinVal
+      value: 16413.84
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
