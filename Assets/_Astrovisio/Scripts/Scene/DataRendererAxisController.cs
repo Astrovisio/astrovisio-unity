@@ -25,15 +25,15 @@ namespace Astrovisio
 
         private void Update()
         {
-            if (cameraToLookAt == null)
-            {
-                return;
-            }
+            // if (cameraToLookAt == null)
+            // {
+            //     return;
+            // }
 
-            BillboardToCamera(xAxeCanvas);
-            BillboardToCamera(yAxeCanvas);
-            BillboardToCamera(zAxeCanvas);
-            BillboardToCamera(refCanvas);
+            // BillboardToCamera(xAxeCanvas);
+            // BillboardToCamera(yAxeCanvas);
+            // BillboardToCamera(zAxeCanvas);
+            // BillboardToCamera(refCanvas);
         }
 
         private void BillboardToCamera(Canvas canvas)
