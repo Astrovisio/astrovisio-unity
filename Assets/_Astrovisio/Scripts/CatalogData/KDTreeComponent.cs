@@ -538,36 +538,35 @@ public class KDTreeComponent : MonoBehaviour
     private Vector3 ApplyScaling(Vector3 point)
     {
 
-        float scale = 1.0f; // Matching shader scale
         Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
 
         switch (mapping.X.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.x = signed_sqrt(point.x, scale);
+                point.x = signed_sqrt(point.x);
                 break;
             case ScalingType.Log:
-                point.x = signed_log10(point.x, scale);
+                point.x = signed_log10(point.x);
                 break;
         }
 
         switch (mapping.Y.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.y = signed_sqrt(point.y, scale);
+                point.y = signed_sqrt(point.y);
                 break;
             case ScalingType.Log:
-                point.y = signed_log10(point.y, scale);
+                point.y = signed_log10(point.y);
                 break;
         }
 
         switch (mapping.Z.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.z = signed_sqrt(point.z, scale);
+                point.z = signed_sqrt(point.z);
                 break;
             case ScalingType.Log:
-                point.z = signed_log10(point.z, scale);
+                point.z = signed_log10(point.z);
                 break;
         }
 
@@ -707,10 +706,10 @@ public class KDTreeComponent : MonoBehaviour
 
             case ScalingType.Log:
             case ScalingType.Sqrt:
-                float scaledMin = ApplyScalingFunction(dataRange.x, entry.ScalingType, 1f);
-                float scaledMax = ApplyScalingFunction(dataRange.y, entry.ScalingType, 1f);
+                float scaledMin = ApplyScalingFunction(dataRange.x, entry.ScalingType);
+                float scaledMax = ApplyScalingFunction(dataRange.y, entry.ScalingType);
                 float unmappedScaled = RemapUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
-                return ApplyInverseScalingFunction(unmappedScaled, entry.ScalingType, 1f);
+                return ApplyInverseScalingFunction(unmappedScaled, entry.ScalingType);
 
             default:
                 return 0;
@@ -719,28 +718,28 @@ public class KDTreeComponent : MonoBehaviour
     }
 
     // Helper function to apply scaling
-    private float ApplyScalingFunction(float value, ScalingType scalingType, float scale)
+    private float ApplyScalingFunction(float value, ScalingType scalingType)
     {
         switch (scalingType)
         {
             case ScalingType.Log:
-                return signed_log10(value, scale);
+                return signed_log10(value);
             case ScalingType.Sqrt:
-                return signed_sqrt(value, scale);
+                return signed_sqrt(value);
             default:
                 return value;
         }
     }
 
     // Helper function to apply inverse scaling
-    private float ApplyInverseScalingFunction(float value, ScalingType scalingType, float scale)
+    private float ApplyInverseScalingFunction(float value, ScalingType scalingType)
     {
         switch (scalingType)
         {
             case ScalingType.Log:
-                return inverse_signed_log10(value, scale);
+                return inverse_signed_log10(value);
             case ScalingType.Sqrt:
-                return inverse_signed_sqrt(value, scale);
+                return inverse_signed_sqrt(value);
             default:
                 return value;
         }
@@ -815,22 +814,22 @@ public class KDTreeComponent : MonoBehaviour
         return toRange.x + t * (toRange.y - toRange.x);
     }
 
-    private float signed_log10(float x, float scale)
+    private float signed_log10(float x, float scale = 1f)
     {
         return Math.Sign(x) * (float)Math.Log10(1 + Math.Abs(x) / scale);
     }
 
-    private float inverse_signed_log10(float y, float scale)
+    private float inverse_signed_log10(float y, float scale = 1f)
     {
         return Math.Sign(y) * scale * ((float)Math.Pow(10, Math.Abs(y)) - 1);
     }
 
-    private float signed_sqrt(float x, float scale)
+    private float signed_sqrt(float x, float scale = 1f)
     {
         return Math.Sign(x) * (float)Math.Sqrt(Math.Abs(x) / scale);
     }
 
-    private float inverse_signed_sqrt(float y, float scale)
+    private float inverse_signed_sqrt(float y, float scale = 1f)
     {
         return Math.Sign(y) * scale * (y * y);
     }
