@@ -153,26 +153,6 @@ namespace CatalogData
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
 
-            // Debug.Log(dataContainer.Center.ToString() + dataContainer.MinPoint.ToString() + dataContainer.MaxPoint.ToString());
-
-            // kdTreeComponent.xRange.Set(dataContainer.MinPoint.x, dataContainer.MaxPoint.x);
-            // kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
-            // kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
-
-            // if (!debug)
-            // {
-            //     kdTreeComponent.xRange.Set(dataContainer.XMinThreshold, dataContainer.XMaxThreshold);
-            //     kdTreeComponent.yRange.Set(dataContainer.YMinThreshold, dataContainer.YMaxThreshold);
-            //     kdTreeComponent.zRange.Set(dataContainer.ZMinThreshold, dataContainer.ZMaxThreshold);
-            // }
-
-
-            Debug.Log("KDTree Start");
-            kdTreeComponent.Initialize(data, Vector3.negativeInfinity).GetAwaiter().OnCompleted(() =>
-            {
-                Debug.Log("KDTree Creation Completed");
-            });
-
             // Dataset
             ColumnInfo[] columnInfo = new ColumnInfo[headers.Length];
             for (int i = 0; i < columnInfo.Length; i++)
@@ -249,38 +229,38 @@ namespace CatalogData
 
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
+            {
+                Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
+            }
+            else
+            {
+                int numDataColumns = _dataSet.DataColumns.Length;
+                _buffers = new ComputeBuffer[numDataColumns];
+
+                for (var i = 0; i < numDataColumns; i++)
                 {
-                    Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
+                    _buffers[i] = new ComputeBuffer(_dataSet.N, sizeof(float));
+                    _buffers[i].SetData(_dataSet.DataColumns[i]);
                 }
-                else
-                {
-                    int numDataColumns = _dataSet.DataColumns.Length;
-                    _buffers = new ComputeBuffer[numDataColumns];
 
-                    for (var i = 0; i < numDataColumns; i++)
-                    {
-                        _buffers[i] = new ComputeBuffer(_dataSet.N, sizeof(float));
-                        _buffers[i].SetData(_dataSet.DataColumns[i]);
-                    }
+                // Load instance of the material, so that each data set can have different material parameters
+                GetPropertyIds();
+                _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
+                _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
+                _catalogMaterial.SetInt(_idNumSprites, 8);
 
-                    // Load instance of the material, so that each data set can have different material parameters
-                    GetPropertyIds();
-                    _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
-                    _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
-                    _catalogMaterial.SetInt(_idNumSprites, 8);
+                _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
+                // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
+                _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
+                _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
 
-                    _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
-                    // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
-                    _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
-                    _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
+                // Apply scaling from data set space to world space
+                // transform.localScale *= DataMapping.Uniforms.Scale;
+                // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
 
-                    // Apply scaling from data set space to world space
-                    // transform.localScale *= DataMapping.Uniforms.Scale;
-                    // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
-
-                    UpdateMappingColumns();
-                    UpdateMappingValues();
-                }
+                UpdateMappingColumns();
+                UpdateMappingValues();
+            }
 
             if (!DataMapping.UniformColor)
             {
@@ -290,6 +270,14 @@ namespace CatalogData
             _initialLocalRotation = transform.localRotation;
             _initialLocalScale = transform.localScale;
             _initialOpacity = DataMapping.Uniforms.Opacity;
+
+            // Init KDTree
+            Debug.Log("KDTree Start");
+            kdTreeComponent.Initialize(data, Vector3.negativeInfinity).GetAwaiter().OnCompleted(() =>
+            {
+                Debug.Log("KDTree Creation Completed");
+            });
+
         }
 
         public Material GetMaterial()
