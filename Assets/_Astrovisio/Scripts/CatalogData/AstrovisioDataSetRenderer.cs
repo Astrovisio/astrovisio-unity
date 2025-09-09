@@ -27,6 +27,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Astrovisio;
 using UnityEditor;
@@ -165,10 +166,9 @@ namespace CatalogData
             //     kdTreeComponent.zRange.Set(dataContainer.ZMinThreshold, dataContainer.ZMaxThreshold);
             // }
 
-            int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
 
             Debug.Log("KDTree Start");
-            kdTreeComponent.Initialize(data, Vector3.negativeInfinity, xyzIndex).GetAwaiter().OnCompleted(() =>
+            kdTreeComponent.Initialize(data, Vector3.negativeInfinity).GetAwaiter().OnCompleted(() =>
             {
                 Debug.Log("KDTree Creation Completed");
             });
@@ -188,6 +188,7 @@ namespace CatalogData
             _dataSet = new CatalogDataSet(columnInfo, data);
 
             if (!debug)
+            {
                 DataMapping = new DataMapping
                 {
                     Spherical = false,
@@ -209,6 +210,7 @@ namespace CatalogData
                         X = new MapFloatEntry
                         {
                             Source = dataContainer.XAxisName,
+                            SourceIndex = dataContainer.XAxisIndex,
                             // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.XMinThreshold,
                             DataMaxVal = dataContainer.XMaxThreshold,
@@ -218,6 +220,7 @@ namespace CatalogData
                         Y = new MapFloatEntry
                         {
                             Source = dataContainer.YAxisName,
+                            SourceIndex = dataContainer.YAxisIndex,
                             // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.YMinThreshold,
                             DataMaxVal = dataContainer.YMaxThreshold,
@@ -227,6 +230,7 @@ namespace CatalogData
                         Z = new MapFloatEntry
                         {
                             Source = dataContainer.ZAxisName,
+                            SourceIndex = dataContainer.ZAxisIndex,
                             // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
                             DataMinVal = dataContainer.ZMinThreshold,
                             DataMaxVal = dataContainer.ZMaxThreshold,
@@ -235,41 +239,48 @@ namespace CatalogData
                         }
                     }
                 };
-
-
-            if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
-            {
-                Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
             }
             else
             {
-                int numDataColumns = _dataSet.DataColumns.Length;
-                _buffers = new ComputeBuffer[numDataColumns];
-
-                for (var i = 0; i < numDataColumns; i++)
-                {
-                    _buffers[i] = new ComputeBuffer(_dataSet.N, sizeof(float));
-                    _buffers[i].SetData(_dataSet.DataColumns[i]);
-                }
-
-                // Load instance of the material, so that each data set can have different material parameters
-                GetPropertyIds();
-                _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
-                _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
-                _catalogMaterial.SetInt(_idNumSprites, 8);
-
-                _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
-                // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
-                _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
-                _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
-
-                // Apply scaling from data set space to world space
-                // transform.localScale *= DataMapping.Uniforms.Scale;
-                // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
-
-                UpdateMappingColumns();
-                UpdateMappingValues();
+                DataMapping.Mapping.X.SourceIndex = Array.IndexOf(headers, DataMapping.Mapping.X.Source);
+                DataMapping.Mapping.Y.SourceIndex = Array.IndexOf(headers, DataMapping.Mapping.Y.Source);
+                DataMapping.Mapping.Z.SourceIndex = Array.IndexOf(headers, DataMapping.Mapping.Z.Source);
             }
+
+
+            if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
+                {
+                    Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
+                }
+                else
+                {
+                    int numDataColumns = _dataSet.DataColumns.Length;
+                    _buffers = new ComputeBuffer[numDataColumns];
+
+                    for (var i = 0; i < numDataColumns; i++)
+                    {
+                        _buffers[i] = new ComputeBuffer(_dataSet.N, sizeof(float));
+                        _buffers[i].SetData(_dataSet.DataColumns[i]);
+                    }
+
+                    // Load instance of the material, so that each data set can have different material parameters
+                    GetPropertyIds();
+                    _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
+                    _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
+                    _catalogMaterial.SetInt(_idNumSprites, 8);
+
+                    _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
+                    // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
+                    _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
+                    _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
+
+                    // Apply scaling from data set space to world space
+                    // transform.localScale *= DataMapping.Uniforms.Scale;
+                    // Debug.Log($"Scaling from data set space to world space: {ScalingString}");
+
+                    UpdateMappingColumns();
+                    UpdateMappingValues();
+                }
 
             if (!DataMapping.UniformColor)
             {

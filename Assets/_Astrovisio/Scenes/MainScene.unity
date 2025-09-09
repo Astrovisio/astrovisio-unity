@@ -2561,7 +2561,7 @@ PrefabInstance:
     - target: {fileID: 2307568220249490968, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4973116314143365544, guid: e41872235d2732946965b653b9ae13e9,
         type: 3}
@@ -3847,7 +3847,7 @@ PrefabInstance:
     - target: {fileID: 912594691150858716, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3857,7 +3857,7 @@ PrefabInstance:
     - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: debugMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3971,8 +3971,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: DataMapping.Mapping.Y.SourceIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: DataMapping.Mapping.Z.ScalingType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Z.SourceIndex
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}

@@ -55,7 +55,7 @@ public class KDTreeComponent : MonoBehaviour
     public Transform pointCloudTransform;
     public Transform controllerTransform;
 
-    private int[] xyz = new int[] { 0, 1, 2 };
+    // private int[] xyz = new int[] { 0, 1, 2 };
 
     private KDTreeManager manager;
     private float[][] data;
@@ -82,6 +82,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private GameObject currentDataSelectionGameObject;
     private AstrovisioDataSetRenderer astrovisioDatasetRenderer;
+    private Mapping mapping;
 
 
     [ContextMenu("ComputeNearestPoint")]
@@ -116,6 +117,7 @@ public class KDTreeComponent : MonoBehaviour
     private void Awake()
     {
         astrovisioDatasetRenderer = GetComponent<AstrovisioDataSetRenderer>();
+        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
     }
 
     private void Start()
@@ -285,11 +287,16 @@ public class KDTreeComponent : MonoBehaviour
         }
     }
 
-    public async Task Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
+    public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
         data = pointData;
-        this.xyz = xyz;
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, this.xyz));
+        int[] xyz = new int[] {
+            mapping.X.SourceIndex,
+            mapping.Y.SourceIndex,
+            mapping.Z.SourceIndex
+        };
+
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
 
         if (!Application.isPlaying)
         {
@@ -487,9 +494,9 @@ public class KDTreeComponent : MonoBehaviour
         if (lastNearestIndex >= 0)
         {
             Vector3 pointOriginal = new Vector3(
-                data[xyz[0]][lastNearestIndex],
-                data[xyz[1]][lastNearestIndex],
-                data[xyz[2]][lastNearestIndex]
+                data[mapping.X.SourceIndex][lastNearestIndex],
+                data[mapping.Y.SourceIndex][lastNearestIndex],
+                data[mapping.Z.SourceIndex][lastNearestIndex]
             );
 
             pointOriginal = ApplyScaling(pointOriginal);
@@ -514,9 +521,9 @@ public class KDTreeComponent : MonoBehaviour
         foreach (int idx in areaSelectionResult.SelectedIndices)
         {
             Vector3 point = new Vector3(
-                data[xyz[0]][idx],
-                data[xyz[1]][idx],
-                data[xyz[2]][idx]
+                data[mapping.X.SourceIndex][idx],
+                data[mapping.Y.SourceIndex][idx],
+                data[mapping.Z.SourceIndex][idx]
             );
             centerOfMass += point;
         }

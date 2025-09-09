@@ -175,6 +175,8 @@ namespace CatalogData
         public float Offset;
         public ScalingType ScalingType = ScalingType.Linear;
         public string Source;
+        [HideInInspector]
+        public int SourceIndex;
 
         public GPUMappingConfig GpuMappingConfig => new GPUMappingConfig
         {
