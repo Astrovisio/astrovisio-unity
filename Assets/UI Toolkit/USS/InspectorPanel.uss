@@ -91,6 +91,10 @@
     display: none;
 }
 
+#Root > #BodyContainer {
+    display: none;
+}
+
 #Root > #BodyContainer > #ShapeContainer {
     margin-bottom: 16px;
 }
@@ -149,4 +153,22 @@
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
     color: var(--black);
     -unity-text-align: middle-left;
+}
+
+#Root > #SkeletonContainer {
+    flex-grow: 1;
+    height: 150px;
+    min-height: 150px;
+    max-height: 150px;
+    background-color: var(--bg-10);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+#Root > #SkeletonContainer > #Label {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 10px;
+    color: var(--black);
 }

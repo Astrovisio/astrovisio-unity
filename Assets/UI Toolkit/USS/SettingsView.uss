@@ -40,11 +40,63 @@
     -unity-background-image-tint-color: var(--accent-100);
 }
 
+.trigger-button {
+    width: 32px;
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    max-width: 32px;
+    min-width: 32px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    background-color: var(--grey-150);
+}
+
+.trigger-button:hover {
+    background-color: var(--grey-200);
+}
+
+.trigger-button:active {
+    background-color: var(--grey-300);
+}
+
+.trigger-button > #Icon.active {
+    -unity-background-image-tint-color: var(--accent-100);
+}
+
 .title-label {
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     font-size: 14px;
     color: var(--black);
     margin-bottom: 8px;
+}
+
+.recorder-button {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    background-color: var(--grey-150);
 }
 
 #SettingsView {
@@ -84,11 +136,6 @@
 }
 
 #SettingsView > #Container > #SettingsSidebar > #InspectorContainer {
-}
-
-#SettingsView > #Container > #SettingsSidebar > #InspectorContainer > #InspectorButton {
-    overflow: visible;
-    display: flex;
     margin-bottom: 8px;
 }
 
@@ -145,7 +192,15 @@
 }
 
 #SettingsView > #Container > #SettingsSidebar > #HideUIContainer > #HideUIButton > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/hideui-bar-icon.svg?fileID=7388822144124034973&guid=678ef0045db73a944866460df2e46abe&type=3#hideui-bar-icon");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Icon-Visibility.svg?fileID=7388822144124034973&guid=8324ee79d07ce334caab71dc0ccbb00f&type=3#Icon-Visibility");
+}
+
+#SettingsView > #Container > #SettingsSidebar > #AxesGizmoContainer {
+    margin-bottom: 8px;
+}
+
+#SettingsView > #Container > #SettingsSidebar > #AxesGizmoContainer > #AxesGizmoButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Icon-Axes.svg?fileID=7388822144124034973&guid=be868c3ea9f99294685b832227a04d20&type=3#Icon-Axes");
 }
 
 #SettingsView > #Container > #SettingsSidebar > #ScreenshotContainer > #ScreenshotButton {
@@ -155,34 +210,6 @@
 
 #SettingsView > #Container > #SettingsSidebar > #ScreenshotContainer > #ScreenshotButton > #Icon {
     background-image: url("project://database/Assets/UI%20Toolkit/Icons/screenshot-bar-icon.svg?fileID=7388822144124034973&guid=5f74499e1d259e84a96f9b118a3ff505&type=3#screenshot-bar-icon");
-}
-
-.recorder-button {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    padding-top: 4px;
-    padding-right: 4px;
-    padding-bottom: 4px;
-    padding-left: 4px;
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
-    max-width: 24px;
-    max-height: 24px;
-    background-color: var(--grey-150);
-}
-
-#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer {
-}
-
-#SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer > #ScreenrecorderButton {
 }
 
 #SettingsView > #Container > #SettingsSidebar > #ScreenrecorderContainer > #ScreenrecorderButton > #Icon {

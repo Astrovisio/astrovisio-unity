@@ -10,6 +10,7 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
         [SerializeField] private KDTreeComponent kdTreeComponent;
+        [SerializeField] private AxesCanvasHandler axesCanvasHandler;
 
         [Header("Debug")]
         [SerializeField] private bool debugMode = false;
@@ -27,7 +28,7 @@ namespace Astrovisio
         {
             if (debugMode)
             {
-                var dataPack = LoadCSV();
+                DataPack dataPack = LoadCSV();
                 if (dataPack == null)
                 {
                     return;
@@ -95,6 +96,8 @@ namespace Astrovisio
             this.dataContainer = dataContainer;
             astrovidioDataSetRenderer.SetCatalogData(dataContainer, debugMode);
             astrovidioDataSetRenderer.gameObject.SetActive(true);
+
+            axesCanvasHandler.SetAxesLabel(dataContainer.XAxisName, dataContainer.YAxisName, dataContainer.ZAxisName);
         }
 
         public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)

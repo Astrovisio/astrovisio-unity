@@ -16,16 +16,17 @@ namespace Astrovisio
             public Button Button { get; }
             public VisualElement Container { get; }
             public VisualElement Icon { get; }
+            public bool State { get; private set; }
             public Action OnClick { get; }
 
-            public bool State { get; private set; } = false;
 
-            public ButtonAction(string name, Button button, VisualElement container = null, VisualElement icon = null, Action onClick = null)
+            public ButtonAction(string name, Button button, VisualElement container = null, VisualElement icon = null, bool state = false, Action onClick = null)
             {
                 Name = name;
                 Button = button;
                 Container = container;
                 Icon = icon;
+                State = state;
                 OnClick = onClick;
             }
 
@@ -68,6 +69,8 @@ namespace Astrovisio
         // Controllers
         private InspectorSettingController inspectorSettingController;
         private NoiseSettingController noiseSettingController;
+        private HideUISettingController hideUIController;
+        private AxesGizmoSettingController axesGizmoController;
         private ScreenrecorderSettingController screenrecorderSettingController;
 
 
@@ -76,16 +79,18 @@ namespace Astrovisio
             Root = root;
             UIManager = uiManager;
 
-            RenderManager.Instance.OnProjectRenderEnd += OnProjectRendered;
+            RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderedEnd;
 
             Init();
             SetSettingsVisibility(false);
         }
 
-        private void OnProjectRendered(Project project)
+        private void OnProjectRenderedEnd(Project project)
         {
             inspectorSettingController.Reset();
             noiseSettingController.Reset();
+            hideUIController.Reset();
+            axesGizmoController.Reset();
             // screenrecorderSettingController.Reset();
             DeactivateAllPanels();
         }
@@ -101,6 +106,7 @@ namespace Astrovisio
             VisualElement inspectorContainer = Root.Q<VisualElement>("InspectorContainer");
             VisualElement noiseContainer = Root.Q<VisualElement>("NoiseContainer");
             VisualElement hideUIContainer = Root.Q<VisualElement>("HideUIContainer");
+            VisualElement axesGizmoContainer = Root.Q<VisualElement>("AxesGizmoContainer");
             VisualElement screenshotContainer = Root.Q<VisualElement>("ScreenshotContainer");
             VisualElement screenrecorderContainer = Root.Q<VisualElement>("ScreenrecorderContainer");
 
@@ -108,6 +114,7 @@ namespace Astrovisio
             Button inspectorButton = inspectorContainer.Q<Button>("InspectorButton");
             Button noiseButton = noiseContainer.Q<Button>("NoiseButton");
             Button hideUIButton = hideUIContainer.Q<Button>("HideUIButton");
+            Button axesGizmoButton = axesGizmoContainer.Q<Button>("AxesGizmoButton");
             Button screenshotButton = screenshotContainer.Q<Button>("ScreenshotButton");
             Button screenrecorderButton = screenrecorderContainer.Q<Button>("ScreenrecorderButton");
 
@@ -115,9 +122,10 @@ namespace Astrovisio
             VisualElement inspectorIcon = inspectorContainer.Q<VisualElement>("Icon");
             VisualElement noiseIcon = noiseContainer.Q<VisualElement>("Icon");
             VisualElement hideUIIcon = hideUIContainer.Q<VisualElement>("Icon");
+            VisualElement axesGizmoIcon = axesGizmoContainer.Q<VisualElement>("Icon");
             VisualElement screenshotIcon = screenshotContainer.Q<VisualElement>("Icon");
             VisualElement screenrecorderIcon = screenrecorderContainer.Q<VisualElement>("Icon");
-
+            
 
             // ButtonActions
 
@@ -128,18 +136,30 @@ namespace Astrovisio
 
             // 2. Action-only buttons
             buttonActions.Add(new ButtonAction(
-                "Screenshot", screenshotButton, null, screenshotIcon,
+                "Screenshot", screenshotButton, null, screenshotIcon, false,
                 () =>
                 {
                     UIManager.TakeScreenshot();
                 }
             ));
             buttonActions.Add(new ButtonAction(
-                "HideUI", hideUIButton, hideUIContainer, hideUIIcon,
+                "HideUI", hideUIButton, hideUIContainer, hideUIIcon, true,
                 () =>
                 {
-                    bool uiVisibility = UIManager.GetUIVisibility();
-                    UIManager.SetUIVisibility(!uiVisibility);
+                    bool hideUIState = hideUIController.GetState();
+                    bool newHideUIState = !hideUIState;
+                    hideUIController.SetState(newHideUIState);
+                    UIManager.SetUIVisibility(newHideUIState);
+                }
+            ));
+            buttonActions.Add(new ButtonAction(
+                "AxesGizmo", axesGizmoButton, axesGizmoContainer, axesGizmoIcon, true,
+                () =>
+                {
+                    bool axesGizmoState = axesGizmoController.GetState();
+                    bool newAxesGizmoState = !axesGizmoState;
+                    axesGizmoController.SetState(newAxesGizmoState);
+                    RenderManager.Instance.SetAxesGizmoVisibility(newAxesGizmoState);
                 }
             ));
 
@@ -172,7 +192,7 @@ namespace Astrovisio
 
                         SetPanelActive(buttonAction, newState);
 
-                        // Only for Inspector Button
+                        // Inspector Button
                         if (buttonAction.Name == "Inspector")
                         {
                             bool selectionState = inspectorSettingController.GetState();
@@ -181,11 +201,27 @@ namespace Astrovisio
                             // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
                         }
 
-                        // Only for Noise Button
+                        // Noise Button
                         if (buttonAction.Name == "Noise" && buttonAction.State == false)
                         {
                             bool noiseState = noiseSettingController.GetState();
                             buttonAction.SetIconState(noiseState);
+                        }
+
+                        // HideUI Button
+                        if (buttonAction.Name == "HideUI")
+                        {
+                            bool hideUIState = hideUIController.GetState();
+                            buttonAction.SetIconState(hideUIState);
+                            // Debug.Log("Setting -> " + hideUIState);
+                        }
+
+                        // AxesGizmo Button
+                        if (buttonAction.Name == "AxesGizmo")
+                        {
+                            bool axesGizmoState = axesGizmoController.GetState();
+                            buttonAction.SetIconState(axesGizmoState);
+                            // Debug.Log("Setting -> " + axesGizmoState);
                         }
                     }
                     else
@@ -202,6 +238,8 @@ namespace Astrovisio
 
             inspectorSettingController = new InspectorSettingController(inspectorContainer);
             noiseSettingController = new NoiseSettingController(noiseContainer);
+            hideUIController = new HideUISettingController(hideUIContainer);
+            axesGizmoController = new AxesGizmoSettingController(axesGizmoContainer);
             screenrecorderSettingController = new ScreenrecorderSettingController(screenrecorderContainer);
         }
 
@@ -235,18 +273,32 @@ namespace Astrovisio
                 {
                     SetPanelActive(buttonAction, false);
 
-                    // Only for Inspector Button
+                    // Inspector Button
                     if (buttonAction.Name == "Inspector")
                     {
                         inspectorSettingController.SetInspectorState(false);
                         // Debug.Log("buttonAction.Name == Inspector -> " + newSelectionState);
                     }
 
-                    // Only for Noise Button
+                    // Noise Button
                     if (buttonAction.Name == "Noise" && buttonAction.State == false)
                     {
                         bool noiseState = noiseSettingController.GetState();
                         buttonAction.SetIconState(noiseState);
+                    }
+
+                    // HideUI Button
+                    if (buttonAction.Name == "HideUI" && buttonAction.State == false)
+                    {
+                        bool hideUIState = hideUIController.GetState();
+                        buttonAction.SetIconState(hideUIState);
+                    }
+
+                    // AxesGizmo Button
+                    if (buttonAction.Name == "AxesGizmo" && buttonAction.State == false)
+                    {
+                        bool axesGizmoState = axesGizmoController.GetState();
+                        buttonAction.SetIconState(axesGizmoState);
                     }
                 }
             }

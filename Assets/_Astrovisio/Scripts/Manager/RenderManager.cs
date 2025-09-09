@@ -126,7 +126,7 @@ namespace Astrovisio
             // Debug.Log("Length :" + dataContainer.DataPack.Rows.Length);
             dataRenderer = Instantiate(dataRendererPrefab);
             dataRenderer.RenderDataContainer(dataContainer);
-            
+
             SetDataInspector(false, true);
 
             OnProjectRenderEnd?.Invoke(project);
@@ -220,6 +220,13 @@ namespace Astrovisio
         {
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
             astrovisioDataSetRenderer.SetNoise(state, value);
+        }
+
+        public void SetAxesGizmoVisibility(bool visibility)
+        {
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
+            AxesCanvasHandler axesCanvasHandler = astrovisioDataSetRenderer.GetComponentInChildren<AxesCanvasHandler>(true);
+            axesCanvasHandler.gameObject.SetActive(visibility);
         }
 
     }

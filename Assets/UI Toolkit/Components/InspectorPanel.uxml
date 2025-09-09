@@ -7,7 +7,7 @@
             <engine:Label text="Inspector mode" name="TitleLabel" />
             <engine:Instance template="CheckboxSimple" name="InspectorToggle" />
         </engine:VisualElement>
-        <engine:VisualElement name="BodyContainer" style="flex-grow: 1;">
+        <engine:VisualElement name="BodyContainer">
             <engine:VisualElement name="ShapeContainer" style="flex-grow: 1;">
                 <engine:Label text="Shape" name="ShapeTitle" class="title" />
                 <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; justify-content: space-between;">
@@ -45,6 +45,9 @@
                     <engine:Label text="A: -231" />
                 </engine:ScrollView>
             </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="SkeletonContainer" style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+            <engine:Label text="Inizializing..." name="Label" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

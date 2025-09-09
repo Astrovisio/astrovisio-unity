@@ -20,7 +20,12 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="Line" />
                 <engine:VisualElement name="HideUIContainer" style="flex-grow: 1;">
-                    <engine:Button name="HideUIButton" class="button">
+                    <engine:Button name="HideUIButton" class="trigger-button">
+                        <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
+                    </engine:Button>
+                </engine:VisualElement>
+                <engine:VisualElement name="AxesGizmoContainer" style="flex-grow: 1;">
+                    <engine:Button name="AxesGizmoButton" class="trigger-button">
                         <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
                     </engine:Button>
                 </engine:VisualElement>
