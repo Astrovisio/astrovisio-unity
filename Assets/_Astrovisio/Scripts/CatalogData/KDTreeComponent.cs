@@ -44,9 +44,6 @@ public class KDTreeComponent : MonoBehaviour
     // Events
     public event Action<float[]> OnSelectionPerformed;
 
-    [Header("Settings")]
-    public bool realtime = false;
-
     [Header("Area Selection Settings")]
     public SelectionMode selectionMode = SelectionMode.Sphere;
     public float selectionRadius = 0.05f; // For sphere selection
@@ -57,19 +54,6 @@ public class KDTreeComponent : MonoBehaviour
     [Header("Transforms")]
     public Transform pointCloudTransform;
     public Transform controllerTransform;
-
-    [Header("Mapping Ranges")]
-    // public Vector2 xRange = new Vector2(-10f, 10f);
-    // public Vector2 yRange = new Vector2(-10f, 10f);
-    // public Vector2 zRange = new Vector2(-10f, 10f);
-    // public Vector2 xTargetRange = new Vector2(-10f, 10f);
-    // public Vector2 yTargetRange = new Vector2(-10f, 10f);
-    // public Vector2 zTargetRange = new Vector2(-10f, 10f);
-
-    [Header("Mapping Scales")]
-    public ScalingType XScale = ScalingType.Linear;
-    public ScalingType YScale = ScalingType.Linear;
-    public ScalingType ZScale = ScalingType.Linear;
 
     private int[] xyz = new int[] { 0, 1, 2 };
 
@@ -548,8 +532,9 @@ public class KDTreeComponent : MonoBehaviour
     {
 
         float scale = 1.0f; // Matching shader scale
+        Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
 
-        switch (XScale)
+        switch (mapping.X.ScalingType)
         {
             case ScalingType.Sqrt:
                 point.x = signed_sqrt(point.x, scale);
@@ -559,7 +544,7 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        switch (YScale)
+        switch (mapping.Y.ScalingType)
         {
             case ScalingType.Sqrt:
                 point.y = signed_sqrt(point.y, scale);
@@ -569,7 +554,7 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        switch (ZScale)
+        switch (mapping.Z.ScalingType)
         {
             case ScalingType.Sqrt:
                 point.z = signed_sqrt(point.z, scale);
