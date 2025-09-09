@@ -3911,6 +3911,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: LoadMetaColumns
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.UniformOpacity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: DataMapping.Mapping.X.Source
       value: x
       objectReference: {fileID: 0}
@@ -3927,7 +3937,7 @@ PrefabInstance:
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: DataMapping.Mapping.Cmap.Source
-      value: x
+      value: vel-0
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -3986,13 +3996,48 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.Source
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
       propertyPath: DataMapping.Mapping.Cmap.DataMaxVal
-      value: 17212.65
+      value: 864.3684
       objectReference: {fileID: 0}
     - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: DataMapping.Mapping.Cmap.DataMinVal
-      value: 16413.84
+      value: -847.4055
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.Clamped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.X.InverseMapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.DataMaxVal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.DataMinVal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.TargetMaxVal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054602126277597126, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: DataMapping.Mapping.Opacity.TargetMinVal
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

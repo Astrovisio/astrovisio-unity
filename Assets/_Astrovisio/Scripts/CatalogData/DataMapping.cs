@@ -20,7 +20,6 @@
  *
  */
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace CatalogData
@@ -29,18 +28,13 @@ namespace CatalogData
     public class DataMapping
     {
         public ColorMapEnum ColorMap = ColorMapEnum.Accent;
-        public bool Spherical;
-        public RenderType RenderType = RenderType.Billboard;
         public bool UniformColor;
-        public bool UniformPointSize;
-        public bool UniformPointShape;
         public bool UniformOpacity;
         public bool UseNoise;
         public bool isolateSelection = false;
         public MappingUniforms Uniforms = new MappingUniforms();
 
         public Mapping Mapping;
-        public MetaMapping MetaMapping;
 
         // public static DataMapping CreateFromJson(string jsonString)
         // {
@@ -74,20 +68,13 @@ namespace CatalogData
             {
                 DataMapping mapping = new DataMapping
                 {
-                    Spherical = false,
-                    RenderType = RenderType.Billboard,
                     ColorMap = ColorMapEnum.Inferno,
                     UniformColor = false,
-                    UniformPointSize = true,
-                    UniformPointShape = true,
                     UniformOpacity = true,
                     UseNoise = false,
                     isolateSelection = false,
                     Uniforms = new MappingUniforms
                     {
-                        Scale = 0.001f,
-                        PointSize = 0.3f,
-                        PointShape = ShapeType.Circle,
                         Color = Color.white
                     },
                     Mapping = new Mapping
@@ -107,25 +94,12 @@ namespace CatalogData
             {
                 DataMapping mapping = new DataMapping
                 {
-                    Spherical = true,
-                    RenderType = RenderType.Billboard,
                     UniformColor = true,
-                    UniformPointSize = true,
-                    UniformPointShape = true,
                     UniformOpacity = true,
                     UseNoise = false,
                     Uniforms = new MappingUniforms
                     {
-                        Scale = 0.001f,
-                        PointSize = 0.3f,
-                        PointShape = ShapeType.Circle,
                         Color = Color.white
-                    },
-                    Mapping = new Mapping
-                    {
-                        Lat = new MapFloatEntry {Source = "glon"},
-                        Lng = new MapFloatEntry {Source = "glat"},
-                        R = new MapFloatEntry {Source = "Dm"}
                     }
                 };
                 return mapping;
@@ -138,9 +112,6 @@ namespace CatalogData
     {
         [HideInInspector] public string ColorString;
         public Color Color;
-        [HideInInspector] public float Scale = 1;
-        public float PointSize = 0.1f;
-        public ShapeType PointShape = ShapeType.OutlinedCircle;
         [Range(0.0f, 1.0f)] public float Opacity = 1.0f;
         public float NoiseStrength = 0.01f;
     }
@@ -149,18 +120,10 @@ namespace CatalogData
     public class Mapping
     {
         public MapFloatEntry Cmap;
-        public MapFloatEntry Lat;
-        public MapFloatEntry Lng;
         public MapFloatEntry Opacity;
-        public MapFloatEntry R;
-        public MapFloatEntry PointSize;
-        public MapFloatEntry PointShape;
         public MapFloatEntry X;
         public MapFloatEntry Y;
         public MapFloatEntry Z;
-        public MapFloatEntry X2;
-        public MapFloatEntry Y2;
-        public MapFloatEntry Z2;
     }
 
     [Serializable]
@@ -172,7 +135,6 @@ namespace CatalogData
         public float TargetMinVal;
         public float TargetMaxVal;
         public bool InverseMapping;
-        public float Offset;
         public ScalingType ScalingType = ScalingType.Linear;
         public string Source;
         [HideInInspector]
@@ -186,7 +148,6 @@ namespace CatalogData
             TargetMinVal = InverseMapping ? TargetMaxVal : TargetMinVal,
             TargetMaxVal = InverseMapping ? TargetMinVal : TargetMaxVal,
             InverseMapping = InverseMapping ? 1 : 0,
-            Offset = Offset,
             ScalingType = ScalingType.GetHashCode()
         };
     }
@@ -201,25 +162,10 @@ namespace CatalogData
         public float DataMinVal;
         public float DataMaxVal;
         public int InverseMapping;
-        public float Offset;
-
         public int ScalingType;
-
         // Future use: Will filter points based on this range
         public float TargetMinVal;
         public float TargetMaxVal;
-    }
-
-    [Serializable]
-    public class MetaMapping
-    {
-        public MapMetaEntry Name;
-    }
-
-    [Serializable]
-    public class MapMetaEntry
-    {
-        public string Source;
     }
 
     [Serializable]

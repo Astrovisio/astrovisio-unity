@@ -20,42 +20,16 @@
  *
  */
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Astrovisio;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Debug = UnityEngine.Debug;
 
 namespace CatalogData
 {
     public class AstrovisioDataSetRenderer : MonoBehaviour
     {
-        public ColorMapDelegate OnColorMapChanged;
-
-        public string TableFileName;
-        public string MappingFileName;
         public DataMapping DataMapping = DataMapping.DefaultXyzMapping;
-        public bool LoadMetaColumns = true;
-        [Range(0.0f, 1.0f)] public float ValueCutoffMin = 0;
-        [Range(0.0f, 1.0f)] public float ValueCutoffMax = 1;
         public Texture2D ColorMapTexture;
-        public Texture2D SpriteSheetTexture;
-
-        // Vignette Rendering
-        [Header("Vignette Rendering Controls")]
-        [Range(0, 0.5f)] public float VignetteFadeStart = 0.15f;
-        [Range(0, 0.5f)] public float VignetteFadeEnd = 0.40f;
-        [Range(0, 1)] public float VignetteIntensity = 0.0f;
-        public Color VignetteColor = Color.black;
 
         private ComputeBuffer[] _buffers;
 
@@ -63,7 +37,7 @@ namespace CatalogData
         // it's less verbose than storing a huge number of options individually
         private ComputeBuffer _mappingConfigBuffer;
         private ComputeBuffer _dataVisibleBuffer;
-        private readonly GPUMappingConfig[] _mappingConfigs = new GPUMappingConfig[7];
+        private readonly GPUMappingConfig[] _mappingConfigs = new GPUMappingConfig[5];
 
         private CatalogDataSet _dataSet;
         private Material _catalogMaterial;
@@ -77,71 +51,45 @@ namespace CatalogData
 
         #region Material Property IDs
 
-        private int _idSpriteSheet, _idNumSprites, _idColorMap, _idColorMapIndex, _idNumColorMaps, _idDataSetMatrix, _idScalingFactor;
-        private int _idDataX, _idDataY, _idDataZ, _idDataX2, _idDataY2, _idDataZ2, _idDataCmap, _idDataOpacity, _idDataPointSize, _idDataPointShape, _idDataVisible;
-        private int _idCutoffMin, _idCutoffMax;
-        private int _idUseUniformColor, _idUseUniformOpacity, _idUseUniformPointSize, _idUseUniformPointShape, _idUseNoise, _idIsolateSelection;
-        private int _idColor, _idOpacity, _idPointSize, _idPointShape, _idNoiseStrength;
+        private int _idColorMap, _idColorMapIndex, _idNumColorMaps;
+        private int _idDataX, _idDataY, _idDataZ, _idDataCmap, _idDataOpacity, _idDataVisible;
+        private int _idUseUniformColor, _idUseUniformOpacity, _idUseNoise, _idIsolateSelection;
+        private int _idColor, _idOpacity, _idNoiseStrength;
         private int _idMappingConfigs;
-        private int _idVignetteFadeStart, _idVignetteFadeEnd, _idVignetteIntensity, _idVignetteColor;
 
-
-        private Transform cameraTarget;
         private KDTreeComponent kdTreeComponent;
 
         private void Awake()
         {
-            cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
-
             kdTreeComponent = GetComponent<KDTreeComponent>();
-            // kdTreeComponent.controllerTransform = cameraTarget;
-            // kdTreeComponent.setControllerTransform(cameraTarget);
         }
 
         private void GetPropertyIds()
         {
-            _idSpriteSheet = Shader.PropertyToID("_SpriteSheet");
-            _idNumSprites = Shader.PropertyToID("_NumSprites");
             _idColorMap = Shader.PropertyToID("colorMap");
             _idColorMapIndex = Shader.PropertyToID("colorMapIndex");
             _idNumColorMaps = Shader.PropertyToID("numColorMaps");
-            _idDataSetMatrix = Shader.PropertyToID("datasetMatrix");
-            _idScalingFactor = Shader.PropertyToID("scalingFactor");
 
             _idDataX = Shader.PropertyToID("dataX");
             _idDataY = Shader.PropertyToID("dataY");
             _idDataZ = Shader.PropertyToID("dataZ");
-            _idDataX2 = Shader.PropertyToID("dataX2");
-            _idDataY2 = Shader.PropertyToID("dataY2");
-            _idDataZ2 = Shader.PropertyToID("dataZ2");
+
             _idDataCmap = Shader.PropertyToID("dataCmap");
             _idDataOpacity = Shader.PropertyToID("dataOpacity");
-            _idDataPointSize = Shader.PropertyToID("dataPointSize");
-            _idDataPointShape = Shader.PropertyToID("dataPointShape");
-            _idDataVisible = Shader.PropertyToID("dataVisible");
 
-            _idCutoffMin = Shader.PropertyToID("cutoffMin");
-            _idCutoffMax = Shader.PropertyToID("cutoffMax");
+            _idDataVisible = Shader.PropertyToID("dataVisible");
 
             _idUseUniformColor = Shader.PropertyToID("useUniformColor");
             _idUseUniformOpacity = Shader.PropertyToID("useUniformOpacity");
-            _idUseUniformPointSize = Shader.PropertyToID("useUniformPointSize");
-            _idUseUniformPointShape = Shader.PropertyToID("useUniformPointShape");
             _idUseNoise = Shader.PropertyToID("useNoise");
             _idIsolateSelection = Shader.PropertyToID("isolateSelection");
 
             _idColor = Shader.PropertyToID("color");
             _idOpacity = Shader.PropertyToID("opacity");
-            _idPointSize = Shader.PropertyToID("pointSize");
-            _idPointShape = Shader.PropertyToID("pointShape");
             _idNoiseStrength = Shader.PropertyToID("noiseStrength");
 
             _idMappingConfigs = Shader.PropertyToID("mappingConfigs");
 
-            _idVignetteFadeStart = Shader.PropertyToID("VignetteFadeStart");
-            _idVignetteFadeEnd = Shader.PropertyToID("VignetteFadeEnd");
-            _idVignetteIntensity = Shader.PropertyToID("VignetteIntensity");
-            _idVignetteColor = Shader.PropertyToID("VignetteColor");
         }
 
         #endregion
@@ -171,17 +119,10 @@ namespace CatalogData
             {
                 DataMapping = new DataMapping
                 {
-                    Spherical = false,
-                    RenderType = RenderType.Billboard,
                     UniformColor = true,
-                    UniformPointSize = true,
-                    UniformPointShape = true,
                     UniformOpacity = true,
                     Uniforms = new MappingUniforms
                     {
-                        Scale = 0.001f,
-                        PointSize = 0.3f,
-                        PointShape = ShapeType.Circle,
                         Color = Color.white,
                         Opacity = 1.0f
                     },
@@ -230,7 +171,7 @@ namespace CatalogData
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
             {
-                Debug.LogWarning($"Problem loading data catalog file {TableFileName}");
+                Debug.LogWarning($"Problem loading data");
             }
             else
             {
@@ -246,12 +187,10 @@ namespace CatalogData
                 // Load instance of the material, so that each data set can have different material parameters
                 GetPropertyIds();
                 _catalogMaterial = new Material(Shader.Find("Astrovisio/PointShader"));
-                _catalogMaterial.SetTexture(_idSpriteSheet, SpriteSheetTexture);
-                _catalogMaterial.SetInt(_idNumSprites, 8);
 
                 _catalogMaterial.SetTexture(_idColorMap, ColorMapTexture);
-                // Buffer holds XYZ, cmap, pointSize, pointShape and opacity mapping configs               
-                _mappingConfigBuffer = new ComputeBuffer(32 * 7, 32);
+                // Buffer holds XYZ, cmap, and opacity mapping configs (float = 4, int = 4, MappingConfig have 7 int/float params. 4*7=28)              
+                _mappingConfigBuffer = new ComputeBuffer(5, 28);
                 _catalogMaterial.SetBuffer(_idMappingConfigs, _mappingConfigBuffer);
 
                 // Apply scaling from data set space to world space
@@ -516,103 +455,6 @@ namespace CatalogData
                 }
             }
 
-            // Set the point size buffer if we're not using a uniform point size
-            if (DataMapping.RenderType == RenderType.Billboard && !DataMapping.UniformPointSize)
-            {
-                if (DataMapping.Mapping.PointSize != null)
-                {
-                    int pointSizeColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.PointSize.Source);
-                    if (pointSizeColumnIndex >= 0)
-                    {
-                        _catalogMaterial.SetBuffer(_idDataPointSize, _buffers[pointSizeColumnIndex]);
-                    }
-                    else
-                    {
-                        if (logErrors)
-                        {
-                            Debug.Log($"Can't find column {DataMapping.Mapping.PointSize.Source} (mapped to PointSize)");
-                        }
-
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (logErrors)
-                    {
-                        Debug.Log("No mapping for PointSize");
-                    }
-
-                    return false;
-                }
-            }
-
-            // Set the point shape buffer if we're not using a uniform point shape
-            if (DataMapping.RenderType == RenderType.Billboard && !DataMapping.UniformPointShape)
-            {
-                if (DataMapping.Mapping.PointShape != null)
-                {
-                    int pointShapeColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.PointShape.Source);
-                    if (pointShapeColumnIndex >= 0)
-                    {
-                        _catalogMaterial.SetBuffer(_idDataPointShape, _buffers[pointShapeColumnIndex]);
-                    }
-                    else
-                    {
-                        if (logErrors)
-                        {
-                            Debug.Log($"Can't find column {DataMapping.Mapping.PointShape.Source} (mapped to PointShape)");
-                        }
-
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (logErrors)
-                    {
-                        Debug.Log("No mapping for PointShape");
-                    }
-
-                    return false;
-                }
-            }
-
-            // Update Spherical mapping buffers if we're using spherical coordinates
-            if (DataMapping.Spherical)
-            {
-                if (DataMapping.Mapping.Lat != null && DataMapping.Mapping.Lng != null && DataMapping.Mapping.R != null)
-                {
-                    int gLatColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.Lat.Source);
-                    int gLongColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.Lng.Source);
-                    int rColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.R.Source);
-                    if (gLatColumnIndex >= 0 && gLongColumnIndex >= 0 && rColumnIndex >= 0)
-                    {
-                        // Spatial mapping and scaling
-                        _catalogMaterial.SetBuffer(_idDataX, _buffers[gLatColumnIndex]);
-                        _catalogMaterial.SetBuffer(_idDataY, _buffers[gLongColumnIndex]);
-                        _catalogMaterial.SetBuffer(_idDataZ, _buffers[rColumnIndex]);
-                        return true;
-                    }
-                    else
-                    {
-                        if (logErrors)
-                        {
-                            Debug.Log($"Can't find columns {DataMapping.Mapping.Lat.Source}, {DataMapping.Mapping.Lng.Source} and {DataMapping.Mapping.R.Source} (mapped to Lat, Long and R)");
-                        }
-
-                        return false;
-                    }
-                }
-
-                if (logErrors)
-                {
-                    Debug.Log("Can't find mappings for Lat, Long and R");
-                }
-
-                return false;
-            }
-
             // Otherwise default to Cartesian coordinates and mapping buffers
             if (DataMapping.Mapping.X != null && DataMapping.Mapping.Y != null && DataMapping.Mapping.Z != null)
             {
@@ -634,43 +476,6 @@ namespace CatalogData
                     }
 
                     return false;
-                }
-
-                // Update Line mapping buffers if we're rendering a line
-                if (DataMapping.RenderType == RenderType.Line)
-                {
-                    if (DataMapping.Mapping.X2 != null && DataMapping.Mapping.Y2 != null && DataMapping.Mapping.Z2 != null)
-                    {
-                        int x2ColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.X2.Source);
-                        int y2ColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.Y2.Source);
-                        int z2ColumnIndex = _dataSet.GetDataColumnIndex(DataMapping.Mapping.Z2.Source);
-                        if (x2ColumnIndex >= 0 && y2ColumnIndex >= 0 && z2ColumnIndex >= 0)
-                        {
-                            // Spatial mapping for the end points
-                            _catalogMaterial.SetBuffer(_idDataX2, _buffers[x2ColumnIndex]);
-                            _catalogMaterial.SetBuffer(_idDataY2, _buffers[y2ColumnIndex]);
-                            _catalogMaterial.SetBuffer(_idDataZ2, _buffers[z2ColumnIndex]);
-                            return true;
-                        }
-                        else
-                        {
-                            if (logErrors)
-                            {
-                                Debug.Log($"Can't find columns {DataMapping.Mapping.X2.Source}, {DataMapping.Mapping.Y2.Source} and {DataMapping.Mapping.Z2.Source} (mapped to X2, Y2 and Z2)");
-                            }
-
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (logErrors)
-                        {
-                            Debug.Log("Can't find mappings for X2, Y2 and Z2");
-                        }
-
-                        return false;
-                    }
                 }
 
                 return true;
@@ -722,7 +527,7 @@ namespace CatalogData
                 {
                     _appliedColorMap = DataMapping.ColorMap;
                     int colorMapIndex = _appliedColorMap.GetHashCode();
-                    OnColorMapChanged?.Invoke(_appliedColorMap);
+                    //OnColorMapChanged?.Invoke(_appliedColorMap);
                     _catalogMaterial.SetFloat(_idColorMapIndex, colorMapIndex);
                     _catalogMaterial.SetInt(_idNumColorMaps, ColorMapUtils.NumColorMaps);
                 }
@@ -754,53 +559,6 @@ namespace CatalogData
             _catalogMaterial.SetInt(_idIsolateSelection, DataMapping.isolateSelection ? 1 : 0);
             _catalogMaterial.SetFloat(_idNoiseStrength, DataMapping.Uniforms.NoiseStrength);
 
-            if (!DataMapping.UniformPointSize && DataMapping.Mapping.PointSize != null && !string.IsNullOrEmpty(DataMapping.Mapping.PointSize.Source))
-            {
-                _catalogMaterial.SetInt(_idUseUniformPointSize, 0);
-                _mappingConfigs[5] = DataMapping.Mapping.PointSize.GpuMappingConfig;
-            }
-            else
-            {
-                _catalogMaterial.SetInt(_idUseUniformPointSize, 1);
-                _catalogMaterial.SetFloat(_idPointSize, DataMapping.Uniforms.PointSize);
-            }
-
-            if (!DataMapping.UniformPointShape && DataMapping.Mapping.PointShape != null && !string.IsNullOrEmpty(DataMapping.Mapping.PointShape.Source))
-            {
-                _catalogMaterial.SetInt(_idUseUniformPointShape, 0);
-                _mappingConfigs[6] = DataMapping.Mapping.PointShape.GpuMappingConfig;
-            }
-            else
-            {
-                _catalogMaterial.SetInt(_idUseUniformPointShape, 1);
-                float shapeIndex = DataMapping.Uniforms.PointShape.GetHashCode();
-                _catalogMaterial.SetFloat(_idPointShape, shapeIndex);
-            }
-
-            // Update spherical mapping properties if we're using spherical coordinates
-            if (DataMapping.Spherical)
-            {
-                if (DataMapping.Mapping.Lat != null && DataMapping.Mapping.Lng != null && DataMapping.Mapping.R != null)
-                {
-                    // Spherical coordinate input assumes degrees for XY, while the shader assumes radians
-                    var latConfig = DataMapping.Mapping.Lat.GpuMappingConfig;
-                    //latConfig.Scale *= Mathf.Deg2Rad;
-                    latConfig.Offset *= Mathf.Deg2Rad;
-
-                    var lngConfig = DataMapping.Mapping.Lng.GpuMappingConfig;
-                    //lngConfig.Scale *= Mathf.Deg2Rad;
-                    lngConfig.Offset *= Mathf.Deg2Rad;
-
-                    _mappingConfigs[0] = latConfig;
-                    _mappingConfigs[1] = lngConfig;
-                    _mappingConfigs[2] = DataMapping.Mapping.R.GpuMappingConfig;
-                    _mappingConfigBuffer.SetData(_mappingConfigs);
-                    return true;
-                }
-
-                return false;
-            }
-
             // Otherwise default to Cartesian coordinates and update properties
             if (DataMapping.Mapping.X != null && DataMapping.Mapping.Y != null && DataMapping.Mapping.Z != null)
             {
@@ -813,32 +571,6 @@ namespace CatalogData
             }
 
             return false;
-        }
-
-        public string ScalingString
-        {
-            get
-            {
-                string unitString = _dataSet.GetColumnDefinition(DataMapping.Spherical ? DataMapping.Mapping.R.Source : DataMapping.Mapping.X.Source).Unit;
-                if (string.IsNullOrEmpty(unitString))
-                {
-                    unitString = "units";
-                }
-
-                float scaleMillimeters = transform.localScale.x * 1000;
-                if (scaleMillimeters < 10)
-                {
-                    return $"1.0 {unitString} = {(scaleMillimeters).ToString("F2", CultureInfo.InvariantCulture)} mm";
-                }
-                else if (scaleMillimeters < 1000)
-                {
-                    return $"1.0 {unitString} = {(scaleMillimeters * 1e-1).ToString("F2", CultureInfo.InvariantCulture)} cm";
-                }
-                else
-                {
-                    return $"1.0 {unitString} = {(scaleMillimeters * 1e-3).ToString("F2", CultureInfo.InvariantCulture)} m";
-                }
-            }
         }
 
         // The color map array is calculated from the color map texture and sent to the GPU whenever the color map is changed
@@ -864,24 +596,13 @@ namespace CatalogData
             int currentIndex = DataMapping.ColorMap.GetHashCode();
             int newIndex = (currentIndex + delta + numColorMaps) % numColorMaps;
             SetColorMap(ColorMapUtils.FromHashCode(newIndex));
-            OnColorMapChanged?.Invoke(DataMapping.ColorMap);
+            //OnColorMapChanged?.Invoke(DataMapping.ColorMap);
         }
 
         private void Update()
         {
-            if (_catalogMaterial != null)
-            {
-                _catalogMaterial.SetFloat(_idCutoffMin, ValueCutoffMin);
-                _catalogMaterial.SetFloat(_idCutoffMax, ValueCutoffMax);
-                _catalogMaterial.SetFloat(_idVignetteFadeStart, VignetteFadeStart);
-                _catalogMaterial.SetFloat(_idVignetteFadeEnd, VignetteFadeEnd);
-                _catalogMaterial.SetFloat(_idVignetteIntensity, VignetteIntensity);
-                _catalogMaterial.SetColor(_idVignetteColor, VignetteColor);
-            }
-
             // HandleNoizeCheck();
             UpdateMappingValues();
-
             GetDataInfo();
         }
 
@@ -941,15 +662,19 @@ namespace CatalogData
 
         void OnRenderObject()
         {
-            GL.PushMatrix();
-            // Update the object transform and point scale on the GPU
-            GL.MultMatrix(transform.localToWorldMatrix);
-            //_catalogMaterial.SetMatrix(_idDataSetMatrix, transform.localToWorldMatrix);
-            // Shader defines two passes: Pass #0 uses cartesian coordinates and Pass #1 uses spherical coordinates
-            _catalogMaterial.SetPass(DataMapping.Spherical ? 1 : 0);
-            // Render points on the GPU using vertex pulling
-            Graphics.DrawProceduralNow(MeshTopology.Points, _dataSet.N);
-            GL.PopMatrix();
+            if (_catalogMaterial is not null)
+            {
+                GL.PushMatrix();
+                // Update the object transform and point scale on the GPU
+                GL.MultMatrix(transform.localToWorldMatrix);
+                //_catalogMaterial.SetMatrix(_idDataSetMatrix, transform.localToWorldMatrix);
+                // Shader defines two passes: Pass #0 uses cartesian coordinates and Pass #1 uses spherical coordinates
+                _catalogMaterial.SetPass(0);
+                // Render points on the GPU using vertex pulling
+                Graphics.DrawProceduralNow(MeshTopology.Points, _dataSet.N);
+                GL.PopMatrix();
+            }
+
         }
 
         private void ReleaseAllGpuResources()

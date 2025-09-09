@@ -52,7 +52,6 @@ Shader "Astrovisio/PointShader"
                 float DataMinVal;
                 float DataMaxVal;
                 int InverseMapping;
-                float Offset;
                 int ScalingType;
                 float TargetMinVal;
                 float TargetMaxVal;
@@ -136,8 +135,6 @@ Shader "Astrovisio/PointShader"
                 // if (config.Clamped) {
                 //     scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
                 // }
-
-                // scaledValue += config.Offset;
                 
                 return scaledValue;
             }
