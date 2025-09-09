@@ -699,60 +699,23 @@ public class KDTreeComponent : MonoBehaviour
 
         Vector2 dataRange = new Vector2(entry.DataMinVal, entry.DataMaxVal);
         Vector2 targetRange = entry.InverseMapping ? new Vector2(entry.TargetMaxVal, entry.TargetMinVal) : new Vector2(entry.TargetMinVal, entry.TargetMaxVal);
-        ScalingType scalingType = entry.ScalingType;
-        float scale = 1f;
 
-        Vector2 effectiveTargetRange = entry.InverseMapping ?
-            new Vector2(targetRange.y, targetRange.x) : targetRange;
-
-        if (scalingType == ScalingType.Linear)
+        switch (entry.ScalingType)
         {
-            return RemapInverseUnclamped(localValue, targetRange, dataRange);
+            case ScalingType.Linear:
+                return RemapInverseUnclamped(localValue, targetRange, dataRange);
+
+            case ScalingType.Log:
+            case ScalingType.Sqrt:
+                float scaledMin = ApplyScalingFunction(dataRange.x, entry.ScalingType, 1f);
+                float scaledMax = ApplyScalingFunction(dataRange.y, entry.ScalingType, 1f);
+                float unmappedScaled = RemapUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
+                return ApplyInverseScalingFunction(unmappedScaled, entry.ScalingType, 1f);
+
+            default:
+                return 0;
         }
 
-        // Check if the range crosses zero
-        bool crossesZero = dataRange.x < 0 && dataRange.y > 0;
-
-        if (crossesZero && (scalingType == ScalingType.Log || scalingType == ScalingType.Sqrt))
-        {
-            // Handle zero-crossing ranges specially
-            // We need to find where zero maps to in the target range
-
-            // Scale the data range boundaries
-            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
-            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
-            float scaledZero = ApplyScalingFunction(0f, scalingType, scale); // This should be 0
-
-            // Find where zero maps to in target space
-            float zeroInTarget = Mathf.Lerp(targetRange.x, targetRange.y,
-                Mathf.InverseLerp(scaledMin, scaledMax, scaledZero));
-
-            // Determine which side of zero we're on in target space
-            if (localValue < zeroInTarget)
-            {
-                // We're in the negative part
-                // Map from [targetRange.x, zeroInTarget] to [dataRange.x, 0]
-                float t = Mathf.InverseLerp(targetRange.x, zeroInTarget, localValue);
-                float scaledValue = Mathf.Lerp(scaledMin, scaledZero, t);
-                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
-            }
-            else
-            {
-                // We're in the positive part
-                // Map from [zeroInTarget, targetRange.y] to [0, dataRange.y]
-                float t = Mathf.InverseLerp(zeroInTarget, targetRange.y, localValue);
-                float scaledValue = Mathf.Lerp(scaledZero, scaledMax, t);
-                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
-            }
-        }
-        else
-        {
-            // Standard case: range doesn't cross zero or using squared scaling
-            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
-            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
-            float unmappedScaled = RemapInverseUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
-            return ApplyInverseScalingFunction(unmappedScaled, scalingType, scale);
-        }
     }
 
     // Helper function to apply scaling
@@ -840,6 +803,18 @@ public class KDTreeComponent : MonoBehaviour
         return Mathf.LerpUnclamped(to.x, to.y, t);
     }
 
+    private float RemapUnclamped(float value, Vector2 fromRange, Vector2 toRange)
+    {
+        // Evita divisione per zero
+        if (Mathf.Approximately(fromRange.y, fromRange.x))
+        {
+            return toRange.x;
+        }
+
+        float t = (value - fromRange.x) / (fromRange.y - fromRange.x);
+        return toRange.x + t * (toRange.y - toRange.x);
+    }
+
     private float signed_log10(float x, float scale)
     {
         return Math.Sign(x) * (float)Math.Log10(1 + Math.Abs(x) / scale);
@@ -857,8 +832,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private float inverse_signed_sqrt(float y, float scale)
     {
-        float absY = Math.Abs(y);
-        return Math.Sign(y) * scale * absY * absY;
+        return Math.Sign(y) * scale * (y * y);
     }
 
     private void OnDestroy()

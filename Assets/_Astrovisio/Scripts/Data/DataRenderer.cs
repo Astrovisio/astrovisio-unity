@@ -102,23 +102,6 @@ namespace Astrovisio
             if (astrovidioDataSetRenderer is not null)
             {
                 astrovidioDataSetRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
-
-                // switch (axis)
-                // {
-                //     case Axis.X:
-                //         kdTreeComponent.xRange.x = thresholdMin;
-                //         kdTreeComponent.xRange.y = thresholdMax;
-                //         break;
-                //     case Axis.Y:
-                //         kdTreeComponent.yRange.x = thresholdMin;
-                //         kdTreeComponent.yRange.y = thresholdMax;
-                //         break;
-                //     case Axis.Z:
-                //         kdTreeComponent.zRange.x = thresholdMin;
-                //         kdTreeComponent.zRange.y = thresholdMax;
-                //         break;
-                // }
-
             }
         }
 
