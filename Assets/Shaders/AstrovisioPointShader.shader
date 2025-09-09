@@ -1,13 +1,6 @@
+
 Shader "Astrovisio/PointShader"
 {
-    Properties 
-    {
-
-
-
-
-    }
-
     SubShader
     {
         Tags { "RenderType"="Opaque" }
@@ -37,8 +30,6 @@ Shader "Astrovisio/PointShader"
             #define Z_INDEX 2
             #define CMAP_INDEX 3
             #define OPACITY_INDEX 4
-            // #define POINT_SIZE_INDEX 5
-            // #define POINT_SHAPE_INDEX 6
 
             struct appdata
             {
@@ -131,10 +122,6 @@ Shader "Astrovisio/PointShader"
                         scaledValue = map(scaledValue, config.DataMinVal, config.DataMaxVal, config.TargetMinVal, config.TargetMaxVal);
                         break;
                 }
-
-                // if (config.Clamped) {
-                //     scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
-                // }
                 
                 return scaledValue;
             }

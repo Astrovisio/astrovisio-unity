@@ -75,7 +75,7 @@ namespace CatalogData
                     isolateSelection = false,
                     Uniforms = new MappingUniforms
                     {
-                        Color = Color.white
+                        Opacity = 1
                     },
                     Mapping = new Mapping
                     {
@@ -87,30 +87,11 @@ namespace CatalogData
                 return mapping;
             }
         }
-
-        public static DataMapping DefaultSphericalMapping
-        {
-            get
-            {
-                DataMapping mapping = new DataMapping
-                {
-                    UniformColor = true,
-                    UniformOpacity = true,
-                    UseNoise = false,
-                    Uniforms = new MappingUniforms
-                    {
-                        Color = Color.white
-                    }
-                };
-                return mapping;
-            }
-        }
     }
 
     [Serializable]
     public class MappingUniforms
     {
-        [HideInInspector] public string ColorString;
         public Color Color;
         [Range(0.0f, 1.0f)] public float Opacity = 1.0f;
         public float NoiseStrength = 0.01f;
@@ -153,9 +134,8 @@ namespace CatalogData
     }
 
     // Struct used to store mapping config values on the GPU.
-    // Using 32-bit ints for clamped and scaling type instead of 8-bit bools for packing purposes
-    // (For performance reasons, struct should be an integer multiple of 128 bits)
-    // Each config struct has a size of 4 * 8 = 32 bytes
+    // Each config struct has a size of 4 * 7 = 28 bytes
+    // https://learn.microsoft.com/it-it/dotnet/csharp/language-reference/operators/sizeof
     public struct GPUMappingConfig
     {
         public int Clamped;
@@ -163,17 +143,9 @@ namespace CatalogData
         public float DataMaxVal;
         public int InverseMapping;
         public int ScalingType;
-        // Future use: Will filter points based on this range
         public float TargetMinVal;
         public float TargetMaxVal;
     }
-
-    [Serializable]
-    public enum RenderType
-    {
-        Billboard,
-        Line
-    };
 
     [Serializable]
     public enum ScalingType
@@ -183,16 +155,4 @@ namespace CatalogData
         Sqrt
     };
 
-    [Serializable]
-    public enum ShapeType
-    {
-        Halo,
-        Circle,
-        OutlinedCircle,
-        Square,
-        OutlinedSquare,
-        Triangle,
-        OutlinedTriangle,
-        Star
-    };
 }
