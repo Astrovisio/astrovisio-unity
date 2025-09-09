@@ -158,12 +158,12 @@ namespace CatalogData
             // kdTreeComponent.yRange.Set(dataContainer.MinPoint.y, dataContainer.MaxPoint.y);
             // kdTreeComponent.zRange.Set(dataContainer.MinPoint.z, dataContainer.MaxPoint.z);
 
-            if (!debug)
-            {
-                kdTreeComponent.xRange.Set(dataContainer.XMinThreshold, dataContainer.XMaxThreshold);
-                kdTreeComponent.yRange.Set(dataContainer.YMinThreshold, dataContainer.YMaxThreshold);
-                kdTreeComponent.zRange.Set(dataContainer.ZMinThreshold, dataContainer.ZMaxThreshold);
-            }
+            // if (!debug)
+            // {
+            //     kdTreeComponent.xRange.Set(dataContainer.XMinThreshold, dataContainer.XMaxThreshold);
+            //     kdTreeComponent.yRange.Set(dataContainer.YMinThreshold, dataContainer.YMaxThreshold);
+            //     kdTreeComponent.zRange.Set(dataContainer.ZMinThreshold, dataContainer.ZMaxThreshold);
+            // }
 
             int[] xyzIndex = new int[] { dataContainer.XAxisIndex, dataContainer.YAxisIndex, dataContainer.ZAxisIndex };
 

@@ -59,12 +59,12 @@ public class KDTreeComponent : MonoBehaviour
     public Transform controllerTransform;
 
     [Header("Mapping Ranges")]
-    public Vector2 xRange = new Vector2(-10f, 10f);
-    public Vector2 yRange = new Vector2(-10f, 10f);
-    public Vector2 zRange = new Vector2(-10f, 10f);
-    public Vector2 xTargetRange = new Vector2(-10f, 10f);
-    public Vector2 yTargetRange = new Vector2(-10f, 10f);
-    public Vector2 zTargetRange = new Vector2(-10f, 10f);
+    // public Vector2 xRange = new Vector2(-10f, 10f);
+    // public Vector2 yRange = new Vector2(-10f, 10f);
+    // public Vector2 zRange = new Vector2(-10f, 10f);
+    // public Vector2 xTargetRange = new Vector2(-10f, 10f);
+    // public Vector2 yTargetRange = new Vector2(-10f, 10f);
+    // public Vector2 zTargetRange = new Vector2(-10f, 10f);
 
     [Header("Mapping Scales")]
     public ScalingType XScale = ScalingType.Linear;
@@ -584,9 +584,23 @@ public class KDTreeComponent : MonoBehaviour
 
     private Vector3 RemapPoint(Vector3 point)
     {
-        point.x = RemapInverseUnclamped(point.x, xRange, xTargetRange);
-        point.y = RemapInverseUnclamped(point.y, yRange, yTargetRange);
-        point.z = RemapInverseUnclamped(point.z, zRange, zTargetRange);
+        Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
+
+        point.x = RemapInverseUnclamped(
+            point.x,
+            new Vector2(mapping.X.DataMinVal, mapping.X.DataMaxVal),
+            mapping.X.InverseMapping ? new Vector2(mapping.X.TargetMaxVal, mapping.X.TargetMinVal) : new Vector2(mapping.X.TargetMinVal, mapping.X.TargetMaxVal)
+            );
+        point.y = RemapInverseUnclamped(
+            point.y,
+            new Vector2(mapping.Y.DataMinVal, mapping.Y.DataMaxVal),
+            mapping.Y.InverseMapping ? new Vector2(mapping.Y.TargetMaxVal, mapping.Y.TargetMinVal) : new Vector2(mapping.Y.TargetMinVal, mapping.Y.TargetMaxVal)
+        );
+        point.z = RemapInverseUnclamped(
+            point.z,
+            new Vector2(mapping.Z.DataMinVal, mapping.Z.DataMaxVal),
+            mapping.Z.InverseMapping ? new Vector2(mapping.Z.TargetMaxVal, mapping.Z.TargetMinVal) : new Vector2(mapping.Z.TargetMinVal, mapping.Z.TargetMaxVal)
+        );
         return point;
     }
 
@@ -673,24 +687,32 @@ public class KDTreeComponent : MonoBehaviour
         // Transform from world space to local space of the point cloud
         Vector3 localPoint = pointCloudTransform.InverseTransformPoint(worldPoint);
 
-        float scale = 1.0f;
         Vector3 result = new Vector3();
 
         // X axis
-        result.x = TransformAxisToDataSpace(localPoint.x, xRange, xTargetRange, XScale, scale);
+        result.x = TransformAxisToDataSpace(localPoint.x, astrovisioDatasetRenderer.DataMapping.Mapping.X);
 
         // Y axis
-        result.y = TransformAxisToDataSpace(localPoint.y, yRange, yTargetRange, YScale, scale);
+        result.y = TransformAxisToDataSpace(localPoint.y, astrovisioDatasetRenderer.DataMapping.Mapping.Y);
 
         // Z axis
-        result.z = TransformAxisToDataSpace(localPoint.z, zRange, zTargetRange, ZScale, scale);
+        result.z = TransformAxisToDataSpace(localPoint.z, astrovisioDatasetRenderer.DataMapping.Mapping.Z);
 
         return result;
     }
 
     // New helper method to handle axis transformation with zero-crossing ranges
-    private float TransformAxisToDataSpace(float localValue, Vector2 dataRange, Vector2 targetRange, ScalingType scalingType, float scale)
+    private float TransformAxisToDataSpace(float localValue, MapFloatEntry entry)
     {
+
+        Vector2 dataRange = new Vector2(entry.DataMinVal, entry.DataMaxVal);
+        Vector2 targetRange = entry.InverseMapping ? new Vector2(entry.TargetMaxVal, entry.TargetMinVal) : new Vector2(entry.TargetMinVal, entry.TargetMaxVal);
+        ScalingType scalingType = entry.ScalingType;
+        float scale = 1f;
+
+        Vector2 effectiveTargetRange = entry.InverseMapping ?
+            new Vector2(targetRange.y, targetRange.x) : targetRange;
+
         if (scalingType == ScalingType.Linear)
         {
             return RemapInverseUnclamped(localValue, targetRange, dataRange);

@@ -137,7 +137,7 @@ Shader "Astrovisio/PointShader"
                 //     scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
                 // }
 
-                scaledValue += config.Offset;
+                // scaledValue += config.Offset;
                 
                 return scaledValue;
             }
