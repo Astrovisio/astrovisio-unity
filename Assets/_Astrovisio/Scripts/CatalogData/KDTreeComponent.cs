@@ -776,7 +776,26 @@ public class KDTreeComponent : MonoBehaviour
             maxRadiusZ = Mathf.Max(maxRadiusZ, Mathf.Abs(transformedPoint.z - center.z));
         }
 
-        return new Vector3(maxRadiusX, maxRadiusY, maxRadiusZ);
+        //HOTFIX: Mitigate volume distortion when DataSetRenderer rotation is 45° +- (n*90)°
+        // No idea why it happens. Sqrt(2) is the scale factor to apply to a cube inscribed in a cube of the same size but rotated by 45° to return to its original size. ⛋
+        float f = RotToValue(transform.eulerAngles.y);
+        f = RemapUnclamped(f, new Vector2(0, 1), new Vector2(1, Mathf.Sqrt(2)));
+        Debug.Log(f);
+
+        return new Vector3(maxRadiusX * f, maxRadiusY, maxRadiusZ * f);
+    }
+
+    public static float RotToValue(float angleDeg)
+    {
+        // Normalizza l'angolo in [0, 360)
+        float angle = angleDeg % 360f;
+        if (angle < 0f)
+            angle += 360f;
+
+        // Applica funzione sinusoidale
+        float radians = (MathF.PI / 90f) * angle;
+        float s = MathF.Sin(radians);
+        return (float)Mathf.Pow(s, 4); // equivalente a sin²
     }
 
     public float InverseLerpUnclamped(float a, float b, float value)
