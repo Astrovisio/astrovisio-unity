@@ -20,6 +20,8 @@ namespace Astrovisio
         private Button cubeButton;
         private FloatField sizeInputFloatField;
         private DropdownField mediaDropdownField;
+        private Button processButton;
+        private Toggle isolateSelectionToggle;
         private ScrollView inspectorInfoScrollView;
 
         // === Local ===
@@ -56,12 +58,28 @@ namespace Astrovisio
             cubeButton = Root.Q<Button>("CubeButton");
             sizeInputFloatField = Root.Q<FloatField>("SizeInputFloatField");
             mediaDropdownField = Root.Q<VisualElement>("MediaDropdown").Q<DropdownField>("DropdownField");
+            processButton = Root.Q<Button>("ProcessButton");
+            isolateSelectionToggle = Root.Q<VisualElement>("IsolateContainer")?.Q<Toggle>();
             inspectorInfoScrollView = Root.Q<ScrollView>("DataInspectorScollView");
 
-            sphereButton.parent.SetEnabled(false);
-            sizeInputFloatField.parent.SetEnabled(false);
-            mediaDropdownField.parent.SetEnabled(false);
-            inspectorInfoScrollView.parent.SetEnabled(false);
+
+            processButton.clicked += () => _subscribedKDTree?.PerformSelection();
+
+
+            isolateSelectionToggle.RegisterValueChangedCallback(evt =>
+            {
+                bool value = evt.newValue;
+                DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+                dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
+            });
+
+
+            // sphereButton.parent.SetEnabled(false);
+            // sizeInputFloatField.parent.SetEnabled(false);
+            // mediaDropdownField.parent.SetEnabled(false);
+            // processButton.SetEnabled(false);
+            // isolateSelectionToggle.SetEnabled(false);
+            // inspectorInfoScrollView.parent.SetEnabled(false);
 
             // inspectorToggle.value = selectionState;
             // inspectorToggle.RegisterValueChangedCallback(evt =>
@@ -313,6 +331,11 @@ namespace Astrovisio
             throw new NotImplementedException();
         }
 
+        private void SetIsolateSelectionMode(bool state)
+        {
+            isolateSelectionToggle.value = state;
+        }
+
         private void SetInspectorInfo(string[] data)
         {
             inspectorInfoScrollView.Clear();
@@ -331,6 +354,7 @@ namespace Astrovisio
             SetSelectionMode(SelectionMode.Sphere);
             SetSelectionSize(defaultSectionSize);
             SetAggregationMode(AggregationMode.Average);
+            SetIsolateSelectionMode(false);
             ShowSelectionGizmo(false);
             // inspectorToggle.value = false;
         }

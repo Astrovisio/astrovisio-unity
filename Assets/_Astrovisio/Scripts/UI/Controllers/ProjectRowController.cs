@@ -73,7 +73,7 @@ namespace Astrovisio
                 createLabel.text = FormatDateTime((DateTime)Project.Created);
             }
 
-            InitFavouriteToggle();
+            // InitFavouriteToggle();
             InitEditButton();
             InitDuplicateButton();
             InitDeleteButton();

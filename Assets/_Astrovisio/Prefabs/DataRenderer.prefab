@@ -474,14 +474,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014583830051124506}
-  m_LocalRotation: {x: -0.27059805, y: -0.27059805, z: 0.6532815, w: 0.6532815}
+  m_LocalRotation: {x: 0.27059805, y: -0.27059805, z: -0.6532815, w: 0.6532815}
   m_LocalPosition: {x: 0, y: 0, z: -0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5758818093635478193}
   m_Father: {fileID: 7326927556941298493}
-  m_LocalEulerAnglesHint: {x: 0, y: -45, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: -45, z: -90}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -0.55, y: 0}
@@ -2209,24 +2209,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f519ab9429f6beb46a7274451be286a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TableFileName: 
-  MappingFileName: 
   DataMapping:
     ColorMap: 33
-    Spherical: 0
-    RenderType: 0
     UniformColor: 0
-    UniformPointSize: 1
-    UniformPointShape: 1
     UniformOpacity: 1
     UseNoise: 0
     isolateSelection: 0
     Uniforms:
-      ColorString: 
       Color: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
-      Scale: 0.001
-      PointSize: 0.3
-      PointShape: 1
       Opacity: 1
       NoiseStrength: 0.01
     Mapping:
@@ -2237,29 +2227,9 @@ MonoBehaviour:
         TargetMinVal: 0
         TargetMaxVal: 1
         InverseMapping: 0
-        Offset: 0
         ScalingType: 0
         Source: size
-      Lat:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-      Lng:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
+        SourceIndex: 0
       Opacity:
         Clamped: 0
         DataMinVal: 0
@@ -2267,39 +2237,9 @@ MonoBehaviour:
         TargetMinVal: 0
         TargetMaxVal: 0
         InverseMapping: 0
-        Offset: 0
         ScalingType: 0
         Source: 
-      R:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-      PointSize:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-      PointShape:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
+        SourceIndex: 0
       X:
         Clamped: 0
         DataMinVal: -0.5
@@ -2307,9 +2247,9 @@ MonoBehaviour:
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
-        Offset: 0
         ScalingType: 0
         Source: x
+        SourceIndex: 0
       Y:
         Clamped: 0
         DataMinVal: -0.5
@@ -2317,9 +2257,9 @@ MonoBehaviour:
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
-        Offset: 0
         ScalingType: 0
         Source: y
+        SourceIndex: 0
       Z:
         Clamped: 0
         DataMinVal: -0.5
@@ -2327,51 +2267,10 @@ MonoBehaviour:
         TargetMinVal: -0.5
         TargetMaxVal: 0.5
         InverseMapping: 0
-        Offset: 0
         ScalingType: 0
         Source: z
-      X2:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-      Y2:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-      Z2:
-        Clamped: 0
-        DataMinVal: 0
-        DataMaxVal: 0
-        TargetMinVal: 0
-        TargetMaxVal: 0
-        InverseMapping: 0
-        Offset: 0
-        ScalingType: 0
-        Source: 
-    MetaMapping:
-      Name:
-        Source: 
-  LoadMetaColumns: 0
-  ValueCutoffMin: 0
-  ValueCutoffMax: 1
+        SourceIndex: 0
   ColorMapTexture: {fileID: 2800000, guid: 9e544ae8ea0eadb429edf5e73d7bcd2f, type: 3}
-  SpriteSheetTexture: {fileID: 0}
-  VignetteFadeStart: 0.15
-  VignetteFadeEnd: 0.4
-  VignetteIntensity: 0
-  VignetteColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &884816262672831559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2384,7 +2283,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0420587223217749bf6419732c89671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realtime: 0
   selectionMode: 2
   selectionRadius: 0.05
   selectionCubeHalfSize: 0.05
@@ -2392,15 +2290,6 @@ MonoBehaviour:
   showSelectionGizmo: 1
   pointCloudTransform: {fileID: 6528833266872925955}
   controllerTransform: {fileID: 6528833266872925955}
-  xRange: {x: -0.5, y: 0.5}
-  yRange: {x: -0.5, y: 0.5}
-  zRange: {x: -0.5, y: 0.5}
-  xTargetRange: {x: -0.5, y: 0.5}
-  yTargetRange: {x: -0.5, y: 0.5}
-  zTargetRange: {x: -0.5, y: 0.5}
-  XScale: 0
-  YScale: 0
-  ZScale: 0
   pointDataInspectorPrefab: {fileID: 1083773075067826380, guid: b197fe1071a96464e9d43a86ea4016c5,
     type: 3}
   areaSphereDataInspectorPrefab: {fileID: 1083773075067826380, guid: 751ce84d33049274686ceec24f7db75b,

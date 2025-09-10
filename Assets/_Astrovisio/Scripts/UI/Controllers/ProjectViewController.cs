@@ -21,7 +21,7 @@ namespace Astrovisio
         // === UI ===
         private Label projectNameLabel;
         private Label descriptionLabel;
-        private Button favouriteButton;
+        private Toggle favouriteToggle;
         private Button editButton;
         private Button deleteButton;
         private Button readMoreButton;
@@ -67,15 +67,10 @@ namespace Astrovisio
             descriptionLabel.text = Project.Description;
 
 
-            favouriteButton = topContainer.Q<Button>("FavouriteButton");
+            favouriteToggle = topContainer.Q<VisualElement>("FavouriteToggle").Q<Toggle>("CheckboxRoot");
             editButton = topContainer.Q<Button>("EditButton");
             deleteButton = topContainer.Q<Button>("DeleteButton");
 
-            Debug.Log("------------------");
-            Debug.Log(favouriteButton);
-            Debug.Log(editButton);
-            Debug.Log(deleteButton);
-            Debug.Log("------------------");
 
             // Project Read More
             readMoreButton = topContainer.Q<Button>("ReadMoreButton");
@@ -106,6 +101,8 @@ namespace Astrovisio
             };
 
             InitDeleteButton();
+            InitEditButton();
+            InitFavouriteToggle();
             InitScrollView();
             InitCheckAllToggle();
         }
@@ -275,6 +272,31 @@ namespace Astrovisio
                 UIManager.SetDeleteProject(Project);
                 evt.StopPropagation();
                 // Debug.Log("DeleteButton clicked");
+            });
+        }
+
+        private void InitEditButton()
+        {
+            editButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                UIManager.SetEditProject(Project);
+                evt.StopPropagation();
+            });
+        }
+
+        private void InitFavouriteToggle()
+        {
+            favouriteToggle.value = Project.Favourite;
+
+            favouriteToggle.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+            });
+
+            favouriteToggle.RegisterValueChangedCallback(evt =>
+            {
+                Project.Favourite = evt.newValue;
+                ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 

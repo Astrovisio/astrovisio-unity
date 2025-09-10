@@ -3,6 +3,7 @@
     <engine:Template name="TertiaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/TertiaryButton.uxml?fileID=9197481963319205126&amp;guid=8de8481b16f7dc640933949828d63915&amp;type=3#TertiaryButton" />
     <engine:Template name="ParamRowHeader" src="project://database/Assets/UI%20Toolkit/Components/ParamRowHeader.uxml?fileID=9197481963319205126&amp;guid=8024fcfe0cec71244bdb7bcf1843470b&amp;type=3#ParamRowHeader" />
     <engine:Template name="ParamRow" src="project://database/Assets/UI%20Toolkit/Components/ParamRow.uxml?fileID=9197481963319205126&amp;guid=24f95cd415ccaa64c812f528b1447b09&amp;type=3#ParamRow" />
+    <engine:Template name="CheckboxFavourite" src="project://database/Assets/UI%20Toolkit/Components/Shared/CheckboxFavourite.uxml?fileID=9197481963319205126&amp;guid=7fd83859370da1e44b1ac203bab1014e&amp;type=3#CheckboxFavourite" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Project.uss?fileID=7433441132597879392&amp;guid=deec784016811ab44986b898b4af8339&amp;type=3#Project" />
     <engine:VisualElement name="Root">
         <engine:VisualElement name="TopContainer">
@@ -11,7 +12,7 @@
                 <engine:VisualElement name="HeaderContainer">
                     <engine:Label text="Project Serra Project Serra Project Serra Project Serra " name="ProjectNameLabel" style="flex-shrink: 1;" />
                     <engine:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; flex-grow: 0;">
-                        <engine:Button name="FavouriteButton" class="icon-btn" />
+                        <engine:Instance template="CheckboxFavourite" name="FavouriteToggle" class="icon-btn" />
                         <engine:Button name="EditButton" class="icon-btn" />
                         <engine:Button name="DeleteButton" class="icon-btn" />
                     </engine:VisualElement>

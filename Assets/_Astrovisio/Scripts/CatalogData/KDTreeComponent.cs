@@ -224,8 +224,6 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        Debug.Log(areaSelectionResult.SelectedIndices.Count);
-
         if (areaSelectionResult.SelectedIndices.Count > 0)
         {
             Debug.Log(string.Join(", ", areaSelectionResult.AggregatedValues));
