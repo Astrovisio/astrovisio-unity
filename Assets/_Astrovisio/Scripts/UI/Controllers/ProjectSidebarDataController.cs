@@ -80,7 +80,7 @@ namespace Astrovisio
                 {
                     float value = 1 - (percentage / 100f);
                     Project.ConfigProcess.Downsampling = value;
-                    SetProcessDataButton(true);
+                    UpdateProcessDataButton();
                 }
                 else
                 {
@@ -138,12 +138,12 @@ namespace Astrovisio
             if (chipLabelCounter >= 3)
             {
                 isReadyToProcessData = true;
-                SetProcessDataButton(true);
+                UpdateProcessDataButton();
                 warningLabel.style.display = DisplayStyle.None;
                 return;
             }
             isReadyToProcessData = false;
-            SetProcessDataButton(false);
+            UpdateProcessDataButton();
 
             // 4) Count how many distinct axes have been selected
             int axesCount = (xAxis ? 1 : 0) + (yAxis ? 1 : 0) + (zAxis ? 1 : 0);
@@ -195,6 +195,18 @@ namespace Astrovisio
                 string.IsNullOrEmpty(warningLabel.text)
                     ? DisplayStyle.None
                     : DisplayStyle.Flex;
+        }
+
+        private void UpdateProcessDataButton()
+        {
+            if (isReadyToProcessData)
+            {
+                SetProcessDataButton(true);
+            }
+            else
+            {
+                SetProcessDataButton(false);
+            }
         }
 
         private void OnProcessDataClicked()

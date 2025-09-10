@@ -21,6 +21,9 @@ namespace Astrovisio
         // === UI ===
         private Label projectNameLabel;
         private Label descriptionLabel;
+        private Button favouriteButton;
+        private Button editButton;
+        private Button deleteButton;
         private Button readMoreButton;
         private Toggle checkAllToggle;
         private Button headerNameButton;
@@ -63,6 +66,17 @@ namespace Astrovisio
             descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
+
+            favouriteButton = topContainer.Q<Button>("FavouriteButton");
+            editButton = topContainer.Q<Button>("EditButton");
+            deleteButton = topContainer.Q<Button>("DeleteButton");
+
+            Debug.Log("------------------");
+            Debug.Log(favouriteButton);
+            Debug.Log(editButton);
+            Debug.Log(deleteButton);
+            Debug.Log("------------------");
+
             // Project Read More
             readMoreButton = topContainer.Q<Button>("ReadMoreButton");
             readMoreButton.clicked += () => UIManager.SetReadMoreViewVisibility(true, Project.Name, Project.Description);
@@ -91,6 +105,7 @@ namespace Astrovisio
                 ApplyScrollViewOrderType();
             };
 
+            InitDeleteButton();
             InitScrollView();
             InitCheckAllToggle();
         }
@@ -251,6 +266,16 @@ namespace Astrovisio
 
             _nextAllowedUpdate = Time.unscaledTime + 0.05f; // 50ms
             ProjectManager.UpdateProject(Project.Id, Project);
+        }
+
+        private void InitDeleteButton()
+        {
+            deleteButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                UIManager.SetDeleteProject(Project);
+                evt.StopPropagation();
+                // Debug.Log("DeleteButton clicked");
+            });
         }
 
         private void InitCheckAllToggle()

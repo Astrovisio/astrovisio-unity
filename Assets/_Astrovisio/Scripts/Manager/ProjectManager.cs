@@ -237,8 +237,10 @@ namespace Astrovisio
 			await apiManager.DeleteProject(id,
 				() =>
 				{
-					projectList.Remove(project);
-					openedProjectList.Remove(project);
+					projectList.RemoveAll(p => p.Id == id);
+					openedProjectList?.RemoveAll(p => p.Id == id);
+					// Debug.Log($"Removed={removed}. Left: {string.Join(", ", projectList.Select(p => p.Name))}");
+
 					ProjectDeleted?.Invoke(project);
 				},
 				error => ApiError?.Invoke(error));

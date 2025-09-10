@@ -122,6 +122,7 @@ namespace Astrovisio
 
             DateTime now = DateTime.UtcNow;
             List<Project> projectList = ProjectManager.GetProjectList();
+            // Debug.Log(string.Join(", ", projectList.Select(p => p.Name)));
             // projectList = projectManager.GetFakeProjectList();
 
             // UnityEngine.Debug.Log(projectList.Count);

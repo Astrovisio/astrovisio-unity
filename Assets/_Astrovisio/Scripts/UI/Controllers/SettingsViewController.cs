@@ -83,23 +83,6 @@ namespace Astrovisio
 
             Init();
             SetSettingsVisibility(false);
-
-            RunAnimationTest();
-        }
-
-        private void RunAnimationTest()
-        {
-            VisualElement testBox = new VisualElement();
-            testBox.style.width = 100;
-            testBox.style.height = 100;
-            testBox.style.backgroundColor = new Color(1f, 0f, 0f, 1f);
-            testBox.style.alignSelf = Align.Center;
-
-            Root.Add(testBox);
-
-            // testBox.SpinForever(3f);
-            // testBox.PulseForever(2f);
-            testBox.ColorPulseForever(Color.red, Color.blue, 2f);
         }
 
         private void OnProjectRenderedEnd(Project project)

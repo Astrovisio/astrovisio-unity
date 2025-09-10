@@ -41,17 +41,15 @@ namespace Astrovisio
             Init();
         }
 
-        private void OnInitializationPerformed()
-        {
-            Debug.Log("OnInitializationPerformed");
-            bodyContainer.style.display = DisplayStyle.Flex;
-            skeletonContainer.style.display = DisplayStyle.None;
-        }
-
         private void Init()
         {
             bodyContainer = Root.Q<VisualElement>("BodyContainer");
             skeletonContainer = Root.Q<VisualElement>("SkeletonContainer");
+            skeletonContainer.ColorPulseForever(
+                new Color(0x5e / 255f, 0x5e / 255f, 0x5e / 255f, 1f),
+                new Color(0x9b / 255f, 0x9b / 255f, 0x9b / 255f, 1f),
+                3f
+            );
 
             // inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
             sphereButton = Root.Q<Button>("SphereButton");
@@ -118,6 +116,13 @@ namespace Astrovisio
             }
 
             ShowSelectionGizmo(false);
+        }
+
+        private void OnInitializationPerformed()
+        {
+            // Debug.Log("OnInitializationPerformed");
+            bodyContainer.style.display = DisplayStyle.Flex;
+            skeletonContainer.style.display = DisplayStyle.None;
         }
 
         public void InitInspectorSettings(SelectionMode selectionMode, float selectionSize, string selectionFunction)

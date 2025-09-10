@@ -196,6 +196,8 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
+        Debug.Log("PerformSelection");
+
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
         // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
@@ -222,6 +224,8 @@ public class KDTreeComponent : MonoBehaviour
                 //cloned.transform.rotation = rotationAtAction;
                 break;
         }
+
+        Debug.Log(areaSelectionResult.SelectedIndices.Count);
 
         if (areaSelectionResult.SelectedIndices.Count > 0)
         {
@@ -296,6 +300,10 @@ public class KDTreeComponent : MonoBehaviour
             mapping.Y.SourceIndex,
             mapping.Z.SourceIndex
         };
+        Debug.Log("Index:");
+        Debug.Log(mapping.X.SourceIndex);
+        Debug.Log(mapping.Y.SourceIndex);
+        Debug.Log(mapping.Z.SourceIndex);
 
         _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
 
@@ -782,7 +790,7 @@ public class KDTreeComponent : MonoBehaviour
         // No idea why it happens. Sqrt(2) is the scale factor to apply to a cube inscribed in a cube of the same size but rotated by 45° to return to its original size. ⛋
         float f = RotToValue(transform.eulerAngles.y);
         f = RemapUnclamped(f, new Vector2(0, 1), new Vector2(1, Mathf.Sqrt(2)));
-        Debug.Log(f);
+        // Debug.Log(f);
 
         return new Vector3(maxRadiusX * f, maxRadiusY, maxRadiusZ * f);
     }
