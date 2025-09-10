@@ -12,6 +12,9 @@ namespace Astrovisio
         // === Dependencies ===
         public VisualElement Root { get; }
 
+        private VisualElement bodyContainer;
+        private VisualElement skeletonContainer;
+
         // private Toggle inspectorToggle;
         private Button sphereButton;
         private Button cubeButton;
@@ -32,15 +35,24 @@ namespace Astrovisio
         {
             Root = root;
 
-            // RenderManager.Instance.OnProjectRenderReady += OnProjectRenderReady;
             RenderManager.Instance.OnProjectRenderStart += OnProjectRenderStart;
             RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderEnd;
 
             Init();
         }
 
+        private void OnInitializationPerformed()
+        {
+            Debug.Log("OnInitializationPerformed");
+            bodyContainer.style.display = DisplayStyle.Flex;
+            skeletonContainer.style.display = DisplayStyle.None;
+        }
+
         private void Init()
         {
+            bodyContainer = Root.Q<VisualElement>("BodyContainer");
+            skeletonContainer = Root.Q<VisualElement>("SkeletonContainer");
+
             // inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
             sphereButton = Root.Q<Button>("SphereButton");
             cubeButton = Root.Q<Button>("CubeButton");
@@ -137,12 +149,19 @@ namespace Astrovisio
         private void OnProjectRenderStart(Project project)
         {
             Unhook();
+
+            bodyContainer.style.display = DisplayStyle.None;
+            skeletonContainer.style.display = DisplayStyle.Flex;
         }
 
         private void OnProjectRenderEnd(Project project)
         {
             Reset();
             TryHookToCurrentKDTree();
+
+            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            KDTreeComponent kDTreeComponent = dataRenderer.GetKDTreeComponent();
+            kDTreeComponent.OnInitializationPerformed += OnInitializationPerformed;
         }
 
         private void TryHookToCurrentKDTree()

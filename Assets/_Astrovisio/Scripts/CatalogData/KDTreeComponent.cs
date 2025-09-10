@@ -42,6 +42,7 @@ public class KDTreeComponent : MonoBehaviour
 {
 
     // Events
+    public event Action OnInitializationPerformed;
     public event Action<float[]> OnSelectionPerformed;
 
     [Header("Settings")]
@@ -330,6 +331,7 @@ public class KDTreeComponent : MonoBehaviour
             areaBoxDataInspector.SetActiveState(false);
         }
 
+        OnInitializationPerformed?.Invoke();
     }
 
     private void UpdateSelectionVisualizer()

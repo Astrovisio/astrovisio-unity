@@ -1,7 +1,7 @@
-using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 namespace Astrovisio
 {
@@ -83,6 +83,29 @@ namespace Astrovisio
 
             Init();
             SetSettingsVisibility(false);
+
+            RunAnimationTest();
+        }
+
+        private void RunAnimationTest()
+        {
+            Debug.Log("=== UIAnimations Test Start ===");
+
+            // Creo un quadrato di 100x100 rosso
+            VisualElement testBox = new VisualElement();
+            testBox.style.width = 100;
+            testBox.style.height = 100;
+            testBox.style.backgroundColor = new Color(1f, 0f, 0f, 1f);
+            testBox.style.alignSelf = Align.Center; // lo mette al centro se root ha flex
+
+            // Lo aggiungo alla root
+            Root.Add(testBox);
+
+            // Avvio le animazioni
+            testBox.SpinForever(3f);   // rotazione ogni 3 secondi
+            testBox.PulseForever(2f);  // effetto pulsazione
+
+            Debug.Log("=== UIAnimations Test Added VisualElement ===");
         }
 
         private void OnProjectRenderedEnd(Project project)
@@ -125,7 +148,7 @@ namespace Astrovisio
             VisualElement axesGizmoIcon = axesGizmoContainer.Q<VisualElement>("Icon");
             VisualElement screenshotIcon = screenshotContainer.Q<VisualElement>("Icon");
             VisualElement screenrecorderIcon = screenrecorderContainer.Q<VisualElement>("Icon");
-            
+
 
             // ButtonActions
 
