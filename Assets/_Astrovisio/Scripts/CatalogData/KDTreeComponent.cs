@@ -45,9 +45,6 @@ public class KDTreeComponent : MonoBehaviour
     public event Action OnInitializationPerformed;
     public event Action<float[]> OnSelectionPerformed;
 
-    [Header("Settings")]
-    public bool realtime = false;
-
     [Header("Area Selection Settings")]
     public SelectionMode selectionMode = SelectionMode.Sphere;
     public float selectionRadius = 0.05f; // For sphere selection
@@ -59,20 +56,7 @@ public class KDTreeComponent : MonoBehaviour
     public Transform pointCloudTransform;
     public Transform controllerTransform;
 
-    [Header("Mapping Ranges")]
-    public Vector2 xRange = new Vector2(-10f, 10f);
-    public Vector2 yRange = new Vector2(-10f, 10f);
-    public Vector2 zRange = new Vector2(-10f, 10f);
-    public Vector2 xTargetRange = new Vector2(-10f, 10f);
-    public Vector2 yTargetRange = new Vector2(-10f, 10f);
-    public Vector2 zTargetRange = new Vector2(-10f, 10f);
-
-    [Header("Mapping Scales")]
-    public ScalingType XScale = ScalingType.Linear;
-    public ScalingType YScale = ScalingType.Linear;
-    public ScalingType ZScale = ScalingType.Linear;
-
-    private int[] xyz = new int[] { 0, 1, 2 };
+    // private int[] xyz = new int[] { 0, 1, 2 };
 
     private KDTreeManager manager;
     private float[][] data;
@@ -99,6 +83,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private GameObject currentDataSelectionGameObject;
     private AstrovisioDataSetRenderer astrovisioDatasetRenderer;
+    private Mapping mapping;
 
 
     [ContextMenu("ComputeNearestPoint")]
@@ -133,6 +118,7 @@ public class KDTreeComponent : MonoBehaviour
     private void Awake()
     {
         astrovisioDatasetRenderer = GetComponent<AstrovisioDataSetRenderer>();
+        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
     }
 
     private void Start()
@@ -302,11 +288,16 @@ public class KDTreeComponent : MonoBehaviour
         }
     }
 
-    public async Task Initialize(float[][] pointData, Vector3 pivot, int[] xyz)
+    public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
         data = pointData;
-        this.xyz = xyz;
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, this.xyz));
+        int[] xyz = new int[] {
+            mapping.X.SourceIndex,
+            mapping.Y.SourceIndex,
+            mapping.Z.SourceIndex
+        };
+
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
 
         if (!Application.isPlaying)
         {
@@ -505,9 +496,9 @@ public class KDTreeComponent : MonoBehaviour
         if (lastNearestIndex >= 0)
         {
             Vector3 pointOriginal = new Vector3(
-                data[xyz[0]][lastNearestIndex],
-                data[xyz[1]][lastNearestIndex],
-                data[xyz[2]][lastNearestIndex]
+                data[mapping.X.SourceIndex][lastNearestIndex],
+                data[mapping.Y.SourceIndex][lastNearestIndex],
+                data[mapping.Z.SourceIndex][lastNearestIndex]
             );
 
             pointOriginal = ApplyScaling(pointOriginal);
@@ -532,9 +523,9 @@ public class KDTreeComponent : MonoBehaviour
         foreach (int idx in areaSelectionResult.SelectedIndices)
         {
             Vector3 point = new Vector3(
-                data[xyz[0]][idx],
-                data[xyz[1]][idx],
-                data[xyz[2]][idx]
+                data[mapping.X.SourceIndex][idx],
+                data[mapping.Y.SourceIndex][idx],
+                data[mapping.Z.SourceIndex][idx]
             );
             centerOfMass += point;
         }
@@ -549,35 +540,35 @@ public class KDTreeComponent : MonoBehaviour
     private Vector3 ApplyScaling(Vector3 point)
     {
 
-        float scale = 1.0f; // Matching shader scale
+        Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
 
-        switch (XScale)
+        switch (mapping.X.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.x = signed_sqrt(point.x, scale);
+                point.x = signed_sqrt(point.x);
                 break;
             case ScalingType.Log:
-                point.x = signed_log10(point.x, scale);
+                point.x = signed_log10(point.x);
                 break;
         }
 
-        switch (YScale)
+        switch (mapping.Y.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.y = signed_sqrt(point.y, scale);
+                point.y = signed_sqrt(point.y);
                 break;
             case ScalingType.Log:
-                point.y = signed_log10(point.y, scale);
+                point.y = signed_log10(point.y);
                 break;
         }
 
-        switch (ZScale)
+        switch (mapping.Z.ScalingType)
         {
             case ScalingType.Sqrt:
-                point.z = signed_sqrt(point.z, scale);
+                point.z = signed_sqrt(point.z);
                 break;
             case ScalingType.Log:
-                point.z = signed_log10(point.z, scale);
+                point.z = signed_log10(point.z);
                 break;
         }
 
@@ -586,9 +577,23 @@ public class KDTreeComponent : MonoBehaviour
 
     private Vector3 RemapPoint(Vector3 point)
     {
-        point.x = RemapInverseUnclamped(point.x, xRange, xTargetRange);
-        point.y = RemapInverseUnclamped(point.y, yRange, yTargetRange);
-        point.z = RemapInverseUnclamped(point.z, zRange, zTargetRange);
+        Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
+
+        point.x = RemapInverseUnclamped(
+            point.x,
+            new Vector2(mapping.X.DataMinVal, mapping.X.DataMaxVal),
+            mapping.X.InverseMapping ? new Vector2(mapping.X.TargetMaxVal, mapping.X.TargetMinVal) : new Vector2(mapping.X.TargetMinVal, mapping.X.TargetMaxVal)
+            );
+        point.y = RemapInverseUnclamped(
+            point.y,
+            new Vector2(mapping.Y.DataMinVal, mapping.Y.DataMaxVal),
+            mapping.Y.InverseMapping ? new Vector2(mapping.Y.TargetMaxVal, mapping.Y.TargetMinVal) : new Vector2(mapping.Y.TargetMinVal, mapping.Y.TargetMaxVal)
+        );
+        point.z = RemapInverseUnclamped(
+            point.z,
+            new Vector2(mapping.Z.DataMinVal, mapping.Z.DataMaxVal),
+            mapping.Z.InverseMapping ? new Vector2(mapping.Z.TargetMaxVal, mapping.Z.TargetMinVal) : new Vector2(mapping.Z.TargetMinVal, mapping.Z.TargetMaxVal)
+        );
         return point;
     }
 
@@ -675,97 +680,68 @@ public class KDTreeComponent : MonoBehaviour
         // Transform from world space to local space of the point cloud
         Vector3 localPoint = pointCloudTransform.InverseTransformPoint(worldPoint);
 
-        float scale = 1.0f;
         Vector3 result = new Vector3();
 
         // X axis
-        result.x = TransformAxisToDataSpace(localPoint.x, xRange, xTargetRange, XScale, scale);
+        result.x = TransformAxisToDataSpace(localPoint.x, astrovisioDatasetRenderer.DataMapping.Mapping.X);
 
         // Y axis
-        result.y = TransformAxisToDataSpace(localPoint.y, yRange, yTargetRange, YScale, scale);
+        result.y = TransformAxisToDataSpace(localPoint.y, astrovisioDatasetRenderer.DataMapping.Mapping.Y);
 
         // Z axis
-        result.z = TransformAxisToDataSpace(localPoint.z, zRange, zTargetRange, ZScale, scale);
+        result.z = TransformAxisToDataSpace(localPoint.z, astrovisioDatasetRenderer.DataMapping.Mapping.Z);
 
         return result;
     }
 
     // New helper method to handle axis transformation with zero-crossing ranges
-    private float TransformAxisToDataSpace(float localValue, Vector2 dataRange, Vector2 targetRange, ScalingType scalingType, float scale)
+    private float TransformAxisToDataSpace(float localValue, MapFloatEntry entry)
     {
-        if (scalingType == ScalingType.Linear)
+
+        Vector2 dataRange = new Vector2(entry.DataMinVal, entry.DataMaxVal);
+        Vector2 targetRange = entry.InverseMapping ? new Vector2(entry.TargetMaxVal, entry.TargetMinVal) : new Vector2(entry.TargetMinVal, entry.TargetMaxVal);
+
+        switch (entry.ScalingType)
         {
-            return RemapInverseUnclamped(localValue, targetRange, dataRange);
+            case ScalingType.Linear:
+                return RemapInverseUnclamped(localValue, targetRange, dataRange);
+
+            case ScalingType.Log:
+            case ScalingType.Sqrt:
+                float scaledMin = ApplyScalingFunction(dataRange.x, entry.ScalingType);
+                float scaledMax = ApplyScalingFunction(dataRange.y, entry.ScalingType);
+                float unmappedScaled = RemapUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
+                return ApplyInverseScalingFunction(unmappedScaled, entry.ScalingType);
+
+            default:
+                return 0;
         }
 
-        // Check if the range crosses zero
-        bool crossesZero = dataRange.x < 0 && dataRange.y > 0;
-
-        if (crossesZero && (scalingType == ScalingType.Log || scalingType == ScalingType.Sqrt))
-        {
-            // Handle zero-crossing ranges specially
-            // We need to find where zero maps to in the target range
-
-            // Scale the data range boundaries
-            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
-            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
-            float scaledZero = ApplyScalingFunction(0f, scalingType, scale); // This should be 0
-
-            // Find where zero maps to in target space
-            float zeroInTarget = Mathf.Lerp(targetRange.x, targetRange.y,
-                Mathf.InverseLerp(scaledMin, scaledMax, scaledZero));
-
-            // Determine which side of zero we're on in target space
-            if (localValue < zeroInTarget)
-            {
-                // We're in the negative part
-                // Map from [targetRange.x, zeroInTarget] to [dataRange.x, 0]
-                float t = Mathf.InverseLerp(targetRange.x, zeroInTarget, localValue);
-                float scaledValue = Mathf.Lerp(scaledMin, scaledZero, t);
-                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
-            }
-            else
-            {
-                // We're in the positive part
-                // Map from [zeroInTarget, targetRange.y] to [0, dataRange.y]
-                float t = Mathf.InverseLerp(zeroInTarget, targetRange.y, localValue);
-                float scaledValue = Mathf.Lerp(scaledZero, scaledMax, t);
-                return ApplyInverseScalingFunction(scaledValue, scalingType, scale);
-            }
-        }
-        else
-        {
-            // Standard case: range doesn't cross zero or using squared scaling
-            float scaledMin = ApplyScalingFunction(dataRange.x, scalingType, scale);
-            float scaledMax = ApplyScalingFunction(dataRange.y, scalingType, scale);
-            float unmappedScaled = RemapInverseUnclamped(localValue, targetRange, new Vector2(scaledMin, scaledMax));
-            return ApplyInverseScalingFunction(unmappedScaled, scalingType, scale);
-        }
     }
 
     // Helper function to apply scaling
-    private float ApplyScalingFunction(float value, ScalingType scalingType, float scale)
+    private float ApplyScalingFunction(float value, ScalingType scalingType)
     {
         switch (scalingType)
         {
             case ScalingType.Log:
-                return signed_log10(value, scale);
+                return signed_log10(value);
             case ScalingType.Sqrt:
-                return signed_sqrt(value, scale);
+                return signed_sqrt(value);
             default:
                 return value;
         }
     }
 
     // Helper function to apply inverse scaling
-    private float ApplyInverseScalingFunction(float value, ScalingType scalingType, float scale)
+    private float ApplyInverseScalingFunction(float value, ScalingType scalingType)
     {
         switch (scalingType)
         {
             case ScalingType.Log:
-                return inverse_signed_log10(value, scale);
+                return inverse_signed_log10(value);
             case ScalingType.Sqrt:
-                return inverse_signed_sqrt(value, scale);
+                return inverse_signed_sqrt(value);
             default:
                 return value;
         }
@@ -802,7 +778,26 @@ public class KDTreeComponent : MonoBehaviour
             maxRadiusZ = Mathf.Max(maxRadiusZ, Mathf.Abs(transformedPoint.z - center.z));
         }
 
-        return new Vector3(maxRadiusX, maxRadiusY, maxRadiusZ);
+        //HOTFIX: Mitigate volume distortion when DataSetRenderer rotation is 45° +- (n*90)°
+        // No idea why it happens. Sqrt(2) is the scale factor to apply to a cube inscribed in a cube of the same size but rotated by 45° to return to its original size. ⛋
+        float f = RotToValue(transform.eulerAngles.y);
+        f = RemapUnclamped(f, new Vector2(0, 1), new Vector2(1, Mathf.Sqrt(2)));
+        Debug.Log(f);
+
+        return new Vector3(maxRadiusX * f, maxRadiusY, maxRadiusZ * f);
+    }
+
+    public static float RotToValue(float angleDeg)
+    {
+        // Normalizza l'angolo in [0, 360)
+        float angle = angleDeg % 360f;
+        if (angle < 0f)
+            angle += 360f;
+
+        // Applica funzione sinusoidale
+        float radians = (MathF.PI / 90f) * angle;
+        float s = MathF.Sin(radians);
+        return (float)Mathf.Pow(s, 4); // equivalente a sin²
     }
 
     public float InverseLerpUnclamped(float a, float b, float value)
@@ -828,25 +823,36 @@ public class KDTreeComponent : MonoBehaviour
         return Mathf.LerpUnclamped(to.x, to.y, t);
     }
 
-    private float signed_log10(float x, float scale)
+    private float RemapUnclamped(float value, Vector2 fromRange, Vector2 toRange)
+    {
+        // Evita divisione per zero
+        if (Mathf.Approximately(fromRange.y, fromRange.x))
+        {
+            return toRange.x;
+        }
+
+        float t = (value - fromRange.x) / (fromRange.y - fromRange.x);
+        return toRange.x + t * (toRange.y - toRange.x);
+    }
+
+    private float signed_log10(float x, float scale = 1f)
     {
         return Math.Sign(x) * (float)Math.Log10(1 + Math.Abs(x) / scale);
     }
 
-    private float inverse_signed_log10(float y, float scale)
+    private float inverse_signed_log10(float y, float scale = 1f)
     {
         return Math.Sign(y) * scale * ((float)Math.Pow(10, Math.Abs(y)) - 1);
     }
 
-    private float signed_sqrt(float x, float scale)
+    private float signed_sqrt(float x, float scale = 1f)
     {
         return Math.Sign(x) * (float)Math.Sqrt(Math.Abs(x) / scale);
     }
 
-    private float inverse_signed_sqrt(float y, float scale)
+    private float inverse_signed_sqrt(float y, float scale = 1f)
     {
-        float absY = Math.Abs(y);
-        return Math.Sign(y) * scale * absY * absY;
+        return Math.Sign(y) * scale * (y * y);
     }
 
     private void OnDestroy()

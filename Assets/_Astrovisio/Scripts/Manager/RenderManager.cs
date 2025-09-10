@@ -72,7 +72,6 @@ namespace Astrovisio
             // Debug.Log("UpdateDataInspector " + state);
             kdTreeComponent = dataRenderer.GetKDTreeComponent();
             kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
-            kdTreeComponent.realtime = state;
             isInspectorModeActive = state;
 
             if (!XRManager.Instance.IsVRActive)

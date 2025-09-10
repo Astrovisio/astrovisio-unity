@@ -1,13 +1,6 @@
+
 Shader "Astrovisio/PointShader"
 {
-    Properties 
-    {
-
-
-
-
-    }
-
     SubShader
     {
         Tags { "RenderType"="Opaque" }
@@ -37,8 +30,6 @@ Shader "Astrovisio/PointShader"
             #define Z_INDEX 2
             #define CMAP_INDEX 3
             #define OPACITY_INDEX 4
-            // #define POINT_SIZE_INDEX 5
-            // #define POINT_SHAPE_INDEX 6
 
             struct appdata
             {
@@ -52,7 +43,6 @@ Shader "Astrovisio/PointShader"
                 float DataMinVal;
                 float DataMaxVal;
                 int InverseMapping;
-                float Offset;
                 int ScalingType;
                 float TargetMinVal;
                 float TargetMaxVal;
@@ -90,11 +80,11 @@ Shader "Astrovisio/PointShader"
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            float signed_log10(float x, float scale) {
+            float signed_log10(float x, float scale =  1.0) {
                 return sign(x) * log10(1 + abs(x) / scale);
             }
 
-            float signed_sqrt(float x, float scale) {
+            float signed_sqrt(float x, float scale = 1.0) {
                 return sign(x) * sqrt(abs(x) / scale);
             }
             
@@ -120,24 +110,18 @@ Shader "Astrovisio/PointShader"
                 switch (config.ScalingType)
                 {
                     case LOG:
-                        scaledValue = signed_log10(input, 1.0);
-                        scaledValue = map(scaledValue, signed_log10(config.DataMinVal, 1.0), signed_log10(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = signed_log10(input);
+                        scaledValue = map(scaledValue, signed_log10(config.DataMinVal), signed_log10(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     case SQRT:
-                        scaledValue = signed_sqrt(input, 1.0);
-                        scaledValue = map(scaledValue, signed_sqrt(config.DataMinVal, 1.0), signed_sqrt(config.DataMaxVal, 1.0), config.TargetMinVal, config.TargetMaxVal);
+                        scaledValue = signed_sqrt(input);
+                        scaledValue = map(scaledValue, signed_sqrt(config.DataMinVal), signed_sqrt(config.DataMaxVal), config.TargetMinVal, config.TargetMaxVal);
                         break;
                     default:
                         scaledValue = input;
                         scaledValue = map(scaledValue, config.DataMinVal, config.DataMaxVal, config.TargetMinVal, config.TargetMaxVal);
                         break;
                 }
-
-                // if (config.Clamped) {
-                //     scaledValue = clamp(scaledValue, config.TargetMinVal, config.TargetMaxVal);
-                // }
-
-                scaledValue += config.Offset;
                 
                 return scaledValue;
             }
