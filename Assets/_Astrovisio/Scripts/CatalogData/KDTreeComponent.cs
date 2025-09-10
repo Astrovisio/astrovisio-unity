@@ -117,7 +117,6 @@ public class KDTreeComponent : MonoBehaviour
     private void Awake()
     {
         astrovisioDatasetRenderer = GetComponent<AstrovisioDataSetRenderer>();
-        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
     }
 
     private void Start()
@@ -289,6 +288,7 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
+        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
         data = pointData;
         int[] xyz = new int[] {
             mapping.X.SourceIndex,
