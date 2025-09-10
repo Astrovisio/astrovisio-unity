@@ -89,23 +89,17 @@ namespace Astrovisio
 
         private void RunAnimationTest()
         {
-            Debug.Log("=== UIAnimations Test Start ===");
-
-            // Creo un quadrato di 100x100 rosso
             VisualElement testBox = new VisualElement();
             testBox.style.width = 100;
             testBox.style.height = 100;
             testBox.style.backgroundColor = new Color(1f, 0f, 0f, 1f);
-            testBox.style.alignSelf = Align.Center; // lo mette al centro se root ha flex
+            testBox.style.alignSelf = Align.Center;
 
-            // Lo aggiungo alla root
             Root.Add(testBox);
 
-            // Avvio le animazioni
-            testBox.SpinForever(3f);   // rotazione ogni 3 secondi
-            testBox.PulseForever(2f);  // effetto pulsazione
-
-            Debug.Log("=== UIAnimations Test Added VisualElement ===");
+            // testBox.SpinForever(3f);
+            // testBox.PulseForever(2f);
+            testBox.ColorPulseForever(Color.red, Color.blue, 2f);
         }
 
         private void OnProjectRenderedEnd(Project project)

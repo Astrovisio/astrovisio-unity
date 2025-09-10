@@ -27,11 +27,27 @@ namespace Astrovisio
                 long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 float t = ((now - start) / 1000f) % durationSec;
                 float phase = t / durationSec;
-                
+
                 float s = 1f + 0.2f * (0.5f - 0.5f * Mathf.Cos(phase * Mathf.PI * 2f));
                 ve.style.scale = new Scale(new Vector2(s, s));
             }).Every(16);
         }
+
+        public static void ColorPulseForever(this VisualElement ve, Color a, Color b, float durationSec = 2f)
+        {
+            long start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            ve.schedule.Execute(() =>
+            {
+                long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                float t = ((now - start) / 1000f) % durationSec;
+                float phase = t / durationSec;
+
+                // valore sinusoidale 0..1
+                float lerp = 0.5f - 0.5f * Mathf.Cos(phase * Mathf.PI * 2f);
+                ve.style.backgroundColor = Color.Lerp(a, b, lerp);
+            }).Every(16);
+        }
+
 
     }
 

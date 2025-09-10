@@ -211,12 +211,7 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
 
             // Init KDTree
-            Debug.Log("KDTree Start");
-            kdTreeComponent.Initialize(data, Vector3.negativeInfinity).GetAwaiter().OnCompleted(() =>
-            {
-                Debug.Log("KDTree Creation Completed");
-            });
-
+            _ = kdTreeComponent.Initialize(data, Vector3.negativeInfinity);
         }
 
         public Material GetMaterial()
