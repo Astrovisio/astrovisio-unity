@@ -168,10 +168,6 @@ namespace CatalogData
                 DataMapping.Mapping.Z.SourceIndex = Array.IndexOf(headers, DataMapping.Mapping.Z.Source);
             }
 
-            Debug.Log(DataMapping.Mapping.X.SourceIndex);
-            Debug.Log(DataMapping.Mapping.Y.SourceIndex);
-            Debug.Log(DataMapping.Mapping.Z.SourceIndex);
-
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
             {
@@ -216,6 +212,7 @@ namespace CatalogData
 
             // Init KDTree
             _ = kdTreeComponent.Initialize(data, Vector3.negativeInfinity);
+
         }
 
         public Material GetMaterial()
