@@ -9,12 +9,14 @@ public class KDTreeManager
     private Vector3 pivot;
     private float[][] data;
     private int[] xyz;
+    private int[] visibilityArray;
 
-    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz)
+    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz, int[] visibilityArray)
     {
         this.data = data;
         this.pivot = pivot;
         this.xyz = xyz;
+        this.visibilityArray = visibilityArray;
         BuildTrees();
     }
 
@@ -35,7 +37,7 @@ public class KDTreeManager
 
         Parallel.For(0, 8, i =>
         {
-            trees[i] = new KDTree(data, buckets[i], xyz);
+            trees[i] = new KDTree(data, buckets[i], xyz, visibilityArray);
         });
     }
 

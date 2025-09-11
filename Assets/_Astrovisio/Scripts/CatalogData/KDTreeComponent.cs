@@ -85,6 +85,8 @@ public class KDTreeComponent : MonoBehaviour
     private AstrovisioDataSetRenderer astrovisioDatasetRenderer;
     private Mapping mapping;
 
+    private int[] visibilityArray;
+
 
     [ContextMenu("ComputeNearestPoint")]
     public async Task<PointDistance?> ComputeNearestPoint()
@@ -163,6 +165,7 @@ public class KDTreeComponent : MonoBehaviour
 
     private async Task<SelectionResult> ComputeSelection()
     {
+        Array.Clear(visibilityArray, 0, visibilityArray.Length);
         SelectionResult selectionResult = null;
 
         switch (selectionMode)
@@ -173,17 +176,12 @@ public class KDTreeComponent : MonoBehaviour
                 selectionResult = new SelectionResult
                 {
                     SelectedIndices = indices,
+                    SelectedArray = visibilityArray,
                     CenterPoint = GetNearestWorldSpaceCoordinates(nearest.Value.index),
                     SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : (selectionMode == SelectionMode.Cube ? selectionCubeHalfSize : 0),
                     AggregatedValues = AggregateData(indices),
                     SelectionMode = selectionMode
                 };
-                int[] visibilityArray = new int[data[0].Length];
-                for (int i = 0; i < indices.Count; i++)
-                {
-                    visibilityArray[indices[i]] = 1;
-                }
-                selectionResult.SelectedArray = visibilityArray;
                 break;
             case SelectionMode.Sphere:
             case SelectionMode.Cube:
@@ -195,8 +193,6 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task<SelectionResult> PerformSelection()
     {
-        Debug.Log("PerformSelection");
-
         Vector3 positionAtAction = controllerTransform.position + Vector3.zero;
         // Quaternion rotationAtAction = controllerTransform.rotation * Quaternion.identity;
         areaSelectionResult = await ComputeSelection();
@@ -299,7 +295,9 @@ public class KDTreeComponent : MonoBehaviour
             mapping.Z.SourceIndex
         };
 
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz));
+        visibilityArray = new int[data[0].Length];
+
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz, visibilityArray));
 
         if (!Application.isPlaying)
         {
@@ -606,6 +604,8 @@ public class KDTreeComponent : MonoBehaviour
         (int index, float distanceSquared) tuple = await Task.Run(() => manager.FindNearest(queryPoint));
         PointDistance nearest = new PointDistance(tuple.index, tuple.distanceSquared);
 
+        visibilityArray[nearest.index] = 1;
+
         return nearest;
     }
 
@@ -651,12 +651,6 @@ public class KDTreeComponent : MonoBehaviour
                 default:
                     indices = new List<int>();
                     break;
-            }
-
-            int[] visibilityArray = new int[dataCount];
-            for (int i = 0; i < indices.Count; i++)
-            {
-                visibilityArray[indices[i]] = 1;
             }
 
             result = new SelectionResult
