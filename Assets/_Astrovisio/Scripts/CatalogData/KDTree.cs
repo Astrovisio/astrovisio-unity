@@ -8,6 +8,7 @@ public class KDTree
     private readonly int[] indices;
     private KDTreeNode root;
     private int[] xyz;
+    private int[] visibilityArray;
 
     private class KDTreeNode
     {
@@ -17,10 +18,11 @@ public class KDTree
         public KDTreeNode right;
     }
 
-    public KDTree(float[][] data, List<int> pointIndices, int[] xyz)
+    public KDTree(float[][] data, List<int> pointIndices, int[] xyz, int[] visibilityArray)
     {
         this.data = data;
         this.xyz = xyz;
+        this.visibilityArray = visibilityArray;
         indices = pointIndices.ToArray();
         root = BuildTree(0, indices.Length, 0);
     }
@@ -131,6 +133,7 @@ public class KDTree
         if (distSq <= radiusSq)
         {
             result.Add(node.index);
+            visibilityArray[node.index] = 1;
         }
 
         int depthMod = depth % 3;
@@ -173,6 +176,7 @@ public class KDTree
             node.point.z >= min.z && node.point.z <= max.z)
         {
             result.Add(node.index);
+            visibilityArray[node.index] = 1;
         }
 
         int depthMod = depth % 3;
@@ -209,6 +213,7 @@ public class KDTree
         if (normalizedDistSq <= 1.0f)
         {
             result.Add(node.index);
+            visibilityArray[node.index] = 1;
         }
 
         int depthMod = depth % 3;
@@ -251,6 +256,7 @@ public class KDTree
             node.point.z >= min.z && node.point.z <= max.z)
         {
             result.Add(node.index);
+            visibilityArray[node.index] = 1;
         }
 
         int depthMod = depth % 3;
