@@ -29,6 +29,7 @@ namespace Astrovisio
         private Button yChipButton;
         private Button zChipButton;
         private VisualElement thresholdContainer;
+        private MinMaxSlider minMaxSlider;
         private DoubleField minInputField;
         private DoubleField maxInputField;
         private Label minErrorLabel;
@@ -39,6 +40,10 @@ namespace Astrovisio
         // === Data ===
         public string ParamName { get; set; }
         public ConfigParam Param { get; set; }
+
+        // === Local ===
+        private UIDebouncer _thrDebouncer;
+
 
         public ParamRowController(VisualElement root, string paramName, ConfigParam param)
         {
@@ -71,7 +76,7 @@ namespace Astrovisio
             thresholdContainer = Root.Q<VisualElement>("ThresholdContainer");
             VisualElement histogramSlider = thresholdContainer.Q<VisualElement>("HistogramSlider");
             HistogramController histogramController = new HistogramController(histogramSlider);
-            MinMaxSlider minMaxSlider = histogramSlider.Q<MinMaxSlider>("MinMaxHistogramSlider");
+            minMaxSlider = histogramSlider.Q<MinMaxSlider>("MinMaxHistogramSlider");
             minInputField = histogramSlider.Q<DoubleField>("MinFloatField");
             maxInputField = histogramSlider.Q<DoubleField>("MaxFloatField");
             // minInputField.SetValueWithoutNotify(double.Parse(minInputField.value.ToString("E5")));
@@ -109,6 +114,7 @@ namespace Astrovisio
             });
             SetSelected(Param.Selected);
 
+            _thrDebouncer = new UIDebouncer(Root, 200);
         }
 
         private void InitAxis()
@@ -218,7 +224,10 @@ namespace Astrovisio
             maxInputField.value = Param.ThrMaxSel ?? Param.ThrMax;
             UpdateWarningLabel(Threshold.Min);
             UpdateWarningLabel(Threshold.Max);
+
+            BindSliderToFields();
         }
+
 
         private void OnResetButtonClicked()
         {
@@ -258,19 +267,30 @@ namespace Astrovisio
             // Debug.Log(ParamName + " " + value);
         }
 
+        private static bool LessThan(double a, double b, double eps) => a < b - eps;
+        private static bool GreaterThan(double a, double b, double eps) => a > b + eps;
+
+        private double EpsilonFor(double refVal)
+        {
+            return Math.Max(1e-9, 1e-6 * Math.Max(1.0, Math.Abs(refVal)));
+        }
+
         private void UpdateWarningLabel(Threshold threshold)
         {
             if (threshold == Threshold.Min)
             {
-                if (Param.ThrMinSel < Param.ThrMin)
+                double sel = Param.ThrMinSel ?? Param.ThrMin;
+                double eps = EpsilonFor(Param.ThrMin);
+
+                if (LessThan(sel, Param.ThrMin, eps))
                 {
                     minErrorLabel.style.visibility = Visibility.Visible;
                     minErrorLabel.text = "Value too low";
                 }
-                else if (Param.ThrMinSel > Param.ThrMax || Param.ThrMinSel > Param.ThrMaxSel)
+                else if (GreaterThan(sel, Math.Min(Param.ThrMaxSel ?? Param.ThrMax, Param.ThrMax), eps))
                 {
                     minErrorLabel.style.visibility = Visibility.Visible;
-                    minErrorLabel.text = "Value too low";
+                    minErrorLabel.text = "Value too high";
                 }
                 else
                 {
@@ -279,12 +299,15 @@ namespace Astrovisio
             }
             else if (threshold == Threshold.Max)
             {
-                if (Param.ThrMaxSel > Param.ThrMax)
+                double sel = Param.ThrMaxSel ?? Param.ThrMax;
+                double eps = EpsilonFor(Param.ThrMax);
+
+                if (GreaterThan(sel, Param.ThrMax, eps))
                 {
                     maxErrorLabel.style.visibility = Visibility.Visible;
                     maxErrorLabel.text = "Value too high";
                 }
-                else if (Param.ThrMaxSel < Param.ThrMin || Param.ThrMaxSel < Param.ThrMinSel)
+                else if (LessThan(sel, Math.Max(Param.ThrMinSel ?? Param.ThrMin, Param.ThrMin), eps))
                 {
                     maxErrorLabel.style.visibility = Visibility.Visible;
                     maxErrorLabel.text = "Value too low";
@@ -296,5 +319,69 @@ namespace Astrovisio
             }
         }
 
+
+        private void ApplySliderClamped(Vector2 raw)
+        {
+            // Clamp within the slider’s limits
+            double loD = Math.Clamp((double)raw.x, Param.ThrMin, Param.ThrMax);
+            double hiD = Math.Clamp((double)raw.y, Param.ThrMin, Param.ThrMax);
+            if (loD > hiD) (loD, hiD) = (hiD, loD);
+
+            // Reset/restore the slider if needed
+            minMaxSlider.SetValueWithoutNotify(new Vector2((float)loD, (float)hiD));
+
+            // Update fields without notifications
+            minInputField.SetValueWithoutNotify(loD);
+            maxInputField.SetValueWithoutNotify(hiD);
+
+            // Update model and warnings
+            Param.ThrMinSel = loD;
+            Param.ThrMaxSel = hiD;
+            UpdateWarningLabel(Threshold.Min);
+            UpdateWarningLabel(Threshold.Max);
+
+            // Debug.Log($"[ApplySliderClamped] lowLimit={minMaxSlider.lowLimit}, valueMin={loD} | highLimit={minMaxSlider.highLimit}, valueMax={hiD}");
+        }
+
+
+        private void BindSliderToFields()
+        {
+            float loLim = (float)Math.Min(Param.ThrMin, Param.ThrMax);
+            float hiLim = (float)Math.Max(Param.ThrMin, Param.ThrMax);
+            if (Mathf.Approximately(loLim, hiLim)) hiLim = loLim + 1e-6f;
+
+            minMaxSlider.lowLimit = float.NegativeInfinity;
+            minMaxSlider.highLimit = float.PositiveInfinity;
+            minMaxSlider.lowLimit = loLim;
+            minMaxSlider.highLimit = hiLim;
+
+            // Align the slider to the current values
+            float lo = (float)(Param.ThrMinSel ?? Param.ThrMin);
+            float hi = (float)(Param.ThrMaxSel ?? Param.ThrMax);
+            lo = Mathf.Clamp(lo, loLim, hiLim);
+            hi = Mathf.Clamp(hi, loLim, hiLim);
+            if (lo > hi) (lo, hi) = (hi, lo);
+
+            minMaxSlider.SetValueWithoutNotify(new Vector2(lo, hi));
+
+            // 1-way binding: Slider -> Fields (+ model)
+            minMaxSlider.RegisterValueChangedCallback(evt =>
+            {
+                ApplySliderClamped(evt.newValue);
+                DebouncedNotifyThresholdsChanged();
+            });
+        }
+
+        private void DebouncedNotifyThresholdsChanged()
+        {
+            _thrDebouncer.Run(() =>
+            {
+                OnThresholdChanged?.Invoke(Threshold.Min, this);
+                OnThresholdChanged?.Invoke(Threshold.Max, this);
+            });
+        }
+
     }
+
+
 }

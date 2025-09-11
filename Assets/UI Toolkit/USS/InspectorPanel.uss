@@ -112,6 +112,21 @@
     margin-bottom: 16px;
 }
 
+#Root > #BodyContainer > #SizeContainer > #TitleContainer {
+    flex-direction: row;
+}
+
+#Root > #BodyContainer > #SizeContainer > #TitleContainer > #Icon {
+    width: 16px;
+    height: 16px;
+    min-height: 16px;
+    max-height: 16px;
+    max-width: 16px;
+    min-width: 16px;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Icon-Size.svg?fileID=7388822144124034973&guid=55251461a1b744346a2858ea68df5e0c&type=3#Icon-Size");
+    margin-right: 4px;
+}
+
 #Root > #BodyContainer > #SizeContainer > #SizeInputFloatField {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
