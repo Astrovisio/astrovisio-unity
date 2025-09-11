@@ -18,6 +18,7 @@ namespace Astrovisio
         // private Toggle inspectorToggle;
         private Button sphereButton;
         private Button cubeButton;
+        private Label sizeLabel;
         private FloatField sizeInputFloatField;
         private DropdownField mediaDropdownField;
         private Button processButton;
@@ -56,6 +57,7 @@ namespace Astrovisio
             // inspectorToggle = Root.Q<VisualElement>("InspectorToggle").Q<Toggle>("CheckboxRoot");
             sphereButton = Root.Q<Button>("SphereButton");
             cubeButton = Root.Q<Button>("CubeButton");
+            sizeLabel = Root.Q<VisualElement>("SizeContainer")?.Q<Label>("Title");
             sizeInputFloatField = Root.Q<FloatField>("SizeInputFloatField");
             mediaDropdownField = Root.Q<VisualElement>("MediaDropdown").Q<DropdownField>("DropdownField");
             processButton = Root.Q<Button>("ProcessButton");
@@ -279,12 +281,14 @@ namespace Astrovisio
                     cubeButton.RemoveFromClassList("active");
                     this.selectionMode = SelectionMode.Sphere;
                     kDTreeComponent.selectionMode = SelectionMode.Sphere;
+                    sizeLabel.text = "Diameter";
                     break;
                 case SelectionMode.Cube:
                     cubeButton.AddToClassList("active");
                     sphereButton.RemoveFromClassList("active");
                     this.selectionMode = SelectionMode.Cube;
                     kDTreeComponent.selectionMode = SelectionMode.Cube;
+                    sizeLabel.text = "Side";
                     break;
             }
 

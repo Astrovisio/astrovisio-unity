@@ -22,7 +22,7 @@
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:VisualElement name="SizeContainer" style="flex-grow: 1;">
-                <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
+                <engine:VisualElement name="TitleContainer">
                     <engine:VisualElement name="Icon" style="flex-grow: 1;" />
                     <engine:Label text="Diameter" name="Title" class="title" />
                 </engine:VisualElement>
