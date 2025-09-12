@@ -27,6 +27,7 @@ namespace CatalogData
     [Serializable]
     public class DataMapping
     {
+        public CoordinateSystem CoordinateSystem = CoordinateSystem.Astrophysics; // Z-up Y-forward di default
         public ColorMapEnum ColorMap = ColorMapEnum.Accent;
         public bool UniformColor;
         public bool UniformOpacity;
@@ -68,20 +69,24 @@ namespace CatalogData
             {
                 DataMapping mapping = new DataMapping
                 {
-                    ColorMap = ColorMapEnum.Inferno,
-                    UniformColor = false,
+                    CoordinateSystem = CoordinateSystem.Astrophysics,
+                    UniformColor = true,
                     UniformOpacity = true,
+                    ColorMap = ColorMapEnum.Inferno,
                     UseNoise = false,
                     isolateSelection = false,
+
                     Uniforms = new MappingUniforms
                     {
-                        Opacity = 1
+                        Color = Color.white,
+                        Opacity = 1.0f
                     },
+
                     Mapping = new Mapping
                     {
-                        X = new MapFloatEntry {Source = "x"},
-                        Y = new MapFloatEntry {Source = "y"},
-                        Z = new MapFloatEntry {Source = "z"},
+                        X = new MapFloatEntry { Source = "x" },
+                        Y = new MapFloatEntry { Source = "y" },
+                        Z = new MapFloatEntry { Source = "z" },
                     }
                 };
                 return mapping;
@@ -154,5 +159,12 @@ namespace CatalogData
         Log,
         Sqrt
     };
+
+    [Serializable]
+    public enum CoordinateSystem
+    {
+        Astrophysics,  // Z-up Y-forward  
+        Unity        // Y-up Z-forward
+    }
 
 }

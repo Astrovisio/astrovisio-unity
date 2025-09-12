@@ -117,47 +117,34 @@ namespace CatalogData
 
             if (!debug)
             {
-                DataMapping = new DataMapping
+                DataMapping.Mapping = new Mapping
                 {
-                    UniformColor = true,
-                    UniformOpacity = true,
-                    Uniforms = new MappingUniforms
+                    X = new MapFloatEntry
                     {
-                        Color = Color.white,
-                        Opacity = 1.0f
+                        Source = dataContainer.XAxisName,
+                        SourceIndex = dataContainer.XAxisIndex,
+                        DataMinVal = dataContainer.XMinThreshold,
+                        DataMaxVal = dataContainer.XMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
                     },
-                    Mapping = new Mapping
+                    Y = new MapFloatEntry
                     {
-                        X = new MapFloatEntry
-                        {
-                            Source = dataContainer.XAxisName,
-                            SourceIndex = dataContainer.XAxisIndex,
-                            // DataMinVal = Mathf.Round(dataContainer.XMinThreshold * 100000f) / 100000f,
-                            DataMinVal = dataContainer.XMinThreshold,
-                            DataMaxVal = dataContainer.XMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        },
-                        Y = new MapFloatEntry
-                        {
-                            Source = dataContainer.YAxisName,
-                            SourceIndex = dataContainer.YAxisIndex,
-                            // DataMinVal = Mathf.Round(dataContainer.YMinThreshold * 100000f) / 100000f,
-                            DataMinVal = dataContainer.YMinThreshold,
-                            DataMaxVal = dataContainer.YMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        },
-                        Z = new MapFloatEntry
-                        {
-                            Source = dataContainer.ZAxisName,
-                            SourceIndex = dataContainer.ZAxisIndex,
-                            // DataMinVal = Mathf.Round(dataContainer.ZMinThreshold * 100000f) / 100000f,
-                            DataMinVal = dataContainer.ZMinThreshold,
-                            DataMaxVal = dataContainer.ZMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        }
+                        Source = dataContainer.YAxisName,
+                        SourceIndex = dataContainer.YAxisIndex,
+                        DataMinVal = dataContainer.YMinThreshold,
+                        DataMaxVal = dataContainer.YMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
+                    },
+                    Z = new MapFloatEntry
+                    {
+                        Source = dataContainer.ZAxisName,
+                        SourceIndex = dataContainer.ZAxisIndex,
+                        DataMinVal = dataContainer.ZMinThreshold,
+                        DataMaxVal = dataContainer.ZMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
                     }
                 };
             }
@@ -168,6 +155,13 @@ namespace CatalogData
                 DataMapping.Mapping.Z.SourceIndex = Array.IndexOf(headers, DataMapping.Mapping.Z.Source);
             }
 
+            // SWAP Y Z If CoordinateSystem.Astrophysics
+            if (DataMapping.CoordinateSystem == CoordinateSystem.Astrophysics)
+            {
+                var temp = DataMapping.Mapping.Y;
+                DataMapping.Mapping.Y = DataMapping.Mapping.Z;
+                DataMapping.Mapping.Z = temp;
+            }
 
             if (_dataSet.DataColumns.Length == 0 || _dataSet.DataColumns[0].Length == 0)
             {
@@ -213,6 +207,57 @@ namespace CatalogData
             // Init KDTree
             _ = kdTreeComponent.Initialize(data, Vector3.negativeInfinity);
 
+        }
+
+
+        public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        {
+            // Applica trasformazione se necessario
+            var targetAxis = TransformAxis(axis);
+
+            var entry = new MapFloatEntry
+            {
+                Source = paramName,
+                Clamped = true,
+                DataMinVal = thresholdMin,
+                DataMaxVal = thresholdMax,
+                TargetMinVal = -0.5f,
+                TargetMaxVal = 0.5f,
+                ScalingType = scalingType,
+                InverseMapping = false
+            };
+
+            switch (targetAxis)
+            {
+                case Astrovisio.Axis.X:
+                    DataMapping.Mapping.X = entry;
+                    break;
+                case Astrovisio.Axis.Y:
+                    DataMapping.Mapping.Y = entry;
+                    break;
+                case Astrovisio.Axis.Z:
+                    DataMapping.Mapping.Z = entry;
+                    break;
+            }
+
+            UpdateMappingColumns();
+            UpdateMappingValues();
+        }
+
+        private Astrovisio.Axis TransformAxis(Astrovisio.Axis inputAxis)
+        {
+            if (DataMapping.CoordinateSystem == CoordinateSystem.Astrophysics)
+            {
+                // Trasforma l'asse dal sistema astrofisico a Unity
+                switch (inputAxis)
+                {
+                    case Astrovisio.Axis.X: return Astrovisio.Axis.X; // X rimane X
+                    case Astrovisio.Axis.Y: return Astrovisio.Axis.Z; // Y astro → Z Unity
+                    case Astrovisio.Axis.Z: return Astrovisio.Axis.Y; // Z astro → Y Unity
+                    default: return inputAxis;
+                }
+            }
+            return inputAxis; // Nessuna trasformazione per sistema Unity
         }
 
         public Material GetMaterial()
@@ -268,60 +313,6 @@ namespace CatalogData
             }
 
             return null;
-        }
-
-        public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
-        {
-
-            switch (axis)
-            {
-                case Astrovisio.Axis.X:
-                    // Debug.Log($"X {thresholdMin} {thresholdMax}");
-                    DataMapping.Mapping.X = new MapFloatEntry
-                    {
-                        Source = paramName,
-                        Clamped = true,
-                        DataMinVal = thresholdMin,
-                        DataMaxVal = thresholdMax,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f,
-                        ScalingType = scalingType,
-                        InverseMapping = false
-                    };
-                    break;
-                case Astrovisio.Axis.Y:
-                    // Debug.Log($"Y {thresholdMin} {thresholdMax}");
-                    DataMapping.Mapping.Y = new MapFloatEntry
-                    {
-                        Source = paramName,
-                        Clamped = true,
-                        DataMinVal = thresholdMin,
-                        DataMaxVal = thresholdMax,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f,
-                        ScalingType = scalingType,
-                        InverseMapping = false
-                    };
-                    break;
-                case Astrovisio.Axis.Z:
-                    // Debug.Log($"Z {thresholdMin} {thresholdMax}");
-                    DataMapping.Mapping.Z = new MapFloatEntry
-                    {
-                        Source = paramName,
-                        Clamped = true,
-                        DataMinVal = thresholdMin,
-                        DataMaxVal = thresholdMax,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f,
-                        ScalingType = scalingType,
-                        InverseMapping = false
-                    };
-                    break;
-            }
-
-            UpdateMappingColumns();
-            UpdateMappingValues();
-
         }
 
         public void SetNoneAstrovisio()
