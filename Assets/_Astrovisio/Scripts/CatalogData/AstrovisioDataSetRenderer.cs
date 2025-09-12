@@ -58,6 +58,7 @@ namespace CatalogData
         private int _idMappingConfigs;
 
         private KDTreeComponent kdTreeComponent;
+        private DataContainer dataContainer;
 
         private void Awake()
         {
@@ -98,6 +99,7 @@ namespace CatalogData
         {
             ReleaseAllGpuResources();
 
+            this.dataContainer = dataContainer;
             string[] headers = dataContainer.DataPack.Columns;
             float[][] data = dataContainer.TransposedData;
 
@@ -111,7 +113,6 @@ namespace CatalogData
                     Type = ColumnType.Numeric,
                     NumericIndex = i
                 };
-                // Debug.Log(headers[i]);
             }
             _dataSet = new CatalogDataSet(columnInfo, data);
 
@@ -218,6 +219,7 @@ namespace CatalogData
             var entry = new MapFloatEntry
             {
                 Source = paramName,
+                SourceIndex = Array.IndexOf(dataContainer.DataPack.Columns, paramName),
                 Clamped = true,
                 DataMinVal = thresholdMin,
                 DataMaxVal = thresholdMax,
