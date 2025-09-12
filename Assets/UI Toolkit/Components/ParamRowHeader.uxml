@@ -10,7 +10,10 @@
                 <engine:Instance template="CheckboxSimple" name="AllCheckbox" />
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Button text="Name" name="Name" />
+        <engine:Button name="Name" style="align-items: center;">
+            <engine:Label text="Name" name="Label" style="margin-right: 10px;" />
+            <engine:VisualElement name="Icon" style="flex-grow: 1; width: 16px; height: 16px; min-height: 16px; max-height: 16px; max-width: 16px; min-width: 16px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/Icon-Reorder.svg?fileID=7388822144124034973&amp;guid=6c1fdbe0a12f62340adb90c45e481a4a&amp;type=3#Icon-Reorder&quot;);" />
+        </engine:Button>
         <engine:Label text="# Files" name="Files" />
         <engine:VisualElement name="XYZAxis" style="flex-grow: 1; justify-content: center;">
             <engine:Label text="XYZ axis" name="XYZAxisLabel" />

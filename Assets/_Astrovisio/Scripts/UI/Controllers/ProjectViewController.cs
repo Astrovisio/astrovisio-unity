@@ -54,7 +54,7 @@ namespace Astrovisio
         {
             VisualElement topContainer = Root.Q<VisualElement>("TopContainer");
 
-            // Files (se servisse altrove)
+            // Files
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
             _ = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
 
@@ -334,13 +334,13 @@ namespace Astrovisio
             switch (scrollViewOrderType)
             {
                 case ScrollViewOrderType.AZ:
-                    headerNameButton.text = "Name (A-Z)";
+                    headerNameButton.Q<Label>().text = "Name (A-Z)";
                     break;
                 case ScrollViewOrderType.ZA:
-                    headerNameButton.text = "Name (Z-A)";
+                    headerNameButton.Q<Label>().text = "Name (Z-A)";
                     break;
                 default:
-                    headerNameButton.text = "Name";
+                    headerNameButton.Q<Label>().text = "Name";
                     break;
             }
         }
