@@ -118,34 +118,44 @@ namespace CatalogData
 
             if (!debug)
             {
-                DataMapping.Mapping = new Mapping
+                DataMapping = new DataMapping
                 {
-                    X = new MapFloatEntry
+                    UniformColor = true,
+                    UniformOpacity = true,
+                    Uniforms = new MappingUniforms
                     {
-                        Source = dataContainer.XAxisName,
-                        SourceIndex = dataContainer.XAxisIndex,
-                        DataMinVal = dataContainer.XMinThreshold,
-                        DataMaxVal = dataContainer.XMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
+                        Color = Color.white,
+                        Opacity = 1.0f
                     },
-                    Y = new MapFloatEntry
+                    Mapping = new Mapping
                     {
-                        Source = dataContainer.YAxisName,
-                        SourceIndex = dataContainer.YAxisIndex,
-                        DataMinVal = dataContainer.YMinThreshold,
-                        DataMaxVal = dataContainer.YMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
-                    },
-                    Z = new MapFloatEntry
-                    {
-                        Source = dataContainer.ZAxisName,
-                        SourceIndex = dataContainer.ZAxisIndex,
-                        DataMinVal = dataContainer.ZMinThreshold,
-                        DataMaxVal = dataContainer.ZMaxThreshold,
-                        TargetMinVal = -0.5f,
-                        TargetMaxVal = 0.5f
+                        X = new MapFloatEntry
+                        {
+                            Source = dataContainer.XAxisName,
+                            SourceIndex = dataContainer.XAxisIndex,
+                            DataMinVal = dataContainer.XMinThreshold,
+                            DataMaxVal = dataContainer.XMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        },
+                        Y = new MapFloatEntry
+                        {
+                            Source = dataContainer.YAxisName,
+                            SourceIndex = dataContainer.YAxisIndex,
+                            DataMinVal = dataContainer.YMinThreshold,
+                            DataMaxVal = dataContainer.YMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        },
+                        Z = new MapFloatEntry
+                        {
+                            Source = dataContainer.ZAxisName,
+                            SourceIndex = dataContainer.ZAxisIndex,
+                            DataMinVal = dataContainer.ZMinThreshold,
+                            DataMaxVal = dataContainer.ZMaxThreshold,
+                            TargetMinVal = -0.5f,
+                            TargetMaxVal = 0.5f
+                        }
                     }
                 };
             }
