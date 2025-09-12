@@ -118,44 +118,34 @@ namespace CatalogData
 
             if (!debug)
             {
-                DataMapping = new DataMapping
+                DataMapping.Mapping = new Mapping
                 {
-                    UniformColor = true,
-                    UniformOpacity = true,
-                    Uniforms = new MappingUniforms
+                    X = new MapFloatEntry
                     {
-                        Color = Color.white,
-                        Opacity = 1.0f
+                        Source = dataContainer.XAxisName,
+                        SourceIndex = dataContainer.XAxisIndex,
+                        DataMinVal = dataContainer.XMinThreshold,
+                        DataMaxVal = dataContainer.XMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
                     },
-                    Mapping = new Mapping
+                    Y = new MapFloatEntry
                     {
-                        X = new MapFloatEntry
-                        {
-                            Source = dataContainer.XAxisName,
-                            SourceIndex = dataContainer.XAxisIndex,
-                            DataMinVal = dataContainer.XMinThreshold,
-                            DataMaxVal = dataContainer.XMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        },
-                        Y = new MapFloatEntry
-                        {
-                            Source = dataContainer.YAxisName,
-                            SourceIndex = dataContainer.YAxisIndex,
-                            DataMinVal = dataContainer.YMinThreshold,
-                            DataMaxVal = dataContainer.YMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        },
-                        Z = new MapFloatEntry
-                        {
-                            Source = dataContainer.ZAxisName,
-                            SourceIndex = dataContainer.ZAxisIndex,
-                            DataMinVal = dataContainer.ZMinThreshold,
-                            DataMaxVal = dataContainer.ZMaxThreshold,
-                            TargetMinVal = -0.5f,
-                            TargetMaxVal = 0.5f
-                        }
+                        Source = dataContainer.YAxisName,
+                        SourceIndex = dataContainer.YAxisIndex,
+                        DataMinVal = dataContainer.YMinThreshold,
+                        DataMaxVal = dataContainer.YMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
+                    },
+                    Z = new MapFloatEntry
+                    {
+                        Source = dataContainer.ZAxisName,
+                        SourceIndex = dataContainer.ZAxisIndex,
+                        DataMinVal = dataContainer.ZMinThreshold,
+                        DataMaxVal = dataContainer.ZMaxThreshold,
+                        TargetMinVal = -0.5f,
+                        TargetMaxVal = 0.5f
                     }
                 };
             }
@@ -515,6 +505,7 @@ namespace CatalogData
         {
             if (!_catalogMaterial)
             {
+                Debug.Log("AAA");
                 return false;
             }
 
@@ -672,6 +663,10 @@ namespace CatalogData
                 // Render points on the GPU using vertex pulling
                 Graphics.DrawProceduralNow(MeshTopology.Points, _dataSet.N);
                 GL.PopMatrix();
+            }
+            else
+            {
+                Debug.Log("AAA");
             }
 
         }

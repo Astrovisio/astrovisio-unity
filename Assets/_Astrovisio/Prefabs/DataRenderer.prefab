@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   astrovidioDataSetRenderer: {fileID: 9054602126277597126}
   kdTreeComponent: {fileID: 884816262672831559}
-  axesCanvasHandler: {fileID: 0}
+  axesCanvasHandler: {fileID: 5943550695792061125}
   debugMode: 0
   fileName: gas_illustris_342447_cut_output.csv
 --- !u!33 &3694761997862831024
@@ -169,8 +169,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DataMapping:
+    CoordinateSystem: 0
     ColorMap: 33
-    UniformColor: 0
+    UniformColor: 1
     UniformOpacity: 1
     UseNoise: 0
     isolateSelection: 0
@@ -182,12 +183,12 @@ MonoBehaviour:
       Cmap:
         Clamped: 0
         DataMinVal: 0
-        DataMaxVal: 0.0001
+        DataMaxVal: 0
         TargetMinVal: 0
-        TargetMaxVal: 1
+        TargetMaxVal: 0
         InverseMapping: 0
         ScalingType: 0
-        Source: size
+        Source: 
         SourceIndex: 0
       Opacity:
         Clamped: 0
@@ -281,6 +282,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: DataRendererAxesZ-Up
       objectReference: {fileID: 0}
+    - target: {fileID: 6548991128624232089, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6548991128624232089, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6839516006121214878, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6839516006121214878, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8117641552947932949, guid: 62bbe31a40dbbcd459b9e580e3694995,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -331,6 +352,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8611679664379500750, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611679664379500750, guid: 62bbe31a40dbbcd459b9e580e3694995,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -348,6 +379,18 @@ Canvas:
     type: 3}
   m_PrefabInstance: {fileID: 2747723640995538822}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5943550695792061125 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8384114579399855427, guid: 62bbe31a40dbbcd459b9e580e3694995,
+    type: 3}
+  m_PrefabInstance: {fileID: 2747723640995538822}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee3be47b85993747b89de591c6452f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6234749814472575123 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8117641552947932949, guid: 62bbe31a40dbbcd459b9e580e3694995,
