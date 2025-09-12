@@ -1,10 +1,8 @@
-using System;
 using Astrovisio;
 using UnityEngine;
 
 public class OrbitCameraController : MonoBehaviour
 {
-    // Dependecies
     [SerializeField] private UIManager uiManager;
 
     [Header("Target & Distance")]
@@ -21,11 +19,9 @@ public class OrbitCameraController : MonoBehaviour
     public float rotationDamping = 0.1f;
     public float zoomDamping = 0.1f;
 
-
     private Vector3 desiredRotation;
     private Vector3 currentRotation;
     private Vector3 rotationVelocity;
-
 
     private float desiredDistance;
     private float currentDistance;
@@ -55,22 +51,25 @@ public class OrbitCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-
         if (uiManager.gameObject.activeSelf && uiManager.HasClickStartedOnUI())
         {
             return;
         }
 
-        // --- Zoom ---
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scrollInput) > 0.001f)
+        // Zoom
+        float scrollInput = 0f;
+        if (uiManager == null || !uiManager.IsPointerOverVisibleUI())
         {
-            desiredDistance -= scrollInput * zoomSpeed * desiredDistance;
-            desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
+            scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            if (Mathf.Abs(scrollInput) > 0.001f)
+            {
+                desiredDistance -= scrollInput * zoomSpeed * desiredDistance;
+                desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
+            }
         }
         currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime / zoomDamping);
 
-        // --- Rotazione (Orbit) ---
+        // Orbit
         if (Input.GetMouseButton(0))
         {
             desiredRotation.y += Input.GetAxis("Mouse X") * rotationSpeed;
@@ -80,7 +79,7 @@ public class OrbitCameraController : MonoBehaviour
         currentRotation = Vector3.SmoothDamp(currentRotation, desiredRotation, ref rotationVelocity, rotationDamping);
         Quaternion rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, 0);
 
-        // --- Pan ---
+        // Pan
         if (Input.GetMouseButton(1))
         {
             Vector3 panInput = new Vector3(-Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"), 0);

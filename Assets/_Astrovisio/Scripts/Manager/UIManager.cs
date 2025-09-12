@@ -133,7 +133,7 @@ namespace Astrovisio
             return clickStartedOnUI;
         }
 
-        private bool IsPointerOverVisibleUI()
+        public bool IsPointerOverVisibleUI()
         {
             if (uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
             {

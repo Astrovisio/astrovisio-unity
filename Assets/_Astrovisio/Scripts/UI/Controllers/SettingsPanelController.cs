@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using CatalogData;
@@ -80,7 +81,8 @@ namespace Astrovisio
             applyButton = Root.Q<VisualElement>("ApplyButton")?.Q<Button>();
             cancelButton = Root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
-            Debug.Log(mappingDropdown);
+            List<string> mappingChoices = new List<string>{"None", "Opacity", "Colormap"};
+            mappingDropdown.choices = mappingChoices;
 
             // cancelButton.clicked += () =>
             // {
@@ -574,7 +576,7 @@ namespace Astrovisio
 
             IMappingSettings mappingSettings = paramRowSettingsController.ParamRenderSettings.MappingSettings;
 
-            var scalingOptions = Enum.GetNames(typeof(ScalingType)).ToList();
+            List<string> scalingOptions = Enum.GetNames(typeof(ScalingType)).ToList();
             scalingDropdown.choices = scalingOptions;
             scalingDropdown.value = mappingSettings.ScalingType.ToString();
 
