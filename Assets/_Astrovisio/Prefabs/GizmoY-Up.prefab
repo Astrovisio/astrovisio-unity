@@ -880,7 +880,7 @@ GameObject:
   - component: {fileID: 1037435235534977598}
   - component: {fileID: 5944275910357556109}
   m_Layer: 8
-  m_Name: Gizmo
+  m_Name: GizmoY-Up
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
