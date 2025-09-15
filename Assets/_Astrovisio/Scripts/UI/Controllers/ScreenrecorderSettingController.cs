@@ -40,13 +40,13 @@ namespace Astrovisio
             {
                 playButton.AddToClassList("active");
                 Debug.Log("Recording started.");
-                // TODO: Start recording logic here
+                RecorderManager.Instance.StartRecording();
             }
             else
             {
                 playButton.RemoveFromClassList("active");
                 Debug.Log("Recording stopped.");
-                // TODO: Stop recording logic here
+                RecorderManager.Instance.StopRecording();
             }
         }
 
