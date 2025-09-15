@@ -10,17 +10,17 @@ namespace Astrovisio
         public AxisRowSettingsController(string paramName, Project project)
             : base(paramName, project)
         {
-            ConfigParam configParam = project.ConfigProcess.Params[paramName];
+            Variables Variables = project.Files.Params[paramName];
 
-            if (TryGetAxis(configParam, out Axis axis))
+            if (TryGetAxis(Variables, out Axis axis))
             {
                 AxisRenderSettings = new AxisRenderSettings(
                     paramName,
                     axis,
-                    (float)configParam.ThrMin,
-                    (float)configParam.ThrMax,
-                    (float)(configParam.ThrMinSel ?? configParam.ThrMin),
-                    (float)(configParam.ThrMaxSel ?? configParam.ThrMax),
+                    (float)Variables.ThrMin,
+                    (float)Variables.ThrMax,
+                    (float)(Variables.ThrMinSel ?? Variables.ThrMin),
+                    (float)(Variables.ThrMaxSel ?? Variables.ThrMax),
                     ScalingType.Linear
                 );
             }
@@ -30,7 +30,7 @@ namespace Astrovisio
             }
         }
 
-        private bool TryGetAxis(ConfigParam param, out Axis axis)
+        private bool TryGetAxis(Variables param, out Axis axis)
         {
             if (param.XAxis)
             {

@@ -70,7 +70,7 @@ namespace Astrovisio
                 tex.Apply();
 
                 byte[] bytes = tex.EncodeToPNG();
-                File.WriteAllBytes(fullPath, bytes);
+                System.IO.File.WriteAllBytes(fullPath, bytes);
 
                 // Reset camera settings
                 camera.targetTexture = prevRT;
@@ -103,11 +103,11 @@ namespace Astrovisio
             var sw = System.Diagnostics.Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < timeoutSeconds)
             {
-                if (File.Exists(filePath))
+                if (System.IO.File.Exists(filePath))
                 {
                     try
                     {
-                        using (FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (FileStream fs = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             if (fs.Length > 0)
                                 return;
@@ -131,8 +131,8 @@ namespace Astrovisio
 
             try
             {
-                using (FileStream input = File.OpenRead(filePath))
-                using (FileStream output = File.OpenWrite(tempPath))
+                using (FileStream input = System.IO.File.OpenRead(filePath))
+                using (FileStream output = System.IO.File.OpenWrite(tempPath))
                 {
                     // Debug.Log("Opening PngReader...");
                     PngReader pngr = new PngReader(input);
@@ -171,16 +171,16 @@ namespace Astrovisio
 
                 // Replace the original file
                 // Debug.Log("Deleting the original file and renaming the temp file...");
-                File.Delete(filePath);
-                File.Move(tempPath, filePath);
+                System.IO.File.Delete(filePath);
+                System.IO.File.Move(tempPath, filePath);
                 // Debug.Log("Final PNG file updated!");
             }
             catch// (Exception ex)
             {
                 // Debug.LogError("Error in AddPngMetadata: " + ex);
-                if (File.Exists(tempPath))
+                if (System.IO.File.Exists(tempPath))
                 {
-                    try { File.Delete(tempPath); } catch { }
+                    try { System.IO.File.Delete(tempPath); } catch { }
                 }
             }
         }

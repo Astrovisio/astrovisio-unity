@@ -39,7 +39,7 @@ namespace Astrovisio
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProject(id);
             // Debug.Log($"[APIManager] GET {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -72,7 +72,7 @@ namespace Astrovisio
             Action<List<Project>> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetAllProjects();
+            string url = APIEndpoints.GetProjects();
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 yield return request.SendWebRequest();
@@ -151,7 +151,7 @@ namespace Astrovisio
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProject(id);
             string json = JsonConvert.SerializeObject(req);
             Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
 
@@ -187,7 +187,7 @@ namespace Astrovisio
             Action onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectById(id);
+            string url = APIEndpoints.GetProject(id);
             // Debug.Log($"[APIManager] DELETE {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Delete(url))

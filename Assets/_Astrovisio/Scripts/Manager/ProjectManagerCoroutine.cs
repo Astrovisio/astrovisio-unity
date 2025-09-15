@@ -107,11 +107,11 @@ namespace Astrovisio
 		private Project fakeProject;
 		private Project InitFakeProject()
 		{
-			var configParams = new Dictionary<string, ConfigParam>
+			var Variabless = new Dictionary<string, Variables>
 			{
 				{
 					"Temperature",
-					new ConfigParam
+					new Variables
 					{
 						Unit = "°C",
 						Selected = true,
@@ -127,7 +127,7 @@ namespace Astrovisio
 				},
 				{
 					"Pressure",
-					new ConfigParam
+					new Variables
 					{
 						Unit = "Pa",
 						Selected = false,
@@ -143,7 +143,7 @@ namespace Astrovisio
 				},
 				{
 					"Velocity",
-					new ConfigParam
+					new Variables
 					{
 						Unit = "m/s",
 						Selected = true,
@@ -159,10 +159,10 @@ namespace Astrovisio
 				}
 			};
 
-			var configProcess = new ConfigProcess
+			var configProcess = new File
 			{
 				Downsampling = 1.0f,
-				Params = configParams
+				Params = Variabless
 			};
 
 			fakeProject = new Project("Fake Project", "A test project", false, new string[] { "/fake/path" })
@@ -170,7 +170,7 @@ namespace Astrovisio
 				Id = -1,
 				Created = DateTime.Now,
 				LastOpened = DateTime.Now,
-				ConfigProcess = configProcess
+				Files = configProcess
 			};
 
 			return fakeProject;
@@ -191,7 +191,7 @@ namespace Astrovisio
                     ""id"": 19,
                     ""created"": ""2025-04-18T10:32:02.518009"",
                     ""last_opened"": ""2025-04-18T13:18:59.765766"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -204,7 +204,7 @@ namespace Astrovisio
                     ""id"": 20,
                     ""created"": ""2025-04-18T12:21:49.983021"",
                     ""last_opened"": ""2025-04-18T13:57:47.675657"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -217,7 +217,7 @@ namespace Astrovisio
                     ""id"": 21,
                     ""created"": ""2025-04-18T12:39:33.380259"",
                     ""last_opened"": ""2025-04-18T13:11:45.849116"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -230,7 +230,7 @@ namespace Astrovisio
                     ""id"": 22,
                     ""created"": ""2025-04-01T13:45:43.461823"",
                     ""last_opened"": ""2025-04-01T13:45:43.461823"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -243,7 +243,7 @@ namespace Astrovisio
                     ""id"": 23,
                     ""created"": ""2025-04-01T13:45:53.243955"",
                     ""last_opened"": ""2025-04-01T13:45:53.243955"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -256,7 +256,7 @@ namespace Astrovisio
                     ""id"": 24,
                     ""created"": ""2025-04-01T13:46:05.204847"",
                     ""last_opened"": ""2025-04-01T13:46:05.204847"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -269,7 +269,7 @@ namespace Astrovisio
                     ""id"": 25,
                     ""created"": ""2024-04-18T13:46:33.107021"",
                     ""last_opened"": ""2024-04-18T13:46:33.107021"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -282,7 +282,7 @@ namespace Astrovisio
                     ""id"": 26,
                     ""created"": ""2024-04-18T13:46:43.284789"",
                     ""last_opened"": ""2024-04-18T13:46:43.284789"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -295,7 +295,7 @@ namespace Astrovisio
                     ""id"": 27,
                     ""created"": ""2024-04-18T13:46:52.282072"",
                     ""last_opened"": ""2024-04-18T13:46:52.282072"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -308,7 +308,7 @@ namespace Astrovisio
                     ""id"": 27,
                     ""created"": ""2024-04-18T13:46:52.282072"",
                     ""last_opened"": ""2024-04-18T13:46:52.282072"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -321,7 +321,7 @@ namespace Astrovisio
                     ""id"": 27,
                     ""created"": ""2024-04-18T13:46:52.282072"",
                     ""last_opened"": ""2024-04-18T13:46:52.282072"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -334,7 +334,7 @@ namespace Astrovisio
                     ""id"": 27,
                     ""created"": ""2024-04-18T13:46:52.282072"",
                     ""last_opened"": ""2024-04-18T13:46:52.282072"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -347,7 +347,7 @@ namespace Astrovisio
                     ""id"": 27,
                     ""created"": ""2024-04-18T13:46:52.282072"",
                     ""last_opened"": ""2024-04-18T13:46:52.282072"",
-                    ""paths"": [],
+                    ""files"": [],
                     ""config_process"": {
                       ""downsampling"": 1,
                       ""variables"": {}
@@ -494,7 +494,7 @@ namespace Astrovisio
 				Name = name,
 				Description = description,
 				Paths = projectToDuplicate.Paths,
-				ConfigProcess = projectToDuplicate.ConfigProcess
+				ConfigProcess = projectToDuplicate.Files
 			};
 
 			// Debug.Log($"Duplicating project {projectToDuplicate.Id} - {projectToDuplicate.Name}");
@@ -595,7 +595,7 @@ namespace Astrovisio
 				Favourite = project.Favourite,
 				Description = project.Description,
 				Paths = project.Paths,
-				ConfigProcess = project.ConfigProcess
+				ConfigProcess = project.Files
 			};
 			StartCoroutine(UpdateProjectCoroutine(id, request));
 		}
@@ -654,12 +654,12 @@ namespace Astrovisio
 		}
 
 
-		public void ProcessProject(int id, ConfigProcess configProcess)
+		public void ProcessProject(int id, File configProcess)
 		{
 			var request = new ProcessProjectRequest
 			{
 				Downsampling = configProcess.Downsampling,
-				ConfigParam = configProcess.Params
+				Variables = configProcess.Params
 			};
 			StartCoroutine(ProcessProjectCoroutine(id, request));
 		}

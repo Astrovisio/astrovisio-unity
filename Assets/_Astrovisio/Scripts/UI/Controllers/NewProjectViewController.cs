@@ -99,7 +99,7 @@ namespace Astrovisio
             {
                 foreach (string path in paths)
                 {
-                    if (!File.Exists(path))
+                    if (!System.IO.File.Exists(path))
                     {
                         Debug.LogWarning($"File not found: {path}");
                         continue;

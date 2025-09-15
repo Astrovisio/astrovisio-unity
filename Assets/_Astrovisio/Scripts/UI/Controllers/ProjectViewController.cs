@@ -133,16 +133,16 @@ namespace Astrovisio
             paramScrollView.contentContainer.Clear();
             paramControllers.Clear();
 
-            if (Project.ConfigProcess?.Params == null)
+            if (Project.Files?.Params == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+                Variables param = kvp.Value;
 
                 TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
@@ -302,22 +302,22 @@ namespace Astrovisio
 
         private void InitCheckAllToggle()
         {
-            checkAllToggle.value = Project.ConfigProcess?.Params != null &&
-                                   Project.ConfigProcess.Params.All(kv => kv.Value.Selected);
+            checkAllToggle.value = Project.Files?.Params != null &&
+                                   Project.Files.Params.All(kv => kv.Value.Selected);
         }
 
         private void ApplyScrollViewOrderType()
         {
-            if (paramScrollView == null || Project.ConfigProcess?.Params == null)
+            if (paramScrollView == null || Project.Files?.Params == null)
             {
                 return;
             }
 
-            IEnumerable<KeyValuePair<string, ConfigParam>> ordered = scrollViewOrderType switch
+            IEnumerable<KeyValuePair<string, Variables>> ordered = scrollViewOrderType switch
             {
-                ScrollViewOrderType.AZ => Project.ConfigProcess.Params.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                ScrollViewOrderType.ZA => Project.ConfigProcess.Params.OrderByDescending(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                _ => Project.ConfigProcess.Params
+                ScrollViewOrderType.AZ => Project.Files.Params.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase),
+                ScrollViewOrderType.ZA => Project.Files.Params.OrderByDescending(k => k.Key, StringComparer.OrdinalIgnoreCase),
+                _ => Project.Files.Params
             };
 
             UpdateOrderTypeLabel();

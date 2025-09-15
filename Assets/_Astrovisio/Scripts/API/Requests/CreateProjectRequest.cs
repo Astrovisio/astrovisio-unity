@@ -14,7 +14,7 @@ namespace Astrovisio
     [JsonProperty("description")]
     public string Description { get; set; }
 
-    [JsonProperty("paths")]
+    [JsonProperty("file_paths")]
     public string[] Paths { get; set; }
   }
 }

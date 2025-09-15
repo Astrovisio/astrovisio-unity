@@ -6,13 +6,13 @@ namespace Astrovisio
     {
         public string ParamName { get; protected set; }
         public Project Project { get; protected set; }
-        public ConfigParam Param { get; protected set; }
+        public Variables Param { get; protected set; }
 
         protected AbstractRowSettingsController(string paramName, Project project)
         {
             ParamName = paramName;
             Project = project;
-            Param = Project.ConfigProcess.Params.FirstOrDefault(p => p.Key == ParamName).Value;
+            Param = Project.Files.Params.FirstOrDefault(p => p.Key == ParamName).Value;
         }
     }
 

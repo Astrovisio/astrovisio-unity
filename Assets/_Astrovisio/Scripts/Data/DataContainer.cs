@@ -50,7 +50,7 @@ namespace Astrovisio
         private void InitAxisThreshold()
         {
             if (Project != null)
-                foreach (var param in Project.ConfigProcess.Params)
+                foreach (var param in Project.Files.Params)
                 {
                     // Debug.Log(param.Key + " " + param.Value);
                     if (param.Value.Selected)
@@ -88,10 +88,10 @@ namespace Astrovisio
             YAxisName = "";
             ZAxisName = "";
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+                Variables param = kvp.Value;
 
                 if (param.XAxis)
                 {
@@ -199,10 +199,10 @@ namespace Astrovisio
             string yAxisName = "";
             string zAxisName = "";
             if (Project != null)
-                foreach (var kvp in Project.ConfigProcess.Params)
+                foreach (var kvp in Project.Files.Params)
                 {
                     string paramName = kvp.Key;
-                    ConfigParam param = kvp.Value;
+                    Variables param = kvp.Value;
 
                     // Debug.Log($"Parametro: {paramName}");
                     // Debug.Log($"Valore: {param.XAxis}");

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class ConfigParam : INotifyPropertyChanged
+    public class Variables : INotifyPropertyChanged
     {
         private double thrMin;
         private double? thrMinSel;
@@ -165,7 +165,7 @@ namespace Astrovisio
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void UpdateFrom(ConfigParam other)
+        public void UpdateFrom(Variables other)
         {
             ThrMin = other.ThrMin;
             ThrMinSel = other.ThrMinSel;
@@ -180,10 +180,10 @@ namespace Astrovisio
             Files = other.Files != null ? (string[])other.Files.Clone() : null;
         }
 
-        public ConfigParam DeepCopy()
+        public Variables DeepCopy()
         {
             string json = JsonConvert.SerializeObject(this);
-            return JsonConvert.DeserializeObject<ConfigParam>(json);
+            return JsonConvert.DeserializeObject<Variables>(json);
         }
 
     }

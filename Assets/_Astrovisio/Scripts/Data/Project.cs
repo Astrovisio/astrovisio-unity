@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
@@ -14,8 +15,8 @@ namespace Astrovisio
         private int id;
         private DateTime? created;
         private DateTime? lastOpened;
-        private string[] paths;
-        private ConfigProcess configProcess;
+        private List<File> files;
+
 
         [JsonProperty("name")]
         public string Name
@@ -101,40 +102,26 @@ namespace Astrovisio
             }
         }
 
-        [JsonProperty("paths")]
-        public string[] Paths
+        [JsonProperty("files")]
+        public List<File> Files
         {
-            get => paths;
+            get => files;
             set
             {
-                if (paths != value)
+                if (files != value)
                 {
-                    paths = value;
-                    OnPropertyChanged(nameof(Paths));
+                    files = value;
+                    OnPropertyChanged(nameof(Files));
                 }
             }
         }
 
-        [JsonProperty("config_process")]
-        public ConfigProcess ConfigProcess
-        {
-            get => configProcess;
-            set
-            {
-                if (configProcess != value)
-                {
-                    configProcess = value;
-                    OnPropertyChanged(nameof(ConfigProcess));
-                }
-            }
-        }
 
-        public Project(string name, string description, bool favourite = false, string[] paths = null)
+        public Project(string name, string description, bool favourite = false)
         {
             Name = name;
             Description = description;
             Favourite = favourite;
-            Paths = paths ?? Array.Empty<string>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -146,26 +133,27 @@ namespace Astrovisio
 
         public void UpdateFrom(Project other)
         {
+            if (other == null)
+            {
+                return;
+            }
+
             Name = other.Name;
-            Description = other.Description;
             Favourite = other.Favourite;
+            Description = other.Description;
+            Id = other.Id;
             Created = other.Created;
             LastOpened = other.LastOpened;
 
-            // Copy the values of the paths
-            if (other.Paths != null)
+            if (other.Files == null)
             {
-                Paths = other.Paths.ToArray();
+                Files = new List<File>();
             }
-
-            // Copy the values of ConfigProcess, but without creating a new instance if not necessary
-            if (ConfigProcess != null && other.ConfigProcess != null)
+            else
             {
-                ConfigProcess.UpdateFrom(other.ConfigProcess);
-            }
-            else if (other.ConfigProcess != null)
-            {
-                ConfigProcess = other.ConfigProcess.DeepCopy();
+                Files = JsonConvert.DeserializeObject<List<File>>(
+                            JsonConvert.SerializeObject(other.Files)
+                        ) ?? new List<File>();
             }
         }
 
@@ -182,5 +170,5 @@ namespace Astrovisio
         }
 
     }
-    
+
 }

@@ -39,13 +39,13 @@ namespace Astrovisio
 
         // === Data ===
         public string ParamName { get; set; }
-        public ConfigParam Param { get; set; }
+        public Variables Param { get; set; }
 
         // === Local ===
         private UIDebouncer _thrDebouncer;
 
 
-        public ParamRowController(VisualElement root, string paramName, ConfigParam param)
+        public ParamRowController(VisualElement root, string paramName, Variables param)
         {
             Root = root;
             ParamName = paramName;

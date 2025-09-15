@@ -51,13 +51,13 @@ namespace Astrovisio
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
-            if (!File.Exists(filePath))
+            if (!System.IO.File.Exists(filePath))
             {
                 Debug.LogError("File CSV non trovato: " + filePath);
                 return null;
             }
 
-            string[] lines = File.ReadAllLines(filePath);
+            string[] lines = System.IO.File.ReadAllLines(filePath);
             if (lines.Length < 2)
             {
                 Debug.LogWarning("CSV vuoto o senza dati.");

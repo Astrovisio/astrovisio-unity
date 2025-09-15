@@ -187,7 +187,7 @@ namespace Astrovisio
 				Description = createdProject.Description,
 				Favourite = false,
 				Paths = createdProject.Paths,
-				ConfigProcess = projectToDuplicate.ConfigProcess.DeepCopy()
+				ConfigProcess = projectToDuplicate.Files.DeepCopy()
 			};
 
 			await apiManager.UpdateProject(createdProject.Id, updateReq,
@@ -212,7 +212,7 @@ namespace Astrovisio
 				Favourite = project.Favourite,
 				Description = project.Description,
 				Paths = project.Paths,
-				ConfigProcess = project.ConfigProcess
+				ConfigProcess = project.Files
 			};
 
 			await apiManager.UpdateProject(id, req,
@@ -246,7 +246,7 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessProject(int id, ConfigProcess configProcess)
+		public async void ProcessProject(int id, File configProcess)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
@@ -254,7 +254,7 @@ namespace Astrovisio
 			ProcessProjectRequest req = new ProcessProjectRequest
 			{
 				Downsampling = configProcess.Downsampling,
-				ConfigParam = configProcess.Params
+				Variables = configProcess.Params
 			};
 
 			try
@@ -380,7 +380,7 @@ namespace Astrovisio
 			// 3. Percorso del file (Unity: cartella scrivibile sicura)
 			string filePath = Path.Combine(Application.persistentDataPath, "project.csv");
 
-			File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            System.IO.File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
 
 			Debug.Log("CSV salvato in: " + filePath);
 		}

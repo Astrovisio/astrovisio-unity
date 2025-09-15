@@ -90,32 +90,32 @@ namespace Astrovisio
             Label yLabel = yButton.Q<Label>("ParamLabel");
             Label zLabel = zButton.Q<Label>("ParamLabel");
 
-            xLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.XAxis).Key ?? "";
-            yLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.YAxis).Key ?? "";
-            zLabel.text = Project.ConfigProcess.Params.FirstOrDefault(p => p.Value.ZAxis).Key ?? "";
+            xLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.XAxis).Key ?? "";
+            yLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.YAxis).Key ?? "";
+            zLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.ZAxis).Key ?? "";
 
             VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
             VisualElement xVisualElement = axisContainer.Q<VisualElement>("XLabel");
             VisualElement yVisualElement = axisContainer.Q<VisualElement>("YLabel");
             VisualElement zVisualElement = axisContainer.Q<VisualElement>("ZLabel");
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam configParam = kvp.Value;
+                Variables Variables = kvp.Value;
 
-                if (!configParam.Selected)
+                if (!Variables.Selected)
                 {
                     continue;
                 }
 
                 VisualElement axisVisualElement = null;
 
-                if (configParam.XAxis)
+                if (Variables.XAxis)
                     axisVisualElement = xVisualElement;
-                else if (configParam.YAxis)
+                else if (Variables.YAxis)
                     axisVisualElement = yVisualElement;
-                else if (configParam.ZAxis)
+                else if (Variables.ZAxis)
                     axisVisualElement = zVisualElement;
 
 
@@ -168,13 +168,13 @@ namespace Astrovisio
         {
             paramSettingsScrollView.Clear();
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam configParam = kvp.Value;
+                Variables Variables = kvp.Value;
 
 
-                if (!configParam.Selected || configParam.XAxis || configParam.YAxis || configParam.ZAxis)
+                if (!Variables.Selected || Variables.XAxis || Variables.YAxis || Variables.ZAxis)
                 {
                     continue;
                 }

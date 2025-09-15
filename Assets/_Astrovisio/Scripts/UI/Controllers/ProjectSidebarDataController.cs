@@ -72,14 +72,14 @@ namespace Astrovisio
             downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.value = ((1 - Project.ConfigProcess.Downsampling) * 100).ToString("0") + "%";
+            downsamplingDropdown.value = ((1 - Project.Files.Downsampling) * 100).ToString("0") + "%";
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string percentageText = evt.newValue.Replace("%", "");
                 if (float.TryParse(percentageText, out float percentage))
                 {
                     float value = 1 - (percentage / 100f);
-                    Project.ConfigProcess.Downsampling = value;
+                    Project.Files.Downsampling = value;
                     UpdateProcessDataButton();
                 }
                 else
@@ -125,14 +125,14 @@ namespace Astrovisio
         private void HandleAxisControll()
         {
             // 1) Count the active parameters
-            chipLabelCounter = Project.ConfigProcess.Params
+            chipLabelCounter = Project.Files.Params
                 .Values
                 .Count(p => p.XAxis || p.YAxis || p.ZAxis);
 
             // 2) Check which axes have been selected
-            bool xAxis = Project.ConfigProcess.Params.Values.Any(p => p.XAxis);
-            bool yAxis = Project.ConfigProcess.Params.Values.Any(p => p.YAxis);
-            bool zAxis = Project.ConfigProcess.Params.Values.Any(p => p.ZAxis);
+            bool xAxis = Project.Files.Params.Values.Any(p => p.XAxis);
+            bool yAxis = Project.Files.Params.Values.Any(p => p.YAxis);
+            bool zAxis = Project.Files.Params.Values.Any(p => p.ZAxis);
 
             // 3) If at least 3 parameters are active → OK, otherwise show warning
             if (chipLabelCounter >= 3)
@@ -212,7 +212,7 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             SetProcessDataButton(false);
-            ProjectManager.ProcessProject(Project.Id, Project.ConfigProcess);
+            ProjectManager.ProcessProject(Project.Id, Project.Files);
             // UpdateRenderingParams();
         }
 
@@ -220,10 +220,10 @@ namespace Astrovisio
         {
             ClearChipLabel();
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+                Variables param = kvp.Value;
 
                 if (!paramRowVisualElement.TryGetValue(paramName, out VisualElement row))
                 {
@@ -258,31 +258,31 @@ namespace Astrovisio
 
         private void UpdateParamsScrollView()
         {
-            if (Project.ConfigProcess?.Params == null)
+            if (Project.Files?.Params == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
-                ConfigParam param = kvp.Value;
+                Variables param = kvp.Value;
                 param.PropertyChanged -= OnPropertyChanged;
             }
 
             paramsScrollView.contentContainer.Clear();
             paramRowVisualElement.Clear();
 
-            if (Project.ConfigProcess?.Params == null)
+            if (Project.Files?.Params == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (var kvp in Project.Files.Params)
             {
                 string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+                Variables param = kvp.Value;
 
                 param.PropertyChanged += OnPropertyChanged;
 
