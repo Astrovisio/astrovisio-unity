@@ -89,10 +89,11 @@ namespace Astrovisio
 
 		public async void OpenProject(int id)
 		{
-			Project alreadyOpened = openedProjectList.Find(p => p.Id == id);
+			Project alreadyOpened = GetOpenedProject(id);
 			if (alreadyOpened != null)
 			{
 				currentProject = alreadyOpened;
+				Debug.Log(currentProject.Name);
 				ProjectOpened?.Invoke(alreadyOpened);
 				return;
 			}
@@ -101,6 +102,7 @@ namespace Astrovisio
 				project =>
 				{
 					Project existing = projectList.FirstOrDefault(p => p.Id == project.Id);
+					Debug.Log(existing.Name);
 					if (existing != null)
 					{
 						existing.UpdateFrom(project);
@@ -112,7 +114,11 @@ namespace Astrovisio
 
 					if (!openedProjectList.Any(p => p.Id == project.Id))
 					{
-						openedProjectList.Add(project);
+						Project openedProject = projectList.FirstOrDefault(p => p.Id == project.Id);
+						if (openedProject != null)
+						{
+							openedProjectList.Add(openedProject);
+						}
 					}
 
 					currentProject = project;

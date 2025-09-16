@@ -13,11 +13,9 @@ namespace Astrovisio
         // === Dependencies ===
         public ProjectManager ProjectManager { get; }
         public UIManager UIManager { get; }
-
-        // === Local ===
+        public VisualElement Root { get; }
         public Project Project { get; }
         public File File { get; }
-        public VisualElement Root { get; }
 
         // === UI ===
         private Label projectNameLabel;
@@ -39,7 +37,12 @@ namespace Astrovisio
         private ScrollViewOrderType scrollViewOrderType = ScrollViewOrderType.None;
 
 
-        public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project, File file)
+        public ProjectViewController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root,
+            Project project,
+            File file)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
