@@ -1610,12 +1610,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1166252297}
   m_CullTransparentMesh: 1
---- !u!20 &1199554159 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 7353215253890024331, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
-    type: 3}
-  m_PrefabInstance: {fileID: 5061524304675062943}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1199827360
 GameObject:
   m_ObjectHideFlags: 0
@@ -3790,7 +3784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68412cfbabde84cc1a79bb46c00a8ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 1199554159}
+  mainCamera: {fileID: 794102724}
   cameras: []
   useRenderTexture: 0
   targetRenderTexture: {fileID: 0}
