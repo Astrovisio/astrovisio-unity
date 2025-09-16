@@ -10,9 +10,7 @@ namespace Astrovisio
         private Button playButton;
         private Button undoButton;
         private Label timerLabel;
-
-        private bool isRecording = false;
-        private float recordingTime = 0f;
+        private IVisualElementScheduledItem timerSchedule;
 
         public ScreenrecorderSettingController(VisualElement root)
         {
@@ -34,49 +32,55 @@ namespace Astrovisio
 
         private void ToggleRecording()
         {
-            isRecording = !isRecording;
-
-            if (isRecording)
+            if (!RecorderManager.Instance.IsRecording)
             {
-                playButton.AddToClassList("active");
                 Debug.Log("Recording started.");
                 RecorderManager.Instance.StartRecording();
+                playButton.AddToClassList("active");
+
+                if (timerSchedule == null)
+                    timerSchedule = Root.schedule.Execute(UpdateTimerLabel).Every(500);
+                else
+                    timerSchedule.Resume();
+
+                return;
+            }
+
+            if (!RecorderManager.Instance.IsPaused)
+            {
+                Debug.Log("Recording paused.");
+                RecorderManager.Instance.PauseRecording();
+                playButton.RemoveFromClassList("active");
+                timerSchedule?.Pause();
             }
             else
             {
-                playButton.RemoveFromClassList("active");
-                Debug.Log("Recording stopped.");
-                RecorderManager.Instance.StopRecording();
+                Debug.Log("Recording resumed.");
+                RecorderManager.Instance.ResumeRecording();
+                playButton.AddToClassList("active");
+                timerSchedule?.Resume();
             }
         }
 
         private void Reset()
         {
-            if (isRecording)
+            if (RecorderManager.Instance.IsRecording)
             {
-                ToggleRecording();
+                Debug.Log("Recording stopped.");
+                RecorderManager.Instance.StopRecording();
             }
 
-            recordingTime = 0f;
+            playButton.RemoveFromClassList("active");
             timerLabel.text = "00:00:00";
-            Debug.Log("Recording reset.");
+            timerSchedule?.Pause();
         }
 
-        // TODO ???
-        public void UpdateTimer(float deltaTime)
+        private void UpdateTimerLabel()
         {
-            if (!isRecording)
+            if (RecorderManager.Instance.IsRecording && !RecorderManager.Instance.IsPaused)
             {
-                return;
+                timerLabel.text = RecorderManager.Instance.GetRecordingTime();
             }
-
-            recordingTime += deltaTime;
-
-            int hours = Mathf.FloorToInt(recordingTime / 3600f);
-            int minutes = Mathf.FloorToInt((recordingTime % 3600f) / 60f);
-            int seconds = Mathf.FloorToInt(recordingTime % 60f);
-
-            timerLabel.text = $"{hours:00}:{minutes:00}:{seconds:00}";
         }
 
     }

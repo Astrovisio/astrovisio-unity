@@ -69,7 +69,7 @@
 }
 
 #Root > #BodyContainer > #RecButton.active > #Icon {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/stop_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&guid=5bbd436b9b21dc94189fa04523ef0a4b&type=3#stop_24dp_000_FILL0_wght400_GRAD0_opsz24 1");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/pause_icon.svg?fileID=7388822144124034973&guid=9d948b88cf580bc4cba65ccd53a6415b&type=3#pause_icon");
 }
 
 #Root > #BodyContainer > #TimerContainer {
@@ -107,5 +107,5 @@
     min-height: 16px;
     max-width: 16px;
     max-height: 16px;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/undo_24dp_000_FILL0_wght400_GRAD0_opsz24.svg?fileID=7388822144124034973&guid=dbb9907a59e3a2544a3663d519c600e7&type=3#undo_24dp_000_FILL0_wght400_GRAD0_opsz24");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/stop_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&guid=5bbd436b9b21dc94189fa04523ef0a4b&type=3#stop_24dp_000_FILL0_wght400_GRAD0_opsz24 1");
 }
