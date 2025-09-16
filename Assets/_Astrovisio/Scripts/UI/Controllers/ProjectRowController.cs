@@ -16,7 +16,6 @@ namespace Astrovisio
 
         // === UI ===
         private Label projectNameLabel;
-        private Label filesLabel;
         private Label lastOpenedLabel;
         private Label createLabel;
         private Toggle favouriteToggle;
@@ -46,7 +45,6 @@ namespace Astrovisio
         private void Init()
         {
             projectNameLabel = Root.Q<Label>("ProjectNameLabel");
-            filesLabel = Root.Q<Label>("FilesLabel");
             lastOpenedLabel = Root.Q<Label>("LastOpenedLabel");
             createLabel = Root.Q<Label>("CreatedLabel");
             favouriteToggle = Root.Q<VisualElement>("FavouriteToggle")?.Q<Toggle>();
@@ -55,7 +53,6 @@ namespace Astrovisio
             deleteButton = Root.Q<Button>("DeleteButton");
 
             projectNameLabel.text = Project.Name;
-            filesLabel.text = Project.Paths.Length.ToString() + " files";
 
             if (Project.LastOpened is null && Project.Created is null)
             {

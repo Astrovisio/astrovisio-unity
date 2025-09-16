@@ -10,10 +10,6 @@ using MessagePack;
 namespace Astrovisio
 {
 
-    /// <summary>
-    /// Manages low-level API calls for project CRUD operations.
-    /// Provides async methods with success and error callbacks.
-    /// </summary>
     public class APIManager : MonoBehaviour
     {
         public static APIManager Instance;
@@ -177,7 +173,7 @@ namespace Astrovisio
             Action onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProject(projectID);
+            string url = APIEndpoints.DeleteProject(projectID);
 
             using (UnityWebRequest request = UnityWebRequest.Delete(url))
             {
@@ -194,40 +190,76 @@ namespace Astrovisio
             }
         }
 
-        public async Task<int?> ProcessProject(
+        public async Task DuplicateProject(
             int projectID,
-            ProcessProjectRequest req,
+            DuplicateProjectRequest req,
+            Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.ProcessProject(projectID);
-            Debug.Log($"[APIManager] POST {url}");
+            string url = APIEndpoints.DuplicateProject(projectID);
 
-            string jsonPayload = JsonConvert.SerializeObject(req, Formatting.None,
-                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include });
-            Debug.Log($"[APIManager] jsonPayload {jsonPayload}");
+            string jsonPayload = JsonConvert.SerializeObject(req);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
 
-            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+            using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
             {
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
 
                 await SendWebRequestAsync(request);
-                Debug.Log($"[APIManager] Raw response: {request.downloadHandler.text}");
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    onError?.Invoke(request.error);
+                }
+                else
+                {
+                    try
+                    {
+                        Project duplicated = JsonConvert.DeserializeObject<Project>(request.downloadHandler.text);
+                        onSuccess?.Invoke(duplicated);
+                    }
+                    catch (Exception ex)
+                    {
+                        onError?.Invoke("Deserialization failed: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<int?> ProcessProject(
+            int projectID,
+            int fileID,
+            Action<string> onError = null)
+        {
+            string baseUrl = APIEndpoints.ProcessProject(projectID, fileID);
+            string url = $"{baseUrl}?file_id={fileID}";
+
+            Debug.Log($"[APIManager] POST {url}");
+
+            using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+            {
+                request.uploadHandler = new UploadHandlerRaw(Array.Empty<byte>());
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                await SendWebRequestAsync(request);
+                string raw = request.downloadHandler.text;
+                Debug.Log($"[APIManager] Raw response: {raw}");
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     Debug.LogError($"[APIManager] Error POST: {request.error}");
-                    onError?.Invoke(request.downloadHandler.text);
+                    onError?.Invoke(string.IsNullOrEmpty(raw) ? request.error : raw);
                     return null;
                 }
 
                 try
                 {
-                    JobResponse jobResponse = JsonConvert.DeserializeObject<JobResponse>(request.downloadHandler.text);
-                    Debug.Log($"[APIManager] Received job_id: {jobResponse.JobID}");
-                    return jobResponse.JobID;
+                    var jobResponse = JsonConvert.DeserializeObject<JobResponse>(raw);
+                    Debug.Log($"[APIManager] Received job_id: {jobResponse?.JobID}");
+                    return jobResponse?.JobID;
                 }
                 catch (Exception ex)
                 {
@@ -237,7 +269,6 @@ namespace Astrovisio
                 }
             }
         }
-
 
         public async Task<JobStatusResponse> GetProjectJobStatus(
             int projectID,
@@ -277,7 +308,6 @@ namespace Astrovisio
                 }
             }
         }
-
 
         public async Task<DataPack> FetchProjectProcessedData(
             int projectID,
@@ -336,7 +366,6 @@ namespace Astrovisio
             onError?.Invoke("Unknown error");
             return null;
         }
-
 
     }
 

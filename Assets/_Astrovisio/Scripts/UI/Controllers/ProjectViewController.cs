@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using NUnit.Framework.Internal;
+
 
 namespace Astrovisio
 {
@@ -16,6 +16,7 @@ namespace Astrovisio
 
         // === Local ===
         public Project Project { get; }
+        public File File { get; }
         public VisualElement Root { get; }
 
         // === UI ===
@@ -32,18 +33,19 @@ namespace Astrovisio
         // === Local ===
         private float _nextAllowedUpdate;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
-        private readonly Dictionary<string, ParamRowController> paramControllers = new();
+        private readonly List<ParamRowController> paramControllers = new();
 
         private enum ScrollViewOrderType { None, AZ, ZA }
         private ScrollViewOrderType scrollViewOrderType = ScrollViewOrderType.None;
 
 
-        public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project)
+        public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project, File file)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
             Root = root;
             Project = project;
+            File = file;
 
             ProjectManager.ProjectUpdated += OnProjectUpdated;
 
@@ -120,9 +122,9 @@ namespace Astrovisio
 
         private void OnCheckAllToggled(bool isChecked)
         {
-            foreach (var kvp in paramControllers)
+            foreach (ParamRowController paramController in paramControllers)
             {
-                kvp.Value.SetSelected(isChecked);
+                paramController.SetSelected(isChecked);
             }
         }
 
@@ -133,23 +135,26 @@ namespace Astrovisio
             paramScrollView.contentContainer.Clear();
             paramControllers.Clear();
 
-            if (Project.Files?.Params == null)
+            if (Project.Files.Count == 0)
+            {
+                Debug.LogWarning("No files to display.");
+                return;
+            }
+
+            if (File == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.Files.Params)
+            foreach (Variable variable in File.Variables)
             {
-                string paramName = kvp.Key;
-                Variables param = kvp.Value;
-
                 TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
-                nameContainer.Q<Label>("Label").text = paramName;
+                nameContainer.Q<Label>("Label").text = variable.Name;
 
-                ParamRowController paramRowController = new ParamRowController(paramRow, paramName, param);
-                paramControllers[paramName] = paramRowController;
+                ParamRowController paramRowController = new ParamRowController(paramRow, variable);
+                paramControllers.Add(paramRowController);
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
@@ -162,22 +167,19 @@ namespace Astrovisio
 
         private void InitializeSelectedAxes()
         {
-            foreach (var kvp in paramControllers)
+            foreach (ParamRowController paramController in paramControllers)
             {
-                var controller = kvp.Value;
-                var param = controller.Param;
-
-                if (param.XAxis)
+                if (paramController.Variable.XAxis)
                 {
-                    selectedAxis[Axis.X] = controller;
+                    selectedAxis[Axis.X] = paramController;
                 }
-                if (param.YAxis)
+                if (paramController.Variable.YAxis)
                 {
-                    selectedAxis[Axis.Y] = controller;
+                    selectedAxis[Axis.Y] = paramController;
                 }
-                if (param.ZAxis)
+                if (paramController.Variable.ZAxis)
                 {
-                    selectedAxis[Axis.Z] = controller;
+                    selectedAxis[Axis.Z] = paramController;
                 }
             }
         }
@@ -194,13 +196,13 @@ namespace Astrovisio
                         switch (kvp.Key)
                         {
                             case Axis.X:
-                                newly.Param.XAxis = false;
+                                newly.Variable.XAxis = false;
                                 break;
                             case Axis.Y:
-                                newly.Param.YAxis = false;
+                                newly.Variable.YAxis = false;
                                 break;
                             case Axis.Z:
-                                newly.Param.ZAxis = false;
+                                newly.Variable.ZAxis = false;
                                 break;
                         }
                     }
@@ -214,13 +216,13 @@ namespace Astrovisio
                 switch (axis.Value)
                 {
                     case Axis.X:
-                        previous.Param.XAxis = false;
+                        previous.Variable.XAxis = false;
                         break;
                     case Axis.Y:
-                        previous.Param.YAxis = false;
+                        previous.Variable.YAxis = false;
                         break;
                     case Axis.Z:
-                        previous.Param.ZAxis = false;
+                        previous.Variable.ZAxis = false;
                         break;
                 }
             }
@@ -230,19 +232,19 @@ namespace Astrovisio
             switch (axis.Value)
             {
                 case Axis.X:
-                    newly.Param.XAxis = true;
-                    newly.Param.YAxis = false;
-                    newly.Param.ZAxis = false;
+                    newly.Variable.XAxis = true;
+                    newly.Variable.YAxis = false;
+                    newly.Variable.ZAxis = false;
                     break;
                 case Axis.Y:
-                    newly.Param.XAxis = false;
-                    newly.Param.YAxis = true;
-                    newly.Param.ZAxis = false;
+                    newly.Variable.XAxis = false;
+                    newly.Variable.YAxis = true;
+                    newly.Variable.ZAxis = false;
                     break;
                 case Axis.Z:
-                    newly.Param.XAxis = false;
-                    newly.Param.ZAxis = true;
-                    newly.Param.YAxis = false;
+                    newly.Variable.XAxis = false;
+                    newly.Variable.ZAxis = true;
+                    newly.Variable.YAxis = false;
                     break;
             }
 
@@ -302,30 +304,41 @@ namespace Astrovisio
 
         private void InitCheckAllToggle()
         {
-            checkAllToggle.value = Project.Files?.Params != null &&
-                                   Project.Files.Params.All(kv => kv.Value.Selected);
-        }
-
-        private void ApplyScrollViewOrderType()
-        {
-            if (paramScrollView == null || Project.Files?.Params == null)
+            if (checkAllToggle == null)
             {
                 return;
             }
 
-            IEnumerable<KeyValuePair<string, Variables>> ordered = scrollViewOrderType switch
+            bool allSelected =
+                File?.Variables != null &&
+                File.Variables.Count > 0 &&
+                File.Variables.All(v => v.Selected);
+
+            checkAllToggle.SetValueWithoutNotify(allSelected);
+        }
+
+        private void ApplyScrollViewOrderType()
+        {
+            if (paramScrollView == null || paramControllers.Count == 0)
             {
-                ScrollViewOrderType.AZ => Project.Files.Params.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                ScrollViewOrderType.ZA => Project.Files.Params.OrderByDescending(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                _ => Project.Files.Params
+                return;
+            }
+
+            IEnumerable<ParamRowController> ordered = scrollViewOrderType switch
+            {
+                ScrollViewOrderType.AZ => paramControllers
+                    .OrderBy(pc => pc.Variable?.Name, StringComparer.OrdinalIgnoreCase),
+                ScrollViewOrderType.ZA => paramControllers
+                    .OrderByDescending(pc => pc.Variable?.Name, StringComparer.OrdinalIgnoreCase),
+                _ => paramControllers
             };
 
             UpdateOrderTypeLabel();
 
             paramScrollView.contentContainer.Clear();
-            foreach (var kvp in ordered)
+            foreach (var pc in ordered)
             {
-                paramScrollView.Add(paramControllers[kvp.Key].Root);
+                paramScrollView.Add(pc.Root);
             }
         }
 

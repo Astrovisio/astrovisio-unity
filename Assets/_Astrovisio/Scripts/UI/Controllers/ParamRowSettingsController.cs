@@ -6,15 +6,15 @@ namespace Astrovisio
     {
         public ParamRenderSettings ParamRenderSettings { get; private set; }
 
-        public ParamRowSettingsController(string paramName, Project project)
-            : base(paramName, project)
+        public ParamRowSettingsController(Variable variable)
+            : base(variable)
         {
-            ParamRenderSettings = new ParamRenderSettings(paramName, MappingType.None);
+            ParamRenderSettings = new ParamRenderSettings(variable.Name, MappingType.None);
         }
 
         public object Clone()
         {
-            return new ParamRowSettingsController(ParamName, Project)
+            return new ParamRowSettingsController(Variable)
             {
                 ParamRenderSettings = ParamRenderSettings?.Clone() as ParamRenderSettings
             };
@@ -22,7 +22,7 @@ namespace Astrovisio
 
         public void Reset()
         {
-            ParamRenderSettings = new ParamRenderSettings(ParamName, MappingType.None);
+            ParamRenderSettings = new ParamRenderSettings(Variable.Name, MappingType.None);
         }
         
     }

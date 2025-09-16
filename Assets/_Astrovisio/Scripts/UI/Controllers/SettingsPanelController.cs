@@ -136,7 +136,7 @@ namespace Astrovisio
 
             SetAxisDisplayStyle();
 
-            paramNameLabel.text = TempAxisRowSettingsController.ParamName;
+            paramNameLabel.text = TempAxisRowSettingsController.Variable.Name;
 
             // Debug.Log($"Get 2: {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
 
@@ -240,7 +240,7 @@ namespace Astrovisio
             ParamRowSettingsController = paramRowSettingsController;
             TempParamRowSettingsController = ParamRowSettingsController.Clone() as ParamRowSettingsController;
 
-            paramNameLabel.text = TempParamRowSettingsController.ParamName;
+            paramNameLabel.text = TempParamRowSettingsController.Variable.Name;
             SetMappingDropdown(TempParamRowSettingsController);
 
             // RenderManager.Instance.SetRenderSettings(renderSettings);
@@ -375,10 +375,10 @@ namespace Astrovisio
                             // Debug.Log("Mapping type: Opacity");
                             paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.Opacity;
                             paramRowSettingsController.ParamRenderSettings.MappingSettings = new OpacitySettings(
-                                (float)paramRowSettingsController.Param.ThrMin,
-                                (float)paramRowSettingsController.Param.ThrMax,
-                                (float)paramRowSettingsController.Param.ThrMinSel,
-                                (float)paramRowSettingsController.Param.ThrMaxSel,
+                                (float)paramRowSettingsController.Variable.ThrMin,
+                                (float)paramRowSettingsController.Variable.ThrMax,
+                                (float)paramRowSettingsController.Variable.ThrMinSel,
+                                (float)paramRowSettingsController.Variable.ThrMaxSel,
                                 ScalingType.Linear,
                                 false
                             );
@@ -390,10 +390,10 @@ namespace Astrovisio
                             paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.Colormap;
                             paramRowSettingsController.ParamRenderSettings.MappingSettings = new ColorMapSettings(
                                 ColorMapEnum.Autumn,
-                                (float)paramRowSettingsController.Param.ThrMin,
-                                (float)paramRowSettingsController.Param.ThrMax,
-                                (float)paramRowSettingsController.Param.ThrMinSel,
-                                (float)paramRowSettingsController.Param.ThrMaxSel,
+                                (float)paramRowSettingsController.Variable.ThrMin,
+                                (float)paramRowSettingsController.Variable.ThrMax,
+                                (float)paramRowSettingsController.Variable.ThrMinSel,
+                                (float)paramRowSettingsController.Variable.ThrMaxSel,
                                 ScalingType.Linear,
                                 false
                             );

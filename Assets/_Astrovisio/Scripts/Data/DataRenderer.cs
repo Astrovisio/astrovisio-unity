@@ -34,7 +34,7 @@ namespace Astrovisio
                     return;
                 }
 
-                dataContainer = new DataContainer(dataPack, null);
+                dataContainer = new DataContainer(dataPack, null, null);
                 RenderDataContainer(dataContainer);
             }
 

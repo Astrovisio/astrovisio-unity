@@ -95,7 +95,7 @@ namespace Astrovisio
 
         private void OnProjectProcessed(Project project, DataPack pack)
         {
-            DataContainer dataContainer = new DataContainer(pack, project);
+            DataContainer dataContainer = new DataContainer(pack, project, project.Files[0]); // GB
             projectDataContainers[project] = dataContainer;
             OnProjectRenderReady?.Invoke(project);
             // Debug.Log("OnProjectReadyToGetRendered");

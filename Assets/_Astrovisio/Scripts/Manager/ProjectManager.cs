@@ -151,57 +151,27 @@ namespace Astrovisio
 		{
 			uiManager.SetLoadingView(true);
 
-			CreateProjectRequest createReq = new CreateProjectRequest
+			DuplicateProjectRequest req = new DuplicateProjectRequest
 			{
 				Name = name,
-				Description = description,
-				Favourite = false,
-				Paths = projectToDuplicate.Paths
+				Description = description
 			};
 
-			Project createdProject = null;
-			bool createSuccess = false;
-
-			await apiManager.CreateNewProject(createReq,
-				created =>
+			await apiManager.DuplicateProject(
+				projectToDuplicate.Id,
+				req,
+				duplicated =>
 				{
-					createdProject = created;
-					projectList.Add(created);
-					createSuccess = true;
-				},
-				error =>
-				{
-					ApiError?.Invoke(error);
-					createSuccess = false;
-				});
-
-			if (!createSuccess || createdProject == null)
-			{
-				uiManager.SetLoadingView(false);
-				return;
-			}
-
-			UpdateProjectRequest updateReq = new UpdateProjectRequest
-			{
-				Name = createdProject.Name,
-				Description = createdProject.Description,
-				Favourite = false,
-				Paths = createdProject.Paths,
-				ConfigProcess = projectToDuplicate.Files.DeepCopy()
-			};
-
-			await apiManager.UpdateProject(createdProject.Id, updateReq,
-				updated =>
-				{
-					createdProject.UpdateFrom(updated);
-					ProjectCreated?.Invoke(createdProject);
+					projectList.Add(duplicated);
+					ProjectCreated?.Invoke(duplicated);
 					uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
-				});
+				}
+			);
 		}
 
 		public async void UpdateProject(int id, Project project)
@@ -210,9 +180,7 @@ namespace Astrovisio
 			{
 				Name = project.Name,
 				Favourite = project.Favourite,
-				Description = project.Description,
-				Paths = project.Paths,
-				ConfigProcess = project.Files
+				Description = project.Description
 			};
 
 			await apiManager.UpdateProject(id, req,
@@ -246,21 +214,15 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessProject(int id, File configProcess)
+		public async void ProcessProject(int projectID, int fileID)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
 
-			ProcessProjectRequest req = new ProcessProjectRequest
-			{
-				Downsampling = configProcess.Downsampling,
-				Variables = configProcess.Params
-			};
-
 			try
 			{
 				// Get Job ID
-				int? jobID = await apiManager.ProcessProject(id, req, error =>
+				int? jobID = await apiManager.ProcessProject(projectID, fileID, error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
@@ -282,7 +244,7 @@ namespace Astrovisio
 					{
 						await Task.Delay(250);
 
-						JobStatusResponse statusResponse = await apiManager.GetProjectJobStatus(id, jobID.Value, error =>
+						JobStatusResponse statusResponse = await apiManager.GetProjectJobStatus(projectID, jobID.Value, error =>
 						{
 							ApiError?.Invoke(error);
 						});
@@ -309,7 +271,7 @@ namespace Astrovisio
 
 				// Get DataPack
 				uiManager.SetLoadingBarProgress(1.0f, ProcessingStatusMessages.GetClientMessage("loading"));
-				DataPack dataPack = await apiManager.FetchProjectProcessedData(id, jobID.Value, error =>
+				DataPack dataPack = await apiManager.FetchProjectProcessedData(projectID, jobID.Value, error =>
 				{
 					ApiError?.Invoke(error);
 				});
@@ -325,7 +287,7 @@ namespace Astrovisio
 					SaveProjectCSV(dataPack);
 				}
 
-				Project project = GetProject(id);
+				Project project = GetProject(projectID);
 				if (project != null)
 				{
 					ProjectProcessed?.Invoke(project, dataPack);
@@ -355,34 +317,27 @@ namespace Astrovisio
 
 			StringBuilder sb = new StringBuilder();
 
-			// 1. Intestazioni (columns)
 			if (dataPack.Columns != null && dataPack.Columns.Length > 0)
 			{
 				sb.AppendLine(string.Join(",", dataPack.Columns));
 			}
 
-			// 2. Righe (rows)
 			if (dataPack.Rows != null)
 			{
 				foreach (var row in dataPack.Rows)
 				{
-					// row è double[], convertiamolo in stringhe
 					string[] values = new string[row.Length];
 					for (int i = 0; i < row.Length; i++)
 					{
-						// Usa ToString con InvariantCulture per evitare problemi con la virgola decimale
 						values[i] = row[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
 					}
 					sb.AppendLine(string.Join(",", values));
 				}
 			}
 
-			// 3. Percorso del file (Unity: cartella scrivibile sicura)
 			string filePath = Path.Combine(Application.persistentDataPath, "project.csv");
-
-            System.IO.File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
-
-			Debug.Log("CSV salvato in: " + filePath);
+			System.IO.File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+			Debug.Log("CSV saved in: " + filePath);
 		}
 
 		private void OnDisable()

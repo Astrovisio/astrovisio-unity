@@ -6,38 +6,41 @@ namespace Astrovisio
 {
     public class File : INotifyPropertyChanged
     {
-        private string fileType;
-        private string filePath;
+        private string type;
+        private string path;
         private bool processed;
         private float downsampling = 1f;
         private string processedPath;
+        private string name;
+        private long size;
         private int id;
-        private List<Variables> variables = new();
+        private List<Variable> variables = new();
 
-        [JsonProperty("file_type")]
-        public string FileType
+
+        [JsonProperty("type")]
+        public string Type
         {
-            get => fileType;
+            get => type;
             set
             {
-                if (fileType != value)
+                if (type != value)
                 {
-                    fileType = value;
-                    OnPropertyChanged(nameof(FileType));
+                    type = value;
+                    OnPropertyChanged(nameof(Type));
                 }
             }
         }
 
-        [JsonProperty("file_path")]
-        public string FilePath
+        [JsonProperty("path")]
+        public string Path
         {
-            get => filePath;
+            get => path;
             set
             {
-                if (filePath != value)
+                if (path != value)
                 {
-                    filePath = value;
-                    OnPropertyChanged(nameof(FilePath));
+                    path = value;
+                    OnPropertyChanged(nameof(Path));
                 }
             }
         }
@@ -98,15 +101,43 @@ namespace Astrovisio
             }
         }
 
+        [JsonProperty("name")]
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        [JsonProperty("size")]
+        public long Size
+        {
+            get => size;
+            set
+            {
+                if (size != value)
+                {
+                    size = value;
+                    OnPropertyChanged(nameof(Size));
+                }
+            }
+        }
+
         [JsonProperty("variables")]
-        public List<Variables> Variables
+        public List<Variable> Variables
         {
             get => variables;
             set
             {
                 if (variables != value)
                 {
-                    variables = value ?? new List<Variables>();
+                    variables = value ?? new List<Variable>();
                     OnPropertyChanged(nameof(Variables));
                 }
             }
@@ -122,8 +153,8 @@ namespace Astrovisio
                 return;
             }
 
-            FileType = other.FileType;
-            FilePath = other.FilePath;
+            Type = other.Type;
+            Path = other.Path;
             Processed = other.Processed;
             Downsampling = other.Downsampling;
             ProcessedPath = other.ProcessedPath;
@@ -131,12 +162,12 @@ namespace Astrovisio
 
             if (other.Variables == null)
             {
-                Variables = new List<Variables>();
+                Variables = new List<Variable>();
             }
             else
             {
-                List<Variables> copy = JsonConvert.DeserializeObject<List<Variables>>(JsonConvert.SerializeObject(other.Variables));
-                Variables = copy ?? new List<Variables>();
+                List<Variable> copy = JsonConvert.DeserializeObject<List<Variable>>(JsonConvert.SerializeObject(other.Variables));
+                Variables = copy ?? new List<Variable>();
             }
         }
 

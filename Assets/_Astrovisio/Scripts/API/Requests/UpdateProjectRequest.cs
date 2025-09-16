@@ -14,11 +14,6 @@ namespace Astrovisio
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("files")]
-        public string[] Paths { get; set; }
-
-        [JsonProperty("config_process")]
-        public File ConfigProcess { get; set; }
-        
     }
+    
 }

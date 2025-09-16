@@ -5,18 +5,33 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class Variables : INotifyPropertyChanged
+    public class Variable : INotifyPropertyChanged
     {
+        private string name;
         private double thrMin;
-        private double? thrMinSel;
         private double thrMax;
+        private double? thrMinSel;
         private double? thrMaxSel;
         private bool selected;
         private string unit;
         private bool xAxis;
         private bool yAxis;
         private bool zAxis;
-        private string[] files;
+
+
+        [JsonProperty("var_name")]
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
 
         [JsonProperty("thr_min")]
         public double ThrMin
@@ -144,19 +159,6 @@ namespace Astrovisio
             }
         }
 
-        [JsonProperty("files")]
-        public string[] Files
-        {
-            get => files;
-            set
-            {
-                if (files != value)
-                {
-                    files = value;
-                    OnPropertyChanged(nameof(Files));
-                }
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
@@ -165,7 +167,7 @@ namespace Astrovisio
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void UpdateFrom(Variables other)
+        public void UpdateFrom(Variable other)
         {
             ThrMin = other.ThrMin;
             ThrMinSel = other.ThrMinSel;
@@ -176,14 +178,12 @@ namespace Astrovisio
             XAxis = other.XAxis;
             YAxis = other.YAxis;
             ZAxis = other.ZAxis;
-
-            Files = other.Files != null ? (string[])other.Files.Clone() : null;
         }
 
-        public Variables DeepCopy()
+        public Variable DeepCopy()
         {
             string json = JsonConvert.SerializeObject(this);
-            return JsonConvert.DeserializeObject<Variables>(json);
+            return JsonConvert.DeserializeObject<Variable>(json);
         }
 
     }

@@ -45,7 +45,14 @@ namespace Astrovisio
         private ProjectRenderSettings projectRenderSettings = new();
 
 
-        public ProjectSidebarRenderController(ProjectSidebarController projectSidebarController, UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
+        public ProjectSidebarRenderController(
+            ProjectSidebarController projectSidebarController,
+            UIManager uiManager,
+            ProjectManager projectManager,
+            UIContextSO uiContextSO,
+            Project project,
+            VisualElement root
+            )
         {
             ProjectSidebarController = projectSidebarController;
             UIManager = uiManager;
@@ -90,32 +97,30 @@ namespace Astrovisio
             Label yLabel = yButton.Q<Label>("ParamLabel");
             Label zLabel = zButton.Q<Label>("ParamLabel");
 
-            xLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.XAxis).Key ?? "";
-            yLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.YAxis).Key ?? "";
-            zLabel.text = Project.Files.Params.FirstOrDefault(p => p.Value.ZAxis).Key ?? "";
+            File file = Project.Files?.FirstOrDefault(); // GB
+            xLabel.text = file?.Variables.FirstOrDefault(v => v.XAxis)?.Name ?? "";
+            yLabel.text = file?.Variables.FirstOrDefault(v => v.YAxis)?.Name ?? "";
+            zLabel.text = file?.Variables.FirstOrDefault(v => v.ZAxis)?.Name ?? "";
 
             VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
             VisualElement xVisualElement = axisContainer.Q<VisualElement>("XLabel");
             VisualElement yVisualElement = axisContainer.Q<VisualElement>("YLabel");
             VisualElement zVisualElement = axisContainer.Q<VisualElement>("ZLabel");
 
-            foreach (var kvp in Project.Files.Params)
+            foreach (Variable variable in file.Variables)
             {
-                string paramName = kvp.Key;
-                Variables Variables = kvp.Value;
-
-                if (!Variables.Selected)
+                if (!variable.Selected)
                 {
                     continue;
                 }
 
                 VisualElement axisVisualElement = null;
 
-                if (Variables.XAxis)
+                if (variable.XAxis)
                     axisVisualElement = xVisualElement;
-                else if (Variables.YAxis)
+                else if (variable.YAxis)
                     axisVisualElement = yVisualElement;
-                else if (Variables.ZAxis)
+                else if (variable.ZAxis)
                     axisVisualElement = zVisualElement;
 
 
@@ -126,15 +131,15 @@ namespace Astrovisio
                     Button axisButton = axisVisualElement.Q<Button>("Root");
                     axisButton.RemoveFromClassList("active");
 
-                    if (axisSettingsData.ContainsKey(paramName))
+                    if (axisSettingsData.ContainsKey(variable.Name))
                     {
-                        var existingRow = axisSettingsData[paramName];
+                        var existingRow = axisSettingsData[variable.Name];
                         axisButton.UnregisterCallback(existingRow.ClickHandler);
                     }
 
                     EventCallback<ClickEvent> clickHandler = evt =>
                     {
-                        AxisRowSettingsController axisRowSettingsController = GetAxisRowSettingsController(paramName);
+                        AxisRowSettingsController axisRowSettingsController = GetAxisRowSettingsController(variable.Name);
 
                         if (axisButton.ClassListContains("active"))
                         {
@@ -155,11 +160,11 @@ namespace Astrovisio
                     AxisRow axisRow = new AxisRow
                     {
                         VisualElement = axisVisualElement,
-                        AxisRowSettingsController = new AxisRowSettingsController(paramName, Project),
+                        AxisRowSettingsController = new AxisRowSettingsController(variable),
                         ClickHandler = clickHandler
                     };
 
-                    axisSettingsData[paramName] = axisRow;
+                    axisSettingsData[variable.Name] = axisRow;
                 }
             }
         }
@@ -168,13 +173,11 @@ namespace Astrovisio
         {
             paramSettingsScrollView.Clear();
 
-            foreach (var kvp in Project.Files.Params)
+            File file = Project.Files?.FirstOrDefault(); // GB
+
+            foreach (Variable variable in file.Variables)
             {
-                string paramName = kvp.Key;
-                Variables Variables = kvp.Value;
-
-
-                if (!Variables.Selected || Variables.XAxis || Variables.YAxis || Variables.ZAxis)
+                if (!variable.Selected || variable.XAxis || variable.YAxis || variable.ZAxis)
                 {
                     continue;
                 }
@@ -185,13 +188,13 @@ namespace Astrovisio
                 Label nameLabel = paramRowSettings.Q<Label>("ParamLabel");
                 if (nameLabel != null)
                 {
-                    nameLabel.text = paramName;
+                    nameLabel.text = variable.Name;
                 }
 
                 ParamRow paramRow = new ParamRow
                 {
                     VisualElement = paramRowSettings,
-                    ParamRowSettingsController = new ParamRowSettingsController(paramName, Project)
+                    ParamRowSettingsController = new ParamRowSettingsController(variable)
                 };
 
                 Button paramButton = paramRowSettings.Q<Button>("Root");
@@ -199,7 +202,7 @@ namespace Astrovisio
                 paramButton.clicked += () =>
                 {
                     // Debug.Log("Clicked");
-                    ParamRowSettingsController paramRowSettingsController = GetParamRowSettingsController(paramName);
+                    ParamRowSettingsController paramRowSettingsController = GetParamRowSettingsController(variable.Name);
 
                     if (paramButton.ClassListContains("active"))
                     {
@@ -217,7 +220,7 @@ namespace Astrovisio
 
                 };
 
-                paramSettingsDatas.Add(paramName, paramRow);
+                paramSettingsDatas.Add(variable.Name, paramRow);
                 paramSettingsScrollView.Add(paramRowSettings);
             }
         }
@@ -257,7 +260,7 @@ namespace Astrovisio
 
         private void OnApplyAxisSettings(AxisRowSettingsController appliedAxisRowSettingsController)
         {
-            string appliedParamName = appliedAxisRowSettingsController.ParamName;
+            string appliedParamName = appliedAxisRowSettingsController.Variable.Name;
 
             SetAxisRowSettingsController(appliedParamName, appliedAxisRowSettingsController);
 
@@ -269,7 +272,7 @@ namespace Astrovisio
 
         private void OnApplyParamSettings(ParamRowSettingsController appliedParamRowSettingsController)
         {
-            string appliedParamName = appliedParamRowSettingsController.ParamName;
+            string appliedParamName = appliedParamRowSettingsController.Variable.Name;
             MappingType appliedMapping = appliedParamRowSettingsController.ParamRenderSettings.Mapping;
 
             // Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
@@ -282,7 +285,7 @@ namespace Astrovisio
                     // Debug.Log("OnApplySettings -> None: " + appliedParamName);
                     if (
                         projectRenderSettings.OpacitySettingsController != null &&
-                        projectRenderSettings.OpacitySettingsController.ParamName == appliedParamName)
+                        projectRenderSettings.OpacitySettingsController.Variable.Name == appliedParamName)
                     {
                         // Debug.Log("Resetting opacity...");
                         projectRenderSettings.OpacitySettingsController.Reset();
@@ -290,7 +293,7 @@ namespace Astrovisio
                     }
                     else if (
                         projectRenderSettings.ColorMapSettingsController != null &&
-                        projectRenderSettings.ColorMapSettingsController.ParamName == appliedParamName)
+                        projectRenderSettings.ColorMapSettingsController.Variable.Name == appliedParamName)
                     {
                         // Debug.Log("Resetting colormap...");
                         projectRenderSettings.ColorMapSettingsController.Reset();
@@ -380,8 +383,8 @@ namespace Astrovisio
 
         private void UpdateMappingIcons()
         {
-            string colormapParamName = projectRenderSettings.ColorMapSettingsController != null ? projectRenderSettings.ColorMapSettingsController.ParamName : "";
-            string opacityParamName = projectRenderSettings.OpacitySettingsController != null ? projectRenderSettings.OpacitySettingsController.ParamName : "";
+            string colormapParamName = projectRenderSettings.ColorMapSettingsController != null ? projectRenderSettings.ColorMapSettingsController.Variable.Name : "";
+            string opacityParamName = projectRenderSettings.OpacitySettingsController != null ? projectRenderSettings.OpacitySettingsController.Variable.Name : "";
 
             // Debug.Log("colormapParamName " + colormapParamName);
             // Debug.Log("opacityParamName " + opacityParamName);
@@ -414,8 +417,8 @@ namespace Astrovisio
 
         private void PrintAllMappings()
         {
-            string opacityParamName = (projectRenderSettings.OpacitySettingsController != null) ? projectRenderSettings.OpacitySettingsController.ParamName : "null";
-            string colormapParamName = (projectRenderSettings.ColorMapSettingsController != null) ? projectRenderSettings.ColorMapSettingsController.ParamName : "null";
+            string opacityParamName = (projectRenderSettings.OpacitySettingsController != null) ? projectRenderSettings.OpacitySettingsController.Variable.Name : "null";
+            string colormapParamName = (projectRenderSettings.ColorMapSettingsController != null) ? projectRenderSettings.ColorMapSettingsController.Variable.Name : "null";
 
             Debug.Log("PrintAllMapping");
             Debug.Log("Opacity: " + opacityParamName);

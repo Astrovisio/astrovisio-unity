@@ -3,7 +3,6 @@ using UnityEngine.UIElements;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
-using System;
 
 namespace Astrovisio
 {
@@ -28,7 +27,14 @@ namespace Astrovisio
         private bool isReadyToProcessData;
         private Dictionary<string, VisualElement> paramRowVisualElement = new();
 
-        public ProjectSidebarDataController(ProjectSidebarController projectSidebarController, UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
+
+        public ProjectSidebarDataController(
+            ProjectSidebarController projectSidebarController,
+            UIManager uiManager,
+            ProjectManager projectManager,
+            UIContextSO uiContextSO,
+            Project project,
+            VisualElement root)
         {
             ProjectSidebarController = projectSidebarController;
             UIManager = uiManager;
@@ -72,14 +78,14 @@ namespace Astrovisio
             downsamplingDropdown.choices.Add("25%");
             downsamplingDropdown.choices.Add("50%");
             downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.value = ((1 - Project.Files.Downsampling) * 100).ToString("0") + "%";
+            downsamplingDropdown.value = ((1 - Project.Files[0].Downsampling) * 100).ToString("0") + "%"; // GB
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string percentageText = evt.newValue.Replace("%", "");
                 if (float.TryParse(percentageText, out float percentage))
                 {
                     float value = 1 - (percentage / 100f);
-                    Project.Files.Downsampling = value;
+                    Project.Files[0].Downsampling = value;
                     UpdateProcessDataButton();
                 }
                 else
@@ -125,14 +131,13 @@ namespace Astrovisio
         private void HandleAxisControll()
         {
             // 1) Count the active parameters
-            chipLabelCounter = Project.Files.Params
-                .Values
+            chipLabelCounter = Project.Files[0].Variables // GB
                 .Count(p => p.XAxis || p.YAxis || p.ZAxis);
 
             // 2) Check which axes have been selected
-            bool xAxis = Project.Files.Params.Values.Any(p => p.XAxis);
-            bool yAxis = Project.Files.Params.Values.Any(p => p.YAxis);
-            bool zAxis = Project.Files.Params.Values.Any(p => p.ZAxis);
+            bool xAxis = Project.Files[0].Variables.Any(p => p.XAxis); // GB
+            bool yAxis = Project.Files[0].Variables.Any(p => p.YAxis); // GB
+            bool zAxis = Project.Files[0].Variables.Any(p => p.ZAxis); // GB
 
             // 3) If at least 3 parameters are active → OK, otherwise show warning
             if (chipLabelCounter >= 3)
@@ -212,7 +217,7 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             SetProcessDataButton(false);
-            ProjectManager.ProcessProject(Project.Id, Project.Files);
+            ProjectManager.ProcessProject(Project.Id, Project.Files[0].Id); // GB
             // UpdateRenderingParams();
         }
 
@@ -220,12 +225,9 @@ namespace Astrovisio
         {
             ClearChipLabel();
 
-            foreach (var kvp in Project.Files.Params)
+            foreach (Variable variable in Project.Files[0].Variables)
             {
-                string paramName = kvp.Key;
-                Variables param = kvp.Value;
-
-                if (!paramRowVisualElement.TryGetValue(paramName, out VisualElement row))
+                if (!paramRowVisualElement.TryGetValue(variable.Name, out VisualElement row))
                 {
                     // Debug.LogWarning($"Row not found for param: {paramName}");
                     continue;
@@ -234,17 +236,17 @@ namespace Astrovisio
                 VisualElement labelChip = row.Q<VisualElement>("LabelChip");
                 Label labelChipLetter = labelChip.Q<Label>("Letter");
 
-                if (param.XAxis)
+                if (variable.XAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "X";
                 }
-                else if (param.YAxis)
+                else if (variable.YAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "Y";
                 }
-                else if (param.ZAxis)
+                else if (variable.ZAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "Z";
@@ -258,35 +260,33 @@ namespace Astrovisio
 
         private void UpdateParamsScrollView()
         {
-            if (Project.Files?.Params == null)
+            File file = Project.Files?[0]; // GB
+
+            if (file.Variables == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.Files.Params)
+            foreach (Variable variable in file.Variables)
             {
-                Variables param = kvp.Value;
-                param.PropertyChanged -= OnPropertyChanged;
+                variable.PropertyChanged -= OnPropertyChanged;
             }
 
             paramsScrollView.contentContainer.Clear();
             paramRowVisualElement.Clear();
 
-            if (Project.Files?.Params == null)
+            if (file.Variables == null)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.Files.Params)
+            foreach (Variable variable in file.Variables)
             {
-                string paramName = kvp.Key;
-                Variables param = kvp.Value;
+                variable.PropertyChanged += OnPropertyChanged;
 
-                param.PropertyChanged += OnPropertyChanged;
-
-                if (!param.Selected)
+                if (!variable.Selected)
                 {
                     continue;
                 }
@@ -294,12 +294,12 @@ namespace Astrovisio
                 TemplateContainer paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
 
                 VisualElement nameContainer = paramRow.Q<VisualElement>("LabelContainer");
-                nameContainer.Q<Label>("LabelParam").text = paramName;
+                nameContainer.Q<Label>("LabelParam").text = variable.Name;
 
                 VisualElement labelChip = paramRow.Q<VisualElement>("LabelChip");
                 labelChip.style.display = DisplayStyle.None;
 
-                paramRowVisualElement.Add(paramName, paramRow);
+                paramRowVisualElement.Add(variable.Name, paramRow);
                 paramsScrollView.Add(paramRow);
             }
         }
