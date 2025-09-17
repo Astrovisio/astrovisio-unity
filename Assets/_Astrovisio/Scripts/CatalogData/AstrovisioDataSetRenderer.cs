@@ -20,6 +20,7 @@
  *
  */
 using System;
+using System.Threading.Tasks;
 using Astrovisio;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -210,6 +211,10 @@ namespace CatalogData
 
         }
 
+        public Task regenerateKDTree()
+        {
+            return kdTreeComponent.initKDTree(Vector3.negativeInfinity);
+        }
 
         public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
         {
@@ -465,6 +470,17 @@ namespace CatalogData
                     }
 
                     return false;
+                }
+
+                //Update Indexes
+                DataMapping.Mapping.X.SourceIndex = Array.IndexOf(dataContainer.DataPack.Columns, DataMapping.Mapping.X.Source);
+                DataMapping.Mapping.Y.SourceIndex = Array.IndexOf(dataContainer.DataPack.Columns, DataMapping.Mapping.Y.Source);
+                DataMapping.Mapping.Z.SourceIndex = Array.IndexOf(dataContainer.DataPack.Columns, DataMapping.Mapping.Z.Source);
+
+                if (Application.isEditor)
+                {
+                    Debug.Log("Regenerating KDTree");
+                    this.regenerateKDTree();
                 }
 
                 return true;
