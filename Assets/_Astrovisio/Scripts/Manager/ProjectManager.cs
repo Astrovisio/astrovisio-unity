@@ -46,29 +46,6 @@ namespace Astrovisio
 		public Project GetOpenedProject(int id) => openedProjectList.Find(p => p.Id == id);
 		public List<Project> GetProjectList() => projectList;
 
-		public void CloseProject(int id)
-		{
-			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
-			if (projectToRemove != null)
-			{
-				openedProjectList.Remove(projectToRemove);
-				if (currentProject?.Id == id)
-				{
-					currentProject = null;
-				}
-				ProjectClosed?.Invoke(projectToRemove);
-			}
-		}
-
-		public void UnselectProject()
-		{
-			if (currentProject != null)
-			{
-				currentProject = null;
-				ProjectUnselected?.Invoke();
-			}
-		}
-
 		public async void FetchAllProjects()
 		{
 			uiManager.SetLoadingView(true);
@@ -93,7 +70,6 @@ namespace Astrovisio
 			if (alreadyOpened != null)
 			{
 				currentProject = alreadyOpened;
-				Debug.Log(currentProject.Name);
 				ProjectOpened?.Invoke(alreadyOpened);
 				return;
 			}
@@ -102,7 +78,6 @@ namespace Astrovisio
 				project =>
 				{
 					Project existing = projectList.FirstOrDefault(p => p.Id == project.Id);
-					Debug.Log(existing.Name);
 					if (existing != null)
 					{
 						existing.UpdateFrom(project);
@@ -112,13 +87,9 @@ namespace Astrovisio
 						projectList.Add(project);
 					}
 
-					if (!openedProjectList.Any(p => p.Id == project.Id))
+					if (!openedProjectList.Any(p => p.Id == project.Id) && existing != null)
 					{
-						Project openedProject = projectList.FirstOrDefault(p => p.Id == project.Id);
-						if (openedProject != null)
-						{
-							openedProjectList.Add(openedProject);
-						}
+						openedProjectList.Add(existing);
 					}
 
 					currentProject = project;
@@ -220,7 +191,7 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessProject(int projectID, int fileID)
+		public async void ProcessFile(int projectID, int fileID)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
@@ -228,7 +199,7 @@ namespace Astrovisio
 			try
 			{
 				// Get Job ID
-				int? jobID = await apiManager.ProcessProject(projectID, fileID, error =>
+				int? jobID = await apiManager.ProcessFile(projectID, fileID, error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
@@ -250,14 +221,14 @@ namespace Astrovisio
 					{
 						await Task.Delay(250);
 
-						JobStatusResponse statusResponse = await apiManager.GetProjectJobStatus(projectID, jobID.Value, error =>
+						JobStatusResponse statusResponse = await apiManager.GetJobProgress(jobID.Value, error =>
 						{
 							ApiError?.Invoke(error);
 						});
 
 						if (statusResponse == null)
 						{
-							Debug.LogWarning("Null statusResponse");
+							Debug.LogWarning("Null statusResponse"); // Err
 							continue;
 						}
 
@@ -277,7 +248,7 @@ namespace Astrovisio
 
 				// Get DataPack
 				uiManager.SetLoadingBarProgress(1.0f, ProcessingStatusMessages.GetClientMessage("loading"));
-				DataPack dataPack = await apiManager.FetchProjectProcessedData(projectID, jobID.Value, error =>
+				DataPack dataPack = await apiManager.GetJobResult(jobID.Value, error =>
 				{
 					ApiError?.Invoke(error);
 				});
@@ -310,6 +281,67 @@ namespace Astrovisio
 			finally
 			{
 				uiManager.SetLoadingView(false);
+			}
+		}
+
+		public async void UpdateFile(int projectId, File file)
+		{
+			UpdateFileRequest req = new UpdateFileRequest
+			{
+				Type = file.Type,
+				Name = file.Name,
+				Path = file.Path,
+				Size = file.Size,
+				Processed = file.Processed,
+				Downsampling = file.Downsampling,
+				ProcessedPath = file.ProcessedPath,
+				Variables = file.Variables
+			};
+
+			await apiManager.UpdateFile(projectId, file.Id, req,
+				updatedFile =>
+				{
+					Project project = projectList.FirstOrDefault(p => p.Id == projectId);
+					if (project != null && project.Files != null)
+					{
+						File fileToUpdate = project.Files.FirstOrDefault(f => f.Id == updatedFile.Id);
+						if (fileToUpdate != null)
+						{
+							fileToUpdate.UpdateFrom(updatedFile);
+						}
+						else
+						{
+							project.Files.Add(updatedFile);
+						}
+					}
+					Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
+				},
+				error =>
+				{
+					ApiError?.Invoke(error);
+				});
+		}
+
+		public void CloseProject(int id)
+		{
+			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
+			if (projectToRemove != null)
+			{
+				openedProjectList.Remove(projectToRemove);
+				if (currentProject?.Id == id)
+				{
+					currentProject = null;
+				}
+				ProjectClosed?.Invoke(projectToRemove);
+			}
+		}
+
+		public void UnselectProject()
+		{
+			if (currentProject != null)
+			{
+				currentProject = null;
+				ProjectUnselected?.Invoke();
 			}
 		}
 
@@ -352,8 +384,10 @@ namespace Astrovisio
 			ProjectOpened = null;
 			ProjectCreated = null;
 			ProjectUpdated = null;
-			ProjectDeleted = null;
+			ProjectClosed = null;
 			ProjectProcessed = null;
+			ProjectUnselected = null;
+			ProjectDeleted = null;
 			ApiError = null;
 		}
 

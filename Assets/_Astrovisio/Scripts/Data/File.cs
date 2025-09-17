@@ -1,6 +1,8 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Newtonsoft.Json;
+using UnityEngine;
+
 
 namespace Astrovisio
 {
@@ -144,7 +146,11 @@ namespace Astrovisio
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+        {
+            // Debug.Log("OnPropertyChanged: " + propertyName);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public void UpdateFrom(File other)
         {

@@ -31,7 +31,7 @@ namespace Astrovisio
             UIManager = uiManager;
         }
 
-        public void Initialize(VisualElement root)
+        public void Init(VisualElement root)
         {
             this.root = root;
             projectNameField = root.Q<VisualElement>("ProjectNameInputField")?.Q<TextField>();

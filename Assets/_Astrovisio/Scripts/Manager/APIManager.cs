@@ -228,13 +228,12 @@ namespace Astrovisio
             }
         }
 
-        public async Task<int?> ProcessProject(
+        public async Task<int?> ProcessFile(
             int projectID,
             int fileID,
             Action<string> onError = null)
         {
-            string baseUrl = APIEndpoints.ProcessProject(projectID, fileID);
-            string url = $"{baseUrl}?file_id={fileID}";
+            string url = APIEndpoints.ProcessFile(projectID, fileID);
 
             Debug.Log($"[APIManager] POST {url}");
 
@@ -270,12 +269,46 @@ namespace Astrovisio
             }
         }
 
-        public async Task<JobStatusResponse> GetProjectJobStatus(
+        public async Task UpdateFile(
             int projectID,
+            int fileID,
+            UpdateFileRequest req,
+            Action<File> onSuccess,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.UpdateFile(projectID, fileID);
+            string json = JsonConvert.SerializeObject(req);
+            Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+
+            using (UnityWebRequest request = UnityWebRequest.Put(url, json))
+            {
+                request.SetRequestHeader("Content-Type", "application/json");
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    onError?.Invoke(request.error);
+                }
+                else
+                {
+                    try
+                    {
+                        File updatedFile = JsonConvert.DeserializeObject<File>(request.downloadHandler.text);
+                        onSuccess?.Invoke(updatedFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        onError?.Invoke(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<JobStatusResponse> GetJobProgress(
             int jobID,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProjectJobStatus(projectID, jobID);
+            string url = APIEndpoints.GetJobProgress(jobID);
             // Debug.Log($"[APIManager] GET {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -286,7 +319,7 @@ namespace Astrovisio
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"[APIManager] Error GET JobStatus: {request.error}");
+                    Debug.LogError($"[APIManager] Error GET JobStatus: {request.error}"); // Err
                     onError?.Invoke(request.downloadHandler.text);
                     return null;
                 }
@@ -309,12 +342,11 @@ namespace Astrovisio
             }
         }
 
-        public async Task<DataPack> FetchProjectProcessedData(
-            int projectID,
+        public async Task<DataPack> GetJobResult(
             int jobID,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.FetchProjectProcessedData(projectID, jobID);
+            string url = APIEndpoints.GetJobResult(jobID);
             Debug.Log($"[APIManager] GET {url}");
 
             const int maxRetries = 3;
@@ -329,7 +361,7 @@ namespace Astrovisio
 
                     await SendWebRequestAsync(request);
 
-                    Debug.LogWarning($"Attempt {attempt}: Request error = {request.error}");
+                    Debug.Log($"Attempt {attempt}: Request error = {request.error}");
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {

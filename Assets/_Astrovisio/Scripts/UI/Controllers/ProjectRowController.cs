@@ -12,8 +12,6 @@ namespace Astrovisio
         public Project Project { get; set; }
         public VisualElement Root { private set; get; }
 
-        // === Events ===
-
         // === UI ===
         private Label projectNameLabel;
         private Label lastOpenedLabel;
@@ -24,7 +22,11 @@ namespace Astrovisio
         private Button deleteButton;
 
 
-        public ProjectRowController(ProjectManager projectManager, UIManager uiManager, Project project, VisualElement root)
+        public ProjectRowController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            Project project,
+            VisualElement root)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;

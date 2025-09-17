@@ -30,6 +30,7 @@ namespace Astrovisio
 
         // === Local ===
         private float _nextAllowedUpdate;
+        private FilesController<FileState> filesController;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly List<ParamRowController> paramControllers = new();
 
@@ -61,7 +62,11 @@ namespace Astrovisio
 
             // Files
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
-            _ = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
+            filesController = new FilesController<FileState>(
+                filesContainer,
+                UIManager.GetUIContext(),
+                () => Debug.Log("Updated order...")
+            );
 
             // Project Name
             projectNameLabel = topContainer.Q<Label>("ProjectNameLabel");
@@ -105,6 +110,7 @@ namespace Astrovisio
                 ApplyScrollViewOrderType();
             };
 
+            InitFileContainer();
             InitDeleteButton();
             InitEditButton();
             InitFavouriteToggle();
@@ -161,6 +167,7 @@ namespace Astrovisio
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
+                paramRowController.OnStateChanged += HandleStateChanged;
 
                 paramScrollView.Add(paramRowController.Root);
             }
@@ -251,15 +258,20 @@ namespace Astrovisio
                     break;
             }
 
-            UpdateProject();
+            UpdateFile();
         }
 
         private void HandleOnThresholdChanged(Threshold threshold, ParamRowController controller)
         {
-            UpdateProject();
+            UpdateFile();
         }
 
-        private void UpdateProject()
+        private void HandleStateChanged()
+        {
+            UpdateFile();
+        }
+
+        private void UpdateFile()
         {
             if (Time.unscaledTime < _nextAllowedUpdate)
             {
@@ -267,7 +279,20 @@ namespace Astrovisio
             }
 
             _nextAllowedUpdate = Time.unscaledTime + 0.05f; // 50ms
-            ProjectManager.UpdateProject(Project.Id, Project);
+
+            // ProjectManager.UpdateProject(Project.Id, Project);
+            ProjectManager.UpdateFile(Project.Id, Project.Files[0]); // GB
+        }
+
+        private void InitFileContainer()
+        {
+            foreach (var file in Project.Files)
+            {
+                FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
+                FileState fileState = new FileState(fileInfo);
+                filesController.AddFile(fileState);
+                Debug.Log($"File added: {fileState.fileInfo.name} ({fileState.fileInfo.size} bytes) - {fileState.fileInfo.path}");
+            }
         }
 
         private void InitDeleteButton()

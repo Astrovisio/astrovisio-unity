@@ -106,7 +106,7 @@ namespace Astrovisio
             checkbox?.RegisterValueChangedCallback(evt =>
             {
                 Variable.Selected = evt.newValue;
-                // Debug.Log($"Checkbox toggled for {ParamName}: {Param.Selected}");
+                Debug.Log($"Checkbox toggled for {Variable.Name}: {Variable.Selected}");
                 SetSelected(Variable.Selected);
             });
             SetSelected(Variable.Selected);
@@ -225,7 +225,6 @@ namespace Astrovisio
             BindSliderToFields();
         }
 
-
         private void OnResetButtonClicked()
         {
             ResetThresholds();
@@ -261,7 +260,7 @@ namespace Astrovisio
             }
 
             OnStateChanged?.Invoke();
-            // Debug.Log(ParamName + " " + value);
+            Debug.Log(Variable.Name + " " + value);
         }
 
         private static bool LessThan(double a, double b, double eps) => a < b - eps;
@@ -316,7 +315,6 @@ namespace Astrovisio
             }
         }
 
-
         private void ApplySliderClamped(Vector2 raw)
         {
             // Clamp within the slider’s limits
@@ -339,7 +337,6 @@ namespace Astrovisio
 
             // Debug.Log($"[ApplySliderClamped] lowLimit={minMaxSlider.lowLimit}, valueMin={loD} | highLimit={minMaxSlider.highLimit}, valueMax={hiD}");
         }
-
 
         private void BindSliderToFields()
         {
@@ -379,6 +376,5 @@ namespace Astrovisio
         }
 
     }
-
 
 }

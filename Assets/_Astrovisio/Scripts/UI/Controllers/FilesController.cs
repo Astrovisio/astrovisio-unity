@@ -98,6 +98,25 @@ namespace Astrovisio
                 }
 
             };
+
+            listView.itemIndexChanged += (oldIndex, newIndex) =>
+            {
+                // Se vuoi solo essere notificato:
+                // onUpdateAction?.Invoke();
+
+                var moved = fileList[oldIndex];
+                fileList.RemoveAt(oldIndex);
+                if (newIndex > oldIndex)
+                {
+                    newIndex--;
+                } 
+                fileList.Insert(newIndex, moved);
+
+                listView.RefreshItems();
+
+                // Debug:
+                PrintListView();
+            };
         }
 
         public void AddFile(T entry)
@@ -191,7 +210,6 @@ namespace Astrovisio
                 }
             }
         }
-
 
     }
 

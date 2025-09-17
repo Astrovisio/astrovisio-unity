@@ -37,7 +37,7 @@ namespace Astrovisio
 
         private void OnContinueClicked()
         {
-            Debug.Log("OnContinueClicked");
+            // Debug.Log("OnContinueClicked");
             projectToEdit.Name = nameTextLabel.value;
             projectToEdit.Description = descriptionTextLabel.value;
             ProjectManager.UpdateProject(projectToEdit.Id, projectToEdit);
@@ -47,7 +47,7 @@ namespace Astrovisio
 
         private void OnCancelClicked()
         {
-            Debug.Log("OnCancelClicked");
+            // Debug.Log("OnCancelClicked");
             projectToEdit = null;
             Root.RemoveFromClassList("active");
             Dispose();

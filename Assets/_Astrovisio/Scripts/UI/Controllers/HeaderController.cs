@@ -14,7 +14,6 @@ namespace Astrovisio
 
         // === References ===
         private ProjectManager projectManager;
-        private UIContextSO uiContextSO;
 
         // === Controllers ===
         private NavbarController navbarController;
@@ -25,7 +24,6 @@ namespace Astrovisio
             uiManager = GetComponentInParent<UIManager>();
 
             projectManager = uiManager.GetProjectManager();
-            uiContextSO = uiManager.GetUIContext();
         }
 
         private void OnEnable()
@@ -41,7 +39,7 @@ namespace Astrovisio
         private void EnableNavbar()
         {
             var navbarRoot = uiDocument.rootVisualElement.Q<VisualElement>("NavbarRoot");
-            navbarController = new NavbarController(uiManager, projectManager, uiContextSO.projectButtonTemplate, navbarRoot);
+            navbarController = new NavbarController(projectManager, uiManager, navbarRoot);
         }
 
         private void DisableNavbar()

@@ -217,7 +217,7 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             SetProcessDataButton(false);
-            ProjectManager.ProcessProject(Project.Id, Project.Files[0].Id); // GB
+            ProjectManager.ProcessFile(Project.Id, Project.Files[0].Id); // GB
             // UpdateRenderingParams();
         }
 

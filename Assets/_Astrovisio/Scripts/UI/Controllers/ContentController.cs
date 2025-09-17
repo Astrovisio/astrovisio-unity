@@ -100,7 +100,7 @@ namespace Astrovisio
             {
                 newProjectViewInstance.AddToClassList("active");
                 newProjectController?.Dispose();
-                newProjectController.Initialize(newProjectViewInstance);
+                newProjectController.Init(newProjectViewInstance);
             }
         }
 

@@ -23,7 +23,12 @@ namespace Astrovisio
         private bool isSearching = false;
         private string searchValue = "";
 
-        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, UIContextSO uiContextSO, SideController sideController)
+        public HomeViewController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root,
+            UIContextSO uiContextSO,
+            SideController sideController)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;

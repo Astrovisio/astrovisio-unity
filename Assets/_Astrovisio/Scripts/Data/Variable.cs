@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -18,75 +17,39 @@ namespace Astrovisio
         private bool yAxis;
         private bool zAxis;
 
-
         [JsonProperty("var_name")]
         public string Name
         {
             get => name;
-            set
-            {
-                if (name != value)
-                {
-                    name = value;
-                    OnPropertyChanged(nameof(Name));
-                }
-            }
+            set => name = value;
         }
 
         [JsonProperty("thr_min")]
         public double ThrMin
         {
             get => thrMin;
-            set
-            {
-                if (thrMin != value)
-                {
-                    thrMin = value;
-                    OnPropertyChanged(nameof(ThrMin));
-                }
-            }
+            set => thrMin = value;
         }
 
         [JsonProperty("thr_min_sel")]
         public double? ThrMinSel
         {
             get => thrMinSel;
-            set
-            {
-                if (thrMinSel != value)
-                {
-                    thrMinSel = value;
-                    OnPropertyChanged(nameof(ThrMinSel));
-                }
-            }
+            set => thrMinSel = value;
         }
 
         [JsonProperty("thr_max")]
         public double ThrMax
         {
             get => thrMax;
-            set
-            {
-                if (thrMax != value)
-                {
-                    thrMax = value;
-                    OnPropertyChanged(nameof(ThrMax));
-                }
-            }
+            set => thrMax = value;
         }
 
         [JsonProperty("thr_max_sel")]
         public double? ThrMaxSel
         {
             get => thrMaxSel;
-            set
-            {
-                if (thrMaxSel != value)
-                {
-                    thrMaxSel = value;
-                    OnPropertyChanged(nameof(ThrMaxSel));
-                }
-            }
+            set => thrMaxSel = value;
         }
 
         [JsonProperty("selected")]
@@ -107,14 +70,7 @@ namespace Astrovisio
         public string Unit
         {
             get => unit;
-            set
-            {
-                if (unit != value)
-                {
-                    unit = value;
-                    OnPropertyChanged(nameof(Unit));
-                }
-            }
+            set => unit = value;
         }
 
         [JsonProperty("x_axis")]
@@ -159,11 +115,11 @@ namespace Astrovisio
             }
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged(string propertyName)
         {
-            // Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
+            Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
@@ -187,4 +143,5 @@ namespace Astrovisio
         }
 
     }
+    
 }
