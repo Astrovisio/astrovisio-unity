@@ -119,7 +119,7 @@ namespace Astrovisio
 
         protected void OnPropertyChanged(string propertyName)
         {
-            Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
+            // Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

@@ -17,16 +17,18 @@ namespace Astrovisio
 		[Header("Debug")]
 		[SerializeField] private bool saveProjectCSV = false;
 
+		// === Events ===
 		public event Action<List<Project>> ProjectsFetched;
 		public event Action<Project> ProjectOpened;
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<Project, DataPack> ProjectProcessed;
+		public event Action<Project, File, DataPack> FileProcessed;
 		public event Action ProjectUnselected;
 		public event Action<Project> ProjectDeleted;
 		public event Action<string> ApiError;
 
+		// === Local ===
 		private List<Project> projectList = new();
 		private List<Project> openedProjectList = new();
 		private Project currentProject;
@@ -40,11 +42,36 @@ namespace Astrovisio
 			}
 		}
 
-		public bool IsProjectOpened(int id) => openedProjectList.Any(p => p.Id == id);
-		public Project GetProject(int id) => projectList.FirstOrDefault(p => p.Id == id);
-		public Project GetCurrentProject() => currentProject;
-		public Project GetOpenedProject(int id) => openedProjectList.Find(p => p.Id == id);
-		public List<Project> GetProjectList() => projectList;
+		public bool IsProjectOpened(int projectId)
+		{
+			return openedProjectList.Any(p => p.Id == projectId);
+		}
+
+		public Project GetProject(int projectId)
+		{
+			return projectList.FirstOrDefault(p => p.Id == projectId);
+		}
+
+		public File GetFile(int projectId, int fileId)
+		{
+			Project project = GetProject(projectId);
+			return project?.Files?.FirstOrDefault(f => f.Id == fileId);
+		}
+
+		public Project GetCurrentProject()
+		{
+			return currentProject;
+		}
+		
+		public Project GetOpenedProject(int id)
+		{
+			return openedProjectList.Find(p => p.Id == id);
+		}
+
+		public List<Project> GetProjectList()
+		{
+			return projectList;
+		}
 
 		public async void FetchAllProjects()
 		{
@@ -265,10 +292,22 @@ namespace Astrovisio
 				}
 
 				Project project = GetProject(projectID);
-				if (project != null)
+				if (project != null && project.Files != null)
 				{
-					ProjectProcessed?.Invoke(project, dataPack);
-					Debug.Log($"[ProjectManager] Process completed, rows: {dataPack.Rows.Length}");
+					File file = GetFile(projectID, fileID);
+					if (file != null)
+					{
+						Debug.Log($"Found file: {file.Name}, id={file.Id}");
+						FileProcessed.Invoke(project, file, dataPack);
+					}
+					else
+					{
+						Debug.LogWarning($"No file found with id={fileID} in project={projectID}");
+					}
+				}
+				else
+				{
+					Debug.LogError($"Project with id={projectID} not found or has no files");
 				}
 
 				uiManager.SetLoadingView(false);
@@ -276,7 +315,7 @@ namespace Astrovisio
 			catch (Exception ex)
 			{
 				Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
-				ApiError?.Invoke("Errore nel processamento: " + ex.Message);
+				ApiError?.Invoke("Error during processing: " + ex.Message);
 			}
 			finally
 			{
@@ -320,6 +359,55 @@ namespace Astrovisio
 				{
 					ApiError?.Invoke(error);
 				});
+		}
+
+		public async void GetProcessedFile(int projectId, int fileId)
+		{
+			uiManager.SetLoadingView(true);
+
+			await apiManager.GetProcessedFile(
+				projectId,
+				fileId,
+				processedFile =>
+				{
+					try
+					{
+						Project project = projectList.FirstOrDefault(p => p.Id == projectId);
+						if (project != null)
+						{
+							if (project.Files == null)
+							{
+								project.Files = new List<File>();
+							}
+
+							File existing = project.Files.FirstOrDefault(f => f.Id == fileId);
+							if (existing != null)
+							{
+								existing.UpdateFrom(processedFile);
+							}
+							else
+							{
+								project.Files.Add(processedFile);
+							}
+
+							ProjectUpdated?.Invoke(project);
+						}
+						else
+						{
+							Debug.LogWarning($"[ProjectManager] Project {projectId} not found while updating processed file {fileId}.");
+						}
+					}
+					finally
+					{
+						uiManager.SetLoadingView(false);
+					}
+				},
+				error =>
+				{
+					ApiError?.Invoke(error);
+					uiManager.SetLoadingView(false);
+				}
+			);
 		}
 
 		public void CloseProject(int id)
@@ -385,7 +473,7 @@ namespace Astrovisio
 			ProjectCreated = null;
 			ProjectUpdated = null;
 			ProjectClosed = null;
-			ProjectProcessed = null;
+			FileProcessed = null;
 			ProjectUnselected = null;
 			ProjectDeleted = null;
 			ApiError = null;

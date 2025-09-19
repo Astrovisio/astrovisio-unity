@@ -162,7 +162,7 @@ namespace Astrovisio
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -175,7 +175,7 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.minValue = (float)evt.newValue;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -188,7 +188,7 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.maxValue = (float)evt.newValue;
                 TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -206,7 +206,7 @@ namespace Astrovisio
                 {
                     TempAxisRowSettingsController.AxisRenderSettings.ScalingType = selectedType;
 
-                    RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                    RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 }
                 else
                 {
@@ -219,13 +219,13 @@ namespace Astrovisio
             EventCallback<ClickEvent> onApply = evt =>
             {
                 AxisRowSettingsController = TempAxisRowSettingsController;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 CloseSettingsPanel();
                 OnApplyAxisSetting?.Invoke(AxisRowSettingsController);
             };
             EventCallback<ClickEvent> onCancel = evt =>
             {
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
                 CloseSettingsPanel();
                 OnCancelSetting?.Invoke();
             };
@@ -267,13 +267,13 @@ namespace Astrovisio
             EventCallback<ClickEvent> onApply = evt =>
             {
                 ParamRowSettingsController = TempParamRowSettingsController;
-                RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
                 CloseSettingsPanel();
                 OnApplyParamSetting?.Invoke(ParamRowSettingsController);
             };
             EventCallback<ClickEvent> onCancel = evt =>
             {
-                RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
                 CloseSettingsPanel();
                 OnCancelSetting?.Invoke();
             };
@@ -289,7 +289,7 @@ namespace Astrovisio
 
             paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.None;
             paramRowSettingsController.ParamRenderSettings.MappingSettings = null;
-            RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+            RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
 
             // switch (renderSettings.Mapping)
             // {
@@ -351,11 +351,11 @@ namespace Astrovisio
                     {
                         case MappingType.Opacity:
                             // Debug.Log("Removing previous opacity...");
-                            RenderManager.Instance.RemoveOpacity();
+                            RenderManager.Instance.RenderSettingsController.RemoveOpacity();
                             break;
                         case MappingType.Colormap:
                             // Debug.Log("Removing previous colormap...");
-                            RenderManager.Instance.RemoveColorMap();
+                            RenderManager.Instance.RenderSettingsController.RemoveColorMap();
                             break;
                     }
                 }
@@ -469,7 +469,7 @@ namespace Astrovisio
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
                 mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
                 mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -482,7 +482,7 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.minValue = (float)evt.newValue;
                 mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -495,7 +495,7 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.maxValue = (float)evt.newValue;
                 mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
                 isThresholdUpdating = false;
             };
 
@@ -535,7 +535,7 @@ namespace Astrovisio
                 {
                     UpdateColormapPreview(selectedColorMap);
                     colorMapSettings.ColorMap = selectedColorMap;
-                    RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                    RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
                 }
             };
 
@@ -586,7 +586,7 @@ namespace Astrovisio
                 if (Enum.TryParse<ScalingType>(evt.newValue, out var newScalingType))
                 {
                     mappingSettings.ScalingType = newScalingType;
-                    RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                    RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
                 }
             };
 
@@ -614,7 +614,7 @@ namespace Astrovisio
             {
                 Debug.Log($"Invert toggled: {evt.newValue}");
                 mappingSettings.Invert = evt.newValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
             };
 
             invertToggle.RegisterValueChangedCallback(invertToggleCallback);

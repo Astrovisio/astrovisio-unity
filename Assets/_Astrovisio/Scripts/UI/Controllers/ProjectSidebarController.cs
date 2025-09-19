@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -51,6 +52,9 @@ namespace Astrovisio
 
         private void Init()
         {
+            bool anyFileProcessed = Project?.Files?.Any(f => f.Processed) ?? false;
+
+
             // Data
             dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
@@ -60,7 +64,7 @@ namespace Astrovisio
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
             renderSettingsButton.clicked += OnRenderSettingsButtonClicked;
-            renderSettingsButton.SetEnabled(false);
+            renderSettingsButton.SetEnabled(anyFileProcessed);
 
             // VR
             goToVRButton = Root.Q<Button>("GoToVRButton");
@@ -111,7 +115,10 @@ namespace Astrovisio
         {
             // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
             SetActiveStep(ProjectSidebarStep.Render);
-            RenderManager.Instance.RenderDataContainer(Project);
+
+            // ProjectManager.Get // ?
+
+            RenderManager.Instance.RenderDataContainer(Project, Project.Files[0]);
             UIManager.SetGizmoTransformVisibility(true);
         }
 

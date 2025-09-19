@@ -26,7 +26,7 @@ namespace Astrovisio
         public void Reset()
         {
             axesGizmoState = true;
-            RenderManager.Instance.SetAxesGizmoVisibility(axesGizmoState);
+            SceneManager.Instance.SetAxesGizmoVisibility(axesGizmoState);
         }
 
     }

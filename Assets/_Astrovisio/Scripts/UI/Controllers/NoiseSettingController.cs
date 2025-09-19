@@ -106,7 +106,7 @@ namespace Astrovisio
 
         private void SetNoise(bool state, float value)
         {
-            RenderManager.Instance.SetNoise(state, value);
+            RenderManager.Instance.RenderSettingsController.SetNoise(state, value);
         }
 
         public void Reset()

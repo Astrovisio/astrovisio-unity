@@ -361,23 +361,23 @@ namespace Astrovisio
             if (projectRenderSettings.ColorMapSettingsController is null)
             {
                 // Debug.Log("Removing colormap");
-                RenderManager.Instance.RemoveColorMap();
+                RenderManager.Instance.RenderSettingsController.RemoveColorMap();
             }
             else
             {
                 // Debug.Log("Setting colormap " + projectRenderSettings.ColorMapSettingsController.ParamName);
-                RenderManager.Instance.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.ParamRenderSettings);
             }
 
             if (projectRenderSettings.OpacitySettingsController is null)
             {
                 // Debug.Log("Removing opacity");
-                RenderManager.Instance.RemoveOpacity();
+                RenderManager.Instance.RenderSettingsController.RemoveOpacity();
             }
             else
             {
                 // Debug.Log("Setting opacity " + projectRenderSettings.OpacitySettingsController.ParamName);
-                RenderManager.Instance.SetRenderSettings(projectRenderSettings.OpacitySettingsController.ParamRenderSettings);
+                RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.OpacitySettingsController.ParamRenderSettings);
             }
         }
 

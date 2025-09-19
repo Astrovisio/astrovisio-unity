@@ -71,7 +71,7 @@ namespace Astrovisio
             isolateSelectionToggle.RegisterValueChangedCallback(evt =>
             {
                 bool value = evt.newValue;
-                DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+                DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
                 dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
             });
 
@@ -184,14 +184,14 @@ namespace Astrovisio
             Reset();
             TryHookToCurrentKDTree();
 
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer.GetKDTreeComponent();
             kDTreeComponent.OnInitializationPerformed += OnInitializationPerformed;
         }
 
         private void TryHookToCurrentKDTree()
         {
-            DataRenderer dr = RenderManager.Instance?.GetCurrentDataRenderer();
+            DataRenderer dr = RenderManager.Instance.DataRenderer;
             KDTreeComponent kd = dr?.GetKDTreeComponent();
             Hook(kd);
         }
@@ -212,7 +212,7 @@ namespace Astrovisio
 
             _subscribedKDTree = kd;
             _subscribedKDTree.OnSelectionPerformed += OnSelectionPerformed;
-            // Debug.Log("Hook to " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Hook to " + RenderManager.Instance.DataRenderer.GetDataContainer().Project.Name);
         }
 
         private void Unhook()
@@ -222,7 +222,7 @@ namespace Astrovisio
                 return;
             }
             _subscribedKDTree.OnSelectionPerformed -= OnSelectionPerformed;
-            // Debug.Log("Unhook from " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Unhook from " + RenderManager.Instance.DataRenderer.GetDataContainer().Project.Name);
             _subscribedKDTree = null;
         }
 
@@ -230,7 +230,7 @@ namespace Astrovisio
         {
             Debug.Log("OnSelectionPerformed " + obj[0] + obj[1]);
 
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
 
             if (dataRenderer == null)
             {
@@ -253,7 +253,7 @@ namespace Astrovisio
 
         private void ShowSelectionGizmo(bool visibility)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -266,7 +266,7 @@ namespace Astrovisio
 
         private void SetSelectionMode(SelectionMode selectionMode)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -297,7 +297,7 @@ namespace Astrovisio
 
         private void SetAggregationMode(AggregationMode aggregationMode)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -311,7 +311,7 @@ namespace Astrovisio
 
         private void SetSelectionSize(float selectionSize)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)

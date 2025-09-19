@@ -269,6 +269,44 @@ namespace Astrovisio
             }
         }
 
+        public async Task GetProcessedFile(
+            int projectID,
+            int fileID,
+            Action<File> onSuccess,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.GetProcessedFile(projectID, fileID);
+            Debug.Log($"[APIManager] GET {url}");
+
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error GET ProcessedFile: {request.error}");
+                    onError?.Invoke(request.downloadHandler.text);
+                }
+                else
+                {
+                    try
+                    {
+                        string json = request.downloadHandler.text;
+                        File processedFile = JsonConvert.DeserializeObject<File>(json);
+                        onSuccess?.Invoke(processedFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"[APIManager] Failed to parse processed file: {ex.Message}");
+                        onError?.Invoke("Deserialization failed: " + ex.Message);
+                    }
+                }
+            }
+        }
+
         public async Task UpdateFile(
             int projectID,
             int fileID,

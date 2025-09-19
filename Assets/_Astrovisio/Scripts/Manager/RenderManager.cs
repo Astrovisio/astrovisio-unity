@@ -26,18 +26,18 @@ namespace Astrovisio
         private OrbitCameraController orbitController;
 
         // Events
-        // public event Action<KDTreeComponent> OnKDTreeComponentChanged;
         public event Action<Project> OnProjectRenderReady;
         public event Action<Project> OnProjectRenderStart;
         public event Action<Project> OnProjectRenderEnd;
 
         // Settings
-        private DataRenderer dataRenderer;
+        public RenderSettingsController RenderSettingsController { get; set; }
+        public DataRenderer DataRenderer { get; set; }
         private KDTreeComponent kdTreeComponent;
-        private ParamRenderSettings renderSettings;
-        private Dictionary<Project, DataContainer> projectDataContainers = new();
+        private ParamRenderSettings paramRenderSettings;
 
         // Local
+        private Dictionary<File, DataContainer> fileDataContainers = new();
         public bool isInspectorModeActive = false;
 
 
@@ -55,7 +55,7 @@ namespace Astrovisio
 
         private void Start()
         {
-            projectManager.ProjectProcessed += OnProjectProcessed;
+            projectManager.FileProcessed += OnProjectProcessed;
 
             orbitController = mainCamera.GetComponent<OrbitCameraController>();
 
@@ -65,19 +65,21 @@ namespace Astrovisio
                 initialCameraRotation = orbitController.transform.rotation.eulerAngles;
                 initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
             }
+
+            RenderSettingsController = new RenderSettingsController();
         }
 
         public void SetDataInspector(bool state, bool bebugSphereVisibility)
         {
             // Debug.Log("UpdateDataInspector " + state);
-            kdTreeComponent = dataRenderer.GetKDTreeComponent();
+            kdTreeComponent = DataRenderer.GetKDTreeComponent();
             kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
             isInspectorModeActive = state;
 
             if (!XRManager.Instance.IsVRActive)
             {
                 Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
-                dataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
+                DataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
             }
             else
             {
@@ -93,28 +95,23 @@ namespace Astrovisio
             }
         }
 
-        private void OnProjectProcessed(Project project, DataPack pack)
+        private void OnProjectProcessed(Project project, File file, DataPack pack)
         {
             DataContainer dataContainer = new DataContainer(pack, project, project.Files[0]); // GB
-            projectDataContainers[project] = dataContainer;
+            fileDataContainers[file] = dataContainer;
             OnProjectRenderReady?.Invoke(project);
             // Debug.Log("OnProjectReadyToGetRendered");
         }
 
-        public DataRenderer GetCurrentDataRenderer()
-        {
-            return dataRenderer;
-        }
-
-        public void RenderDataContainer(Project project)
+        public void RenderDataContainer(Project project, File file)
         {
             OnProjectRenderStart?.Invoke(project);
 
             ResetCameraTransform();
 
-            DataContainer dataContainer = projectDataContainers[project];
+            DataContainer dataContainer = fileDataContainers[file];
 
-            renderSettings = null;
+            paramRenderSettings = null;
 
             DataRenderer[] allDataRenderer = FindObjectsByType<DataRenderer>(FindObjectsSortMode.None);
             foreach (DataRenderer dR in allDataRenderer)
@@ -123,109 +120,13 @@ namespace Astrovisio
             }
 
             // Debug.Log("Length :" + dataContainer.DataPack.Rows.Length);
-            dataRenderer = Instantiate(dataRendererPrefab);
-            dataRenderer.RenderDataContainer(dataContainer);
+            DataRenderer = Instantiate(dataRendererPrefab);
+            RenderSettingsController.DataRenderer = DataRenderer;
+            DataRenderer.RenderDataContainer(dataContainer);
 
             SetDataInspector(false, true);
 
             OnProjectRenderEnd?.Invoke(project);
-        }
-
-        public void SetAxisSettings(AxisRenderSettings axisRenderSettings)
-        {
-
-            // Debug.Log($"SetAxisSettings: {axis} {thresholdMin} {thresholdMax} {scalingType}");
-            dataRenderer.SetAxisAstrovisio(
-                axisRenderSettings.Axis,
-                axisRenderSettings.Name,
-                axisRenderSettings.ThresholdMinSelected,
-                axisRenderSettings.ThresholdMaxSelected,
-                axisRenderSettings.ScalingType
-            );
-        }
-
-        public void SetRenderSettings(ParamRenderSettings renderSettings)
-        {
-            if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
-            {
-                // Debug.Log("SetRenderSettings -> Opacity " + renderSettings.MappingSettings.ScalingType);
-                SetOpacity(renderSettings);
-            }
-            else if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
-            {
-                // Debug.Log("SetRenderSettings -> Colormap");
-                SetColorMap(renderSettings);
-            }
-        }
-
-        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
-        {
-            if (dataRenderer is not null)
-            {
-                dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
-            }
-        }
-
-        private void SetColorMap(ParamRenderSettings renderSettings)
-        {
-            if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
-            {
-                ColorMapSettings colorMapSettings = renderSettings.MappingSettings as ColorMapSettings;
-
-                string name = renderSettings.Name;
-                ColorMapEnum colorMap = colorMapSettings.ColorMap;
-                float thresholdMinSelected = colorMapSettings.ThresholdMinSelected;
-                float thresholdMaxSelected = colorMapSettings.ThresholdMaxSelected;
-                ScalingType scalingType = colorMapSettings.ScalingType;
-                bool invert = colorMapSettings.Invert;
-
-                dataRenderer.SetColorMap(name, colorMap, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
-            }
-            else
-            {
-                Debug.Log("Error on renderSettings.Mapping");
-                return;
-            }
-        }
-
-        public void RemoveColorMap()
-        {
-            dataRenderer.RemoveColorMap();
-        }
-
-        private void SetOpacity(ParamRenderSettings renderSettings)
-        {
-            if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
-            {
-                OpacitySettings opacitySettings = renderSettings.MappingSettings as OpacitySettings;
-
-                string name = renderSettings.Name;
-
-                dataRenderer.SetOpacity(name, opacitySettings.ThresholdMinSelected, opacitySettings.ThresholdMaxSelected, opacitySettings.ScalingType, opacitySettings.Invert);
-            }
-            else
-            {
-                Debug.Log("Error on renderSettings.Mapping");
-                return;
-            }
-        }
-
-        public void RemoveOpacity()
-        {
-            dataRenderer.RemoveOpacity();
-        }
-
-        public void SetNoise(bool state, float value = 0f)
-        {
-            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
-            astrovisioDataSetRenderer.SetNoise(state, value);
-        }
-
-        public void SetAxesGizmoVisibility(bool visibility)
-        {
-            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
-            AxesCanvasHandler axesCanvasHandler = astrovisioDataSetRenderer.GetComponentInChildren<AxesCanvasHandler>(true);
-            axesCanvasHandler.gameObject.SetActive(visibility);
         }
 
     }

@@ -159,7 +159,7 @@ namespace Astrovisio
                     bool axesGizmoState = axesGizmoController.GetState();
                     bool newAxesGizmoState = !axesGizmoState;
                     axesGizmoController.SetState(newAxesGizmoState);
-                    RenderManager.Instance.SetAxesGizmoVisibility(newAxesGizmoState);
+                    SceneManager.Instance.SetAxesGizmoVisibility(newAxesGizmoState);
                 }
             ));
 
