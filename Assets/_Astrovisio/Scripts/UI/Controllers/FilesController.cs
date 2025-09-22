@@ -18,13 +18,15 @@ namespace Astrovisio
         private readonly ListView listView;
 
         private readonly Action onUpdateAction;
+        private readonly Action<T> onClickAction;
 
 
-        public FilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null)
+        public FilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null, Action<T> onClickAction = null)
         {
             Root = root;
             UIContextSO = ctx;
             this.onUpdateAction = onUpdateAction;
+            this.onClickAction = onClickAction;
 
             listView = Root.Q<ListView>();
             if (listView == null)
@@ -39,14 +41,51 @@ namespace Astrovisio
             listView.reorderMode = ListViewReorderMode.Animated;
 
             listView.makeItem = () =>
-                (typeof(T) == typeof(FileState)
+            {
+                // Debug.Log("[FilesController] makeItem: creating row VisualElement");
+
+                VisualElement ve = (typeof(T) == typeof(FileState)
                     ? UIContextSO.listItemFileStateTemplate
                     : (UIContextSO.listItemFileTemplate ?? UIContextSO.listItemFileStateTemplate)
                 ).CloneTree();
 
+                ve.RegisterCallback<ClickEvent>(evt =>
+                {
+                    // Debug.Log("[FilesController] Row clicked");
+
+                    if (onClickAction == null)
+                    {
+                        Debug.LogWarning("[FilesController] onClickAction is null; skipping invocation");
+                        return;
+                    }
+
+                    // Debug.Log($"[FilesController] userData is {(ve.userData == null ? "null" : ve.userData.GetType().Name)}");
+
+                    if (ve.userData is T item)
+                    {
+                        var fe = (IFileEntry)item;
+                        // Debug.Log($"[FilesController] Invoking onClickAction for item: Name='{fe.Name}', Size={fe.Size}, Path='{fe.Path}'");
+                        onClickAction(item);
+                        evt.StopPropagation();
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[FilesController] userData is not of type T; click ignored");
+                    }
+                });
+
+                return ve;
+            };
+
+
             listView.bindItem = (listItemVisualElement, i) =>
             {
                 T entry = fileList[i];
+
+                // Keep current item on the row for the click handler (and log binding)
+                listItemVisualElement.userData = entry;
+                // var feBound = (IFileEntry)entry;
+                // Debug.Log($"[FilesController] bindItem: index={i}, Name='{feBound.Name}', Size={feBound.Size}, Path='{feBound.Path}'");
 
                 // Name
                 Label name = listItemVisualElement.Q<Label>("NameLabel");
@@ -101,21 +140,9 @@ namespace Astrovisio
 
             listView.itemIndexChanged += (oldIndex, newIndex) =>
             {
-                // Se vuoi solo essere notificato:
-                // onUpdateAction?.Invoke();
-
-                var moved = fileList[oldIndex];
-                fileList.RemoveAt(oldIndex);
-                if (newIndex > oldIndex)
-                {
-                    newIndex--;
-                } 
-                fileList.Insert(newIndex, moved);
-
+                onUpdateAction?.Invoke();
                 listView.RefreshItems();
-
-                // Debug:
-                PrintListView();
+                // PrintListView();
             };
         }
 
@@ -136,6 +163,11 @@ namespace Astrovisio
             {
                 Refresh();
             }
+        }
+
+        public List<T> GetFileList()
+        {
+            return fileList;
         }
 
         public void ClearAll()

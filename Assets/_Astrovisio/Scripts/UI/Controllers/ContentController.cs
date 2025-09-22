@@ -27,7 +27,7 @@ namespace Astrovisio
         // === Containers ===
         private VisualElement contentContainer;
         private VisualElement homeViewContainer;
-        private List<VisualElement> projectViewContainerList = new List<VisualElement>();
+        // private List<VisualElement> projectViewContainerList = new List<VisualElement>();
 
         private void Awake()
         {
@@ -122,10 +122,12 @@ namespace Astrovisio
             if (projectViewControllerDictionary.TryGetValue(project.Id, out var existingController))
             {
                 existingController.Root.style.display = DisplayStyle.Flex;
+                // Debug.Log("Existing controller for " + project.Name);
                 return;
             }
 
             VisualElement projectViewInstance = uiContextSO.projectViewTemplate.CloneTree();
+            projectViewInstance.name = project.Id.ToString() + "-" + project.Name.ToString();
             contentContainer.Add(projectViewInstance);
 
             // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), uiContextSO.paramRowTemplate);
@@ -133,9 +135,9 @@ namespace Astrovisio
                 projectManager,
                 uiManager,
                 projectViewInstance,
-                project,
-                project.Files[0]); // GB
+                project);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
+            // Debug.Log("Created new controller for " + project.Name);
         }
 
         private void OnProjectUnselected()
@@ -150,12 +152,12 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            foreach (var controller in projectViewControllerDictionary.Values)
-            {
-                controller.Root.style.display = DisplayStyle.None;
-            }
-            homeViewContainer.style.display = DisplayStyle.Flex;
-
+            // foreach (var controller in projectViewControllerDictionary.Values)
+            // {
+            //     controller.Root.style.display = DisplayStyle.None;
+            // }
+            // homeViewContainer.style.display = DisplayStyle.Flex;
+            contentContainer.Remove(projectViewControllerDictionary[project.Id].Root);
             projectViewControllerDictionary.Remove(project.Id);
         }
 

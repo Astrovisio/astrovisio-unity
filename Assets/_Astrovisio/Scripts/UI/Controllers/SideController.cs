@@ -87,6 +87,7 @@ namespace Astrovisio
 
             // VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
             VisualElement projectSidebarInstance = uiContextSO.projectSidebarTemplate.CloneTree();
+            projectSidebarInstance.name = project.Id.ToString() + "-" + project.Name.ToString();
             sideContainer.Add(projectSidebarInstance);
 
             // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
@@ -107,12 +108,13 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            foreach (var controller in projectSidebarControllerDictionary.Values)
-            {
-                controller.Root.style.display = DisplayStyle.None;
-            }
-            sidebarContainer.style.display = DisplayStyle.Flex;
+            // foreach (var controller in projectSidebarControllerDictionary.Values)
+            // {
+            //     controller.Root.style.display = DisplayStyle.None;
+            // }
+            // sidebarContainer.style.display = DisplayStyle.Flex;
 
+            sideContainer.Remove(projectSidebarControllerDictionary[project.Id].Root);
             projectSidebarControllerDictionary.Remove(project.Id);
         }
 

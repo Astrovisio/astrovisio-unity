@@ -260,7 +260,7 @@ namespace Astrovisio
             }
 
             OnStateChanged?.Invoke();
-            Debug.Log(Variable.Name + " " + value);
+            // Debug.Log(Variable.Name + " " + value);
         }
 
         private static bool LessThan(double a, double b, double eps) => a < b - eps;

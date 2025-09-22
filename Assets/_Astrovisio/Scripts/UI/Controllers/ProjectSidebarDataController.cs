@@ -26,6 +26,8 @@ namespace Astrovisio
         private int chipLabelCounter;
         private bool isReadyToProcessData;
         private Dictionary<string, VisualElement> paramRowVisualElement = new();
+        private File oldFile;
+        private File currentFile;
 
 
         public ProjectSidebarDataController(
@@ -45,6 +47,9 @@ namespace Astrovisio
 
             ProjectManager.ProjectOpened += OnProjectOpened;
             ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.FileSelected += OnFileSelected;
+            ProjectManager.ProjectClosed += OnProjectClosed;
+
 
             Init();
         }
@@ -55,6 +60,9 @@ namespace Astrovisio
 
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
             processDataButton.clicked += OnProcessDataClicked;
+
+            currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
+            oldFile = currentFile;
 
             InitWarningLabel();
             InitParamsScrollView();
@@ -74,18 +82,24 @@ namespace Astrovisio
         {
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
             downsamplingDropdown.choices.Clear();
-            downsamplingDropdown.choices.Add("0%");
-            downsamplingDropdown.choices.Add("25%");
-            downsamplingDropdown.choices.Add("50%");
-            downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.value = ((1 - Project.Files[0].Downsampling) * 100).ToString("0") + "%"; // GB
+            downsamplingDropdown.choices.AddRange(new[] { "0%", "25%", "50%", "75%" });
+
+            if (currentFile == null)
+            {
+                Debug.LogWarning("No current file, downsampling dropdown disabled.");
+                downsamplingDropdown.SetEnabled(false);
+                return;
+            }
+
+            downsamplingDropdown.SetEnabled(true);
+            downsamplingDropdown.value = ((1 - currentFile.Downsampling) * 100).ToString("0") + "%";
             downsamplingDropdown?.RegisterValueChangedCallback(evt =>
             {
                 string percentageText = evt.newValue.Replace("%", "");
                 if (float.TryParse(percentageText, out float percentage))
                 {
                     float value = 1 - (percentage / 100f);
-                    Project.Files[0].Downsampling = value;
+                    currentFile.Downsampling = value;
                     UpdateProcessDataButton();
                 }
                 else
@@ -107,11 +121,17 @@ namespace Astrovisio
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // Debug.Log($"Property changed: {e.PropertyName}");
+            Debug.Log($"Property changed: {e.PropertyName}");
+            // TODO: C'è UN PROBLEMA QUA PERCHE' VA IN LOOP, DOVREI FARE IN MODO CHE SI ISCRIVE SOLO UNA VOLTA E POI QUANDO CI SONO MODIFICHE LE AGGIORNA
+
 
             UpdateParamsScrollView();
             UpdateChipLabel();
         }
+
+
+
+
 
         private void SetProcessDataButton(bool state)
         {
@@ -128,16 +148,24 @@ namespace Astrovisio
             }
         }
 
-        private void HandleAxisControll()
+        private void HandleAxisControl()
         {
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
+            {
+                isReadyToProcessData = false;
+                UpdateProcessDataButton();
+                warningLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
             // 1) Count the active parameters
-            chipLabelCounter = Project.Files[0].Variables // GB
+            chipLabelCounter = currentFile.Variables
                 .Count(p => p.XAxis || p.YAxis || p.ZAxis);
 
             // 2) Check which axes have been selected
-            bool xAxis = Project.Files[0].Variables.Any(p => p.XAxis); // GB
-            bool yAxis = Project.Files[0].Variables.Any(p => p.YAxis); // GB
-            bool zAxis = Project.Files[0].Variables.Any(p => p.ZAxis); // GB
+            bool xAxis = currentFile.Variables.Any(p => p.XAxis);
+            bool yAxis = currentFile.Variables.Any(p => p.YAxis);
+            bool zAxis = currentFile.Variables.Any(p => p.ZAxis);
 
             // 3) If at least 3 parameters are active → OK, otherwise show warning
             if (chipLabelCounter >= 3)
@@ -217,15 +245,22 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             SetProcessDataButton(false);
-            ProjectManager.ProcessFile(Project.Id, Project.Files[0].Id); // GB
+            ProjectManager.ProcessFile(Project.Id, currentFile.Id);
             // UpdateRenderingParams();
         }
 
         private void UpdateChipLabel()
         {
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
+            {
+                ClearChipLabel();
+                warningLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
             ClearChipLabel();
 
-            foreach (Variable variable in Project.Files[0].Variables)
+            foreach (Variable variable in currentFile.Variables)
             {
                 if (!paramRowVisualElement.TryGetValue(variable.Name, out VisualElement row))
                 {
@@ -255,54 +290,55 @@ namespace Astrovisio
                 // Debug.Log($"Param: {paramName}, X: {param.XAxis}, Y: {param.YAxis}, Z: {param.ZAxis}");
             }
 
-            HandleAxisControll();
+            HandleAxisControl();
         }
 
         private void UpdateParamsScrollView()
         {
-            File file = Project.Files?[0]; // GB
-
-            if (file.Variables == null)
+            // Unsubscribe from previous file (if any)
+            if (oldFile?.Variables != null)
             {
-                Debug.LogWarning("No variables to display.");
-                return;
+                foreach (var v in oldFile.Variables)
+                {
+                    v.PropertyChanged -= OnPropertyChanged;
+                }
             }
 
-            foreach (Variable variable in file.Variables)
-            {
-                variable.PropertyChanged -= OnPropertyChanged;
-            }
-
+            // Reset UI containers
             paramsScrollView.contentContainer.Clear();
             paramRowVisualElement.Clear();
 
-            if (file.Variables == null)
+            // Guard on the CURRENT file
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (Variable variable in file.Variables)
+            // (Re)subscribe and build rows
+            foreach (var variable in currentFile.Variables)
             {
                 variable.PropertyChanged += OnPropertyChanged;
-
                 if (!variable.Selected)
                 {
                     continue;
                 }
 
-                TemplateContainer paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
-
-                VisualElement nameContainer = paramRow.Q<VisualElement>("LabelContainer");
-                nameContainer.Q<Label>("LabelParam").text = variable.Name;
-
-                VisualElement labelChip = paramRow.Q<VisualElement>("LabelChip");
+                TemplateContainer row = UIContextSO.sidebarParamRowTemplate.CloneTree();
+                row.Q<VisualElement>("LabelContainer").Q<Label>("LabelParam").text = variable.Name;
+                VisualElement labelChip = row.Q<VisualElement>("LabelChip");
                 labelChip.style.display = DisplayStyle.None;
 
-                paramRowVisualElement.Add(variable.Name, paramRow);
-                paramsScrollView.Add(paramRow);
+                // Protect against duplicate keys
+                if (!paramRowVisualElement.ContainsKey(variable.Name))
+                {
+                    paramRowVisualElement.Add(variable.Name, row);
+                }
+
+                paramsScrollView.Add(row);
             }
         }
+
 
         private void ClearChipLabel()
         {
@@ -344,6 +380,44 @@ namespace Astrovisio
                 // Project = project;
                 UpdateChipLabel();
             }
+        }
+
+        private void OnFileSelected(Project project, File file)
+        {
+            // Debug.Log("I'm: " + Project.Name + " @ " + project.Name + " - " + file.Name);
+
+            if (project == null || file == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Skip if the selected file is already displayed
+            if (ReferenceEquals(currentFile, file))
+            {
+                return;
+            }
+
+            oldFile = currentFile;
+            currentFile = file;
+
+            // Rebuild the right panel for the newly selected file
+            InitWarningLabel();
+            InitParamsScrollView();
+            InitActualSizeLabel();
+            InitDownsamplingDropdown();
+        }
+
+        private void OnProjectClosed(Project project)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // ProjectManager.ProjectOpened += OnProjectOpened;
+            // ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileSelected -= OnFileSelected;
+            ProjectManager.ProjectClosed -= OnProjectClosed;
         }
 
     }

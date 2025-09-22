@@ -33,6 +33,9 @@ namespace Astrovisio
 
         // === Other ===
         private VisualElement renderSettingsContainer;
+        private Button prevReelButton;
+        private Button nextReelButton;
+        private Label reelLabel;
         private Button xButton;
         private Button yButton;
         private Button zButton;
@@ -67,6 +70,14 @@ namespace Astrovisio
         private void Init()
         {
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
+
+            prevReelButton = renderSettingsContainer.Q<Button>("PrevReelButton");
+            nextReelButton = renderSettingsContainer.Q<Button>("NextReelButton");
+            reelLabel = renderSettingsContainer.Q<Label>("ReelLabel");
+
+            // Debug.Log(prevReelButton);
+            // Debug.Log(nextReelButton);
+            // Debug.Log(reelLabel);
 
             VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
             xButton = axisContainer.Q<VisualElement>("XLabel")?.Q<Button>("Root");

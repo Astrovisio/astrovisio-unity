@@ -15,7 +15,6 @@ namespace Astrovisio
         public UIManager UIManager { get; }
         public VisualElement Root { get; }
         public Project Project { get; }
-        public File File { get; }
 
         // === UI ===
         private Label projectNameLabel;
@@ -24,11 +23,13 @@ namespace Astrovisio
         private Button editButton;
         private Button deleteButton;
         private Button readMoreButton;
+        private Label configurationFileLabel;
         private Toggle checkAllToggle;
         private Button headerNameButton;
         private ScrollView paramScrollView;
 
         // === Local ===
+        private File currentFile;
         private float _nextAllowedUpdate;
         private FilesController<FileState> filesController;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
@@ -42,16 +43,15 @@ namespace Astrovisio
             ProjectManager projectManager,
             UIManager uiManager,
             VisualElement root,
-            Project project,
-            File file)
+            Project project)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
             Root = root;
             Project = project;
-            File = file;
 
             ProjectManager.ProjectUpdated += OnProjectUpdated;
+            // ProjectManager.NotifyFileSelected(Project.Id, selectedFile);
 
             Init();
         }
@@ -59,13 +59,15 @@ namespace Astrovisio
         private void Init()
         {
             VisualElement topContainer = Root.Q<VisualElement>("TopContainer");
+            VisualElement labelContainer = Root.Q<VisualElement>("LabelContainer");
 
             // Files
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
             filesController = new FilesController<FileState>(
                 filesContainer,
                 UIManager.GetUIContext(),
-                () => Debug.Log("Updated order...")
+                () => UpdateFileOrderCallback(),
+                OnFileRowClicked
             );
 
             // Project Name
@@ -76,15 +78,21 @@ namespace Astrovisio
             descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
-
+            // Project Buttons
             favouriteToggle = topContainer.Q<VisualElement>("FavouriteToggle").Q<Toggle>("CheckboxRoot");
             editButton = topContainer.Q<Button>("EditButton");
             deleteButton = topContainer.Q<Button>("DeleteButton");
 
-
             // Project Read More
             readMoreButton = topContainer.Q<Button>("ReadMoreButton");
             readMoreButton.clicked += () => UIManager.SetReadMoreViewVisibility(true, Project.Name, Project.Description);
+
+            // Configuration file Label
+            configurationFileLabel = labelContainer.Q<Label>("SubtitleLabel");
+
+            // Scroll View
+            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
+            paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
 
             // Header Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
@@ -110,12 +118,41 @@ namespace Astrovisio
                 ApplyScrollViewOrderType();
             };
 
+            currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
+
             InitFileContainer();
             InitDeleteButton();
             InitEditButton();
             InitFavouriteToggle();
             InitScrollView();
             InitCheckAllToggle();
+            UpdateConfigurationFileLabel();
+        }
+
+        private void OnFileRowClicked(FileState fs)
+        {
+            if (fs.file == null || fs.file == currentFile)
+            {
+                return;
+            }
+
+            currentFile = fs.file;
+            InitScrollView();
+            InitCheckAllToggle();
+            UpdateConfigurationFileLabel();
+
+            // Debug.Log($"[ProjectViewController] Showing file: {currentFile?.Name ?? "none"}");
+            ProjectManager.NotifyFileSelected(Project, currentFile);
+        }
+
+        private void UpdateConfigurationFileLabel()
+        {
+            if (currentFile == null)
+            {
+                return;
+            }
+
+            configurationFileLabel.text = currentFile.Name;
         }
 
         private void OnProjectUpdated(Project project)
@@ -139,10 +176,20 @@ namespace Astrovisio
 
         private void InitScrollView()
         {
-            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
-            paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
-            paramScrollView.contentContainer.Clear();
+            if (currentFile == null)
+            {
+                return;
+            }
+
+
+            foreach (ParamRowController paramRowController in paramControllers)
+            {
+                paramRowController.OnAxisChanged -= HandleOnAxisChanged;
+                paramRowController.OnThresholdChanged -= HandleOnThresholdChanged;
+                paramRowController.OnStateChanged -= HandleStateChanged;
+            }
             paramControllers.Clear();
+            paramScrollView.contentContainer.Clear();
 
             if (Project.Files.Count == 0)
             {
@@ -150,13 +197,7 @@ namespace Astrovisio
                 return;
             }
 
-            if (File == null)
-            {
-                Debug.LogWarning("No variables to display.");
-                return;
-            }
-
-            foreach (Variable variable in File.Variables)
+            foreach (Variable variable in currentFile.Variables)
             {
                 TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
@@ -172,10 +213,10 @@ namespace Astrovisio
                 paramScrollView.Add(paramRowController.Root);
             }
 
-            InitializeSelectedAxes();
+            InitSelectedAxes();
         }
 
-        private void InitializeSelectedAxes()
+        private void InitSelectedAxes()
         {
             foreach (ParamRowController paramController in paramControllers)
             {
@@ -280,16 +321,18 @@ namespace Astrovisio
 
             _nextAllowedUpdate = Time.unscaledTime + 0.05f; // 50ms
 
-            // ProjectManager.UpdateProject(Project.Id, Project);
-            ProjectManager.UpdateFile(Project.Id, Project.Files[0]); // GB
+            if (currentFile != null)
+            {
+                ProjectManager.UpdateFile(Project.Id, currentFile);
+            }
         }
 
         private void InitFileContainer()
         {
-            foreach (var file in Project.Files)
+            foreach (File file in Project.Files)
             {
                 FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
-                FileState fileState = new FileState(fileInfo);
+                FileState fileState = new FileState(fileInfo, file);
                 filesController.AddFile(fileState);
                 Debug.Log($"File added: {fileState.fileInfo.name} ({fileState.fileInfo.size} bytes) - {fileState.fileInfo.path}");
             }
@@ -338,9 +381,9 @@ namespace Astrovisio
             }
 
             bool allSelected =
-                File?.Variables != null &&
-                File.Variables.Count > 0 &&
-                File.Variables.All(v => v.Selected);
+                currentFile?.Variables != null &&
+                currentFile.Variables.Count > 0 &&
+                currentFile.Variables.All(v => v.Selected);
 
             checkAllToggle.SetValueWithoutNotify(allSelected);
         }
@@ -384,6 +427,59 @@ namespace Astrovisio
                     headerNameButton.Q<Label>().text = "Name";
                     break;
             }
+        }
+
+        private void UpdateFileOrderCallback()
+        {
+            // Debug.Log("UpdateFileOrder");
+
+            // Guard: nothing to do if project list or UI list is missing
+            var uiList = filesController.GetFileList(); // List<FileState> reflecting UI order
+            if (Project.Files == null || uiList == null)
+                return;
+
+            var original = Project.Files;
+
+            // Reorder only within the overlapping range
+            int limit = Math.Min(uiList.Count, original.Count);
+
+            for (int i = 0; i < limit; i++)
+            {
+                var uiFile = uiList[i].file;
+                if (uiFile == null)
+                {
+                    Debug.LogWarning($"UI slot {i} has null file; skipping.");
+                    continue;
+                }
+
+                // Find where that file currently is in the original list
+                int j = original.FindIndex(f => f.Id == uiFile.Id);
+                if (j < 0)
+                {
+                    // Not found in original; skip to avoid out-of-range errors
+                    Debug.LogWarning($"File with Id={uiFile.Id} not found in Project.Files; skipping.");
+                    continue;
+                }
+                if (j == i)
+                {
+                    // Already in the right place
+                    continue;
+                }
+
+                // Swap existing items by position (do NOT assign the UI instance to avoid replacing references)
+                (original[i], original[j]) = (original[j], original[i]);
+            }
+
+            // API Call to update Project order TODO
+
+
+            // Check order (let commented)
+            // for (int i = 0; i < Project.Files.Count; i++)
+            // {
+            //     Debug.Log(Project.Files[i].Name);
+            // }
+
+            // Debug.Log($"Project.Files reordered to match UI order (first {limit} items). Count={original.Count}");
         }
 
     }

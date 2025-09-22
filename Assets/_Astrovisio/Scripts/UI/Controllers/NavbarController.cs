@@ -75,12 +75,10 @@ namespace Astrovisio
 
         private void OnProjectUpdated(Project updatedProject)
         {
-
             if (projectTabDictionary.TryGetValue(updatedProject.Id, out ProjectTabInfo projectTabInfo))
             {
                 projectTabInfo.TabElement.Q<Label>("Label").text = updatedProject.Name;
             }
-
         }
 
         private void OnProjectDeleted(Project project)
@@ -107,14 +105,16 @@ namespace Astrovisio
                 if (evt.button == (int)MouseButton.MiddleMouse)
                 {
                     RemoveProjectTab(project.Id);
-                    evt.StopPropagation();
+                    // evt.StopPropagation();
+                    ProjectManager.CloseProject(project.Id);
                 }
             });
 
             // Close Button
-            projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(evt =>
             {
                 RemoveProjectTab(project.Id);
+                // evt.StopPropagation();
                 ProjectManager.CloseProject(project.Id);
             });
 
@@ -124,6 +124,8 @@ namespace Astrovisio
 
         private void RemoveProjectTab(int projectId)
         {
+            // Debug.Log("RemoveProjectTab " + projectId);
+
             if (!projectTabDictionary.TryGetValue(projectId, out var tabInfo))
             {
                 return;
@@ -144,7 +146,7 @@ namespace Astrovisio
                 return;
             }
 
-            var after = projectTabContainer.Children().ToList();
+            List<VisualElement> after = projectTabContainer.Children().ToList();
             if (after.Any())
             {
                 int newIndex = removedIndex < after.Count ? removedIndex : after.Count - 1;

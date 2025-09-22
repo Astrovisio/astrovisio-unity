@@ -23,9 +23,11 @@ namespace Astrovisio
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<Project, File, DataPack> FileProcessed;
-		public event Action ProjectUnselected;
 		public event Action<Project> ProjectDeleted;
+		public event Action ProjectUnselected;
+		public event Action<Project, File> FileSelected;
+		public event Action<Project, File> FileUpdated;
+		public event Action<Project, File, DataPack> FileProcessed;
 		public event Action<string> ApiError;
 
 		// === Local ===
@@ -62,7 +64,7 @@ namespace Astrovisio
 		{
 			return currentProject;
 		}
-		
+
 		public Project GetOpenedProject(int id)
 		{
 			return openedProjectList.Find(p => p.Id == id);
@@ -353,7 +355,7 @@ namespace Astrovisio
 							project.Files.Add(updatedFile);
 						}
 					}
-					Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
+					// Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
 				},
 				error =>
 				{
@@ -415,6 +417,7 @@ namespace Astrovisio
 			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
 			if (projectToRemove != null)
 			{
+				// Debug.Log("Closed project " + GetProject(id).Name);
 				openedProjectList.Remove(projectToRemove);
 				if (currentProject?.Id == id)
 				{
@@ -431,6 +434,41 @@ namespace Astrovisio
 				currentProject = null;
 				ProjectUnselected?.Invoke();
 			}
+		}
+
+		public void NotifyFileSelected(Project project, File file)
+		{
+			if (file == null)
+			{
+				Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
+				return;
+			}
+
+			if (project == null)
+			{
+				Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
+				return;
+			}
+
+			FileSelected?.Invoke(project, file);
+		}
+
+		// TODO: evaluate utility of this function
+		public void NotifyFileUpdated(Project project, File file)
+		{
+			if (file == null)
+			{
+				Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
+				return;
+			}
+
+			if (project == null)
+			{
+				Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
+				return;
+			}
+
+			FileUpdated?.Invoke(project, file);
 		}
 
 		private void SaveProjectCSV(DataPack dataPack)

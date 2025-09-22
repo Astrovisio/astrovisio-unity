@@ -24,22 +24,26 @@ namespace Astrovisio
         public string Path => path;
         public string Name => name;
         public long Size => size;
+        
     }
 
     public struct FileState : IFileEntry
     {
         public FileInfo fileInfo;
+        public File file;
         public bool state;
 
-        public FileState(FileInfo fileInfo)
+        public FileState(FileInfo fileInfo, File file)
         {
             this.fileInfo = fileInfo;
+            this.file = file;
             state = false;
         }
 
         public string Path => fileInfo.path;
         public string Name => fileInfo.name;
         public long Size => fileInfo.size;
+
     }
 
 }

@@ -54,7 +54,6 @@ namespace Astrovisio
         {
             bool anyFileProcessed = Project?.Files?.Any(f => f.Processed) ?? false;
 
-
             // Data
             dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
