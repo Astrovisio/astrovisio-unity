@@ -53,6 +53,8 @@ namespace Astrovisio
             ProjectManager.ProjectUpdated += OnProjectUpdated;
             // ProjectManager.NotifyFileSelected(Project.Id, selectedFile);
 
+            ProjectManager.FileProcessed += OnFileProcessed;
+
             Init();
         }
 
@@ -137,6 +139,7 @@ namespace Astrovisio
             }
 
             currentFile = fs.file;
+            Debug.Log("currentFile processed: " + currentFile.Processed);
             InitScrollView();
             InitCheckAllToggle();
             UpdateConfigurationFileLabel();
@@ -153,17 +156,6 @@ namespace Astrovisio
             }
 
             configurationFileLabel.text = currentFile.Name;
-        }
-
-        private void OnProjectUpdated(Project project)
-        {
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-
-            projectNameLabel.text = project.Name;
-            descriptionLabel.text = project.Description;
         }
 
         private void OnCheckAllToggled(bool isChecked)
@@ -323,18 +315,23 @@ namespace Astrovisio
 
             if (currentFile != null)
             {
+                currentFile.Processed = false;
+                filesController.SetFileState(currentFile, false);
                 ProjectManager.UpdateFile(Project.Id, currentFile);
+                ProjectManager.NotifyFileUpdated(Project, currentFile); // new
             }
+
         }
 
         private void InitFileContainer()
         {
-            foreach (File file in Project.Files)
+            foreach (File file in Project.Files.OrderBy(f => f.Order))
             {
                 FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
                 FileState fileState = new FileState(fileInfo, file);
                 filesController.AddFile(fileState);
-                Debug.Log($"File added: {fileState.fileInfo.name} ({fileState.fileInfo.size} bytes) - {fileState.fileInfo.path}");
+                // Debug.Log($"File added: {file.Name} - {file.Order}");
+                // Debug.Log($"File added: {fileState.fileInfo.Name} ({fileState.fileInfo.Size} bytes) - {fileState.fileInfo.Path}");
             }
         }
 
@@ -369,7 +366,7 @@ namespace Astrovisio
             favouriteToggle.RegisterValueChangedCallback(evt =>
             {
                 Project.Favourite = evt.newValue;
-                ProjectManager.UpdateProject(Project.Id, Project);
+                _ = ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 
@@ -434,18 +431,20 @@ namespace Astrovisio
             // Debug.Log("UpdateFileOrder");
 
             // Guard: nothing to do if project list or UI list is missing
-            var uiList = filesController.GetFileList(); // List<FileState> reflecting UI order
+            List<FileState> uiList = filesController.GetFileList();
             if (Project.Files == null || uiList == null)
+            {
                 return;
+            }
 
-            var original = Project.Files;
+            List<File> original = Project.Files;
 
             // Reorder only within the overlapping range
             int limit = Math.Min(uiList.Count, original.Count);
 
             for (int i = 0; i < limit; i++)
             {
-                var uiFile = uiList[i].file;
+                File uiFile = uiList[i].file;
                 if (uiFile == null)
                 {
                     Debug.LogWarning($"UI slot {i} has null file; skipping.");
@@ -471,7 +470,11 @@ namespace Astrovisio
             }
 
             // API Call to update Project order TODO
-
+            for (int i = 0; i < original.Count; i++)
+            {
+                original[i].Order = i;
+                ProjectManager.UpdateFile(Project.Id, original[i]);
+            }
 
             // Check order (let commented)
             // for (int i = 0; i < Project.Files.Count; i++)
@@ -480,6 +483,29 @@ namespace Astrovisio
             // }
 
             // Debug.Log($"Project.Files reordered to match UI order (first {limit} items). Count={original.Count}");
+        }
+
+        private void OnProjectUpdated(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            projectNameLabel.text = project.Name;
+            descriptionLabel.text = project.Description;
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log(project.Name + " - " + file.Name + " @ processed: " + file.Processed);
+
+            filesController.SetFileState(file, true);
         }
 
     }

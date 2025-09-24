@@ -38,8 +38,8 @@ namespace Astrovisio
         {
             Root = root;
 
-            RenderManager.Instance.OnProjectRenderStart += OnProjectRenderStart;
-            RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderEnd;
+            RenderManager.Instance.OnFileRenderStart += OnProjectRenderStart;
+            RenderManager.Instance.OnFileRenderEnd += OnProjectRenderEnd;
 
             Init();
         }

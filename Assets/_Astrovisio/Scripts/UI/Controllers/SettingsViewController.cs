@@ -79,7 +79,7 @@ namespace Astrovisio
             Root = root;
             UIManager = uiManager;
 
-            RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderedEnd;
+            RenderManager.Instance.OnFileRenderEnd += OnProjectRenderedEnd;
 
             Init();
             SetSettingsVisibility(false);

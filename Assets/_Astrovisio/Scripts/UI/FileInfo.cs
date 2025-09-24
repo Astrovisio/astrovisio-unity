@@ -10,9 +10,9 @@ namespace Astrovisio
 
     public readonly struct FileInfo : IFileEntry
     {
-        public readonly string path;
-        public readonly string name;
-        public readonly long size;
+        private readonly string path;
+        private readonly string name;
+        private readonly long size;
 
         public FileInfo(string path, string name, long size)
         {
@@ -40,9 +40,9 @@ namespace Astrovisio
             state = false;
         }
 
-        public string Path => fileInfo.path;
-        public string Name => fileInfo.name;
-        public long Size => fileInfo.size;
+        public string Path => fileInfo.Path;
+        public string Name => fileInfo.Name;
+        public long Size => fileInfo.Size;
 
     }
 

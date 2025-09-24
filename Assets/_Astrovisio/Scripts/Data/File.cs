@@ -13,6 +13,7 @@ namespace Astrovisio
         private bool processed;
         private float downsampling = 1f;
         private string processedPath;
+        private int order;
         private string name;
         private long size;
         private int id;
@@ -85,6 +86,20 @@ namespace Astrovisio
                 {
                     processedPath = value;
                     OnPropertyChanged(nameof(ProcessedPath));
+                }
+            }
+        }
+
+        [JsonProperty("order")]
+        public int Order
+        {
+            get => order;
+            set
+            {
+                if (order != value)
+                {
+                    order = value;
+                    OnPropertyChanged(nameof(Order));
                 }
             }
         }

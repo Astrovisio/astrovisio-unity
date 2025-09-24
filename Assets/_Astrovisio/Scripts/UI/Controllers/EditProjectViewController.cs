@@ -40,7 +40,7 @@ namespace Astrovisio
             // Debug.Log("OnContinueClicked");
             projectToEdit.Name = nameTextLabel.value;
             projectToEdit.Description = descriptionTextLabel.value;
-            ProjectManager.UpdateProject(projectToEdit.Id, projectToEdit);
+            _ = ProjectManager.UpdateProject(projectToEdit.Id, projectToEdit);
             Root.RemoveFromClassList("active");
             Dispose();
         }

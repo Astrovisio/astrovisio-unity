@@ -1470,7 +1470,6 @@ MonoBehaviour:
   apiManager: {fileID: 1328975545}
   projectManager: {fileID: 545608354}
   uiManager: {fileID: 1869469690}
-  mainCamera: {fileID: 794102724}
   dataRendererPrefab: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
     type: 3}
   isInspectorModeActive: 0
@@ -1519,6 +1518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderManager: {fileID: 917013866}
+  mainCamera: {fileID: 794102724}
 --- !u!1 &1166252297
 GameObject:
   m_ObjectHideFlags: 0

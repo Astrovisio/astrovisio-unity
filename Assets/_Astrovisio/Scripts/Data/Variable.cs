@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class Variable : INotifyPropertyChanged
+    public class Variable
     {
         private string name;
         private double thrMin;
@@ -61,7 +61,6 @@ namespace Astrovisio
                 if (selected != value)
                 {
                     selected = value;
-                    OnPropertyChanged(nameof(Selected));
                 }
             }
         }
@@ -82,7 +81,6 @@ namespace Astrovisio
                 if (xAxis != value)
                 {
                     xAxis = value;
-                    OnPropertyChanged(nameof(XAxis));
                 }
             }
         }
@@ -96,7 +94,6 @@ namespace Astrovisio
                 if (yAxis != value)
                 {
                     yAxis = value;
-                    OnPropertyChanged(nameof(YAxis));
                 }
             }
         }
@@ -110,17 +107,8 @@ namespace Astrovisio
                 if (zAxis != value)
                 {
                     zAxis = value;
-                    OnPropertyChanged(nameof(ZAxis));
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            // Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void UpdateFrom(Variable other)

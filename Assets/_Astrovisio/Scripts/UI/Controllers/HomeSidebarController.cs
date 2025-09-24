@@ -105,7 +105,7 @@ namespace Astrovisio
                 favouriteButton.clicked += () =>
                 {
                     // Debug.Log(project.Name);
-                    ProjectManager.OpenProject(project.Id);
+                    _ = ProjectManager.OpenProject(project.Id);
                 };
 
                 favouritesScrollView.Add(favouriteProjectTemplate);

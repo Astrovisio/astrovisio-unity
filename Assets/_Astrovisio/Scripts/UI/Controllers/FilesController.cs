@@ -18,7 +18,7 @@ namespace Astrovisio
         private readonly ListView listView;
 
         private readonly Action onUpdateAction;
-        private readonly Action<T> onClickAction;
+        // private readonly Action<T> onClickAction;
 
 
         public FilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null, Action<T> onClickAction = null)
@@ -26,7 +26,7 @@ namespace Astrovisio
             Root = root;
             UIContextSO = ctx;
             this.onUpdateAction = onUpdateAction;
-            this.onClickAction = onClickAction;
+            // this.onClickAction = onClickAction;
 
             listView = Root.Q<ListView>();
             if (listView == null)
@@ -105,10 +105,9 @@ namespace Astrovisio
                 VisualElement listItemState = listItemVisualElement.Q<VisualElement>("State");
                 if (entry is FileState fileState)
                 {
-                    bool state = fileState.state;
                     if (listItemState != null)
                     {
-                        if (state)
+                        if (fileState.state)
                         {
                             listItemState.AddToClassList("active");
                         }
@@ -216,6 +215,53 @@ namespace Astrovisio
             return FormatFileSize(GetTotalSizeBytes());
         }
 
+        public void SetFileState(File file, bool value)
+        {
+            // Safety checks
+            if (file == null)
+            {
+                Debug.LogWarning("SetFileState: file is null.");
+                return;
+            }
+            if (typeof(T) != typeof(FileState))
+            {
+                Debug.LogWarning("SetFileState: T is not FileState; operation ignored.");
+                return;
+            }
+
+            // Find the matching FileState and update its 'state'
+            for (int i = 0; i < fileList.Count; i++)
+            {
+                if (fileList[i] is FileState fs)
+                {
+                    // Match either by reference or by Id (adjust if your File doesn't have Id)
+                    bool isMatch =
+                        ReferenceEquals(fs.file, file) ||
+                        (fs.file != null && fs.file.Id == file.Id);
+
+                    if (!isMatch)
+                    {
+                        continue;
+                    }
+
+                    // Update only if needed
+                    if (fs.state != value)
+                    {
+                        fs.state = value;
+
+                        // IMPORTANT: FileState is a struct, assign it back to persist the change
+                        fileList[i] = (T)(object)fs;
+                    }
+
+                    // Refresh UI and notify listeners
+                    Refresh();
+                    return;
+                }
+            }
+
+            Debug.LogWarning($"SetFileState: file with Id={file.Id} not found in list.");
+        }
+
         public void PrintListView()
         {
             if (listView?.itemsSource == null)
@@ -230,11 +276,11 @@ namespace Astrovisio
             {
                 if (listView.itemsSource[i] is FileInfo fileInfo)
                 {
-                    Debug.Log($"[{i}] FileInfo -> Name={fileInfo.name}, Size={fileInfo.size}, Path={fileInfo.path}");
+                    Debug.Log($"[{i}] FileInfo -> Name={fileInfo.Name}, Size={fileInfo.Size}, Path={fileInfo.Path}");
                 }
                 else if (listView.itemsSource[i] is FileState fs)
                 {
-                    Debug.Log($"[{i}] FileState -> Name={fs.fileInfo.name}, Size={fs.fileInfo.size}, Path={fs.fileInfo.path}, State={fs.state}");
+                    Debug.Log($"[{i}] FileState -> Name={fs.fileInfo.Name}, Size={fs.fileInfo.Size}, Path={fs.fileInfo.Path}, State={fs.state}");
                 }
                 else
                 {

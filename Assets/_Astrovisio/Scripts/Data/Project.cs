@@ -151,6 +151,10 @@ namespace Astrovisio
             }
             else
             {
+                // Usare updateFrom ???
+                // foreach (File file in files) {
+                // }
+
                 Files = JsonConvert.DeserializeObject<List<File>>(
                             JsonConvert.SerializeObject(other.Files)
                         ) ?? new List<File>();

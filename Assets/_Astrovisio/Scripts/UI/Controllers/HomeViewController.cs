@@ -116,7 +116,11 @@ namespace Astrovisio
                 ProjectRowController projectRowController = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
                 projectControllers[project.Id] = projectRowController;
 
-                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
+                projectRow.RegisterCallback<ClickEvent>(evt =>
+                {
+                    _ = ProjectManager.OpenProject(project.Id);
+                });
+
                 target.Add(projectRow);
             }
         }

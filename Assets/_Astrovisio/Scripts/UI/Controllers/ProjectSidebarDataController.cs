@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using System;
 
 namespace Astrovisio
 {
@@ -26,7 +27,6 @@ namespace Astrovisio
         private int chipLabelCounter;
         private bool isReadyToProcessData;
         private Dictionary<string, VisualElement> paramRowVisualElement = new();
-        private File oldFile;
         private File currentFile;
 
 
@@ -47,8 +47,9 @@ namespace Astrovisio
 
             ProjectManager.ProjectOpened += OnProjectOpened;
             ProjectManager.ProjectUpdated += OnProjectUpdated;
-            ProjectManager.FileSelected += OnFileSelected;
             ProjectManager.ProjectClosed += OnProjectClosed;
+            ProjectManager.FileSelected += OnFileSelected;
+            ProjectManager.FileUpdated += OnFileUpdated;
 
 
             Init();
@@ -62,7 +63,6 @@ namespace Astrovisio
             processDataButton.clicked += OnProcessDataClicked;
 
             currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
-            oldFile = currentFile;
 
             InitWarningLabel();
             InitParamsScrollView();
@@ -113,25 +113,11 @@ namespace Astrovisio
         {
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
         }
-
+        
         private void InitWarningLabel()
         {
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
         }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            Debug.Log($"Property changed: {e.PropertyName}");
-            // TODO: C'è UN PROBLEMA QUA PERCHE' VA IN LOOP, DOVREI FARE IN MODO CHE SI ISCRIVE SOLO UNA VOLTA E POI QUANDO CI SONO MODIFICHE LE AGGIORNA
-
-
-            UpdateParamsScrollView();
-            UpdateChipLabel();
-        }
-
-
-
-
 
         private void SetProcessDataButton(bool state)
         {
@@ -295,16 +281,6 @@ namespace Astrovisio
 
         private void UpdateParamsScrollView()
         {
-            // Unsubscribe from previous file (if any)
-            if (oldFile?.Variables != null)
-            {
-                foreach (var v in oldFile.Variables)
-                {
-                    v.PropertyChanged -= OnPropertyChanged;
-                }
-            }
-
-            // Reset UI containers
             paramsScrollView.contentContainer.Clear();
             paramRowVisualElement.Clear();
 
@@ -315,14 +291,13 @@ namespace Astrovisio
                 return;
             }
 
-            // (Re)subscribe and build rows
-            foreach (var variable in currentFile.Variables)
+            foreach (Variable variable in currentFile.Variables)
             {
-                variable.PropertyChanged += OnPropertyChanged;
                 if (!variable.Selected)
                 {
                     continue;
                 }
+                // Debug.Log("Name: " + variable.Name + " - Selected: " + variable.Selected + " - X: " + variable.XAxis + " - Y: " + variable.YAxis + " - Z: " + variable.ZAxis);
 
                 TemplateContainer row = UIContextSO.sidebarParamRowTemplate.CloneTree();
                 row.Q<VisualElement>("LabelContainer").Q<Label>("LabelParam").text = variable.Name;
@@ -339,7 +314,6 @@ namespace Astrovisio
             }
         }
 
-
         private void ClearChipLabel()
         {
             foreach (var kvp in paramRowVisualElement)
@@ -352,6 +326,8 @@ namespace Astrovisio
             }
         }
 
+
+        // === Events ===
         private void OnProjectOpened(Project project)
         {
             if (Project.Id != project.Id)
@@ -382,6 +358,19 @@ namespace Astrovisio
             }
         }
 
+        private void OnProjectClosed(Project project)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // ProjectManager.ProjectOpened += OnProjectOpened;
+            // ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileSelected -= OnFileSelected;
+            ProjectManager.ProjectClosed -= OnProjectClosed;
+        }
+
         private void OnFileSelected(Project project, File file)
         {
             // Debug.Log("I'm: " + Project.Name + " @ " + project.Name + " - " + file.Name);
@@ -397,7 +386,6 @@ namespace Astrovisio
                 return;
             }
 
-            oldFile = currentFile;
             currentFile = file;
 
             // Rebuild the right panel for the newly selected file
@@ -407,17 +395,19 @@ namespace Astrovisio
             InitDownsamplingDropdown();
         }
 
-        private void OnProjectClosed(Project project)
+        private void OnFileUpdated(Project project, File file)
         {
-            if (project == null || project.Id != Project.Id)
+            if (project == null || file == null)
             {
                 return;
             }
 
-            // ProjectManager.ProjectOpened += OnProjectOpened;
-            // ProjectManager.ProjectUpdated -= OnProjectUpdated;
-            ProjectManager.FileSelected -= OnFileSelected;
-            ProjectManager.ProjectClosed -= OnProjectClosed;
+            if (Project == project && currentFile == file)
+            {
+                UpdateParamsScrollView();
+                UpdateChipLabel();
+            }
+
         }
 
     }

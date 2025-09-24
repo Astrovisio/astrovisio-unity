@@ -38,7 +38,7 @@ namespace Astrovisio
         private void OnContinueClicked()
         {
             // Debug.Log("OnContinueClicked");
-            ProjectManager.DuplicateProject(nameTextLabel.value, descriptionTextLabel.value, projectToDuplicate);
+            _ = ProjectManager.DuplicateProject(nameTextLabel.value, descriptionTextLabel.value, projectToDuplicate);
             Root.RemoveFromClassList("active");
             Dispose();
         }

@@ -23,6 +23,9 @@ namespace Astrovisio
         [JsonProperty("downsampling")]
         public float Downsampling { get; set; }
 
+        [JsonProperty("order")]
+        public int Order { get; set; }
+
         [JsonProperty("processed_path")]
         public string ProcessedPath { get; set; }
 

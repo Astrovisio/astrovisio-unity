@@ -75,34 +75,6 @@ namespace Astrovisio
             projectSidebarRenderController = new ProjectSidebarRenderController(this, UIManager, ProjectManager, UIContextSO, Project, renderSettingsContainer);
         }
 
-        private void OnProjectOpened(Project project)
-        {
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-
-            SetActiveStep(ProjectSidebarStep.Data);
-        }
-
-        private void OnProjectReadyToGetRendered(Project project)
-        {
-            // Debug.Log($"Returned {Project.Id} {Project.Name} - {project.Id} {project.Name}");
-            // Debug.Log(Project == project);
-            // Debug.Log(ReferenceEquals(project, Project));
-
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-            else
-            {
-                Project = project;
-            }
-
-            SetNextStepButtons(true);
-        }
-
         private void OnDataSettingsButtonClicked()
         {
             SetActiveStep(ProjectSidebarStep.Data);
@@ -115,10 +87,21 @@ namespace Astrovisio
             // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
             SetActiveStep(ProjectSidebarStep.Render);
 
-            // ProjectManager.Get // ?
+            // Pick the first processed file
+            File fileToRender = Project.Files.FirstOrDefault(f => f.Processed);
 
-            RenderManager.Instance.RenderDataContainer(Project, Project.Files[0]);
-            UIManager.SetGizmoTransformVisibility(true);
+            if (fileToRender != null)
+            {
+                // Debug.Log($"Variable: {fileToRender.Variables[0].Name}, Min: {fileToRender.Variables[0].ThrMinSel}, Max: {fileToRender.Variables[0].ThrMaxSel}");
+                // Debug.Log($"Variable: {fileToRender.Variables[1].Name}, Min: {fileToRender.Variables[1].ThrMinSel}, Max: {fileToRender.Variables[1].ThrMaxSel}");
+                // Debug.Log($"Variable: {fileToRender.Variables[2].Name}, Min: {fileToRender.Variables[2].ThrMinSel}, Max: {fileToRender.Variables[2].ThrMaxSel}");
+                RenderManager.Instance.RenderFile(Project, fileToRender);
+                UIManager.SetGizmoTransformVisibility(true);
+            }
+            else
+            {
+                Debug.LogWarning($"No processed file found for Project {Project.Id} - {Project.Name}");
+            }
         }
 
         private void OnGoToVRButtonClicked()
@@ -184,6 +167,30 @@ namespace Astrovisio
                 label.text = "Go To VR";
             }
             goToVRButton.Blur();
+        }
+
+        private void OnProjectReadyToGetRendered(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+            else
+            {
+                Project = project;
+            }
+
+            SetNextStepButtons(true);
+        }
+
+        private void OnProjectOpened(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            SetActiveStep(ProjectSidebarStep.Data);
         }
 
     }

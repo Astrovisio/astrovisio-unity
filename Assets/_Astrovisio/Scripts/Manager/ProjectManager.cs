@@ -93,16 +93,17 @@ namespace Astrovisio
 				});
 		}
 
-		public async void OpenProject(int id)
+		public async Task<Project> OpenProject(int id)
 		{
 			Project alreadyOpened = GetOpenedProject(id);
 			if (alreadyOpened != null)
 			{
 				currentProject = alreadyOpened;
 				ProjectOpened?.Invoke(alreadyOpened);
-				return;
+				return alreadyOpened;
 			}
 
+			Project result = null;
 			await apiManager.ReadProject(id,
 				project =>
 				{
@@ -122,12 +123,14 @@ namespace Astrovisio
 					}
 
 					currentProject = project;
+					result = project;
 					ProjectOpened?.Invoke(project);
 				},
 				error => ApiError?.Invoke(error));
+			return result ?? currentProject;
 		}
 
-		public async void CreateProject(string name, string description, string[] paths)
+		public async Task<Project> CreateProject(string name, string description, string[] paths)
 		{
 			uiManager.SetLoadingView(true);
 
@@ -139,11 +142,13 @@ namespace Astrovisio
 				Paths = paths
 			};
 
+			Project created = null;
 			await apiManager.CreateNewProject(req,
-				created =>
+				createdProj =>
 				{
-					projectList.Add(created);
-					ProjectCreated?.Invoke(created);
+					created = createdProj;
+					projectList.Add(createdProj);
+					ProjectCreated?.Invoke(createdProj);
 					uiManager.SetLoadingView(false);
 				},
 				error =>
@@ -151,9 +156,10 @@ namespace Astrovisio
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
 				});
+			return created;
 		}
 
-		public async void DuplicateProject(string name, string description, Project projectToDuplicate)
+		public async Task<Project> DuplicateProject(string name, string description, Project projectToDuplicate)
 		{
 			uiManager.SetLoadingView(true);
 
@@ -163,13 +169,15 @@ namespace Astrovisio
 				Description = description
 			};
 
+			Project duplicated = null;
 			await apiManager.DuplicateProject(
 				projectToDuplicate.Id,
 				req,
-				duplicated =>
+				duplicatedProj =>
 				{
-					projectList.Add(duplicated);
-					ProjectCreated?.Invoke(duplicated);
+					duplicated = duplicatedProj;
+					projectList.Add(duplicatedProj);
+					ProjectCreated?.Invoke(duplicatedProj);
 					uiManager.SetLoadingView(false);
 				},
 				error =>
@@ -178,9 +186,10 @@ namespace Astrovisio
 					uiManager.SetLoadingView(false);
 				}
 			);
+			return duplicated;
 		}
 
-		public async void UpdateProject(int id, Project project)
+		public async Task<Project> UpdateProject(int id, Project project)
 		{
 			UpdateProjectRequest req = new UpdateProjectRequest
 			{
@@ -189,21 +198,24 @@ namespace Astrovisio
 				Description = project.Description
 			};
 
+			Project updated = null;
 			await apiManager.UpdateProject(id, req,
-				updated =>
+				updatedProj =>
 				{
-					Project projectToUpdate = projectList.FirstOrDefault(p => p.Id == updated.Id);
+					updated = updatedProj;
+					Project projectToUpdate = projectList.FirstOrDefault(p => p.Id == updatedProj.Id);
 					if (projectToUpdate != null)
 					{
-						projectToUpdate.UpdateFrom(updated);
+						projectToUpdate.UpdateFrom(updatedProj);
 					}
 					else
 					{
-						projectList.Add(updated);
+						projectList.Add(updatedProj);
 					}
-					ProjectUpdated?.Invoke(updated);
+					ProjectUpdated?.Invoke(updatedProj);
 				},
 				error => ApiError?.Invoke(error));
+			return updated;
 		}
 
 		public async void DeleteProject(int id, Project project)
@@ -293,13 +305,30 @@ namespace Astrovisio
 					SaveProjectCSV(dataPack);
 				}
 
+				// Get project and file
 				Project project = GetProject(projectID);
+				File file = GetFile(projectID, fileID);
+
+				// Get updated project and update file
+				await apiManager.ReadProject(
+				projectID,
+				onSuccess: (p) =>
+				{
+					File updatedFile = p.Files?.FirstOrDefault(f => f.Id == fileID);
+					file.UpdateFrom(updatedFile);
+				},
+				onError: (err) =>
+				{
+					ApiError?.Invoke(err);
+					return;
+				});
+
+
 				if (project != null && project.Files != null)
 				{
-					File file = GetFile(projectID, fileID);
 					if (file != null)
 					{
-						Debug.Log($"Found file: {file.Name}, id={file.Id}");
+						// Debug.Log($"Found file: {file.Name}, id={file.Id}, proc={file.Processed}");
 						FileProcessed.Invoke(project, file, dataPack);
 					}
 					else
@@ -335,9 +364,12 @@ namespace Astrovisio
 				Size = file.Size,
 				Processed = file.Processed,
 				Downsampling = file.Downsampling,
+				Order = file.Order,
 				ProcessedPath = file.ProcessedPath,
 				Variables = file.Variables
 			};
+
+			// Debug.Log("[UpdateFile] Request payload:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(req, Newtonsoft.Json.Formatting.Indented));
 
 			await apiManager.UpdateFile(projectId, file.Id, req,
 				updatedFile =>

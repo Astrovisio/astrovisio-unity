@@ -110,7 +110,7 @@ namespace Astrovisio
             favouriteToggle.RegisterValueChangedCallback(evt =>
             {
                 Project.Favourite = evt.newValue;
-                ProjectManager.UpdateProject(Project.Id, Project);
+                _ = ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 

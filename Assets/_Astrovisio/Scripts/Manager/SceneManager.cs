@@ -7,8 +7,14 @@ namespace Astrovisio
     {
         public static SceneManager Instance { get; private set; }
 
-        [SerializeField]
-        private RenderManager renderManager;
+        [SerializeField] private RenderManager renderManager;
+        [SerializeField] private Camera mainCamera;
+
+        // Camera
+        private Vector3 initialCameraTargetPosition;
+        private Vector3 initialCameraRotation;
+        private float initialCameraDistance;
+        private OrbitCameraController orbitController;
 
 
         private void Awake()
@@ -23,6 +29,18 @@ namespace Astrovisio
             Instance = this;
         }
 
+        private void Start()
+        {
+            orbitController = mainCamera.GetComponent<OrbitCameraController>();
+
+            if (orbitController != null)
+            {
+                initialCameraTargetPosition = orbitController.target.position;
+                initialCameraRotation = orbitController.transform.rotation.eulerAngles;
+                initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
+            }
+        }
+
         public void SetAxesGizmoVisibility(bool visibility)
         {
             DataRenderer dataRenderer = renderManager.DataRenderer;
@@ -32,6 +50,14 @@ namespace Astrovisio
                 AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
                 AxesCanvasHandler axesCanvasHandler = astrovisioDataSetRenderer.GetComponentInChildren<AxesCanvasHandler>(true);
                 axesCanvasHandler.gameObject.SetActive(visibility);
+            }
+        }
+
+        public void ResetCameraTransform()
+        {
+            if (orbitController != null)
+            {
+                orbitController.ResetCameraView(initialCameraTargetPosition, initialCameraRotation, initialCameraDistance);
             }
         }
 

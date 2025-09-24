@@ -48,6 +48,11 @@ namespace Astrovisio
         private ProjectRenderSettings projectRenderSettings = new();
 
 
+        // === Reels ===
+        private int currentReelIndex = 0;
+        private List<File> reelFileList = new();
+
+
         public ProjectSidebarRenderController(
             ProjectSidebarController projectSidebarController,
             UIManager uiManager,
@@ -64,8 +69,38 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
+            ProjectManager.FileProcessed += OnFileProcessed;
+
             Init();
         }
+
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || Project.Id != project.Id)
+            {
+                // Debug.Log($"1 {Project.Id} - {project.Id}");
+                return;
+            }
+            Project = project;
+
+            reelFileList.Clear();
+            currentReelIndex = 0;
+
+            foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))
+            {
+                if (f.Order == -1 || f.Order == 0)
+                {
+                    Debug.Log(f.Name);
+                    reelLabel.text = f.Name;
+                    reelFileList.Add(f);
+                    continue;
+                }
+
+                reelFileList.Add(f);
+            }
+        }
+
 
         private void Init()
         {
@@ -74,6 +109,41 @@ namespace Astrovisio
             prevReelButton = renderSettingsContainer.Q<Button>("PrevReelButton");
             nextReelButton = renderSettingsContainer.Q<Button>("NextReelButton");
             reelLabel = renderSettingsContainer.Q<Label>("ReelLabel");
+
+            // PREV
+            prevReelButton.clicked += () =>
+            {
+                if (reelFileList.Count == 0)
+                {
+                    return;
+                }
+
+                if (currentReelIndex == 0)
+                {
+                    currentReelIndex = reelFileList.Count - 1;
+                }
+                else
+                {
+                    currentReelIndex--;
+                }
+                reelLabel.text = reelFileList[currentReelIndex].Name;
+            };
+
+            // NEXT
+            nextReelButton.clicked += () =>
+            {
+                if (reelFileList.Count == 0)
+                {
+                    return;
+                }
+
+                currentReelIndex++;
+                if (currentReelIndex >= reelFileList.Count)
+                {
+                    currentReelIndex = 0;
+                }
+                reelLabel.text = reelFileList[currentReelIndex].Name;
+            };
 
             // Debug.Log(prevReelButton);
             // Debug.Log(nextReelButton);

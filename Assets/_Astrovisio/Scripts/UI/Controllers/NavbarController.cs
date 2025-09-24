@@ -93,10 +93,10 @@ namespace Astrovisio
             projectTab.Q<Label>("Label").text = project.Name;
 
             // Left Click
-            projectTab.Q<Button>().RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>().RegisterCallback<ClickEvent>(evt =>
             {
                 SetActiveTab(project.Id);
-                ProjectManager.OpenProject(project.Id);
+                _ = ProjectManager.OpenProject(project.Id);
             });
 
             // MiddleMouse Click
@@ -156,7 +156,7 @@ namespace Astrovisio
                     .Key;
 
                 SetActiveTab(newProjectId);
-                ProjectManager.OpenProject(newProjectId);
+                _ = ProjectManager.OpenProject(newProjectId);
             }
             else
             {
