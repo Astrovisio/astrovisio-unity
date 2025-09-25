@@ -317,6 +317,7 @@ namespace Astrovisio
             {
                 currentFile.Processed = false;
                 filesController.SetFileState(currentFile, false);
+                Debug.Log("2");
                 ProjectManager.UpdateFile(Project.Id, currentFile);
                 ProjectManager.NotifyFileUpdated(Project, currentFile); // new
             }
@@ -328,9 +329,9 @@ namespace Astrovisio
             foreach (File file in Project.Files.OrderBy(f => f.Order))
             {
                 FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
-                FileState fileState = new FileState(fileInfo, file);
+                FileState fileState = new FileState(fileInfo, file, file.Processed);
                 filesController.AddFile(fileState);
-                // Debug.Log($"File added: {file.Name} - {file.Order}");
+                // Debug.Log($"File /// Name: {file.Name} - Processed: {file.Processed}");
                 // Debug.Log($"File added: {fileState.fileInfo.Name} ({fileState.fileInfo.Size} bytes) - {fileState.fileInfo.Path}");
             }
         }
@@ -428,7 +429,7 @@ namespace Astrovisio
 
         private void UpdateFileOrderCallback()
         {
-            // Debug.Log("UpdateFileOrder");
+            // Debug.Log("UpdateFileOrderCallback");
 
             // Guard: nothing to do if project list or UI list is missing
             List<FileState> uiList = filesController.GetFileList();
@@ -473,6 +474,7 @@ namespace Astrovisio
             for (int i = 0; i < original.Count; i++)
             {
                 original[i].Order = i;
+                // Debug.Log($"1 {original[i].Id} {original[i].Name} {original[i].Processed}");
                 ProjectManager.UpdateFile(Project.Id, original[i]);
             }
 

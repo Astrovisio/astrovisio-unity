@@ -222,7 +222,8 @@ namespace Astrovisio
 
         private void OnFileProcessed(Project project, File file, DataPack pack)
         {
-            Debug.Log($"Processed project {project.Name}, file {file.Name}, with {pack.Rows.Length} points.");
+            // Debug.Log($"Processed project {project.Name}, file {file.Name}, with {pack.Rows.Length} points.");
+            // Debug.Log($"C {file.Id} {file.Name} {file.Processed}");
             RegisterProcessedFile(project, file, pack);
         }
 

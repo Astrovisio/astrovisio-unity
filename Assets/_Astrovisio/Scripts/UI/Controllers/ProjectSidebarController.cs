@@ -84,25 +84,50 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
-            // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
+            Debug.Log($"[Sidebar] Render clicked for Project id={Project?.Id}, name='{Project?.Name}'");
+
+            if (Project?.Files == null)
+            {
+                Debug.LogWarning("[Sidebar] Project.Files is null");
+                return;
+            }
+
+            Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
+
+            // Log dettagliato di ogni file e presenza del DataContainer in RenderManager
+            foreach (File f in Project.Files.OrderBy(f => f.Order))
+            {
+                bool hasDC = RenderManager.Instance.TryGetDataContainer(Project, f, out var _);
+                Debug.Log($"[Sidebar] File id={f.Id}, name='{f.Name}', processed={f.Processed}, order={f.Order}, processedPath='{f.ProcessedPath}', hasDataContainer={hasDC}");
+            }
+
             SetActiveStep(ProjectSidebarStep.Render);
 
-            // Pick the first processed file
+            // 1) prova standard: primo file con Processed == true
             File fileToRender = Project.Files.FirstOrDefault(f => f.Processed);
+
+            // 2) fallback: se nessun file è marcato Processed, ma il DataContainer esiste già in RenderManager
+            if (fileToRender == null)
+            {
+                fileToRender = Project.Files.FirstOrDefault(f => RenderManager.Instance.TryGetDataContainer(Project, f, out var _));
+                if (fileToRender != null)
+                {
+                    Debug.Log($"[Sidebar] Nessun file con Processed=true, ma trovato DataContainer per '{fileToRender.Name}'. Lo userò come fallback.");
+                }
+            }
 
             if (fileToRender != null)
             {
-                // Debug.Log($"Variable: {fileToRender.Variables[0].Name}, Min: {fileToRender.Variables[0].ThrMinSel}, Max: {fileToRender.Variables[0].ThrMaxSel}");
-                // Debug.Log($"Variable: {fileToRender.Variables[1].Name}, Min: {fileToRender.Variables[1].ThrMinSel}, Max: {fileToRender.Variables[1].ThrMaxSel}");
-                // Debug.Log($"Variable: {fileToRender.Variables[2].Name}, Min: {fileToRender.Variables[2].ThrMinSel}, Max: {fileToRender.Variables[2].ThrMaxSel}");
+                Debug.Log($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
                 RenderManager.Instance.RenderFile(Project, fileToRender);
                 UIManager.SetGizmoTransformVisibility(true);
             }
             else
             {
-                Debug.LogWarning($"No processed file found for Project {Project.Id} - {Project.Name}");
+                Debug.LogWarning($"[Sidebar] Nessun file processato trovato e nessun DataContainer registrato per Project id={Project.Id}, name='{Project.Name}'. Vedi log sopra.");
             }
         }
+
 
         private void OnGoToVRButtonClicked()
         {

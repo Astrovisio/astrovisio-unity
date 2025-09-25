@@ -181,6 +181,7 @@ namespace Astrovisio
             ProcessedPath = other.ProcessedPath;
             Id = other.Id;
 
+            // Better Variales update from ?
             if (other.Variables == null)
             {
                 Variables = new List<Variable>();

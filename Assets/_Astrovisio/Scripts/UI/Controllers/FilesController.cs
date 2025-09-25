@@ -139,6 +139,7 @@ namespace Astrovisio
 
             listView.itemIndexChanged += (oldIndex, newIndex) =>
             {
+                Debug.Log("itemIndexChanged");
                 onUpdateAction?.Invoke();
                 listView.RefreshItems();
                 // PrintListView();
@@ -182,7 +183,7 @@ namespace Astrovisio
         private void Refresh()
         {
             listView.RefreshItems();
-            onUpdateAction?.Invoke();
+            // onUpdateAction?.Invoke(); // Not needed ?
         }
 
         private string FormatFileSize(long sizeInBytes)
@@ -217,7 +218,6 @@ namespace Astrovisio
 
         public void SetFileState(File file, bool value)
         {
-            // Safety checks
             if (file == null)
             {
                 Debug.LogWarning("SetFileState: file is null.");
@@ -234,7 +234,6 @@ namespace Astrovisio
             {
                 if (fileList[i] is FileState fs)
                 {
-                    // Match either by reference or by Id (adjust if your File doesn't have Id)
                     bool isMatch =
                         ReferenceEquals(fs.file, file) ||
                         (fs.file != null && fs.file.Id == file.Id);
@@ -244,16 +243,13 @@ namespace Astrovisio
                         continue;
                     }
 
-                    // Update only if needed
                     if (fs.state != value)
                     {
                         fs.state = value;
-
-                        // IMPORTANT: FileState is a struct, assign it back to persist the change
                         fileList[i] = (T)(object)fs;
                     }
 
-                    // Refresh UI and notify listeners
+                    // Refresh UI
                     Refresh();
                     return;
                 }

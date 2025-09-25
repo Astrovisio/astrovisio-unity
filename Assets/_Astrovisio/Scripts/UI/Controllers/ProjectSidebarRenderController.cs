@@ -91,7 +91,7 @@ namespace Astrovisio
             {
                 if (f.Order == -1 || f.Order == 0)
                 {
-                    Debug.Log(f.Name);
+                    // Debug.Log(f.Name);
                     reelLabel.text = f.Name;
                     reelFileList.Add(f);
                     continue;
@@ -127,6 +127,8 @@ namespace Astrovisio
                     currentReelIndex--;
                 }
                 reelLabel.text = reelFileList[currentReelIndex].Name;
+                // Debug.Log("Prev pressed: " + currentReelIndex);
+                RenderManager.Instance.RenderFile(Project.Id, reelFileList[currentReelIndex].Id);
             };
 
             // NEXT
@@ -143,6 +145,8 @@ namespace Astrovisio
                     currentReelIndex = 0;
                 }
                 reelLabel.text = reelFileList[currentReelIndex].Name;
+                // Debug.Log("Next pressed: " + currentReelIndex);
+                RenderManager.Instance.RenderFile(Project.Id, reelFileList[currentReelIndex].Id);
             };
 
             // Debug.Log(prevReelButton);

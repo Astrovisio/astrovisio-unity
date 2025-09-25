@@ -251,7 +251,7 @@ namespace Astrovisio
 					Debug.LogError("Job ID is null. Aborting process.");
 					return;
 				}
-				Debug.Log($"[ProjectManager] Job ID: {jobID}");
+				// Debug.Log($"[ProjectManager] Job ID: {jobID}");
 
 
 				// Polling
@@ -287,6 +287,7 @@ namespace Astrovisio
 				}
 
 
+
 				// Get DataPack
 				uiManager.SetLoadingBarProgress(1.0f, ProcessingStatusMessages.GetClientMessage("loading"));
 				DataPack dataPack = await apiManager.GetJobResult(jobID.Value, error =>
@@ -305,6 +306,7 @@ namespace Astrovisio
 					SaveProjectCSV(dataPack);
 				}
 
+
 				// Get project and file
 				Project project = GetProject(projectID);
 				File file = GetFile(projectID, fileID);
@@ -315,7 +317,9 @@ namespace Astrovisio
 				onSuccess: (p) =>
 				{
 					File updatedFile = p.Files?.FirstOrDefault(f => f.Id == fileID);
+					// Debug.Log($"A {updatedFile.Id} {updatedFile.Name} {updatedFile.Processed}");
 					file.UpdateFrom(updatedFile);
+					// Debug.Log($"B {file.Id} {file.Name} {file.Processed}");
 				},
 				onError: (err) =>
 				{
@@ -371,6 +375,8 @@ namespace Astrovisio
 
 			// Debug.Log("[UpdateFile] Request payload:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(req, Newtonsoft.Json.Formatting.Indented));
 
+			// Debug.Log($"Z {file.Id} {file.Name} {file.Processed}");
+
 			await apiManager.UpdateFile(projectId, file.Id, req,
 				updatedFile =>
 				{
@@ -387,7 +393,7 @@ namespace Astrovisio
 							project.Files.Add(updatedFile);
 						}
 					}
-					// Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
+					Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
 				},
 				error =>
 				{
@@ -402,34 +408,46 @@ namespace Astrovisio
 			await apiManager.GetProcessedFile(
 				projectId,
 				fileId,
-				processedFile =>
+				dataPack =>
 				{
 					try
 					{
-						Project project = projectList.FirstOrDefault(p => p.Id == projectId);
-						if (project != null)
+						int rows = dataPack?.Rows?.Length ?? 0;
+						int cols = dataPack?.Columns?.Length ?? 0;
+						Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
+
+						Project project = GetProject(projectId);
+						if (project == null)
 						{
-							if (project.Files == null)
-							{
-								project.Files = new List<File>();
-							}
+							Debug.LogWarning($"[GetProcessedFile] Project {projectId} not found.");
+							return;
+						}
 
-							File existing = project.Files.FirstOrDefault(f => f.Id == fileId);
-							if (existing != null)
-							{
-								existing.UpdateFrom(processedFile);
-							}
-							else
-							{
-								project.Files.Add(processedFile);
-							}
+						if (project.Files == null)
+						{
+							Debug.LogWarning($"[GetProcessedFile] Project {projectId} has no file list.");
+							return;
+						}
 
+						File file = project.Files.FirstOrDefault(f => f.Id == fileId);
+						if (file == null)
+						{
+							Debug.LogWarning($"[GetProcessedFile] File {fileId} not found in project {projectId}.");
+							return;
+						}
+
+						if (!file.Processed)
+						{
+							file.Processed = true;
 							ProjectUpdated?.Invoke(project);
+							Debug.Log($"[GetProcessedFile] File {fileId} marked as processed.");
 						}
-						else
-						{
-							Debug.LogWarning($"[ProjectManager] Project {projectId} not found while updating processed file {fileId}.");
-						}
+
+						FileProcessed?.Invoke(project, file, dataPack);
+						Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
+
+						bool hasDC = RenderManager.Instance.TryGetDataContainer(projectId, fileId, out var _);
+						Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
 					}
 					finally
 					{
@@ -439,10 +457,12 @@ namespace Astrovisio
 				error =>
 				{
 					ApiError?.Invoke(error);
+					Debug.LogError($"[GetProcessedFile] API error: {error}");
 					uiManager.SetLoadingView(false);
 				}
 			);
 		}
+
 
 		public void CloseProject(int id)
 		{

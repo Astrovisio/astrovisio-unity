@@ -116,9 +116,18 @@ namespace Astrovisio
                 ProjectRowController projectRowController = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
                 projectControllers[project.Id] = projectRowController;
 
-                projectRow.RegisterCallback<ClickEvent>(evt =>
+                projectRow.RegisterCallback<ClickEvent>(async evt =>
                 {
-                    _ = ProjectManager.OpenProject(project.Id);
+                    Project projectOpened = await ProjectManager.OpenProject(project.Id);
+
+                    foreach (File file in projectOpened.Files)
+                    {
+                        if (file.Processed)
+                        {
+                            Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
+                            ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
+                        }
+                    }
                 });
 
                 target.Add(projectRow);

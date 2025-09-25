@@ -245,7 +245,7 @@ namespace Astrovisio
 
                 await SendWebRequestAsync(request);
                 string raw = request.downloadHandler.text;
-                Debug.Log($"[APIManager] Raw response: {raw}");
+                // Debug.Log($"[APIManager] Raw response: {raw}");
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
@@ -256,8 +256,8 @@ namespace Astrovisio
 
                 try
                 {
-                    var jobResponse = JsonConvert.DeserializeObject<JobResponse>(raw);
-                    Debug.Log($"[APIManager] Received job_id: {jobResponse?.JobID}");
+                    JobResponse jobResponse = JsonConvert.DeserializeObject<JobResponse>(raw);
+                    // Debug.Log($"[APIManager] Received job_id: {jobResponse?.JobID}");
                     return jobResponse?.JobID;
                 }
                 catch (Exception ex)
@@ -272,40 +272,65 @@ namespace Astrovisio
         public async Task GetProcessedFile(
             int projectID,
             int fileID,
-            Action<File> onSuccess,
+            Action<DataPack> onSuccess,
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProcessedFile(projectID, fileID);
             Debug.Log($"[APIManager] GET {url}");
 
-            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            const int maxRetries = 3;
+            const int retryDelayMs = 2000;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
-
-                await SendWebRequestAsync(request);
-
-                if (request.result != UnityWebRequest.Result.Success)
+                using (UnityWebRequest request = UnityWebRequest.Get(url))
                 {
-                    Debug.LogError($"[APIManager] Error GET ProcessedFile: {request.error}");
-                    onError?.Invoke(request.downloadHandler.text);
-                }
-                else
-                {
-                    try
+
+                    request.downloadHandler = new DownloadHandlerBuffer();
+                    request.timeout = 10;
+                    request.SetRequestHeader("Accept", "application/x-msgpack");
+
+                    await SendWebRequestAsync(request);
+
+                    Debug.Log($"Attempt {attempt}: Request error = {request.error}");
+
+                    if (request.result == UnityWebRequest.Result.Success)
                     {
-                        string json = request.downloadHandler.text;
-                        File processedFile = JsonConvert.DeserializeObject<File>(json);
-                        onSuccess?.Invoke(processedFile);
+                        try
+                        {
+                            byte[] rawBytes = request.downloadHandler.data;
+                            DataPack dataPack = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
+                            onSuccess?.Invoke(dataPack);
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError($"[APIManager] Deserialization failed (MessagePack): {ex.Message}");
+                            onError?.Invoke("Deserialization failed: " + ex.Message);
+                            return;
+                        }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Debug.LogError($"[APIManager] Failed to parse processed file: {ex.Message}");
-                        onError?.Invoke("Deserialization failed: " + ex.Message);
+                        Debug.LogError($"[APIManager] Error GET ProcessedFile (attempt {attempt}): {request.error}");
+                        Debug.LogError($"[APIManager] Error Text: {request.downloadHandler.text}");
+
+                        if (attempt == maxRetries)
+                        {
+                            onError?.Invoke(string.IsNullOrEmpty(request.downloadHandler.text)
+                                ? request.error
+                                : request.downloadHandler.text);
+                            return;
+                        }
+
+                        await Task.Delay(retryDelayMs);
                     }
                 }
             }
+
+            onError?.Invoke("Unknown error");
         }
+
 
         public async Task UpdateFile(
             int projectID,
@@ -399,7 +424,7 @@ namespace Astrovisio
 
                     await SendWebRequestAsync(request);
 
-                    Debug.Log($"Attempt {attempt}: Request error = {request.error}");
+                    Debug.Log($"Attempt {attempt}");
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {

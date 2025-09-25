@@ -33,11 +33,11 @@ namespace Astrovisio
         public File file;
         public bool state;
 
-        public FileState(FileInfo fileInfo, File file)
+        public FileState(FileInfo fileInfo, File file, bool state)
         {
             this.fileInfo = fileInfo;
             this.file = file;
-            state = false;
+            this.state = state;
         }
 
         public string Path => fileInfo.Path;

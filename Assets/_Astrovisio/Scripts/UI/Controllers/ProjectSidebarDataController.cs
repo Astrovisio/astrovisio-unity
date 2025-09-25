@@ -230,7 +230,7 @@ namespace Astrovisio
 
         private void OnProcessDataClicked()
         {
-            SetProcessDataButton(false);
+            // SetProcessDataButton(false);
             ProjectManager.ProcessFile(Project.Id, currentFile.Id);
             // UpdateRenderingParams();
         }
