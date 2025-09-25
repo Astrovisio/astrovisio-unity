@@ -292,7 +292,7 @@ namespace Astrovisio
 
                     await SendWebRequestAsync(request);
 
-                    Debug.Log($"Attempt {attempt}: Request error = {request.error}");
+                    Debug.Log($"Attempt {attempt}");
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {
@@ -368,7 +368,7 @@ namespace Astrovisio
 
         public async Task ReplaceProjectFiles(
             int projectID,
-            ReplaceProjectFileRequest req)
+            ReplaceProjectFilesRequest req)
         {
             if (req == null || req.Paths == null || req.Paths.Length == 0)
                 Debug.LogWarning("[APIManager] ReplaceProjectFiles called with empty request/paths.");
@@ -400,8 +400,6 @@ namespace Astrovisio
                 Debug.Log($"[APIManager] ReplaceProjectFiles OK. Status: {status}\nBody: {body}");
             }
         }
-
-
 
         public async Task<JobStatusResponse> GetJobProgress(
             int jobID,

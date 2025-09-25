@@ -19,6 +19,8 @@ namespace Astrovisio
         private readonly List<FileState> fileList = new();
         private readonly ListView listView;
 
+        private Label fileCounterLabel;
+
 
         public ProjectFilesController(ProjectManager projectManager, Project project, VisualElement root, UIContextSO ctx, Action onUpdateAction = null, Action<FileState> onClickAction = null)
         {
@@ -26,6 +28,9 @@ namespace Astrovisio
             Project = project;
             Root = root;
             UIContextSO = ctx;
+
+            fileCounterLabel = Root.Q<Label>("FileCounterLabel");
+            UpdateFileCounter();
 
             listView = Root.Q<ListView>();
             if (listView == null)
@@ -72,7 +77,6 @@ namespace Astrovisio
             };
 
 
-
             listView.bindItem = (listItemVisualElement, i) =>
             {
                 FileState entry = fileList[i];
@@ -114,6 +118,7 @@ namespace Astrovisio
                         Debug.Log("Remove file here... API CALL");
                         ProjectManager.RemoveFile(Project.Id, current.file.Id);
                         RemoveFile(current);
+                        UpdateFileCounter();
                     });
                 }
             };
@@ -228,6 +233,10 @@ namespace Astrovisio
             Debug.LogWarning($"SetFileState: file with Id={file.Id} not found in list.");
         }
 
+        private void UpdateFileCounter()
+        {
+            fileCounterLabel.text = $"Files ({Project.Files.Count})";
+        }
 
         public void PrintListView()
         {

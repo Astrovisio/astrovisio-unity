@@ -84,7 +84,7 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
-            Debug.Log($"[Sidebar] Render clicked for Project id={Project?.Id}, name='{Project?.Name}'");
+            // Debug.Log($"[Sidebar] Render clicked for Project id={Project?.Id}, name='{Project?.Name}'");
 
             if (Project?.Files == null)
             {
@@ -92,13 +92,13 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
+            // Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
 
             // Log dettagliato di ogni file e presenza del DataContainer in RenderManager
             foreach (File f in Project.Files.OrderBy(f => f.Order))
             {
                 bool hasDC = RenderManager.Instance.TryGetDataContainer(Project, f, out var _);
-                Debug.Log($"[Sidebar] File id={f.Id}, name='{f.Name}', processed={f.Processed}, order={f.Order}, processedPath='{f.ProcessedPath}', hasDataContainer={hasDC}");
+                // Debug.Log($"[Sidebar] File id={f.Id}, name='{f.Name}', processed={f.Processed}, order={f.Order}, processedPath='{f.ProcessedPath}', hasDataContainer={hasDC}");
             }
 
             SetActiveStep(ProjectSidebarStep.Render);
@@ -118,7 +118,7 @@ namespace Astrovisio
 
             if (fileToRender != null)
             {
-                Debug.Log($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
+                // Debug.Log($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
                 RenderManager.Instance.RenderFile(Project, fileToRender);
                 UIManager.SetGizmoTransformVisibility(true);
             }

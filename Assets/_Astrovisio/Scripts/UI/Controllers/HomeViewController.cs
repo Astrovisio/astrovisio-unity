@@ -119,6 +119,7 @@ namespace Astrovisio
                 projectRow.RegisterCallback<ClickEvent>(async evt =>
                 {
                     Project projectOpened = await ProjectManager.OpenProject(project.Id);
+                    Debug.Log("Opening...");
 
                     foreach (File file in projectOpened.Files)
                     {

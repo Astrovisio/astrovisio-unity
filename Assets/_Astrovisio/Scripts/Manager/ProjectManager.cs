@@ -414,7 +414,7 @@ namespace Astrovisio
 					{
 						int rows = dataPack?.Rows?.Length ?? 0;
 						int cols = dataPack?.Columns?.Length ?? 0;
-						Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
+						// Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
 
 						Project project = GetProject(projectId);
 						if (project == null)
@@ -444,10 +444,10 @@ namespace Astrovisio
 						}
 
 						FileProcessed?.Invoke(project, file, dataPack);
-						Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
+						// Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
 
 						bool hasDC = RenderManager.Instance.TryGetDataContainer(projectId, fileId, out var _);
-						Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
+						// Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
 					}
 					finally
 					{
@@ -492,7 +492,7 @@ namespace Astrovisio
 				.Where(p => !string.IsNullOrEmpty(p))
 				.ToArray();
 
-			var req = new ReplaceProjectFileRequest
+			var req = new ReplaceProjectFilesRequest
 			{
 				Paths = remainingPaths
 			};

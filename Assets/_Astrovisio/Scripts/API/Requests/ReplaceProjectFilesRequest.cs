@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Astrovisio
 {
-    public class ReplaceProjectFileRequest
+    public class ReplaceProjectFilesRequest
     {
         [JsonProperty("paths")]
         public string[] Paths { get; set; }

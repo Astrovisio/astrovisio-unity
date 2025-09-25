@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CatalogData;
-using TMPro;
-using Unity.VectorGraphics;
 using UnityEngine;
 
 namespace Astrovisio
@@ -153,7 +150,7 @@ namespace Astrovisio
                 return;
             }
             RenderDataContainer(dc);
-            Debug.Log($"Rendering project id {projectId}, file id {fileId}");
+            // Debug.Log($"Rendering project id {projectId}, file id {fileId}");
         }
 
         public void RenderFile(Project project, File file)
@@ -164,7 +161,7 @@ namespace Astrovisio
                 return;
             }
             RenderDataContainer(dc);
-            Debug.Log($"Rendering project {project?.Name}, file {file?.Name}");
+            // Debug.Log($"Rendering project {project?.Name}, file {file?.Name}");
         }
 
         private void RenderDataContainer(DataContainer dc)
