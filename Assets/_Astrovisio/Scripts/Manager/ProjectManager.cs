@@ -463,6 +463,69 @@ namespace Astrovisio
 			);
 		}
 
+		public async void RemoveFile(int projectId, int fileId)
+		{
+			// 1) Recupero progetto e file
+			Project project = GetProject(projectId);
+			if (project == null)
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found.");
+				return;
+			}
+			if (project.Files == null || project.Files.Count == 0)
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} has no files.");
+				return;
+			}
+
+			int idx = project.Files.FindIndex(f => f.Id == fileId);
+			if (idx < 0)
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: file {fileId} not found in project {projectId}.");
+				return;
+			}
+
+			// 2) Preparo la richiesta API con le paths rimanenti (escludo il file da rimuovere)
+			var remainingPaths = project.Files
+				.Where(f => f.Id != fileId)
+				.Select(f => f.Path)
+				.Where(p => !string.IsNullOrEmpty(p))
+				.ToArray();
+
+			var req = new ReplaceProjectFileRequest
+			{
+				Paths = remainingPaths
+			};
+
+			// 3) Chiamata API per sostituire l’elenco file lato server
+			try
+			{
+				await apiManager.ReplaceProjectFiles(projectId, req);
+				Debug.Log($"[ProjectManager] RemoveFile: server updated for project {projectId} (removed file {fileId}).");
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError($"[ProjectManager] RemoveFile: API error replacing files. {ex.Message}");
+				ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
+				return; // esco senza toccare il modello locale
+			}
+
+			// 4) (Facoltativo) Rimuovo eventuali processed data associati al file rimosso
+			// Se hai un metodo del tipo RenderManager.Instance.RemoveProcessedFile(projectId, fileId), puoi usarlo:
+			// bool removedProcessed = RenderManager.Instance?.RemoveProcessedFile(projectId, fileId) ?? false;
+			// if (removedProcessed) Debug.Log($"[ProjectManager] RemoveFile: removed processed data for P{projectId} F{fileId}.");
+
+			// 5) Aggiorno il modello locale: rimuovo il file e riallineo gli 'Order'
+			project.Files.RemoveAt(idx);
+			for (int i = 0; i < project.Files.Count; i++)
+			{
+				project.Files[i].Order = i;
+			}
+
+			// 6) Notifico l’update per aggiornare le viste
+			ProjectUpdated?.Invoke(project);
+		}
+
 
 		public void CloseProject(int id)
 		{

@@ -331,7 +331,6 @@ namespace Astrovisio
             onError?.Invoke("Unknown error");
         }
 
-
         public async Task UpdateFile(
             int projectID,
             int fileID,
@@ -366,6 +365,43 @@ namespace Astrovisio
                 }
             }
         }
+
+        public async Task ReplaceProjectFiles(
+            int projectID,
+            ReplaceProjectFileRequest req)
+        {
+            if (req == null || req.Paths == null || req.Paths.Length == 0)
+                Debug.LogWarning("[APIManager] ReplaceProjectFiles called with empty request/paths.");
+
+            string url = APIEndpoints.UpdateProjectFiles(projectID);
+            string json = JsonConvert.SerializeObject(req);
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+
+            Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+
+            using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPUT))
+            {
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                long status = request.responseCode;
+                string body = request.downloadHandler?.text;
+                bool success = request.result == UnityWebRequest.Result.Success;
+
+                if (!success)
+                {
+                    Debug.LogError($"[APIManager] Error PUT ReplaceProjectFiles: {request.error} | Status: {status}\nBody: {body}");
+                    throw new Exception($"PUT failed ({status}): {request.error}");
+                }
+
+                Debug.Log($"[APIManager] ReplaceProjectFiles OK. Status: {status}\nBody: {body}");
+            }
+        }
+
+
 
         public async Task<JobStatusResponse> GetJobProgress(
             int jobID,

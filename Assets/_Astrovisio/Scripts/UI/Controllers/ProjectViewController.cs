@@ -31,7 +31,7 @@ namespace Astrovisio
         // === Local ===
         private File currentFile;
         private float _nextAllowedUpdate;
-        private FilesController<FileState> filesController;
+        private ProjectFilesController projectFilesController;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
         private readonly List<ParamRowController> paramControllers = new();
 
@@ -65,7 +65,9 @@ namespace Astrovisio
 
             // Files
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
-            filesController = new FilesController<FileState>(
+            projectFilesController = new ProjectFilesController(
+                ProjectManager,
+                Project,
                 filesContainer,
                 UIManager.GetUIContext(),
                 () => UpdateFileOrderCallback(),
@@ -316,7 +318,7 @@ namespace Astrovisio
             if (currentFile != null)
             {
                 currentFile.Processed = false;
-                filesController.SetFileState(currentFile, false);
+                projectFilesController.SetFileState(currentFile, false);
                 Debug.Log("2");
                 ProjectManager.UpdateFile(Project.Id, currentFile);
                 ProjectManager.NotifyFileUpdated(Project, currentFile); // new
@@ -330,7 +332,7 @@ namespace Astrovisio
             {
                 FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
                 FileState fileState = new FileState(fileInfo, file, file.Processed);
-                filesController.AddFile(fileState);
+                projectFilesController.AddFile(fileState);
                 // Debug.Log($"File /// Name: {file.Name} - Processed: {file.Processed}");
                 // Debug.Log($"File added: {fileState.fileInfo.Name} ({fileState.fileInfo.Size} bytes) - {fileState.fileInfo.Path}");
             }
@@ -432,7 +434,7 @@ namespace Astrovisio
             // Debug.Log("UpdateFileOrderCallback");
 
             // Guard: nothing to do if project list or UI list is missing
-            List<FileState> uiList = filesController.GetFileList();
+            List<FileState> uiList = projectFilesController.GetFileList();
             if (Project.Files == null || uiList == null)
             {
                 return;
@@ -507,7 +509,7 @@ namespace Astrovisio
 
             // Debug.Log(project.Name + " - " + file.Name + " @ processed: " + file.Processed);
 
-            filesController.SetFileState(file, true);
+            projectFilesController.SetFileState(file, true);
         }
 
     }

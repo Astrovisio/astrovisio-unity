@@ -26,7 +26,7 @@ namespace Astrovisio
 
         // === Local ===
         private VisualElement root;
-        private FilesController<FileInfo> filesController;
+        private NewProjectFilesController filesController;
 
         public NewProjectViewController(ProjectManager projectManager, UIManager uiManager)
         {
@@ -43,7 +43,7 @@ namespace Astrovisio
 
 
             VisualElement filesContainer = this.root.Q<VisualElement>("FilesContainer");
-            filesController = new FilesController<FileInfo>(
+            filesController = new NewProjectFilesController(
                 filesContainer,
                 UIManager.GetUIContext(),
                 () => UpdateFilesSizeLabel()
