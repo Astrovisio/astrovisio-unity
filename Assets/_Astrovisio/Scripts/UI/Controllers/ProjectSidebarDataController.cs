@@ -28,6 +28,7 @@ namespace Astrovisio
         private bool isReadyToProcessData;
         private Dictionary<string, VisualElement> paramRowVisualElement = new();
         private File currentFile;
+        private EventCallback<ChangeEvent<string>> _downsamplingCallback;
 
 
         public ProjectSidebarDataController(
@@ -81,6 +82,17 @@ namespace Astrovisio
         private void InitDownsamplingDropdown()
         {
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
+            if (downsamplingDropdown == null)
+            {
+                Debug.LogError("DropdownField not found.");
+                return;
+            }
+
+            if (_downsamplingCallback != null)
+            {
+                downsamplingDropdown.UnregisterValueChangedCallback(_downsamplingCallback);
+            }
+
             downsamplingDropdown.choices.Clear();
             downsamplingDropdown.choices.AddRange(new[] { "0%", "25%", "50%", "75%" });
 
@@ -88,32 +100,48 @@ namespace Astrovisio
             {
                 Debug.LogWarning("No current file, downsampling dropdown disabled.");
                 downsamplingDropdown.SetEnabled(false);
+                downsamplingDropdown.SetValueWithoutNotify("0%");
                 return;
             }
 
             downsamplingDropdown.SetEnabled(true);
-            downsamplingDropdown.value = ((1 - currentFile.Downsampling) * 100).ToString("0") + "%";
-            downsamplingDropdown?.RegisterValueChangedCallback(evt =>
+
+            string pctText = ((1f - currentFile.Downsampling) * 100f).ToString("0") + "%";
+            downsamplingDropdown.SetValueWithoutNotify(pctText);
+
+            if (_downsamplingCallback == null)
             {
-                string percentageText = evt.newValue.Replace("%", "");
-                if (float.TryParse(percentageText, out float percentage))
+                _downsamplingCallback = evt =>
                 {
-                    float value = 1 - (percentage / 100f);
-                    currentFile.Downsampling = value;
-                    UpdateProcessDataButton();
-                }
-                else
-                {
-                    Debug.LogWarning("Invalid percentage format.");
-                }
-            });
+                    string percentageText = evt.newValue.Replace("%", "");
+                    if (float.TryParse(
+                            percentageText,
+                            System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            out float percentage))
+                    {
+                        float value = 1f - (percentage / 100f);
+                        currentFile.Downsampling = value;
+
+                        Debug.Log($"[Downsampling] Set to {percentage:0}% → value={value:0.##}");
+                        ProjectManager.UpdateFile(Project.Id, currentFile);
+                        UpdateProcessDataButton();
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Invalid percentage format: '{evt.newValue}'");
+                    }
+                };
+            }
+
+            downsamplingDropdown.RegisterValueChangedCallback(_downsamplingCallback);
         }
 
         private void InitActualSizeLabel()
         {
             actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
         }
-        
+
         private void InitWarningLabel()
         {
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
@@ -380,7 +408,6 @@ namespace Astrovisio
                 return;
             }
 
-            // Skip if the selected file is already displayed
             if (ReferenceEquals(currentFile, file))
             {
                 return;
@@ -388,7 +415,6 @@ namespace Astrovisio
 
             currentFile = file;
 
-            // Rebuild the right panel for the newly selected file
             InitWarningLabel();
             InitParamsScrollView();
             InitActualSizeLabel();

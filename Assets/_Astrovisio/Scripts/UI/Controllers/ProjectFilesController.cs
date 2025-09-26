@@ -9,29 +9,51 @@ namespace Astrovisio
 
     public class ProjectFilesController
     {
+
+        // === Dependencies ===
         public ProjectManager ProjectManager { get; }
         public Project Project { get; }
         public VisualElement Root { get; }
         public UIContextSO UIContextSO { get; }
 
-        public IReadOnlyList<FileState> Items => fileList;
+        // === Actions ===
+        private Action onUpdateAction;
+        private Action<FileState> onClickAction;
 
+        // === Local ===
         private readonly List<FileState> fileList = new();
-        private readonly ListView listView;
-
+        private ListView listView;
         private Label fileCounterLabel;
 
 
-        public ProjectFilesController(ProjectManager projectManager, Project project, VisualElement root, UIContextSO ctx, Action onUpdateAction = null, Action<FileState> onClickAction = null)
+        public ProjectFilesController(
+            ProjectManager projectManager,
+            Project project,
+            VisualElement root,
+            UIContextSO ctx,
+            Action onUpdateAction = null,
+            Action<FileState> onClickAction = null)
         {
             ProjectManager = projectManager;
             Project = project;
             Root = root;
             UIContextSO = ctx;
 
+            this.onUpdateAction = onUpdateAction;
+            this.onClickAction = onClickAction;
+
+            InitFileCounterLabel();
+            InitListView();
+        }
+
+        private void InitFileCounterLabel()
+        {
             fileCounterLabel = Root.Q<Label>("FileCounterLabel");
             UpdateFileCounter();
+        }
 
+        private void InitListView()
+        {
             listView = Root.Q<ListView>();
             if (listView == null)
             {

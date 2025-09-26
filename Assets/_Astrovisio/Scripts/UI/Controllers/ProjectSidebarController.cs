@@ -41,13 +41,39 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            RenderManager.Instance.OnProjectRenderReady += OnProjectReadyToGetRendered;
+            // RenderManager.Instance.OnProjectRenderReady += OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened += OnProjectOpened;
+            ProjectManager.FileProcessed += OnFileProcessed;
+            ProjectManager.FileUpdated += OnFileUpdated;
 
             Init();
             SetActiveStep(ProjectSidebarStep.Data);
 
             // Debug.Log("###" + (projectManager.GetProject(Project.Id) == Project));
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, processed {file.Processed}.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
+        }
+
+        private void OnFileUpdated(Project project, File file)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
         }
 
         private void Init()
@@ -73,6 +99,14 @@ namespace Astrovisio
             // Init
             projectSidebarDataController = new ProjectSidebarDataController(this, UIManager, ProjectManager, UIContextSO, Project, dataSettingsContainer);
             projectSidebarRenderController = new ProjectSidebarRenderController(this, UIManager, ProjectManager, UIContextSO, Project, renderSettingsContainer);
+        }
+
+        public void Dispose()
+        {
+            // RenderManager.Instance.OnProjectRenderReady -= OnProjectReadyToGetRendered;
+            ProjectManager.ProjectOpened -= OnProjectOpened;
+            ProjectManager.FileProcessed -= OnFileProcessed;
+            ProjectManager.FileUpdated -= OnFileUpdated;
         }
 
         private void OnDataSettingsButtonClicked()
@@ -127,7 +161,6 @@ namespace Astrovisio
                 Debug.LogWarning($"[Sidebar] Nessun file processato trovato e nessun DataContainer registrato per Project id={Project.Id}, name='{Project.Name}'. Vedi log sopra.");
             }
         }
-
 
         private void OnGoToVRButtonClicked()
         {
@@ -194,19 +227,19 @@ namespace Astrovisio
             goToVRButton.Blur();
         }
 
-        private void OnProjectReadyToGetRendered(Project project)
-        {
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-            else
-            {
-                Project = project;
-            }
+        // private void OnProjectReadyToGetRendered(Project project)
+        // {
+        //     if (Project.Id != project.Id)
+        //     {
+        //         return;
+        //     }
+        //     else
+        //     {
+        //         Project = project;
+        //     }
 
-            SetNextStepButtons(true);
-        }
+        //     SetNextStepButtons(true);
+        // }
 
         private void OnProjectOpened(Project project)
         {

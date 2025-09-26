@@ -157,6 +157,8 @@ namespace Astrovisio
             //     controller.Root.style.display = DisplayStyle.None;
             // }
             // homeViewContainer.style.display = DisplayStyle.Flex;
+
+            projectViewControllerDictionary[project.Id].Dispose();
             contentContainer.Remove(projectViewControllerDictionary[project.Id].Root);
             projectViewControllerDictionary.Remove(project.Id);
         }

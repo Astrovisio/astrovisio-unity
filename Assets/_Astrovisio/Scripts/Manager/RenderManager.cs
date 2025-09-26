@@ -85,8 +85,11 @@ namespace Astrovisio
             RenderSettingsController = new RenderSettingsController();
         }
 
-
-
+        private void OnDestroy()
+        {
+            projectManager.FileUpdated -= OnFileUpdated;
+            projectManager.FileProcessed -= OnFileProcessed;
+        }
 
         // === Add / Get / Remove / Clear ===
         private static ProjectFile Key(int projectId, int fileId)

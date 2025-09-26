@@ -114,6 +114,7 @@ namespace Astrovisio
             // }
             // sidebarContainer.style.display = DisplayStyle.Flex;
 
+            projectSidebarControllerDictionary[project.Id].Dispose();
             sideContainer.Remove(projectSidebarControllerDictionary[project.Id].Root);
             projectSidebarControllerDictionary.Remove(project.Id);
         }

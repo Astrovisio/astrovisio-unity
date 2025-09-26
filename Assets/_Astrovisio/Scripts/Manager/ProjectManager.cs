@@ -387,6 +387,8 @@ namespace Astrovisio
 						if (fileToUpdate != null)
 						{
 							fileToUpdate.UpdateFrom(updatedFile);
+							Debug.Log("a");
+							FileUpdated?.Invoke(project, fileToUpdate);
 						}
 						else
 						{
@@ -569,22 +571,22 @@ namespace Astrovisio
 		}
 
 		// TODO: evaluate utility of this function
-		public void NotifyFileUpdated(Project project, File file)
-		{
-			if (file == null)
-			{
-				Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
-				return;
-			}
+		// public void NotifyFileUpdated(Project project, File file)
+		// {
+		// 	if (file == null)
+		// 	{
+		// 		Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
+		// 		return;
+		// 	}
 
-			if (project == null)
-			{
-				Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
-				return;
-			}
+		// 	if (project == null)
+		// 	{
+		// 		Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
+		// 		return;
+		// 	}
 
-			FileUpdated?.Invoke(project, file);
-		}
+		// 	FileUpdated?.Invoke(project, file);
+		// }
 
 		private void SaveProjectCSV(DataPack dataPack)
 		{
