@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace Astrovisio
@@ -69,7 +70,7 @@ namespace Astrovisio
                 Project,
                 filesContainer,
                 UIManager.GetUIContext(),
-                () => UpdateFileOrderCallback(),
+                async () => await UpdateFileOrderCallback(),
                 OnFileRowClicked
             );
 
@@ -325,7 +326,7 @@ namespace Astrovisio
             if (currentFile != null)
             {
                 currentFile.Processed = false;
-                Debug.Log("UpdateFile");
+                // Debug.Log("UpdateFile");
                 ProjectManager.UpdateFile(Project.Id, currentFile);
             }
 
@@ -434,7 +435,7 @@ namespace Astrovisio
             }
         }
 
-        private void UpdateFileOrderCallback()
+        private async Task UpdateFileOrderCallback()
         {
             // Debug.Log("UpdateFileOrderCallback");
 
@@ -470,15 +471,18 @@ namespace Astrovisio
                 (original[i], original[j]) = (original[j], original[i]);
             }
 
-
+            int[] orderIds = new int[original.Count];
             for (int i = 0; i < original.Count; i++)
             {
-                original[i].Order = i;
-                Debug.Log("111");
-                ProjectManager.UpdateFile(Project.Id, original[i]);
+                // original[i].Order = i;
+                // ProjectManager.UpdateFile(Project.Id, original[i]);
+
+                orderIds[i] = original[i].Id;
             }
 
-            // Check order (let commented)
+            await ProjectManager.UpdateFileOrder(Project.Id, orderIds);
+
+            // // Check order
             // for (int i = 0; i < Project.Files.Count; i++)
             // {
             //     Debug.Log(Project.Files[i].Name);

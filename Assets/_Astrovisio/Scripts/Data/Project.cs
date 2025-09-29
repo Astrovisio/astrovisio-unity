@@ -133,8 +133,13 @@ namespace Astrovisio
 
         public void UpdateFrom(Project other)
         {
-            if (other == null) return;
+            // If 'other' is null, there is nothing to merge/update.
+            if (other == null)
+            {
+                return;
+            }
 
+            // Copy basic project metadata from 'other' (shallow copy).
             Name = other.Name;
             Favourite = other.Favourite;
             Description = other.Description;
@@ -142,8 +147,59 @@ namespace Astrovisio
             Created = other.Created;
             LastOpened = other.LastOpened;
 
-            if (Files == null || other.Files == null) return;
 
+            // If the source project has no files, it means the canonical state is "no files".
+            // In that case, clear our local list (if any) and notify the UI/bindings, then return.
+            if (other.Files == null)
+            {
+                if (Files != null && Files.Count > 0)
+                {
+                    Files.Clear();
+                    OnPropertyChanged(nameof(Files));
+                }
+                return;
+            }
+
+            // Ensure our local list exists before proceeding with sync.
+            if (Files == null)
+            {
+                Files = new List<File>();
+            }
+
+            // --- Removal pass ---
+            // Iterate backwards so we can safely remove items by index.
+            // For each local file, check if it still exists in 'other' by Id; if not, remove it.
+            for (int i = Files.Count - 1; i >= 0; i--)
+            {
+                File current = Files[i];
+                // Defensive check: remove null entries if any have crept in.
+                if (current == null)
+                {
+                    Files.RemoveAt(i);
+                    continue;
+                }
+
+                bool existsInOther = false;
+                // Linear scan of 'other.Files' to find a matching Id.
+                foreach (File of in other.Files)
+                {
+                    if (of != null && of.Id == current.Id)
+                    {
+                        existsInOther = true;
+                        break;
+                    }
+                }
+                // If not found in 'other', this file was removed on the source side -> remove locally.
+                if (!existsInOther)
+                {
+                    Files.RemoveAt(i);
+                }
+            }
+
+            // --- Upsert pass (update or insert) ---
+            // For each file in 'other':
+            //   - If we already have it (same Id), update the existing instance (preserve reference).
+            //   - If we don't have it, create a new instance and copy values from 'other'.
             foreach (File otherFile in other.Files)
             {
                 if (otherFile == null)
@@ -151,16 +207,31 @@ namespace Astrovisio
                     continue;
                 }
 
+                bool found = false;
+                // Look for a local file with the same Id.
                 for (int i = 0; i < Files.Count; i++)
                 {
-                    File currentFile = Files[i];
-                    if (currentFile != null && currentFile.Id == otherFile.Id)
+                    File current = Files[i];
+                    if (current != null && current.Id == otherFile.Id)
                     {
-                        currentFile.UpdateFrom(otherFile);
+                        // Keep the same reference and just update its fields.
+                        current.UpdateFrom(otherFile);
+                        found = true;
                         break;
                     }
                 }
+
+                // If not found, this is a new file -> instantiate and copy data.
+                if (!found)
+                {
+                    File newFile = new File();
+                    newFile.UpdateFrom(otherFile);
+                    Files.Add(newFile);
+                }
             }
+
+            // Notify that the 'Files' collection has changed so the UI/bindings can refresh.
+            OnPropertyChanged(nameof(Files));
         }
 
         public Project DeepCopy()

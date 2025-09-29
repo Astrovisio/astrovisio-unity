@@ -541,7 +541,11 @@ namespace Astrovisio
             reelFileList.Clear();
             currentReelIndex = 0;
 
-            Debug.Log($"Test: {project.Files.Where(f => f.Processed)}");
+            foreach (File f in project.Files)
+            {
+                Debug.Log($"File: {f.Name} - {f.Order}");
+            }
+
             foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))
             {
                 if (f.Order == -1 || f.Order == 0)

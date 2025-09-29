@@ -27,6 +27,7 @@ namespace Astrovisio
 		public event Action ProjectUnselected;
 		public event Action<Project, File> FileSelected;
 		public event Action<Project, File> FileUpdated;
+		public event Action<Project, File> FileAdded;
 		public event Action<Project, File, DataPack> FileProcessed;
 		public event Action<string> ApiError;
 
@@ -395,7 +396,6 @@ namespace Astrovisio
 						if (fileToUpdate != null)
 						{
 							fileToUpdate.UpdateFrom(updatedFile);
-							Debug.Log("a");
 							FileUpdated?.Invoke(project, fileToUpdate);
 						}
 						else
@@ -476,7 +476,7 @@ namespace Astrovisio
 		public async Task<File> AddFile(int projectId, string path)
 		{
 			// Pre-checks
-			var project = GetProject(projectId);
+			Project project = GetProject(projectId);
 			if (project == null)
 			{
 				Debug.LogWarning($"[ProjectManager] AddFile: project {projectId} not found.");
@@ -500,7 +500,7 @@ namespace Astrovisio
 				.Concat(new[] { path })
 				.ToArray();
 
-			var req = new ReplaceProjectFilesRequest { Paths = newPaths };
+			ReplaceProjectFilesRequest req = new ReplaceProjectFilesRequest { Paths = newPaths };
 
 			uiManager.SetLoadingView(true);
 			try
@@ -540,34 +540,10 @@ namespace Astrovisio
 					return null;
 				}
 
-				// Re-acquire current instance (in case it was replaced elsewhere)
-				var current = GetProject(projectId) ?? project;
-
-				// Update top-level and files in-place
-				current.Files ??= new List<File>();
-				updated.Files ??= new List<File>();
-				current.UpdateFrom(updated); // updates existing files by Id
-
-				// Remove files no longer present server-side
-				var updatedIds = new HashSet<int>(updated.Files.Select(f => f.Id));
-				current.Files.RemoveAll(f => !updatedIds.Contains(f.Id));
-
-				// Add any new files included by server
-				var currentIds = new HashSet<int>(current.Files.Select(f => f.Id));
-				foreach (var nf in updated.Files)
-				{
-					if (!currentIds.Contains(nf.Id))
-						current.Files.Add(nf);
-				}
-
-				// Recompute order locally
-				for (int i = 0; i < current.Files.Count; i++)
-					current.Files[i].Order = i;
-
-				ProjectUpdated?.Invoke(current);
-
-				// Return the newly added file by path
-				return current.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
+				Project updatedProject = GetProject(projectId) ?? project;
+				updatedProject.UpdateFrom(updated);
+				ProjectUpdated?.Invoke(updatedProject);
+				return updatedProject.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
 			}
 			finally
 			{
@@ -575,11 +551,10 @@ namespace Astrovisio
 			}
 		}
 
-
 		public async Task<bool> RemoveFile(int projectId, int fileId)
 		{
 			// Pre-checks
-			var project = GetProject(projectId);
+			Project project = GetProject(projectId);
 			if (project == null || project.Files == null || project.Files.Count == 0)
 			{
 				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found or has no files.");
@@ -595,13 +570,13 @@ namespace Astrovisio
 			try
 			{
 				// Build server payload without the removed file
-				var remainingPaths = project.Files
+				string[] remainingPaths = project.Files
 					.Where(f => f.Id != fileId)
 					.Select(f => f.Path)
 					.Where(p => !string.IsNullOrEmpty(p))
 					.ToArray();
 
-				var req = new ReplaceProjectFilesRequest { Paths = remainingPaths };
+				ReplaceProjectFilesRequest req = new ReplaceProjectFilesRequest { Paths = remainingPaths };
 
 				// Server update
 				try
@@ -638,33 +613,13 @@ namespace Astrovisio
 					return false;
 				}
 
-				// Re-acquire current instance (in case it was replaced elsewhere)
-				var current = GetProject(projectId) ?? project;
+				Project updatedProject = GetProject(projectId) ?? project;
 
-				// Ensure lists exist
-				current.Files ??= new List<File>();
-				updated.Files ??= new List<File>();
+				Debug.Log("updatedProject.Files.Count " + updatedProject.Files.Count);
+				Debug.Log("updated.Files.Count " + updated.Files.Count);
 
-				// Update top-level fields and in-place files by Id
-				current.UpdateFrom(updated);
-
-				// Remove files no longer present server-side
-				var updatedIds = new HashSet<int>(updated.Files.Select(f => f.Id));
-				current.Files.RemoveAll(f => !updatedIds.Contains(f.Id));
-
-				// Add any new files present server-side and missing locally
-				var currentIds = new HashSet<int>(current.Files.Select(f => f.Id));
-				foreach (var nf in updated.Files)
-				{
-					if (!currentIds.Contains(nf.Id))
-						current.Files.Add(nf);
-				}
-
-				// Recompute order locally (keep it simple)
-				for (int i = 0; i < current.Files.Count; i++)
-					current.Files[i].Order = i;
-
-				ProjectUpdated?.Invoke(current);
+				updatedProject.UpdateFrom(updated);
+				ProjectUpdated?.Invoke(updatedProject);
 				return true;
 			}
 			finally
@@ -673,6 +628,62 @@ namespace Astrovisio
 			}
 		}
 
+		public async Task UpdateFileOrder(int projectId, int[] orderIds)
+		{
+			Project project = GetProject(projectId);
+			if (project == null || project.Files == null || project.Files.Count == 0)
+			{
+				Debug.LogWarning($"[UpdateFileOrder] Project {projectId} not found or has no files.");
+				return;
+			}
+			if (orderIds == null || orderIds.Length != project.Files.Count)
+			{
+				Debug.LogWarning($"[UpdateFileOrder] Invalid order length. Expected {project.Files.Count}, got {orderIds?.Length ?? 0}.");
+				return;
+			}
+
+			UpdateProjectRequest req = new UpdateProjectRequest
+			{
+				Name = project.Name,
+				Description = project.Description,
+				Favourite = project.Favourite,
+				Order = orderIds
+			};
+
+			uiManager.SetLoadingView(true);
+			Project updatedFromApi = null;
+
+			await apiManager.UpdateProject(
+				projectId,
+				req,
+				onSuccess: p =>
+				{
+					updatedFromApi = p;
+				},
+				onError: err =>
+				{
+					ApiError?.Invoke(err);
+					Debug.LogError($"[UpdateFileOrder] API error: {err}");
+				});
+
+
+			if (updatedFromApi == null)
+			{
+				return;
+			}
+
+			project.UpdateFrom(updatedFromApi);
+			ProjectUpdated?.Invoke(project);
+			uiManager.SetLoadingView(false);
+			
+			foreach (File file in project.Files)
+			{
+				Debug.Log($"{file.Name} order: {file.Order}");
+			}
+		}
+
+
+		// --------------------
 		public void CloseProject(int id)
 		{
 			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
@@ -713,24 +724,6 @@ namespace Astrovisio
 
 			FileSelected?.Invoke(project, file);
 		}
-
-		// TODO: evaluate utility of this function
-		// public void NotifyFileUpdated(Project project, File file)
-		// {
-		// 	if (file == null)
-		// 	{
-		// 		Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
-		// 		return;
-		// 	}
-
-		// 	if (project == null)
-		// 	{
-		// 		Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
-		// 		return;
-		// 	}
-
-		// 	FileUpdated?.Invoke(project, file);
-		// }
 
 		private void SaveProjectCSV(DataPack dataPack)
 		{

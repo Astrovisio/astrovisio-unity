@@ -155,10 +155,15 @@ namespace Astrovisio
                             return;
                         }
 
-                        Debug.Log("Check!!! " + ReferenceEquals(Project, ProjectManager.GetProject(Project.Id)));
-
+                        // Remove file
                         await ProjectManager.RemoveFile(Project.Id, current.file.Id);
                         RemoveFile(current);
+
+                        // Update order
+                        onUpdateAction?.Invoke();
+                        listView.RefreshItems();
+
+                        // Final updates
                         onClickAction(fileList[0]);
                         UpdateFileCounter();
                     });
@@ -334,17 +339,19 @@ namespace Astrovisio
 
                     string relativePath = "data/" + Path.GetFileName(path);
 
-                    // TODO: API Call...
                     File fileAdded = await ProjectManager.AddFile(Project.Id, relativePath);
                     if (fileAdded == null)
                     {
                         return;
                     }
+                    fileAdded.Order = fileList.Count - 1;
+                    ProjectManager.UpdateFile(Project.Id, fileAdded);
+
 
                     FileInfo fileInfo = new FileInfo(fileAdded.Path, fileAdded.Name, fileAdded.Size);
                     FileState fileState = new FileState(fileInfo, fileAdded, false);
                     AddFile(fileState);
-                    Debug.Log($"File added: {fileState.Name} ({fileState.Size} bytes) - {fileState.Path}");
+                    Debug.Log($"File added: {fileState.Name} ({fileState.Size} bytes) - {fileState.Path} @ Order {fileAdded.Order}");
                 }
             }
         }

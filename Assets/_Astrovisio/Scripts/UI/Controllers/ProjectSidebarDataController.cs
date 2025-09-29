@@ -420,11 +420,11 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log(ReferenceEquals(Project, project));
-            Debug.Log(ReferenceEquals(currentFile, file));
+            // Debug.Log(ReferenceEquals(Project, project));
+            // Debug.Log(ReferenceEquals(currentFile, file));
             if (Project.Id == project.Id && currentFile.Id == file.Id)
             {
-                Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name}");
+                // Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name}");
                 UpdateParamsScrollView();
                 UpdateChipLabel();
             }
