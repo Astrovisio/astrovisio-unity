@@ -550,7 +550,7 @@ namespace Astrovisio
             {
                 if (f.Order == -1 || f.Order == 0)
                 {
-                    Debug.Log(f.Name);
+                    // Debug.Log(f.Name);
                     reelLabel.text = f.Name;
                     reelFileList.Add(f);
                     continue;

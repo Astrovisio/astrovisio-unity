@@ -520,7 +520,7 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
+            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
             projectFilesController.SetFileState(file, false);
         }
 

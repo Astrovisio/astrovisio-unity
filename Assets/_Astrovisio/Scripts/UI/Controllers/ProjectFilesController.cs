@@ -60,7 +60,11 @@ namespace Astrovisio
         private void InitAddFileButton()
         {
             addFileButton = Root.Q<VisualElement>("ButtonAddFile")?.Q<Button>();
-            addFileButton.clicked += async () => await OnUploadFileClicked();
+            addFileButton.clicked += async () =>
+            {
+                await OnUploadFileClicked();
+                onUpdateAction?.Invoke();
+            };
         }
 
         private void InitListView()
@@ -148,7 +152,7 @@ namespace Astrovisio
                     FileState current = entry;
                     deleteButton.clickable = new Clickable(async () =>
                     {
-                        Debug.LogWarning(Project.Files.Count);
+                        // Debug.LogWarning(Project.Files.Count);
                         if (Project.Files.Count <= 1)
                         {
                             Debug.LogWarning("Can't remove the last file.");

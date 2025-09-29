@@ -113,6 +113,7 @@ namespace Astrovisio
 
         public void UpdateFrom(Variable other)
         {
+            Name = other.name;
             ThrMin = other.ThrMin;
             ThrMinSel = other.ThrMinSel;
             ThrMax = other.ThrMax;
