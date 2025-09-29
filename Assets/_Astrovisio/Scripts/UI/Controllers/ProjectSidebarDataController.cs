@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.UIElements;
-using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
-using System;
 
 namespace Astrovisio
 {
@@ -363,12 +361,9 @@ namespace Astrovisio
                 // Debug.Log("RETURNED");
                 return;
             }
-            else
-            {
-                // Debug.Log("OPENED");
-                // Project = project;
-                UpdateChipLabel();
-            }
+
+            UpdateParamsScrollView();
+            UpdateChipLabel();
         }
 
         private void OnProjectUpdated(Project project)
@@ -378,12 +373,9 @@ namespace Astrovisio
                 // Debug.Log("RETURNED");
                 return;
             }
-            else
-            {
-                // Debug.Log("UPDATED");
-                // Project = project;
-                UpdateChipLabel();
-            }
+
+            UpdateParamsScrollView();
+            UpdateChipLabel();
         }
 
         private void OnProjectClosed(Project project)
@@ -428,8 +420,11 @@ namespace Astrovisio
                 return;
             }
 
-            if (Project == project && currentFile == file)
+            Debug.Log(ReferenceEquals(Project, project));
+            Debug.Log(ReferenceEquals(currentFile, file));
+            if (Project.Id == project.Id && currentFile.Id == file.Id)
             {
+                Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name}");
                 UpdateParamsScrollView();
                 UpdateChipLabel();
             }

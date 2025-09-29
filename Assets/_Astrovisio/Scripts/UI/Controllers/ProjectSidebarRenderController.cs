@@ -74,34 +74,6 @@ namespace Astrovisio
             Init();
         }
 
-
-        private void OnFileProcessed(Project project, File file, DataPack pack)
-        {
-            if (project == null || Project.Id != project.Id)
-            {
-                // Debug.Log($"1 {Project.Id} - {project.Id}");
-                return;
-            }
-            Project = project;
-
-            reelFileList.Clear();
-            currentReelIndex = 0;
-
-            foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))
-            {
-                if (f.Order == -1 || f.Order == 0)
-                {
-                    // Debug.Log(f.Name);
-                    reelLabel.text = f.Name;
-                    reelFileList.Add(f);
-                    continue;
-                }
-
-                reelFileList.Add(f);
-            }
-        }
-
-
         private void Init()
         {
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
@@ -555,6 +527,33 @@ namespace Astrovisio
             UpdateRenderManager();
             UpdateMappingIcons();
             // PrintAllMappings();
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || Project.Id != project.Id)
+            {
+                // Debug.Log($"1 {Project.Id} - {project.Id}");
+                return;
+            }
+            Project = project;
+
+            reelFileList.Clear();
+            currentReelIndex = 0;
+
+            Debug.Log($"Test: {project.Files.Where(f => f.Processed)}");
+            foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))
+            {
+                if (f.Order == -1 || f.Order == 0)
+                {
+                    Debug.Log(f.Name);
+                    reelLabel.text = f.Name;
+                    reelFileList.Add(f);
+                    continue;
+                }
+
+                reelFileList.Add(f);
+            }
         }
 
     }

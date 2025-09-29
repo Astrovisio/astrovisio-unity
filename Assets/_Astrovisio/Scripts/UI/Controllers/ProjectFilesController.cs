@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using SFB;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,6 +27,7 @@ namespace Astrovisio
         private readonly List<FileState> fileList = new();
         private ListView listView;
         private Label fileCounterLabel;
+        private Button addFileButton;
 
 
         public ProjectFilesController(
@@ -43,6 +47,7 @@ namespace Astrovisio
             this.onClickAction = onClickAction;
 
             InitFileCounterLabel();
+            InitAddFileButton();
             InitListView();
         }
 
@@ -50,6 +55,12 @@ namespace Astrovisio
         {
             fileCounterLabel = Root.Q<Label>("FileCounterLabel");
             UpdateFileCounter();
+        }
+
+        private void InitAddFileButton()
+        {
+            addFileButton = Root.Q<VisualElement>("ButtonAddFile")?.Q<Button>();
+            addFileButton.clicked += async () => await OnUploadFileClicked();
         }
 
         private void InitListView()
@@ -135,11 +146,20 @@ namespace Astrovisio
                 {
                     deleteButton.clickable = null;
                     FileState current = entry;
-                    deleteButton.clickable = new Clickable(() =>
+                    deleteButton.clickable = new Clickable(async () =>
                     {
-                        Debug.Log("Remove file here... API CALL");
-                        ProjectManager.RemoveFile(Project.Id, current.file.Id);
+                        Debug.LogWarning(Project.Files.Count);
+                        if (Project.Files.Count <= 1)
+                        {
+                            Debug.LogWarning("Can't remove the last file.");
+                            return;
+                        }
+
+                        Debug.Log("Check!!! " + ReferenceEquals(Project, ProjectManager.GetProject(Project.Id)));
+
+                        await ProjectManager.RemoveFile(Project.Id, current.file.Id);
                         RemoveFile(current);
+                        onClickAction(fileList[0]);
                         UpdateFileCounter();
                     });
                 }
@@ -160,7 +180,6 @@ namespace Astrovisio
             fileList.Add(entry);
             Refresh();
         }
-
 
         public void RemoveFile(FileState entry)
         {
@@ -257,6 +276,7 @@ namespace Astrovisio
 
         private void UpdateFileCounter()
         {
+            Debug.Log("File counter: " + Project.Files.Count);
             fileCounterLabel.text = $"Files ({Project.Files.Count})";
         }
 
@@ -279,6 +299,52 @@ namespace Astrovisio
                 else
                 {
                     Debug.Log($"[{i}] {listView.itemsSource[i]}");
+                }
+            }
+        }
+
+        private async Task OnUploadFileClicked()
+        {
+            string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", false);
+
+            if (paths.Length > 0)
+            {
+                foreach (string path in paths)
+                {
+                    if (!System.IO.File.Exists(path))
+                    {
+                        Debug.LogWarning($"File not found: {path}");
+                        continue;
+                    }
+
+                    // Check if the file extension is supported (.hdf5 or .fits)
+                    string extension = Path.GetExtension(path).ToLowerInvariant();
+                    if (extension != ".hdf5" && extension != ".fits")
+                    {
+                        Debug.LogWarning($"Unsupported file format: {path}");
+                        continue;
+                    }
+
+                    // Skip if the file is already in the list
+                    if (fileList.Any(file => file.Path == path))
+                    {
+                        Debug.Log($"File already added: {path}");
+                        continue;
+                    }
+
+                    string relativePath = "data/" + Path.GetFileName(path);
+
+                    // TODO: API Call...
+                    File fileAdded = await ProjectManager.AddFile(Project.Id, relativePath);
+                    if (fileAdded == null)
+                    {
+                        return;
+                    }
+
+                    FileInfo fileInfo = new FileInfo(fileAdded.Path, fileAdded.Name, fileAdded.Size);
+                    FileState fileState = new FileState(fileInfo, fileAdded, false);
+                    AddFile(fileState);
+                    Debug.Log($"File added: {fileState.Name} ({fileState.Size} bytes) - {fileState.Path}");
                 }
             }
         }

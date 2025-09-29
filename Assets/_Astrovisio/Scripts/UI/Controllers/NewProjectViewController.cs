@@ -26,7 +26,7 @@ namespace Astrovisio
 
         // === Local ===
         private VisualElement root;
-        private NewProjectFilesController filesController;
+        private NewProjectFilesController newProjectfilesController;
 
         public NewProjectViewController(ProjectManager projectManager, UIManager uiManager)
         {
@@ -43,7 +43,7 @@ namespace Astrovisio
 
 
             VisualElement filesContainer = this.root.Q<VisualElement>("FilesContainer");
-            filesController = new NewProjectFilesController(
+            newProjectfilesController = new NewProjectFilesController(
                 filesContainer,
                 UIManager.GetUIContext(),
                 () => UpdateFilesSizeLabel()
@@ -117,7 +117,7 @@ namespace Astrovisio
                     }
 
                     // Skip if the file is already in the list
-                    if (filesController.Items.Any(file => file.Path == path))
+                    if (newProjectfilesController.Items.Any(file => file.Path == path))
                     {
                         Debug.Log($"File already added: {path}");
                         continue;
@@ -125,7 +125,7 @@ namespace Astrovisio
 
                     System.IO.FileInfo sysInfo = new System.IO.FileInfo(path);
                     FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
-                    filesController.AddFile(fileInfo);
+                    newProjectfilesController.AddFile(fileInfo);
                     // Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");
                 }
             }
@@ -135,7 +135,7 @@ namespace Astrovisio
 
         private void UpdateFilesSizeLabel()
         {
-            filesSizeLabel.text = filesController.GetFormattedTotalSize();
+            filesSizeLabel.text = newProjectfilesController.GetFormattedTotalSize();
 
             bool overLimit = IsSizeOverLimit();
 
@@ -146,14 +146,14 @@ namespace Astrovisio
         private bool IsSizeOverLimit()
         {
             const long maxSize = 5L * 1024 * 1024 * 1024;
-            return filesController.GetTotalSizeBytes() > maxSize;
+            return newProjectfilesController.GetTotalSizeBytes() > maxSize;
         }
 
         private async Task OnContinueClicked()
         {
             string name = projectNameField?.value ?? "<empty>";
             string description = projectDescriptionField?.value ?? "<empty>";
-            string[] paths = filesController.Items
+            string[] paths = newProjectfilesController.Items
                 .Select(file => $"data/{Path.GetFileName(file.Path)}")
                 .ToArray();
 
@@ -166,7 +166,7 @@ namespace Astrovisio
                 }
 
                 // TODO: Back-end should popolate order, not front-end
-                List<FileInfo> fileList = filesController.GetFileList();
+                List<FileInfo> fileList = newProjectfilesController.GetFileList();
                 // Debug.Log("=== createdProject.Files ===");
                 // foreach (var f in createdProject.Files)
                 //     Debug.Log($"{f.Name} | {f.Path} | {f.Size} | Order={f.Order}");

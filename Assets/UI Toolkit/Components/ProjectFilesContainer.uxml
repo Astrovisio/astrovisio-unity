@@ -4,7 +4,7 @@
     <engine:VisualElement name="FilesContainerRoot">
         <engine:VisualElement name="HeaderFiles">
             <engine:Label text="Files (12)" name="FileCounterLabel" />
-            <engine:Instance template="TertiaryButton" name="ButtonAddFile">
+            <engine:Instance template="TertiaryButton" name="ButtonAddFile" style="display: flex;">
                 <AttributeOverrides element-name="Label" text="Add a file" />
             </engine:Instance>
         </engine:VisualElement>

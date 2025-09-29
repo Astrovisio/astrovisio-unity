@@ -232,11 +232,13 @@ namespace Astrovisio
 
         private void ResetThresholds()
         {
-            minInputField.value = Variable.ThrMin;
-            maxInputField.value = Variable.ThrMax;
-            Variable.ThrMinSel = Variable.ThrMin;
-            Variable.ThrMaxSel = Variable.ThrMax;
+            ApplySliderClamped(new Vector2(
+                (float)Variable.ThrMin,
+                (float)Variable.ThrMax));
+
+            DebouncedNotifyThresholdsChanged();
         }
+
 
         public void SetSelected(bool value)
         {
@@ -262,9 +264,6 @@ namespace Astrovisio
             OnStateChanged?.Invoke();
             // Debug.Log(Variable.Name + " " + value);
         }
-
-        private static bool LessThan(double a, double b, double eps) => a < b - eps;
-        private static bool GreaterThan(double a, double b, double eps) => a > b + eps;
 
         private double EpsilonFor(double refVal)
         {
@@ -373,6 +372,30 @@ namespace Astrovisio
                 OnThresholdChanged?.Invoke(Threshold.Min, this);
                 OnThresholdChanged?.Invoke(Threshold.Max, this);
             });
+        }
+
+        private static bool LessThan(double a, double b, double eps)
+        {
+            if (a < b - eps)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static bool GreaterThan(double a, double b, double eps)
+        {
+            if (a > b + eps)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

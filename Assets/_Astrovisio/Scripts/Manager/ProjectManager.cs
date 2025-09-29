@@ -95,39 +95,47 @@ namespace Astrovisio
 
 		public async Task<Project> OpenProject(int id)
 		{
-			Project alreadyOpened = GetOpenedProject(id);
-			if (alreadyOpened != null)
+			Project opened = GetOpenedProject(id);
+			if (opened != null)
 			{
-				currentProject = alreadyOpened;
-				ProjectOpened?.Invoke(alreadyOpened);
-				return alreadyOpened;
+				currentProject = opened;
+				ProjectOpened?.Invoke(opened);
+				return opened;
 			}
 
-			Project result = null;
-			await apiManager.ReadProject(id,
-				project =>
+			Project projectResult = null;
+
+			await apiManager.ReadProject(
+				id,
+				projectFromApi =>
 				{
-					Project existing = projectList.FirstOrDefault(p => p.Id == project.Id);
+					Project existing = projectList.FirstOrDefault(p => p.Id == projectFromApi.Id);
 					if (existing != null)
 					{
-						existing.UpdateFrom(project);
+						existing.UpdateFrom(projectFromApi);
+						projectResult = existing;
 					}
 					else
 					{
-						projectList.Add(project);
+						projectList.Add(projectFromApi);
+						projectResult = projectFromApi;
 					}
 
-					if (!openedProjectList.Any(p => p.Id == project.Id) && existing != null)
+					if (!openedProjectList.Any(p => p.Id == projectResult.Id))
 					{
-						openedProjectList.Add(existing);
+						openedProjectList.Add(projectResult);
 					}
 
-					currentProject = project;
-					result = project;
-					ProjectOpened?.Invoke(project);
+					currentProject = projectResult;
+					ProjectOpened?.Invoke(projectResult);
 				},
-				error => ApiError?.Invoke(error));
-			return result ?? currentProject;
+				error =>
+				{
+					ApiError?.Invoke(error);
+				}
+			);
+
+			return projectResult;
 		}
 
 		public async Task<Project> CreateProject(string name, string description, string[] paths)
@@ -465,69 +473,205 @@ namespace Astrovisio
 			);
 		}
 
-		public async void RemoveFile(int projectId, int fileId)
+		public async Task<File> AddFile(int projectId, string path)
 		{
-			// 1) Recupero progetto e file
-			Project project = GetProject(projectId);
+			// Pre-checks
+			var project = GetProject(projectId);
 			if (project == null)
 			{
-				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found.");
-				return;
+				Debug.LogWarning($"[ProjectManager] AddFile: project {projectId} not found.");
+				return null;
 			}
-			if (project.Files == null || project.Files.Count == 0)
+			if (string.IsNullOrWhiteSpace(path))
 			{
-				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} has no files.");
-				return;
+				Debug.LogWarning($"[ProjectManager] AddFile: invalid path.");
+				return null;
+			}
+			if (project.Files != null && project.Files.Any(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase)))
+			{
+				// Already present locally
+				return project.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
 			}
 
-			int idx = project.Files.FindIndex(f => f.Id == fileId);
-			if (idx < 0)
-			{
-				Debug.LogWarning($"[ProjectManager] RemoveFile: file {fileId} not found in project {projectId}.");
-				return;
-			}
-
-			// 2) Preparo la richiesta API con le paths rimanenti (escludo il file da rimuovere)
-			var remainingPaths = project.Files
-				.Where(f => f.Id != fileId)
+			// Build payload with the new path appended
+			string[] newPaths = (project.Files ?? new List<File>())
 				.Select(f => f.Path)
 				.Where(p => !string.IsNullOrEmpty(p))
+				.Concat(new[] { path })
 				.ToArray();
 
-			var req = new ReplaceProjectFilesRequest
-			{
-				Paths = remainingPaths
-			};
+			var req = new ReplaceProjectFilesRequest { Paths = newPaths };
 
-			// 3) Chiamata API per sostituire l’elenco file lato server
+			uiManager.SetLoadingView(true);
 			try
 			{
-				await apiManager.ReplaceProjectFiles(projectId, req);
-				Debug.Log($"[ProjectManager] RemoveFile: server updated for project {projectId} (removed file {fileId}).");
+				// Server update
+				try
+				{
+					await apiManager.ReplaceProjectFiles(projectId, req);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] AddFile: API error replacing files. {ex.Message}");
+					ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
+					return null;
+				}
+
+				// Read back authoritative state
+				Project updated;
+				try
+				{
+					var tcs = new TaskCompletionSource<Project>();
+					await apiManager.ReadProject(
+						projectId,
+						onSuccess: p => tcs.TrySetResult(p),
+						onError: err => tcs.TrySetException(new Exception(err))
+					);
+					updated = await tcs.Task;
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] AddFile: ReadProject exception. {ex.Message}");
+					return null;
+				}
+				if (updated == null)
+				{
+					Debug.LogWarning($"[ProjectManager] AddFile: ReadProject returned null for {projectId}.");
+					return null;
+				}
+
+				// Re-acquire current instance (in case it was replaced elsewhere)
+				var current = GetProject(projectId) ?? project;
+
+				// Update top-level and files in-place
+				current.Files ??= new List<File>();
+				updated.Files ??= new List<File>();
+				current.UpdateFrom(updated); // updates existing files by Id
+
+				// Remove files no longer present server-side
+				var updatedIds = new HashSet<int>(updated.Files.Select(f => f.Id));
+				current.Files.RemoveAll(f => !updatedIds.Contains(f.Id));
+
+				// Add any new files included by server
+				var currentIds = new HashSet<int>(current.Files.Select(f => f.Id));
+				foreach (var nf in updated.Files)
+				{
+					if (!currentIds.Contains(nf.Id))
+						current.Files.Add(nf);
+				}
+
+				// Recompute order locally
+				for (int i = 0; i < current.Files.Count; i++)
+					current.Files[i].Order = i;
+
+				ProjectUpdated?.Invoke(current);
+
+				// Return the newly added file by path
+				return current.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
 			}
-			catch (Exception ex)
+			finally
 			{
-				Debug.LogError($"[ProjectManager] RemoveFile: API error replacing files. {ex.Message}");
-				ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
-				return; // esco senza toccare il modello locale
+				uiManager.SetLoadingView(false);
 			}
-
-			// 4) (Facoltativo) Rimuovo eventuali processed data associati al file rimosso
-			// Se hai un metodo del tipo RenderManager.Instance.RemoveProcessedFile(projectId, fileId), puoi usarlo:
-			// bool removedProcessed = RenderManager.Instance?.RemoveProcessedFile(projectId, fileId) ?? false;
-			// if (removedProcessed) Debug.Log($"[ProjectManager] RemoveFile: removed processed data for P{projectId} F{fileId}.");
-
-			// 5) Aggiorno il modello locale: rimuovo il file e riallineo gli 'Order'
-			project.Files.RemoveAt(idx);
-			for (int i = 0; i < project.Files.Count; i++)
-			{
-				project.Files[i].Order = i;
-			}
-
-			// 6) Notifico l’update per aggiornare le viste
-			ProjectUpdated?.Invoke(project);
 		}
 
+
+		public async Task<bool> RemoveFile(int projectId, int fileId)
+		{
+			// Pre-checks
+			var project = GetProject(projectId);
+			if (project == null || project.Files == null || project.Files.Count == 0)
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found or has no files.");
+				return false;
+			}
+			if (!project.Files.Any(f => f.Id == fileId))
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: file {fileId} not found in project {projectId}.");
+				return false;
+			}
+
+			uiManager.SetLoadingView(true);
+			try
+			{
+				// Build server payload without the removed file
+				var remainingPaths = project.Files
+					.Where(f => f.Id != fileId)
+					.Select(f => f.Path)
+					.Where(p => !string.IsNullOrEmpty(p))
+					.ToArray();
+
+				var req = new ReplaceProjectFilesRequest { Paths = remainingPaths };
+
+				// Server update
+				try
+				{
+					await apiManager.ReplaceProjectFiles(projectId, req);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] RemoveFile: API error replacing files. {ex.Message}");
+					ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
+					return false;
+				}
+
+				// Read back authoritative state
+				Project updated;
+				try
+				{
+					var tcs = new TaskCompletionSource<Project>();
+					await apiManager.ReadProject(
+						projectId,
+						onSuccess: p => tcs.TrySetResult(p),
+						onError: err => tcs.TrySetException(new Exception(err))
+					);
+					updated = await tcs.Task;
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] RemoveFile: ReadProject exception. {ex.Message}");
+					return false;
+				}
+				if (updated == null)
+				{
+					Debug.LogWarning($"[ProjectManager] RemoveFile: ReadProject returned null for {projectId}.");
+					return false;
+				}
+
+				// Re-acquire current instance (in case it was replaced elsewhere)
+				var current = GetProject(projectId) ?? project;
+
+				// Ensure lists exist
+				current.Files ??= new List<File>();
+				updated.Files ??= new List<File>();
+
+				// Update top-level fields and in-place files by Id
+				current.UpdateFrom(updated);
+
+				// Remove files no longer present server-side
+				var updatedIds = new HashSet<int>(updated.Files.Select(f => f.Id));
+				current.Files.RemoveAll(f => !updatedIds.Contains(f.Id));
+
+				// Add any new files present server-side and missing locally
+				var currentIds = new HashSet<int>(current.Files.Select(f => f.Id));
+				foreach (var nf in updated.Files)
+				{
+					if (!currentIds.Contains(nf.Id))
+						current.Files.Add(nf);
+				}
+
+				// Recompute order locally (keep it simple)
+				for (int i = 0; i < current.Files.Count; i++)
+					current.Files[i].Order = i;
+
+				ProjectUpdated?.Invoke(current);
+				return true;
+			}
+			finally
+			{
+				uiManager.SetLoadingView(false);
+			}
+		}
 
 		public void CloseProject(int id)
 		{

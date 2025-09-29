@@ -28,6 +28,7 @@
 
 #FilesContainerRoot > #HeaderFiles > #ButtonAddFile {
     display: none;
+    margin-right: 8px;
 }
 
 #FilesContainerRoot > #HeaderFiles > #ButtonAddFile > .btn-tertiary > #Icon {

@@ -33,7 +33,12 @@ namespace Astrovisio
         private Button goToVRButton;
         // private DataContainer dataContainer;
 
-        public ProjectSidebarController(UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
+        public ProjectSidebarController(
+            UIManager uiManager,
+            ProjectManager projectManager,
+            UIContextSO uiContextSO,
+            Project project,
+            VisualElement root)
         {
             UIManager = uiManager;
             ProjectManager = projectManager;
@@ -41,7 +46,6 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            // RenderManager.Instance.OnProjectRenderReady += OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened += OnProjectOpened;
             ProjectManager.FileProcessed += OnFileProcessed;
             ProjectManager.FileUpdated += OnFileUpdated;
@@ -50,30 +54,6 @@ namespace Astrovisio
             SetActiveStep(ProjectSidebarStep.Data);
 
             // Debug.Log("###" + (projectManager.GetProject(Project.Id) == Project));
-        }
-
-        private void OnFileProcessed(Project project, File file, DataPack pack)
-        {
-            if (project == null || project.Id != Project.Id)
-            {
-                return;
-            }
-
-            // Debug.Log($"Project {project.Name}, file {file.Name}, processed {file.Processed}.");
-            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
-            SetNextStepButtons(activateNextStepButtons);
-        }
-
-        private void OnFileUpdated(Project project, File file)
-        {
-            if (project == null || project.Id != Project.Id)
-            {
-                return;
-            }
-
-            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
-            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
-            SetNextStepButtons(activateNextStepButtons);
         }
 
         private void Init()
@@ -128,7 +108,6 @@ namespace Astrovisio
 
             // Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
 
-            // Log dettagliato di ogni file e presenza del DataContainer in RenderManager
             foreach (File f in Project.Files.OrderBy(f => f.Order))
             {
                 bool hasDC = RenderManager.Instance.TryGetDataContainer(Project, f, out var _);
@@ -137,16 +116,14 @@ namespace Astrovisio
 
             SetActiveStep(ProjectSidebarStep.Render);
 
-            // 1) prova standard: primo file con Processed == true
             File fileToRender = Project.Files.FirstOrDefault(f => f.Processed);
 
-            // 2) fallback: se nessun file è marcato Processed, ma il DataContainer esiste già in RenderManager
             if (fileToRender == null)
             {
                 fileToRender = Project.Files.FirstOrDefault(f => RenderManager.Instance.TryGetDataContainer(Project, f, out var _));
                 if (fileToRender != null)
                 {
-                    Debug.Log($"[Sidebar] Nessun file con Processed=true, ma trovato DataContainer per '{fileToRender.Name}'. Lo userò come fallback.");
+                    Debug.Log($"[Sidebar] No file with Processed=true found, but a DataContainer for '{fileToRender.Name}' was found. Using it as fallback.");
                 }
             }
 
@@ -158,7 +135,7 @@ namespace Astrovisio
             }
             else
             {
-                Debug.LogWarning($"[Sidebar] Nessun file processato trovato e nessun DataContainer registrato per Project id={Project.Id}, name='{Project.Name}'. Vedi log sopra.");
+                Debug.LogWarning($"[Sidebar] No processed file found and no DataContainer registered for Project id={Project.Id}, name='{Project.Name}'. See log above.");
             }
         }
 
@@ -249,6 +226,30 @@ namespace Astrovisio
             }
 
             SetActiveStep(ProjectSidebarStep.Data);
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, processed {file.Processed}.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
+        }
+
+        private void OnFileUpdated(Project project, File file)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
         }
 
     }

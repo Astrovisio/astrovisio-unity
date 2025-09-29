@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class File : INotifyPropertyChanged
+    public class File
     {
         private string type;
         private string path;
@@ -29,7 +30,6 @@ namespace Astrovisio
                 if (type != value)
                 {
                     type = value;
-                    OnPropertyChanged(nameof(Type));
                 }
             }
         }
@@ -43,7 +43,6 @@ namespace Astrovisio
                 if (path != value)
                 {
                     path = value;
-                    OnPropertyChanged(nameof(Path));
                 }
             }
         }
@@ -57,7 +56,6 @@ namespace Astrovisio
                 if (processed != value)
                 {
                     processed = value;
-                    OnPropertyChanged(nameof(Processed));
                 }
             }
         }
@@ -71,7 +69,6 @@ namespace Astrovisio
                 if (downsampling != value)
                 {
                     downsampling = value;
-                    OnPropertyChanged(nameof(Downsampling));
                 }
             }
         }
@@ -85,7 +82,6 @@ namespace Astrovisio
                 if (processedPath != value)
                 {
                     processedPath = value;
-                    OnPropertyChanged(nameof(ProcessedPath));
                 }
             }
         }
@@ -99,7 +95,6 @@ namespace Astrovisio
                 if (order != value)
                 {
                     order = value;
-                    OnPropertyChanged(nameof(Order));
                 }
             }
         }
@@ -113,7 +108,6 @@ namespace Astrovisio
                 if (id != value)
                 {
                     id = value;
-                    OnPropertyChanged(nameof(Id));
                 }
             }
         }
@@ -127,7 +121,6 @@ namespace Astrovisio
                 if (name != value)
                 {
                     name = value;
-                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -141,7 +134,6 @@ namespace Astrovisio
                 if (size != value)
                 {
                     size = value;
-                    OnPropertyChanged(nameof(Size));
                 }
             }
         }
@@ -155,16 +147,8 @@ namespace Astrovisio
                 if (variables != value)
                 {
                     variables = value ?? new List<Variable>();
-                    OnPropertyChanged(nameof(Variables));
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            // Debug.Log("OnPropertyChanged: " + propertyName);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void UpdateFrom(File other)
@@ -179,19 +163,35 @@ namespace Astrovisio
             Processed = other.Processed;
             Downsampling = other.Downsampling;
             ProcessedPath = other.ProcessedPath;
+            Order = other.Order;
+            Name = other.Name;
+            Size = other.Size;
             Id = other.Id;
 
-            // Better Variales update from ?
-            if (other.Variables == null)
+            if (Variables == null || other.Variables == null)
             {
-                Variables = new List<Variable>();
+                return;
             }
-            else
+
+            foreach (Variable otherVar in other.Variables)
             {
-                List<Variable> copy = JsonConvert.DeserializeObject<List<Variable>>(JsonConvert.SerializeObject(other.Variables));
-                Variables = copy ?? new List<Variable>();
+                if (otherVar == null)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < Variables.Count; i++)
+                {
+                    Variable currentVar = Variables[i];
+                    if (currentVar != null && string.Equals(currentVar.Name, otherVar.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        currentVar.UpdateFrom(otherVar);
+                        break;
+                    }
+                }
             }
         }
+
 
         public File DeepCopy()
         {

@@ -139,14 +139,14 @@ namespace Astrovisio
             ProjectManager.FileUpdated -= OnFileUpdated;
         }
 
-        private void OnFileRowClicked(FileState fs)
+        private void OnFileRowClicked(FileState fileState)
         {
-            if (fs.file == null || fs.file == currentFile)
+            if (fileState.file == null || fileState.file == currentFile)
             {
                 return;
             }
 
-            currentFile = fs.file;
+            currentFile = fileState.file;
             Debug.Log("Is current clicked file processed? " + currentFile.Processed);
 
             InitScrollView();

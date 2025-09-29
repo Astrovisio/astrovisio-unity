@@ -133,10 +133,7 @@ namespace Astrovisio
 
         public void UpdateFrom(Project other)
         {
-            if (other == null)
-            {
-                return;
-            }
+            if (other == null) return;
 
             Name = other.Name;
             Favourite = other.Favourite;
@@ -145,19 +142,24 @@ namespace Astrovisio
             Created = other.Created;
             LastOpened = other.LastOpened;
 
-            if (other.Files == null)
-            {
-                Files = new List<File>();
-            }
-            else
-            {
-                // Usare updateFrom ???
-                // foreach (File file in files) {
-                // }
+            if (Files == null || other.Files == null) return;
 
-                Files = JsonConvert.DeserializeObject<List<File>>(
-                            JsonConvert.SerializeObject(other.Files)
-                        ) ?? new List<File>();
+            foreach (File otherFile in other.Files)
+            {
+                if (otherFile == null)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < Files.Count; i++)
+                {
+                    File currentFile = Files[i];
+                    if (currentFile != null && currentFile.Id == otherFile.Id)
+                    {
+                        currentFile.UpdateFrom(otherFile);
+                        break;
+                    }
+                }
             }
         }
 
