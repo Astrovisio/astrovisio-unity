@@ -12,6 +12,7 @@ namespace Astrovisio
     public class ParamRowController
     {
         // === Dependencies ===
+        public ProjectManager ProjectManager { get; }
         public VisualElement Root { get; }
 
         // === Events ===
@@ -43,8 +44,9 @@ namespace Astrovisio
         private UIDebouncer _thrDebouncer;
 
 
-        public ParamRowController(VisualElement root, Variable variable)
+        public ParamRowController(ProjectManager projectManager, VisualElement root, Variable variable)
         {
+            ProjectManager = projectManager;
             Root = root;
             Variable = variable;
 
@@ -240,7 +242,7 @@ namespace Astrovisio
         }
 
 
-        public void SetSelected(bool value)
+        public void SetSelected(bool value, bool silent = false)
         {
             checkbox.value = value;
             Variable.Selected = value;
@@ -261,7 +263,10 @@ namespace Astrovisio
                 DeselectAxis(Axis.Z);
             }
 
-            OnStateChanged?.Invoke();
+            if (!silent)
+            {
+                OnStateChanged?.Invoke();
+            }
             // Debug.Log(Variable.Name + " " + value);
         }
 

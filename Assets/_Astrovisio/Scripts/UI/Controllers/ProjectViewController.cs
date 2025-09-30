@@ -135,6 +135,7 @@ namespace Astrovisio
 
         public void Dispose()
         {
+            projectFilesController.Dispose();
             ProjectManager.ProjectUpdated -= OnProjectUpdated;
             ProjectManager.FileProcessed -= OnFileProcessed;
             ProjectManager.FileUpdated -= OnFileUpdated;
@@ -148,7 +149,7 @@ namespace Astrovisio
             }
 
             currentFile = fileState.file;
-            Debug.Log("Is current clicked file processed? " + currentFile.Processed);
+            // Debug.Log("Is current clicked file processed? " + currentFile.Processed);
 
             InitScrollView();
             InitCheckAllToggle();
@@ -172,8 +173,9 @@ namespace Astrovisio
         {
             foreach (ParamRowController paramController in paramControllers)
             {
-                paramController.SetSelected(isChecked);
+                paramController.SetSelected(isChecked, true);
             }
+            ProjectManager.UpdateFile(Project.Id, currentFile);
         }
 
         private void InitScrollView()
@@ -188,7 +190,6 @@ namespace Astrovisio
             {
                 paramRowController.OnAxisChanged -= HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged -= HandleOnThresholdChanged;
-                paramRowController.OnStateChanged -= HandleStateChanged;
             }
             paramControllers.Clear();
             paramScrollView.contentContainer.Clear();
@@ -205,12 +206,11 @@ namespace Astrovisio
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = variable.Name;
 
-                ParamRowController paramRowController = new ParamRowController(paramRow, variable);
+                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, variable);
                 paramControllers.Add(paramRowController);
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
-                paramRowController.OnStateChanged += HandleStateChanged;
 
                 paramScrollView.Add(paramRowController.Root);
             }
@@ -309,11 +309,6 @@ namespace Astrovisio
             UpdateFile();
         }
 
-        private void HandleStateChanged()
-        {
-            UpdateFile();
-        }
-
         private void UpdateFile()
         {
             if (Time.unscaledTime < _nextAllowedUpdate)
@@ -325,8 +320,8 @@ namespace Astrovisio
 
             if (currentFile != null)
             {
+                // Debug.Log("UpdateFile -> " + currentFile.Order);
                 currentFile.Processed = false;
-                // Debug.Log("UpdateFile");
                 ProjectManager.UpdateFile(Project.Id, currentFile);
             }
 
@@ -482,11 +477,12 @@ namespace Astrovisio
 
             await ProjectManager.UpdateFileOrder(Project.Id, orderIds);
 
-            // // Check order
-            // for (int i = 0; i < Project.Files.Count; i++)
-            // {
-            //     Debug.Log(Project.Files[i].Name);
-            // }
+            // Check order
+            Debug.LogWarning("CHECK ORDER");
+            for (int i = 0; i < Project.Files.Count; i++)
+            {
+                Debug.Log(Project.Files[i].Order + " - " + Project.Files[i].Name);
+            }
 
             // Debug.Log($"Project.Files reordered to match UI order (first {limit} items). Count={original.Count}");
         }
@@ -522,6 +518,12 @@ namespace Astrovisio
 
             // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
             projectFilesController.SetFileState(file, false);
+
+            // Debug.LogWarning("CHECK ORDER");
+            // for (int i = 0; i < Project.Files.Count; i++)
+            // {
+            //     Debug.Log(Project.Files[i].Order + " - " + Project.Files[i].Name);
+            // }
         }
 
     }

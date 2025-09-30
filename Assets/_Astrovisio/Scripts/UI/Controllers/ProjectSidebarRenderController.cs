@@ -543,7 +543,7 @@ namespace Astrovisio
 
             foreach (File f in project.Files)
             {
-                Debug.Log($"File: {f.Name} - {f.Order}");
+                Debug.Log($"{f.Order} - {f.Name}");
             }
 
             foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))

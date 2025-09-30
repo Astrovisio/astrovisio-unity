@@ -382,13 +382,14 @@ namespace Astrovisio
 				Variables = file.Variables
 			};
 
-			// Debug.Log("[UpdateFile] Request payload:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(req, Newtonsoft.Json.Formatting.Indented));
-
-			// Debug.Log($"Z {file.Id} {file.Name} {file.Processed}");
+			// Debug.Log($"Request: {file.Id} {file.Name} {file.Order}");
 
 			await apiManager.UpdateFile(projectId, file.Id, req,
 				updatedFile =>
 				{
+					// Debug.Log("Sended: " + req.Order);
+					// Debug.Log("Received: " + updatedFile.Order);
+
 					Project project = projectList.FirstOrDefault(p => p.Id == projectId);
 					if (project != null && project.Files != null)
 					{
@@ -521,7 +522,7 @@ namespace Astrovisio
 				Project updated;
 				try
 				{
-					var tcs = new TaskCompletionSource<Project>();
+					TaskCompletionSource<Project> tcs = new TaskCompletionSource<Project>();
 					await apiManager.ReadProject(
 						projectId,
 						onSuccess: p => tcs.TrySetResult(p),

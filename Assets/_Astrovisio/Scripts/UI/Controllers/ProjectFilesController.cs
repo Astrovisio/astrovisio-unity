@@ -46,6 +46,8 @@ namespace Astrovisio
             this.onUpdateAction = onUpdateAction;
             this.onClickAction = onClickAction;
 
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+
             InitFileCounterLabel();
             InitAddFileButton();
             InitListView();
@@ -289,29 +291,6 @@ namespace Astrovisio
             fileCounterLabel.text = $"Files ({Project.Files.Count})";
         }
 
-        public void PrintListView()
-        {
-            if (listView?.itemsSource == null)
-            {
-                Debug.LogWarning("ListView or itemsSource is null.");
-                return;
-            }
-
-            Debug.Log($"[ListView] Count = {listView.itemsSource.Count}");
-
-            for (int i = 0; i < listView.itemsSource.Count; i++)
-            {
-                if (listView.itemsSource[i] is FileState fileState)
-                {
-                    Debug.Log($"[{i}] FileState -> Name={fileState.fileInfo.Name}, Size={fileState.fileInfo.Size}, Path={fileState.fileInfo.Path}, State={fileState.state}");
-                }
-                else
-                {
-                    Debug.Log($"[{i}] {listView.itemsSource[i]}");
-                }
-            }
-        }
-
         private async Task OnUploadFileClicked()
         {
             string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", false);
@@ -348,14 +327,52 @@ namespace Astrovisio
                     {
                         return;
                     }
-                    fileAdded.Order = fileList.Count - 1;
-                    ProjectManager.UpdateFile(Project.Id, fileAdded);
+                    // fileAdded.Order = fileList.Count - 1;
+                    // ProjectManager.UpdateFile(Project.Id, fileAdded);
 
 
                     FileInfo fileInfo = new FileInfo(fileAdded.Path, fileAdded.Name, fileAdded.Size);
                     FileState fileState = new FileState(fileInfo, fileAdded, false);
                     AddFile(fileState);
                     Debug.Log($"File added: {fileState.Name} ({fileState.Size} bytes) - {fileState.Path} @ Order {fileAdded.Order}");
+                }
+            }
+        }
+
+        private void OnProjectUpdated(Project project)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            UpdateFileCounter();
+        }
+
+        public void Dispose()
+        {
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+        }
+
+        public void PrintListView()
+        {
+            if (listView?.itemsSource == null)
+            {
+                Debug.LogWarning("ListView or itemsSource is null.");
+                return;
+            }
+
+            Debug.Log($"[ListView] Count = {listView.itemsSource.Count}");
+
+            for (int i = 0; i < listView.itemsSource.Count; i++)
+            {
+                if (listView.itemsSource[i] is FileState fileState)
+                {
+                    Debug.Log($"[{i}] FileState -> Name={fileState.fileInfo.Name}, Size={fileState.fileInfo.Size}, Path={fileState.fileInfo.Path}, State={fileState.state}");
+                }
+                else
+                {
+                    Debug.Log($"[{i}] {listView.itemsSource[i]}");
                 }
             }
         }

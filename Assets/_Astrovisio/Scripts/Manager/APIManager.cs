@@ -340,7 +340,10 @@ namespace Astrovisio
         {
             string url = APIEndpoints.UpdateFile(projectID, fileID);
             string json = JsonConvert.SerializeObject(req);
+
             // Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+            // string savedPath = DebugUtility.SaveJson("PUT", json, pretty: true);
+
 
             using (UnityWebRequest request = UnityWebRequest.Put(url, json))
             {
@@ -355,6 +358,7 @@ namespace Astrovisio
                 {
                     try
                     {
+                        // string savedPath = DebugUtility.SaveJson("PUT_UpdateFILE", request.downloadHandler.text, pretty: true);
                         File updatedFile = JsonConvert.DeserializeObject<File>(request.downloadHandler.text);
                         onSuccess?.Invoke(updatedFile);
                     }
@@ -466,7 +470,7 @@ namespace Astrovisio
                         {
                             byte[] rawBytes = request.downloadHandler.data;
                             DataPack processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
-                            // Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
+                            Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
                             return processedData;
                         }
                         catch (Exception ex)
