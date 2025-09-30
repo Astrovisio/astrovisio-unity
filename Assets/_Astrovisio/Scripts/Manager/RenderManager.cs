@@ -63,6 +63,7 @@ namespace Astrovisio
         // Local
         public bool isInspectorModeActive = false;
         private readonly Dictionary<ProjectFile, DataContainer> processedFileDictionary = new();
+        private readonly Dictionary<int, ProjectReel> projectReelDictionary = new();
 
 
         private void Awake()
