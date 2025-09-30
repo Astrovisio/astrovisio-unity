@@ -190,6 +190,7 @@ namespace Astrovisio
             {
                 paramRowController.OnAxisChanged -= HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged -= HandleOnThresholdChanged;
+                paramRowController.OnStateChanged -= HandleStateChanged;
             }
             paramControllers.Clear();
             paramScrollView.contentContainer.Clear();
@@ -211,6 +212,7 @@ namespace Astrovisio
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
+                paramRowController.OnStateChanged += HandleStateChanged;
 
                 paramScrollView.Add(paramRowController.Root);
             }
@@ -305,6 +307,11 @@ namespace Astrovisio
         }
 
         private void HandleOnThresholdChanged(Threshold threshold, ParamRowController controller)
+        {
+            UpdateFile();
+        }
+
+        private void HandleStateChanged()
         {
             UpdateFile();
         }
