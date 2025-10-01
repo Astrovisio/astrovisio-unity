@@ -48,9 +48,21 @@ namespace Astrovisio
         private ProjectRenderSettings projectRenderSettings = new();
 
 
-        // === Reels ===
-        private int currentReelIndex = 0;
-        private List<File> reelFileList = new();
+
+        private void UpdateReelLabelFromRenderManager()
+        {
+            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
+            if (fileId == null)
+            {
+                reelLabel.text = "";
+                return;
+            }
+
+            // Trova il File dal Project per mostrare il nome
+            File f = Project.Files?.FirstOrDefault(x => x.Id == fileId.Value);
+            reelLabel.text = f?.Name ?? $"File {fileId.Value}";
+        }
+
 
 
         public ProjectSidebarRenderController(
@@ -85,41 +97,17 @@ namespace Astrovisio
             // PREV
             prevReelButton.clicked += () =>
             {
-                if (reelFileList.Count == 0)
-                {
-                    return;
-                }
-
-                if (currentReelIndex == 0)
-                {
-                    currentReelIndex = reelFileList.Count - 1;
-                }
-                else
-                {
-                    currentReelIndex--;
-                }
-                reelLabel.text = reelFileList[currentReelIndex].Name;
-                // Debug.Log("Prev pressed: " + currentReelIndex);
-                RenderManager.Instance.RenderFile(Project.Id, reelFileList[currentReelIndex].Id);
+                RenderManager.Instance.RenderReelPrev(Project.Id);
+                UpdateReelLabelFromRenderManager();
             };
 
             // NEXT
             nextReelButton.clicked += () =>
             {
-                if (reelFileList.Count == 0)
-                {
-                    return;
-                }
-
-                currentReelIndex++;
-                if (currentReelIndex >= reelFileList.Count)
-                {
-                    currentReelIndex = 0;
-                }
-                reelLabel.text = reelFileList[currentReelIndex].Name;
-                // Debug.Log("Next pressed: " + currentReelIndex);
-                RenderManager.Instance.RenderFile(Project.Id, reelFileList[currentReelIndex].Id);
+                RenderManager.Instance.RenderReelNext(Project.Id);
+                UpdateReelLabelFromRenderManager();
             };
+
 
             // Debug.Log(prevReelButton);
             // Debug.Log(nextReelButton);
@@ -138,6 +126,27 @@ namespace Astrovisio
             settingsPanelController.OnApplyAxisSetting += OnApplyAxisSettings;
             settingsPanelController.OnApplyParamSetting += OnApplyParamSettings;
             settingsPanelController.OnCancelSetting += OnCancelSettings;
+
+            ProjectManager.ProjectUpdated += OnProjectUpdatedForReelLabel;
+
+
+            UpdateReelLabelFromRenderManager();
+        }
+
+        private void OnProjectUpdatedForReelLabel(Project project)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+            Project = project; // mantieni allineato
+            UpdateReelLabelFromRenderManager();
+        }
+
+
+        public void Dispose()
+        {
+            ProjectManager.ProjectUpdated -= OnProjectUpdatedForReelLabel;
         }
 
         public void Update()
@@ -533,32 +542,17 @@ namespace Astrovisio
         {
             if (project == null || Project.Id != project.Id)
             {
-                // Debug.Log($"1 {Project.Id} - {project.Id}");
                 return;
             }
+
+            // Aggiorna riferimento progetto (manteniamo coerenza con la tua logica attuale)
             Project = project;
 
-            reelFileList.Clear();
-            currentReelIndex = 0;
-
-            foreach (File f in project.Files)
-            {
-                Debug.Log($"{f.Order} - {f.Name}");
-            }
-
-            foreach (File f in project.Files.Where(f => f.Processed).OrderBy(f => f.Order))
-            {
-                if (f.Order == -1 || f.Order == 0)
-                {
-                    // Debug.Log(f.Name);
-                    reelLabel.text = f.Name;
-                    reelFileList.Add(f);
-                    continue;
-                }
-
-                reelFileList.Add(f);
-            }
+            // Il RenderManager ha già aggiornato il reel e l’ordine.
+            // Qui aggiorniamo solo la label in base al "current" del reel.
+            UpdateReelLabelFromRenderManager();
         }
+
 
     }
 

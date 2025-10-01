@@ -83,7 +83,6 @@ namespace Astrovisio
 
         public void Dispose()
         {
-            // RenderManager.Instance.OnProjectRenderReady -= OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened -= OnProjectOpened;
             ProjectManager.FileProcessed -= OnFileProcessed;
             ProjectManager.FileUpdated -= OnFileUpdated;

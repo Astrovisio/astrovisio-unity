@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Astrovisio
 {
-
     public readonly struct ProjectFile : IEquatable<ProjectFile>
     {
         public readonly int ProjectID;
@@ -16,11 +16,15 @@ namespace Astrovisio
             FileID = fileID;
         }
 
-        public bool Equals(ProjectFile other) =>
-            ProjectID == other.ProjectID && FileID == other.FileID;
+        public bool Equals(ProjectFile other)
+        {
+            return ProjectID == other.ProjectID && FileID == other.FileID;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is ProjectFile other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is ProjectFile other && Equals(other);
+        }
 
         public override int GetHashCode()
         {
@@ -33,7 +37,10 @@ namespace Astrovisio
             }
         }
 
-        public override string ToString() => $"P{ProjectID}-F{FileID}";
+        public override string ToString()
+        {
+            return $"P{ProjectID}-F{FileID}";
+        }
     }
 
     public class RenderManager : MonoBehaviour
@@ -45,26 +52,21 @@ namespace Astrovisio
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private UIManager uiManager;
 
-
         [Header("Other")]
         [SerializeField] private DataRenderer dataRendererPrefab;
 
-        // Events
-        public event Action<Project> OnProjectRenderReady;
+        // === Events ===
         public event Action<Project> OnFileRenderStart;
         public event Action<Project> OnFileRenderEnd;
 
-        // Settings
+        // === Settings ===
         public RenderSettingsController RenderSettingsController { get; set; }
         public DataRenderer DataRenderer { get; set; }
         private KDTreeComponent kdTreeComponent;
         private ParamRenderSettings paramRenderSettings;
 
-        // Local
+        // === Local ===
         public bool isInspectorModeActive = false;
-        private readonly Dictionary<ProjectFile, DataContainer> processedFileDictionary = new();
-        private readonly Dictionary<int, ProjectReel> projectReelDictionary = new();
-
 
         private void Awake()
         {
@@ -80,70 +82,170 @@ namespace Astrovisio
 
         private void Start()
         {
-            projectManager.FileUpdated += OnFileUpdated;
-            projectManager.FileProcessed += OnFileProcessed;
-
             RenderSettingsController = new RenderSettingsController();
         }
 
-        private void OnDestroy()
-        {
-            projectManager.FileUpdated -= OnFileUpdated;
-            projectManager.FileProcessed -= OnFileProcessed;
-        }
-
-        // === Add / Get / Remove / Clear ===
-        private static ProjectFile Key(int projectId, int fileId)
-        {
-            return new ProjectFile(projectId, fileId);
-        }
-
-        public void RegisterProcessedFile(Project project, File file, DataPack pack)
-        {
-            if (project == null || file == null || pack == null)
-            {
-                Debug.LogError("RegisterProcessedFile: null.");
-                return;
-            }
-
-            DataContainer dataContainer = new DataContainer(pack, project, file);
-            processedFileDictionary[Key(project.Id, file.Id)] = dataContainer;
-
-            OnProjectRenderReady?.Invoke(project);
-        }
-
+        // === DataContainer ===
         public bool TryGetDataContainer(int projectId, int fileId, out DataContainer dc)
         {
-            return processedFileDictionary.TryGetValue(Key(projectId, fileId), out dc);
+            if (ReelManager.Instance == null)
+            {
+                dc = null;
+                return false;
+            }
+
+            return ReelManager.Instance.TryGetDataContainer(projectId, fileId, out dc);
         }
 
         public bool TryGetDataContainer(Project project, File file, out DataContainer dc)
         {
-            return processedFileDictionary.TryGetValue(Key(project.Id, file.Id), out dc);
+            if (project == null || file == null)
+            {
+                dc = null;
+                return false;
+            }
+
+            if (ReelManager.Instance == null)
+            {
+                dc = null;
+                return false;
+            }
+
+            return ReelManager.Instance.TryGetDataContainer(project.Id, file.Id, out dc);
         }
 
-        public bool RemoveProcessedFile(int projectId, int fileId)
+        // === Reel ===
+        public bool TryGetReel(int projectId, out ProjectReel reel)
         {
-            return processedFileDictionary.Remove(Key(projectId, fileId));
+            if (ReelManager.Instance == null)
+            {
+                reel = null;
+                return false;
+            }
+
+            return ReelManager.Instance.TryGetReel(projectId, out reel);
         }
 
-        public int RemoveProcessedProject(int projectId)
+        public IReadOnlyList<int> GetReelOrderedIds(int projectId)
         {
-            var toRemove = new List<ProjectFile>();
-            foreach (var k in processedFileDictionary.Keys)
-                if (k.ProjectID == projectId) toRemove.Add(k);
+            if (ReelManager.Instance == null)
+            {
+                return Array.Empty<int>();
+            }
 
-            foreach (var k in toRemove)
-                processedFileDictionary.Remove(k);
-
-            return toRemove.Count;
+            return ReelManager.Instance.GetReelOrderedIds(projectId);
         }
 
-        public void ClearAllProcessed()
+        public void SetReelOrder(int projectId, IReadOnlyList<int> orderedIds)
         {
-            processedFileDictionary.Clear();
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            Debug.Log($"SetReelOrder P{projectId} → [{(orderedIds == null ? "∅" : string.Join(",", orderedIds))}]");
+            ReelManager.Instance.SetReelOrder(projectId, orderedIds);
         }
 
+        public bool RemoveFromReel(int projectId, int fileId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return false;
+            }
+
+            return ReelManager.Instance.RemoveFromReel(projectId, fileId);
+        }
+
+        public void ClearReel(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            ReelManager.Instance.ClearReel(projectId);
+        }
+
+        public void RemoveReel(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            ReelManager.Instance.RemoveReel(projectId);
+        }
+
+        public void RenderReelCurrent(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"RenderReelCurrent: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            DataContainer dc = ReelManager.Instance.GetReelCurrentDataContainer(projectId);
+            if (dc == null)
+            {
+                Debug.LogWarning($"RenderReelCurrent: empty or invalid reel for P{projectId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
+            Debug.Log($"RenderReelCurrent P{projectId} → {name}");
+            RenderDataContainer(dc);
+        }
+
+        public void RenderReelNext(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"RenderReelNext: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            int fileId = ReelManager.Instance.MoveNext(projectId);
+            if (fileId < 0)
+            {
+                return;
+            }
+
+            if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
+            {
+                Debug.LogWarning($"RenderReelNext: DataContainer not found for P{projectId} F{fileId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"RenderReelNext P{projectId} → {name} (F{fileId})");
+            RenderDataContainer(dc);
+        }
+
+        public void RenderReelPrev(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"RenderReelPrev: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            int fileId = ReelManager.Instance.MovePrev(projectId);
+            if (fileId < 0)
+            {
+                return;
+            }
+
+            if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
+            {
+                Debug.LogWarning($"RenderReelPrev: DataContainer not found for P{projectId} F{fileId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"RenderReelPrev P{projectId} → {name} (F{fileId})");
+            RenderDataContainer(dc);
+        }
 
         // === Render ===
         public void RenderFile(int projectId, int fileId)
@@ -153,8 +255,10 @@ namespace Astrovisio
                 Debug.LogWarning($"RenderDataContainer: no DataContainer for P{projectId} F{fileId}");
                 return;
             }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"RenderFile direct P{projectId} → {name} (F{fileId})");
             RenderDataContainer(dc);
-            // Debug.Log($"Rendering project id {projectId}, file id {fileId}");
         }
 
         public void RenderFile(Project project, File file)
@@ -164,8 +268,10 @@ namespace Astrovisio
                 Debug.LogWarning($"RenderDataContainer: DataContainer not found for P{project?.Id} F{file?.Id}");
                 return;
             }
+
+            string name = dc?.File?.Name ?? $"F{file?.Id}";
+            Debug.Log($"RenderFile direct P{project?.Id} → {name} (F{file?.Id})");
             RenderDataContainer(dc);
-            // Debug.Log($"Rendering project {project?.Name}, file {file?.Name}");
         }
 
         private void RenderDataContainer(DataContainer dc)
@@ -176,7 +282,6 @@ namespace Astrovisio
                 return;
             }
 
-            // If DataContainer exposes Project, use it for events/camera
             Project project = dc.Project;
             OnFileRenderStart?.Invoke(project);
 
@@ -193,46 +298,18 @@ namespace Astrovisio
             DataRenderer = Instantiate(dataRendererPrefab);
             RenderSettingsController.DataRenderer = DataRenderer;
 
+            string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
+            Debug.Log($"RenderDataContainer P{project?.Id} → {name}");
+
             DataRenderer.RenderDataContainer(dc);
 
             SetDataInspector(false, true);
             OnFileRenderEnd?.Invoke(project);
         }
 
-
-        // === Events ===
-        private void OnFileUpdated(Project project, File file)
-        {
-            if (project == null || file == null)
-            {
-                Debug.LogError("OnFileUpdated: null project or file.");
-                return;
-            }
-
-            bool removed = RemoveProcessedFile(project.Id, file.Id);
-
-            if (removed)
-            {
-                Debug.Log($"Removed processed data for Project {project.Name}, File {file.Name} (must be reprocessed).");
-            }
-            else
-            {
-                Debug.Log($"No processed data found to remove for Project {project.Name}, File {file.Name}.");
-            }
-        }
-
-        private void OnFileProcessed(Project project, File file, DataPack pack)
-        {
-            // Debug.Log($"Processed project {project.Name}, file {file.Name}, with {pack.Rows.Length} points.");
-            // Debug.Log($"C {file.Id} {file.Name} {file.Processed}");
-            RegisterProcessedFile(project, file, pack);
-        }
-
-
-        // TODO: fix this method if there is any error GB
+        // === Inspector ===
         public void SetDataInspector(bool state, bool debugSphereVisibility)
         {
-            // Debug.Log("UpdateDataInspector " + state);
             kdTreeComponent = DataRenderer.GetKDTreeComponent();
             kdTreeComponent.SetDataInspectorVisibility(debugSphereVisibility);
             isInspectorModeActive = state;
@@ -246,6 +323,16 @@ namespace Astrovisio
             {
                 // VR Controller...
             }
+        }
+
+        public int? GetReelCurrentFileId(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return null;
+            }
+
+            return ReelManager.Instance.GetReelCurrentFileId(projectId);
         }
 
     }
