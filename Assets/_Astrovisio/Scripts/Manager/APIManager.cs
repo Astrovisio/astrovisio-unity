@@ -276,7 +276,7 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProcessedFile(projectId, fileId);
-            Debug.Log($"[APIManager] GET {url}");
+            // Debug.Log($"[APIManager] GET {url}");
 
             const int maxRetries = 3;
             const int retryDelayMs = 2000;
@@ -292,7 +292,7 @@ namespace Astrovisio
 
                     await SendWebRequestAsync(request);
 
-                    Debug.Log($"Attempt {attempt}");
+                    // Debug.Log($"Attempt {attempt}");
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {

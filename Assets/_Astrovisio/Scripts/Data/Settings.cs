@@ -15,6 +15,19 @@ namespace Astrovisio
             set => variables = value;
         }
 
+        public void SetDefaults()
+        {
+            foreach (Setting setting in Variables)
+            {
+                setting.ThrMinSel = setting.ThrMin;
+                setting.ThrMaxSel = setting.ThrMax;
+                setting.Mapping = null;
+                setting.Colormap = null;
+                setting.Scaling = "Linear";
+                setting.InvertMapping = false;
+            }
+        }
+
     }
 
 }

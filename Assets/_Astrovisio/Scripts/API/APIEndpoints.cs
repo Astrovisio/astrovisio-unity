@@ -24,8 +24,8 @@ namespace Astrovisio
         public static string GetProcessedFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/process";
 
         // Renderer
-        public static string GetSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/renderer";
-        public static string UpdateSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/renderer";
+        public static string GetSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/render";
+        public static string UpdateSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/render";
 
         // Jobs
         public static string GetJobProgress(int jobId) => $"{BaseUrl}/api/jobs/{jobId}/progress";

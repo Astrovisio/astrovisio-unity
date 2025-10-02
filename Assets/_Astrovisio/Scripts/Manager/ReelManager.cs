@@ -94,7 +94,7 @@ namespace Astrovisio
                 reel = new ProjectReel();
                 reelByProject[projectId] = reel;
                 cursorByProject[projectId] = 0;
-                Debug.Log($"Create reel for P{projectId}. {DumpReelStateLine(projectId)}");
+                Debug.Log($"[ReelManager] Create reel for P{projectId}. {DumpReelStateLine(projectId)}");
             }
 
             return reel;
@@ -105,7 +105,7 @@ namespace Astrovisio
             if (!reelByProject.TryGetValue(projectId, out var reel))
             {
                 cursorByProject.Remove(projectId);
-                Debug.Log($"EnsureCursorInRange: reel missing for P{projectId} → remove cursor.");
+                Debug.Log($"[ReelManager] EnsureCursorInRange: reel missing for P{projectId} → remove cursor.");
                 return;
             }
 
@@ -114,14 +114,14 @@ namespace Astrovisio
             if (count <= 0)
             {
                 cursorByProject[projectId] = 0;
-                Debug.Log($"EnsureCursorInRange: empty reel for P{projectId} → cursor=0.");
+                Debug.Log($"[ReelManager] EnsureCursorInRange: empty reel for P{projectId} → cursor=0.");
                 return;
             }
 
             int after = Mathf.Clamp(before, 0, count - 1);
             if (before != after)
             {
-                Debug.Log($"EnsureCursorInRange: P{projectId} cursor {before}→{after} (count={count}).");
+                Debug.Log($"[ReelManager] EnsureCursorInRange: P{projectId} cursor {before}→{after} (count={count}).");
             }
 
             cursorByProject[projectId] = after;
@@ -146,7 +146,7 @@ namespace Astrovisio
                 .Select(f => f.Id)
                 .ToArray();
 
-            Debug.Log($"Sync start P{project.Id}: serverProcessedOrder=[{JoinIds(orderedProcessedIds)}] processedCount={CountProcessedForProject(project.Id)}");
+            Debug.Log($"[ReelManager] Sync start P{project.Id}: serverProcessedOrder=[{JoinIds(orderedProcessedIds)}] processedCount={CountProcessedForProject(project.Id)}");
 
             reel.SetOrder(orderedProcessedIds);
 
@@ -159,11 +159,11 @@ namespace Astrovisio
             foreach (var rid in toRemove)
             {
                 reel.Remove(rid);
-                Debug.Log($"Sync: removed not-processed-anymore P{project.Id} F{rid}");
+                Debug.Log($"[ReelManager] Sync: removed not-processed-anymore P{project.Id} F{rid}");
             }
 
             EnsureCursorInRange(project.Id);
-            Debug.Log($"Sync end   {DumpReelStateLine(project.Id)}");
+            Debug.Log($"[ReelManager] Sync end - {DumpReelStateLine(project.Id)}");
         }
 
         // ===== Public API: processed cache (for RenderManager if needed) =====
@@ -193,10 +193,10 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log($"SetReelOrder P{projectId} → [{JoinIds(orderedIds)}]");
+            Debug.Log($"[ReelManager] SetReelOrder P{projectId} → [{JoinIds(orderedIds)}]");
             reel.SetOrder(orderedIds);
             EnsureCursorInRange(projectId);
-            Debug.Log($"After SetReelOrder {DumpReelStateLine(projectId)}");
+            Debug.Log($"[ReelManager] After SetReelOrder {DumpReelStateLine(projectId)}");
         }
 
         public bool RemoveFromReel(int projectId, int fileId)
@@ -209,12 +209,12 @@ namespace Astrovisio
             bool removed = reel.Remove(fileId);
             if (removed)
             {
-                Debug.Log($"RemoveFromReel P{projectId} F{fileId} → removed. {DumpReelStateLine(projectId)}");
+                Debug.Log($"[ReelManager] RemoveFromReel P{projectId} F{fileId} → removed. {DumpReelStateLine(projectId)}");
                 EnsureCursorInRange(projectId);
             }
             else
             {
-                Debug.Log($"RemoveFromReel P{projectId} F{fileId} → not present.");
+                Debug.Log($"[ReelManager] RemoveFromReel P{projectId} F{fileId} → not present.");
             }
 
             return removed;
@@ -228,14 +228,14 @@ namespace Astrovisio
             }
 
             cursorByProject[projectId] = 0;
-            Debug.Log($"ClearReel P{projectId}. {DumpReelStateLine(projectId)}");
+            Debug.Log($"[ReelManager] ClearReel P{projectId}. {DumpReelStateLine(projectId)}");
         }
 
         public void RemoveReel(int projectId)
         {
             reelByProject.Remove(projectId);
             cursorByProject.Remove(projectId);
-            Debug.Log($"RemoveReel P{projectId} (reel + cursor removed).");
+            Debug.Log($"[ReelManager] RemoveReel P{projectId} (reel + cursor removed).");
         }
 
         public int? GetReelCurrentFileId(int projectId)
@@ -280,14 +280,14 @@ namespace Astrovisio
         {
             if (!reelByProject.TryGetValue(projectId, out var reel) || reel == null)
             {
-                Debug.LogWarning($"MoveNext: reel missing for P{projectId}");
+                Debug.LogWarning($"[ReelManager] MoveNext: reel missing for P{projectId}");
                 return -1;
             }
 
             int count = reel.Enumerate().Count();
             if (count == 0)
             {
-                Debug.LogWarning($"MoveNext: empty reel for P{projectId}");
+                Debug.LogWarning($"[ReelManager] MoveNext: empty reel for P{projectId}");
                 return -1;
             }
 
@@ -297,7 +297,7 @@ namespace Astrovisio
             var current = reel.GetAt(next);
 
             string name = current.Data?.File?.Name ?? $"F{current.FileId}";
-            Debug.Log($"MoveNext P{projectId} {cursor}→{next} (count={count}) → {name} (F{current.FileId})");
+            Debug.Log($"[ReelManager] MoveNext P{projectId} {cursor}→{next} (count={count}) → {name} (F{current.FileId})");
 
             return current.FileId;
         }
@@ -306,14 +306,14 @@ namespace Astrovisio
         {
             if (!reelByProject.TryGetValue(projectId, out var reel) || reel == null)
             {
-                Debug.LogWarning($"MovePrev: reel missing for P{projectId}");
+                Debug.LogWarning($"[ReelManager] MovePrev: reel missing for P{projectId}");
                 return -1;
             }
 
             int count = reel.Enumerate().Count();
             if (count == 0)
             {
-                Debug.LogWarning($"MovePrev: empty reel for P{projectId}");
+                Debug.LogWarning($"[ReelManager] MovePrev: empty reel for P{projectId}");
                 return -1;
             }
 
@@ -323,7 +323,7 @@ namespace Astrovisio
             var current = reel.GetAt(prev);
 
             string name = current.Data?.File?.Name ?? $"F{current.FileId}";
-            Debug.Log($"MovePrev P{projectId} {cursor}→{prev} (count={count}) → {name} (F{current.FileId})");
+            Debug.Log($"[ReelManager] MovePrev P{projectId} {cursor}→{prev} (count={count}) → {name} (F{current.FileId})");
 
             return current.FileId;
         }
@@ -334,7 +334,7 @@ namespace Astrovisio
         {
             if (project == null || file == null || pack == null)
             {
-                Debug.LogError("OnFileProcessed: null args.");
+                Debug.LogError("[ReelManager] OnFileProcessed: null args.");
                 return;
             }
 
@@ -342,12 +342,12 @@ namespace Astrovisio
             DataContainer dataContainer = new DataContainer(pack, project, file);
             processedMap[Key(project.Id, file.Id)] = dataContainer;
 
-            Debug.Log($"Processed ADD P{project.Id} {project.Name} | F{file.Id} {file.Name} | processedCount={CountProcessedForProject(project.Id)}");
+            Debug.Log($"[ReelManager] Processed ADD P{project.Id} {project.Name} | F{file.Id} {file.Name} | processedCount={CountProcessedForProject(project.Id)}");
 
             // Add to reel and sync with server order
             var reel = GetOrCreateReel(project.Id);
             reel.AddOrUpdate(file.Id, dataContainer);
-            Debug.Log($"Reel AddOrUpdate P{project.Id} F{file.Id}. {DumpReelStateLine(project.Id)}");
+            Debug.Log($"[ReelManager] Reel AddOrUpdate P{project.Id} F{file.Id}. {DumpReelStateLine(project.Id)}");
 
             SyncReelWithServerOrder(project);
         }
@@ -356,20 +356,20 @@ namespace Astrovisio
         {
             if (project == null || file == null)
             {
-                Debug.LogError("OnFileUpdated: null project or file.");
+                Debug.LogError("[ReelManager] OnFileUpdated: null project or file.");
                 return;
             }
 
-            Debug.Log($"OnFileUpdated P{project.Id} {project.Name} | F{file.Id} {file.Name} → remove processed & reel entry");
+            Debug.Log($"[ReelManager] OnFileUpdated P{project.Id} {project.Name} | F{file.Id} {file.Name} → remove processed & reel entry");
 
             bool removedProcessed = processedMap.Remove(Key(project.Id, file.Id));
             if (removedProcessed)
             {
-                Debug.Log($"Processed REMOVE P{project.Id} F{file.Id} | processedCount={CountProcessedForProject(project.Id)}");
+                Debug.Log($"[ReelManager] Processed REMOVE P{project.Id} F{file.Id} | processedCount={CountProcessedForProject(project.Id)}");
             }
             else
             {
-                Debug.Log($"Processed REMOVE skipped (not found) P{project.Id} F{file.Id}");
+                Debug.Log($"[ReelManager] Processed REMOVE skipped (not found) P{project.Id} F{file.Id}");
             }
 
             if (reelByProject.TryGetValue(project.Id, out var reel) && reel != null)
@@ -377,7 +377,7 @@ namespace Astrovisio
                 bool removedReel = reel.Remove(file.Id);
                 if (removedReel)
                 {
-                    Debug.Log($"Reel REMOVE P{project.Id} F{file.Id}. {DumpReelStateLine(project.Id)}");
+                    Debug.Log($"[ReelManager] Reel REMOVE P{project.Id} F{file.Id}. {DumpReelStateLine(project.Id)}");
                     EnsureCursorInRange(project.Id);
                 }
             }
@@ -390,7 +390,7 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log($"OnProjectUpdated P{project.Id} {project.Name} → sync reel with server order.");
+            Debug.Log($"[ReelManager] OnProjectUpdated P{project.Id} {project.Name} → sync reel with server order.");
             SyncReelWithServerOrder(project);
         }
 
@@ -416,7 +416,7 @@ namespace Astrovisio
                 processedMap.Remove(k);
             }
 
-            Debug.Log($"Processed CLEAR project P{project.Id} removed={toRemove.Count}");
+            Debug.Log($"[ReelManager] Processed CLEAR project P{project.Id} removed={toRemove.Count}");
 
             // Remove reel + cursor
             RemoveReel(project.Id);
@@ -428,7 +428,7 @@ namespace Astrovisio
             processedMap.Clear();
             reelByProject.Clear();
             cursorByProject.Clear();
-            Debug.Log("ClearAll: processed + reels + cursors cleared.");
+            Debug.Log("[ReelManager] ClearAll: processed + reels + cursors cleared.");
         }
 
     }
