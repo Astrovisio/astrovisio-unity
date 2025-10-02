@@ -48,23 +48,6 @@ namespace Astrovisio
         private ProjectRenderSettings projectRenderSettings = new();
 
 
-
-        private void UpdateReelLabelFromRenderManager()
-        {
-            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
-            if (fileId == null)
-            {
-                reelLabel.text = "";
-                return;
-            }
-
-            // Trova il File dal Project per mostrare il nome
-            File f = Project.Files?.FirstOrDefault(x => x.Id == fileId.Value);
-            reelLabel.text = f?.Name ?? $"File {fileId.Value}";
-        }
-
-
-
         public ProjectSidebarRenderController(
             ProjectSidebarController projectSidebarController,
             UIManager uiManager,
@@ -98,20 +81,16 @@ namespace Astrovisio
             prevReelButton.clicked += () =>
             {
                 RenderManager.Instance.RenderReelPrev(Project.Id);
-                UpdateReelLabelFromRenderManager();
+                UpdateReelLabel();
             };
 
             // NEXT
             nextReelButton.clicked += () =>
             {
                 RenderManager.Instance.RenderReelNext(Project.Id);
-                UpdateReelLabelFromRenderManager();
+                UpdateReelLabel();
             };
 
-
-            // Debug.Log(prevReelButton);
-            // Debug.Log(nextReelButton);
-            // Debug.Log(reelLabel);
 
             VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
             xButton = axisContainer.Q<VisualElement>("XLabel")?.Q<Button>("Root");
@@ -130,23 +109,7 @@ namespace Astrovisio
             ProjectManager.ProjectUpdated += OnProjectUpdatedForReelLabel;
 
 
-            UpdateReelLabelFromRenderManager();
-        }
-
-        private void OnProjectUpdatedForReelLabel(Project project)
-        {
-            if (project == null || project.Id != Project.Id)
-            {
-                return;
-            }
-            Project = project; // mantieni allineato
-            UpdateReelLabelFromRenderManager();
-        }
-
-
-        public void Dispose()
-        {
-            ProjectManager.ProjectUpdated -= OnProjectUpdatedForReelLabel;
+            UpdateReelLabel();
         }
 
         public void Update()
@@ -155,6 +118,15 @@ namespace Astrovisio
             UpdateAxisButtons();
             UpdateParamsScrollView();
             UnselectAllSettingsButton();
+        }
+
+        public void Dispose()
+        {
+            settingsPanelController.OnApplyAxisSetting -= OnApplyAxisSettings;
+            settingsPanelController.OnApplyParamSetting -= OnApplyParamSettings;
+            settingsPanelController.OnCancelSetting -= OnCancelSettings;
+
+            ProjectManager.ProjectUpdated -= OnProjectUpdatedForReelLabel;
         }
 
         private void UpdateAxisButtons()
@@ -550,9 +522,31 @@ namespace Astrovisio
 
             // Il RenderManager ha già aggiornato il reel e l’ordine.
             // Qui aggiorniamo solo la label in base al "current" del reel.
-            UpdateReelLabelFromRenderManager();
+            UpdateReelLabel();
         }
 
+        private void UpdateReelLabel()
+        {
+            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
+            if (fileId == null)
+            {
+                reelLabel.text = "";
+                return;
+            }
+
+            File f = Project.Files?.FirstOrDefault(x => x.Id == fileId.Value);
+            reelLabel.text = f?.Name ?? $"File {fileId.Value}";
+        }
+
+        private void OnProjectUpdatedForReelLabel(Project project)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+            Project = project;
+            UpdateReelLabel();
+        }
 
     }
 

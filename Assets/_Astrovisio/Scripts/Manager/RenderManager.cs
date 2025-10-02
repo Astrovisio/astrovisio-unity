@@ -7,18 +7,18 @@ namespace Astrovisio
 {
     public readonly struct ProjectFile : IEquatable<ProjectFile>
     {
-        public readonly int ProjectID;
-        public readonly int FileID;
+        public readonly int ProjectId;
+        public readonly int FileId;
 
-        public ProjectFile(int projectID, int fileID)
+        public ProjectFile(int projectId, int fileId)
         {
-            ProjectID = projectID;
-            FileID = fileID;
+            ProjectId = projectId;
+            FileId = fileId;
         }
 
         public bool Equals(ProjectFile other)
         {
-            return ProjectID == other.ProjectID && FileID == other.FileID;
+            return ProjectId == other.ProjectId && FileId == other.FileId;
         }
 
         public override bool Equals(object obj)
@@ -31,15 +31,15 @@ namespace Astrovisio
             unchecked
             {
                 int hash = 17;
-                hash = hash * 31 + ProjectID;
-                hash = hash * 31 + FileID;
+                hash = hash * 31 + ProjectId;
+                hash = hash * 31 + FileId;
                 return hash;
             }
         }
 
         public override string ToString()
         {
-            return $"P{ProjectID}-F{FileID}";
+            return $"P{ProjectId}-F{FileId}";
         }
     }
 

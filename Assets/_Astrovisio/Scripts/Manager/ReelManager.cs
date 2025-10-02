@@ -60,7 +60,7 @@ namespace Astrovisio
             int count = 0;
             foreach (var k in processedMap.Keys)
             {
-                if (k.ProjectID == projectId)
+                if (k.ProjectId == projectId)
                 {
                     count++;
                 }
@@ -405,7 +405,7 @@ namespace Astrovisio
             var toRemove = new List<ProjectFile>();
             foreach (var k in processedMap.Keys)
             {
-                if (k.ProjectID == project.Id)
+                if (k.ProjectId == project.Id)
                 {
                     toRemove.Add(k);
                 }

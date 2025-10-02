@@ -10,20 +10,26 @@ namespace Astrovisio
 
         // Projects
         public static string GetProjects() => $"{BaseUrl}/api/projects/";
-        public static string GetProject(int projectID) => $"{BaseUrl}/api/projects/{projectID}";
+        public static string GetProject(int projectId) => $"{BaseUrl}/api/projects/{projectId}";
         public static string CreateProject() => $"{BaseUrl}/api/projects/";
-        public static string UpdateProject(int projectID) => $"{BaseUrl}/api/projects/{projectID}";
-        public static string DeleteProject(int projectID) => $"{BaseUrl}/api/projects/{projectID}";
-        public static string DuplicateProject(int projectID) => $"{BaseUrl}/api/projects/{projectID}/duplicate";
-        public static string UpdateProjectFiles(int projectID) => $"{BaseUrl}/api/projects/{projectID}/files";
-        public static string GetFile(int projectID, int fileID) => $"{BaseUrl}/api/projects/{projectID}/file/{fileID}";
-        public static string UpdateFile(int projectID, int fileID) => $"{BaseUrl}/api/projects/{projectID}/file/{fileID}";
-        public static string ProcessFile(int projectID, int fileID) => $"{BaseUrl}/api/projects/{projectID}/file/{fileID}/process";
-        public static string GetProcessedFile(int projectID, int fileID) => $"{BaseUrl}/api/projects/{projectID}/file/{fileID}/process";
+        public static string UpdateProject(int projectId) => $"{BaseUrl}/api/projects/{projectId}";
+        public static string DeleteProject(int projectId) => $"{BaseUrl}/api/projects/{projectId}";
+        public static string DuplicateProject(int projectId) => $"{BaseUrl}/api/projects/{projectId}/duplicate";
+
+        // Files
+        public static string UpdateProjectFiles(int projectId) => $"{BaseUrl}/api/projects/{projectId}/files";
+        public static string GetFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}";
+        public static string UpdateFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}";
+        public static string ProcessFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/process";
+        public static string GetProcessedFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/process";
+
+        // Renderer
+        public static string GetSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/renderer";
+        public static string UpdateSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/renderer";
 
         // Jobs
-        public static string GetJobProgress(int jobID) => $"{BaseUrl}/api/jobs/{jobID}/progress";
-        public static string GetJobResult(int jobID) => $"{BaseUrl}/api/jobs/{jobID}/result";
+        public static string GetJobProgress(int jobId) => $"{BaseUrl}/api/jobs/{jobId}/progress";
+        public static string GetJobResult(int jobId) => $"{BaseUrl}/api/jobs/{jobId}/result";
 
     }
 

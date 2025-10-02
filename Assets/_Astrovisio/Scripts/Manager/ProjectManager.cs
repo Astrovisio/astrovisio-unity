@@ -241,7 +241,7 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessFile(int projectID, int fileID)
+		public async void ProcessFile(int projectId, int fileId)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
@@ -249,7 +249,7 @@ namespace Astrovisio
 			try
 			{
 				// Get Job ID
-				int? jobID = await apiManager.ProcessFile(projectID, fileID, error =>
+				int? jobID = await apiManager.ProcessFile(projectId, fileId, error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
@@ -317,15 +317,15 @@ namespace Astrovisio
 
 
 				// Get project and file
-				Project project = GetProject(projectID);
-				File file = GetFile(projectID, fileID);
+				Project project = GetProject(projectId);
+				File file = GetFile(projectId, fileId);
 
 				// Get updated project and update file
 				await apiManager.ReadProject(
-				projectID,
+				projectId,
 				onSuccess: (p) =>
 				{
-					File updatedFile = p.Files?.FirstOrDefault(f => f.Id == fileID);
+					File updatedFile = p.Files?.FirstOrDefault(f => f.Id == fileId);
 					// Debug.Log($"A {updatedFile.Id} {updatedFile.Name} {updatedFile.Processed}");
 					file.UpdateFrom(updatedFile);
 					// Debug.Log($"B {file.Id} {file.Name} {file.Processed}");
@@ -346,12 +346,12 @@ namespace Astrovisio
 					}
 					else
 					{
-						Debug.LogWarning($"No file found with id={fileID} in project={projectID}");
+						Debug.LogWarning($"No file found with id={fileId} in project={projectId}");
 					}
 				}
 				else
 				{
-					Debug.LogError($"Project with id={projectID} not found or has no files");
+					Debug.LogError($"Project with id={projectId} not found or has no files");
 				}
 
 				uiManager.SetLoadingView(false);
@@ -683,6 +683,8 @@ namespace Astrovisio
 			}
 		}
 
+		// TODO: settings
+		
 
 		// --------------------
 		public void CloseProject(int id)

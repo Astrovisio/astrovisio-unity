@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class Project : INotifyPropertyChanged
+    public class Project
     {
         private string name;
         private bool favourite;
@@ -27,7 +27,6 @@ namespace Astrovisio
                 if (name != value)
                 {
                     name = value;
-                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -41,7 +40,6 @@ namespace Astrovisio
                 if (favourite != value)
                 {
                     favourite = value;
-                    OnPropertyChanged(nameof(Favourite));
                 }
             }
         }
@@ -55,7 +53,6 @@ namespace Astrovisio
                 if (description != value)
                 {
                     description = value;
-                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
@@ -69,7 +66,6 @@ namespace Astrovisio
                 if (id != value)
                 {
                     id = value;
-                    OnPropertyChanged(nameof(Id));
                 }
             }
         }
@@ -83,7 +79,6 @@ namespace Astrovisio
                 if (created != value)
                 {
                     created = value;
-                    OnPropertyChanged(nameof(Created));
                 }
             }
         }
@@ -97,7 +92,6 @@ namespace Astrovisio
                 if (lastOpened != value)
                 {
                     lastOpened = value;
-                    OnPropertyChanged(nameof(LastOpened));
                 }
             }
         }
@@ -111,24 +105,15 @@ namespace Astrovisio
                 if (files != value)
                 {
                     files = value;
-                    OnPropertyChanged(nameof(Files));
                 }
             }
         }
-
 
         public Project(string name, string description, bool favourite = false)
         {
             Name = name;
             Description = description;
             Favourite = favourite;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void UpdateFrom(Project other)
@@ -155,7 +140,6 @@ namespace Astrovisio
                 if (Files != null && Files.Count > 0)
                 {
                     Files.Clear();
-                    OnPropertyChanged(nameof(Files));
                 }
                 return;
             }
@@ -229,9 +213,6 @@ namespace Astrovisio
                     Files.Add(newFile);
                 }
             }
-
-            // Notify that the 'Files' collection has changed so the UI/bindings can refresh.
-            OnPropertyChanged(nameof(Files));
         }
 
         public Project DeepCopy()

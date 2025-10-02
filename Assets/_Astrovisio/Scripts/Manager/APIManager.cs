@@ -38,11 +38,11 @@ namespace Astrovisio
         }
 
         public async Task ReadProject(
-            int projectID,
+            int projectId,
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProject(projectID);
+            string url = APIEndpoints.GetProject(projectId);
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 await SendWebRequestAsync(request);
@@ -135,12 +135,12 @@ namespace Astrovisio
         }
 
         public async Task UpdateProject(
-            int projectID,
+            int projectId,
             UpdateProjectRequest req,
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProject(projectID);
+            string url = APIEndpoints.GetProject(projectId);
             string json = JsonConvert.SerializeObject(req);
             Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
 
@@ -169,11 +169,11 @@ namespace Astrovisio
         }
 
         public async Task DeleteProject(
-            int projectID,
+            int projectId,
             Action onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.DeleteProject(projectID);
+            string url = APIEndpoints.DeleteProject(projectId);
 
             using (UnityWebRequest request = UnityWebRequest.Delete(url))
             {
@@ -191,12 +191,12 @@ namespace Astrovisio
         }
 
         public async Task DuplicateProject(
-            int projectID,
+            int projectId,
             DuplicateProjectRequest req,
             Action<Project> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.DuplicateProject(projectID);
+            string url = APIEndpoints.DuplicateProject(projectId);
 
             string jsonPayload = JsonConvert.SerializeObject(req);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
@@ -229,11 +229,11 @@ namespace Astrovisio
         }
 
         public async Task<int?> ProcessFile(
-            int projectID,
-            int fileID,
+            int projectId,
+            int fileId,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.ProcessFile(projectID, fileID);
+            string url = APIEndpoints.ProcessFile(projectId, fileId);
 
             Debug.Log($"[APIManager] POST {url}");
 
@@ -270,12 +270,12 @@ namespace Astrovisio
         }
 
         public async Task GetProcessedFile(
-            int projectID,
-            int fileID,
+            int projectId,
+            int fileId,
             Action<DataPack> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.GetProcessedFile(projectID, fileID);
+            string url = APIEndpoints.GetProcessedFile(projectId, fileId);
             Debug.Log($"[APIManager] GET {url}");
 
             const int maxRetries = 3;
@@ -332,13 +332,13 @@ namespace Astrovisio
         }
 
         public async Task UpdateFile(
-            int projectID,
-            int fileID,
+            int projectId,
+            int fileId,
             UpdateFileRequest req,
             Action<File> onSuccess,
             Action<string> onError = null)
         {
-            string url = APIEndpoints.UpdateFile(projectID, fileID);
+            string url = APIEndpoints.UpdateFile(projectId, fileId);
             string json = JsonConvert.SerializeObject(req);
 
             // Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
@@ -371,13 +371,13 @@ namespace Astrovisio
         }
 
         public async Task ReplaceProjectFiles(
-            int projectID,
+            int projectId,
             ReplaceProjectFilesRequest req)
         {
             if (req == null || req.Paths == null || req.Paths.Length == 0)
                 Debug.LogWarning("[APIManager] ReplaceProjectFiles called with empty request/paths.");
 
-            string url = APIEndpoints.UpdateProjectFiles(projectID);
+            string url = APIEndpoints.UpdateProjectFiles(projectId);
             string json = JsonConvert.SerializeObject(req);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
@@ -404,6 +404,104 @@ namespace Astrovisio
                 Debug.Log($"[APIManager] ReplaceProjectFiles OK. Status: {status}\nBody: {body}");
             }
         }
+
+
+
+
+        public async Task GetSettings(
+            int projectId,
+            int fileId,
+            Action<Settings> onSuccess,
+            Action<string> onError = null)
+        {
+            string url = APIEndpoints.GetSettings(projectId, fileId);
+            Debug.Log($"[APIManager] GET {url}");
+
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Accept", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error GET Settings: {request.error}");
+                    onError?.Invoke(request.downloadHandler?.text ?? request.error);
+                    return;
+                }
+
+                try
+                {
+                    string json = request.downloadHandler.text;
+                    Settings settings = JsonConvert.DeserializeObject<Settings>(json);
+                    onSuccess?.Invoke(settings);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[APIManager] Deserialization failed (Settings): {ex.Message}");
+                    onError?.Invoke("Deserialization failed: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task UpdateSettings(
+            int projectId,
+            int fileId,
+            UpdateSettingsRequest req,
+            Action<Settings> onSuccess,
+            Action<string> onError = null)
+        {
+            if (req == null || req.Variables == null || req.Variables.Count == 0)
+            {
+                Debug.LogWarning("[APIManager] UpdateSettings called with empty request/variables.");
+            }
+
+            string url = APIEndpoints.UpdateSettings(projectId, fileId);
+            string json = JsonConvert.SerializeObject(req, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+
+            using (UnityWebRequest request = UnityWebRequest.Put(url, json))
+            {
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error PUT Settings: {request.error}");
+                    onError?.Invoke(request.downloadHandler?.text ?? request.error);
+                    return;
+                }
+
+                try
+                {
+                    string body = request.downloadHandler.text;
+                    if (string.IsNullOrWhiteSpace(body))
+                    {
+                        onSuccess?.Invoke(new Settings { Variables = req.Variables });
+                        return;
+                    }
+
+                    Settings updated = JsonConvert.DeserializeObject<Settings>(body);
+                    onSuccess?.Invoke(updated);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[APIManager] Deserialization failed (UpdateSettings): {ex.Message}");
+                    onError?.Invoke("Deserialization failed: " + ex.Message);
+                }
+            }
+        }
+
+
+
+
 
         public async Task<JobStatusResponse> GetJobProgress(
             int jobID,
