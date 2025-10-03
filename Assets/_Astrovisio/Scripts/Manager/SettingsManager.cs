@@ -66,7 +66,8 @@ namespace Astrovisio
                 Debug.LogError(JsonConvert.SerializeObject(settings));
 
                 ProjectFile key = new ProjectFile(project.Id, file.Id);
-                settingsDictionary[key] = settings;
+                AddSettings(project.Id, file.Id, settings);
+                // settingsDictionary[key] = settings;
 
                 Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
                 Debug.LogWarning(JsonConvert.SerializeObject(updatedSettings));
@@ -138,8 +139,6 @@ namespace Astrovisio
 
             return removed;
         }
-
-
 
         public async Task<Settings> GetSettings(int projectId, int fileId)
         {
