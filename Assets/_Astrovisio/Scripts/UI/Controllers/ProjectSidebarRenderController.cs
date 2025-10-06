@@ -40,20 +40,27 @@ namespace Astrovisio
         private Button xButton;
         private Button yButton;
         private Button zButton;
-        private ScrollView paramSettingsScrollView;
+        private ScrollView paramScrollView;
         private VisualElement settingsPanel;
 
+        // === Click events ===
+        private EventCallback<ClickEvent> xParamClickHandler;
+        private EventCallback<ClickEvent> yParamClickHandler;
+        private EventCallback<ClickEvent> zParamClickHandler;
 
 
         // === Data ===
 
-        private List<Settings> settingsList;
 
 
         private SettingsPanelController settingsPanelController;
-        private Dictionary<string, AxisRow> axisSettingsData = new();
-        private Dictionary<string, ParamRow> paramSettingsDatas = new();
-        private ProjectRenderSettings projectRenderSettings = new();
+        private File currentFile;
+        // private Setting currentSetting;
+        private Settings settings;
+
+        // private Dictionary<string, AxisRow> axisSettingsData = new();
+        // private Dictionary<string, ParamRow> paramSettingsDatas = new();
+        // private ProjectRenderSettings projectRenderSettings = new();
 
 
 
@@ -73,20 +80,19 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            ProjectManager.FileProcessed += OnFileProcessed;
 
             Init();
 
-            // Settings settings;
-            // SettingsManager.Instance.TryGetSettings(3, 1, out settings);
-
-            // Debug.Log(settings.Variables.Count);
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.FileProcessed += OnFileProcessed;
         }
 
         private void Init()
         {
-            renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
+            // UpdateCurrentFile();
+            // SettingsManager.Instance.TryGetSettings(Project.Id, currentFile.Id, out settings);
 
+            renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
             prevReelButton = renderSettingsContainer.Q<Button>("PrevReelButton");
             nextReelButton = renderSettingsContainer.Q<Button>("NextReelButton");
             reelLabel = renderSettingsContainer.Q<Label>("ReelLabel");
@@ -95,16 +101,16 @@ namespace Astrovisio
             prevReelButton.clicked += () =>
             {
                 RenderManager.Instance.RenderReelPrev(Project.Id);
-                UpdateReelLabel();
-                UpdateParamsScrollView();
+                UpdateCurrentFile();
+                UpdateSidebar();
             };
 
             // NEXT
             nextReelButton.clicked += () =>
             {
                 RenderManager.Instance.RenderReelNext(Project.Id);
-                UpdateReelLabel();
-                UpdateParamsScrollView();
+                UpdateCurrentFile();
+                UpdateSidebar();
             };
 
 
@@ -113,7 +119,7 @@ namespace Astrovisio
             yButton = axisContainer.Q<VisualElement>("YLabel")?.Q<Button>("Root");
             zButton = axisContainer.Q<VisualElement>("ZLabel")?.Q<Button>("Root");
 
-            paramSettingsScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
+            paramScrollView = renderSettingsContainer.Q<ScrollView>("ParamSettingsScrollView");
 
             settingsPanel = renderSettingsContainer.Q<VisualElement>("SettingsPanel");
             settingsPanelController = new SettingsPanelController(Project, settingsPanel, UIContextSO);
@@ -121,122 +127,102 @@ namespace Astrovisio
             settingsPanelController.OnApplyAxisSetting += OnApplyAxisSettings;
             settingsPanelController.OnApplyParamSetting += OnApplyParamSettings;
             settingsPanelController.OnCancelSetting += OnCancelSettings;
-
-            ProjectManager.ProjectUpdated += OnProjectUpdatedForReelLabel;
-
-
-            UpdateReelLabel();
-            UpdateParamsScrollView();
-        }
-
-        public void Update()
-        {
-            paramSettingsDatas.Clear();
-            UpdateAxisButtons();
-            UpdateParamsScrollView();
-            UnselectAllSettingsButton();
         }
 
         public void Dispose()
         {
-            ProjectManager.ProjectUpdated -= OnProjectUpdatedForReelLabel;
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileProcessed -= OnFileProcessed;
         }
 
-        private void UpdateAxisButtons()
+        public void Render()
         {
-            Label xLabel = xButton.Q<Label>("ParamLabel");
-            Label yLabel = yButton.Q<Label>("ParamLabel");
-            Label zLabel = zButton.Q<Label>("ParamLabel");
+            // Debug.Log($"[Sidebar] Render clicked for Project id={Project?.Id}, name='{Project?.Name}'");
 
-            File file = Project.Files?.FirstOrDefault(); // GB
-            xLabel.text = file?.Variables.FirstOrDefault(v => v.XAxis)?.Name ?? "";
-            yLabel.text = file?.Variables.FirstOrDefault(v => v.YAxis)?.Name ?? "";
-            zLabel.text = file?.Variables.FirstOrDefault(v => v.ZAxis)?.Name ?? "";
-
-            VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
-            VisualElement xVisualElement = axisContainer.Q<VisualElement>("XLabel");
-            VisualElement yVisualElement = axisContainer.Q<VisualElement>("YLabel");
-            VisualElement zVisualElement = axisContainer.Q<VisualElement>("ZLabel");
-
-            foreach (Variable variable in file.Variables)
+            if (Project?.Files == null)
             {
-                if (!variable.Selected)
+                Debug.LogWarning("[Sidebar] Project.Files is null");
+                return;
+            }
+            // Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
+
+            // // Check for data container (debug)
+            // foreach (File f in Project.Files.OrderBy(f => f.Order))
+            // {
+            // bool hasDC = RenderManager.Instance.TryGetDataContainer(Project, f, out var _);
+            // Debug.Log($"[Sidebar] File id={f.Id}, name='{f.Name}', processed={f.Processed}, order={f.Order}, processedPath='{f.ProcessedPath}', hasDataContainer={hasDC}");
+            // }
+
+            File fileToRender = Project.Files.FirstOrDefault(f => f.Processed);
+
+            if (fileToRender == null)
+            {
+                fileToRender = Project.Files.FirstOrDefault(f => RenderManager.Instance.TryGetDataContainer(Project, f, out var _));
+                if (fileToRender != null)
                 {
-                    continue;
-                }
-
-                VisualElement axisVisualElement = null;
-
-                if (variable.XAxis)
-                    axisVisualElement = xVisualElement;
-                else if (variable.YAxis)
-                    axisVisualElement = yVisualElement;
-                else if (variable.ZAxis)
-                    axisVisualElement = zVisualElement;
-
-
-                if (axisVisualElement != null)
-                {
-                    // Debug.Log("Axis " + paramName);
-
-                    Button axisButton = axisVisualElement.Q<Button>("Root");
-                    axisButton.RemoveFromClassList("active");
-
-                    if (axisSettingsData.ContainsKey(variable.Name))
-                    {
-                        var existingRow = axisSettingsData[variable.Name];
-                        axisButton.UnregisterCallback(existingRow.ClickHandler);
-                    }
-
-                    EventCallback<ClickEvent> clickHandler = evt =>
-                    {
-                        // AxisRowSettingsController axisRowSettingsController = GetAxisRowSettingsController(variable.Name);
-
-                        if (axisButton.ClassListContains("active"))
-                        {
-                            UnselectAllSettingsButton();
-                            CloseSettingsPanel();
-                        }
-                        else
-                        {
-                            UnselectAllSettingsButton();
-                            axisButton.AddToClassList("active");
-                            settingsPanel.AddToClassList("active");
-                            // settingsPanelController.InitAxisSettingsPanel(axisRowSettingsController);
-                        }
-                    };
-
-                    axisButton.RegisterCallback(clickHandler);
-
-                    AxisRow axisRow = new AxisRow
-                    {
-                        VisualElement = axisVisualElement,
-                        AxisRowSettingsController = new AxisRowSettingsController(variable),
-                        ClickHandler = clickHandler
-                    };
-
-                    axisSettingsData[variable.Name] = axisRow;
+                    Debug.Log($"[Sidebar] No file with Processed=true found, but a DataContainer for '{fileToRender.Name}' was found. Using it as fallback.");
                 }
             }
+
+            if (fileToRender != null)
+            {
+                // Debug.LogError($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
+                RenderManager.Instance.RenderReelCurrent(Project.Id);
+            }
+            else
+            {
+                Debug.LogWarning($"[Sidebar] No processed file found and no DataContainer registered for Project id={Project.Id}, name='{Project.Name}'. See log above.");
+            }
+            
+            UpdateSidebar();
         }
 
-        private void UnselectAllSettingsButton()
+        private void UpdateCurrentFile()
+        {
+            // Debug.LogWarning("Updating current file...");
+            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
+            if (fileId == null)
+            {
+                return;
+            }
+            currentFile = Project.Files?.FirstOrDefault(f => f.Id == fileId.Value);
+            SettingsManager.Instance.TryGetSettings(Project.Id, currentFile.Id, out settings);
+            // Debug.LogError($"Updated current file: {currentFile != null}.");
+        }
+
+        public void UpdateSidebar()
+        {
+            // paramSettingsDatas.Clear();
+            UpdateReelLabel();
+            UpdateAxesButtons();
+            UpdateParamButtons();
+            UnselectAllButtons();
+            // CloseSettingsPanel();
+        }
+
+        private void UnselectAllButtons()
         {
             xButton.RemoveFromClassList("active");
             yButton.RemoveFromClassList("active");
             zButton.RemoveFromClassList("active");
 
-            foreach (ParamRow paramSettingsData in paramSettingsDatas.Values)
+            paramScrollView.contentContainer.Query<Button>().ForEach(button =>
             {
-                Button button = paramSettingsData.VisualElement.Q<Button>("Root");
-                if (button != null)
-                {
-                    button.RemoveFromClassList("active");
-                    settingsPanel.RemoveFromClassList("active");
-                }
-            }
+                button.RemoveFromClassList("active");
+            });
 
-            CloseSettingsPanel();
+            settingsPanel.RemoveFromClassList("active");
+
+            // foreach (ParamRow paramSettingsData in paramSettingsDatas.Values)
+            // {
+            //     Button button = paramSettingsData.VisualElement.Q<Button>("Root");
+            //     if (button != null)
+            //     {
+            //         button.RemoveFromClassList("active");
+            //         settingsPanel.RemoveFromClassList("active");
+            //     }
+            // }
+            // CloseSettingsPanel();
         }
 
         private void CloseSettingsPanel()
@@ -244,7 +230,7 @@ namespace Astrovisio
             // settingsPanelController.UnregisterSettingPanelEvents();
             settingsPanelController.CloseSettingsPanel();
 
-            foreach (var paramSettingButton in paramSettingsScrollView.Children())
+            foreach (VisualElement paramSettingButton in paramScrollView.Children())
             {
                 Button paramButton = paramSettingButton.Q<Button>();
                 paramButton.RemoveFromClassList("active");
@@ -253,11 +239,11 @@ namespace Astrovisio
             }
         }
 
-        private void OnApplyAxisSettings(AxisRowSettingsController appliedAxisRowSettingsController)
+        private void OnApplyAxisSettings(Setting setting)
         {
-            string appliedParamName = appliedAxisRowSettingsController.Variable.Name;
+            string appliedParamName = setting.Name;
 
-            SetAxisRowSettingsController(appliedParamName, appliedAxisRowSettingsController);
+            // TODO: API call GB
 
             CloseSettingsPanel();
             xButton.RemoveFromClassList("active");
@@ -265,177 +251,225 @@ namespace Astrovisio
             zButton.RemoveFromClassList("active");
         }
 
-        private void OnApplyParamSettings(ParamRowSettingsController appliedParamRowSettingsController)
+        private void OnApplyParamSettings(Setting setting)
         {
-            string appliedParamName = appliedParamRowSettingsController.Variable.Name;
-            MappingType appliedMapping = appliedParamRowSettingsController.ParamRenderSettings.Mapping;
+            string appliedParamName = setting.Name;
+            // MappingType appliedMapping = appliedParamRowSettingsController.ParamRenderSettings.Mapping;
 
             // Debug.Log("Applied Param Name: " + appliedParamName + " " + appliedMapping);
             // PrintAllMappings();
 
             // Update project params
-            switch (appliedMapping)
-            {
-                case MappingType.None:
-                    // Debug.Log("OnApplySettings -> None: " + appliedParamName);
-                    if (
-                        projectRenderSettings.OpacitySettingsController != null &&
-                        projectRenderSettings.OpacitySettingsController.Variable.Name == appliedParamName)
-                    {
-                        // Debug.Log("Resetting opacity...");
-                        projectRenderSettings.OpacitySettingsController.Reset();
-                        projectRenderSettings.OpacitySettingsController = null;
-                    }
-                    else if (
-                        projectRenderSettings.ColorMapSettingsController != null &&
-                        projectRenderSettings.ColorMapSettingsController.Variable.Name == appliedParamName)
-                    {
-                        // Debug.Log("Resetting colormap...");
-                        projectRenderSettings.ColorMapSettingsController.Reset();
-                        projectRenderSettings.ColorMapSettingsController = null;
-                    }
-                    break;
-                case MappingType.Opacity:
-                    // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName + " " + appliedParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
-                    ResetParamsByMappingType(appliedParamName, MappingType.Opacity);
-                    projectRenderSettings.OpacitySettingsController = appliedParamRowSettingsController;
-                    break;
-                case MappingType.Colormap:
-                    // Debug.Log("OnApplySettings -> Colormap: " + appliedParamName);
-                    ResetParamsByMappingType(appliedParamName, MappingType.Colormap);
-                    projectRenderSettings.ColorMapSettingsController = appliedParamRowSettingsController;
-                    break;
-            }
+            // switch (appliedMapping)
+            // {
+            //     case MappingType.None:
+            //         // Debug.Log("OnApplySettings -> None: " + appliedParamName);
+            //         if (
+            //             projectRenderSettings.OpacitySettingsController != null &&
+            //             projectRenderSettings.OpacitySettingsController.Variable.Name == appliedParamName)
+            //         {
+            //             // Debug.Log("Resetting opacity...");
+            //             projectRenderSettings.OpacitySettingsController.Reset();
+            //             projectRenderSettings.OpacitySettingsController = null;
+            //         }
+            //         else if (
+            //             projectRenderSettings.ColorMapSettingsController != null &&
+            //             projectRenderSettings.ColorMapSettingsController.Variable.Name == appliedParamName)
+            //         {
+            //             // Debug.Log("Resetting colormap...");
+            //             projectRenderSettings.ColorMapSettingsController.Reset();
+            //             projectRenderSettings.ColorMapSettingsController = null;
+            //         }
+            //         break;
+            //     case MappingType.Opacity:
+            //         // Debug.Log("OnApplySettings -> Opacity: " + appliedParamName + " " + appliedParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
+            //         ResetParamsByMappingType(appliedParamName, MappingType.Opacity);
+            //         projectRenderSettings.OpacitySettingsController = appliedParamRowSettingsController;
+            //         break;
+            //     case MappingType.Colormap:
+            //         // Debug.Log("OnApplySettings -> Colormap: " + appliedParamName);
+            //         ResetParamsByMappingType(appliedParamName, MappingType.Colormap);
+            //         projectRenderSettings.ColorMapSettingsController = appliedParamRowSettingsController;
+            //         break;
+            // }
 
-            SetParamRowSettingsController(appliedParamName, appliedParamRowSettingsController);
+            // SetParamRowSettingsController(appliedParamName, appliedParamRowSettingsController);
+
             CloseSettingsPanel();
-            UpdateRenderManager();
+            // UpdateRenderManager();
             UpdateMappingIcons();
             // PrintAllMappings();
         }
 
-        private void ResetParamsByMappingType(string appliedParamName, MappingType appliedMappingType)
+        // private void ResetParamsByMappingType(string appliedParamName, MappingType appliedMappingType)
+        // {
+        //     foreach (var paramSettings in paramSettingsDatas)
+        //     {
+        //         string paramName = paramSettings.Key;
+        //         ParamRow paramRow = paramSettings.Value;
+        //         ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
+        //         MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
+
+        //         // Debug.Log(paramName + " <-> " + appliedParamName);
+        //         if (paramName == appliedParamName)
+        //         {
+        //             if (paramMappingType == MappingType.Opacity)
+        //             {
+        //                 projectRenderSettings.OpacitySettingsController = null;
+        //                 // Debug.Log(paramName + " opacity null");
+        //             }
+        //             else if (paramMappingType == MappingType.Colormap)
+        //             {
+        //                 projectRenderSettings.ColorMapSettingsController = null;
+        //                 // Debug.Log(paramName + " colormap null");
+        //             }
+        //         }
+        //     }
+
+        //     foreach (var paramSettings in paramSettingsDatas)
+        //     {
+        //         ParamRow paramRow = paramSettings.Value;
+        //         ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
+        //         MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
+        //         if (paramMappingType == appliedMappingType)
+        //         {
+        //             paramRowSettingsController.Reset();
+        //         }
+        //     }
+        // }
+
+        // private void UpdateRenderManager()
+        // {
+        //     if (projectRenderSettings.ColorMapSettingsController is null)
+        //     {
+        //         // Debug.Log("Removing colormap");
+        //         RenderManager.Instance.RenderSettingsController.RemoveColorMap();
+        //     }
+        //     else
+        //     {
+        //         // Debug.Log("Setting colormap " + projectRenderSettings.ColorMapSettingsController.ParamName);
+        //         RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.ParamRenderSettings);
+        //     }
+
+        //     if (projectRenderSettings.OpacitySettingsController is null)
+        //     {
+        //         // Debug.Log("Removing opacity");
+        //         RenderManager.Instance.RenderSettingsController.RemoveOpacity();
+        //     }
+        //     else
+        //     {
+        //         // Debug.Log("Setting opacity " + projectRenderSettings.OpacitySettingsController.ParamName);
+        //         RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.OpacitySettingsController.ParamRenderSettings);
+        //     }
+        // }
+
+        private void OnCancelSettings()
         {
-            foreach (var paramSettings in paramSettingsDatas)
-            {
-                string paramName = paramSettings.Key;
-                ParamRow paramRow = paramSettings.Value;
-                ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
-                MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
-
-                // Debug.Log(paramName + " <-> " + appliedParamName);
-                if (paramName == appliedParamName)
-                {
-                    if (paramMappingType == MappingType.Opacity)
-                    {
-                        projectRenderSettings.OpacitySettingsController = null;
-                        // Debug.Log(paramName + " opacity null");
-                    }
-                    else if (paramMappingType == MappingType.Colormap)
-                    {
-                        projectRenderSettings.ColorMapSettingsController = null;
-                        // Debug.Log(paramName + " colormap null");
-                    }
-                }
-            }
-
-            foreach (var paramSettings in paramSettingsDatas)
-            {
-                ParamRow paramRow = paramSettings.Value;
-                ParamRowSettingsController paramRowSettingsController = paramRow.ParamRowSettingsController;
-                MappingType paramMappingType = paramRowSettingsController.ParamRenderSettings.Mapping;
-                if (paramMappingType == appliedMappingType)
-                {
-                    paramRowSettingsController.Reset();
-                }
-            }
-        }
-
-        private void UpdateRenderManager()
-        {
-            if (projectRenderSettings.ColorMapSettingsController is null)
-            {
-                // Debug.Log("Removing colormap");
-                RenderManager.Instance.RenderSettingsController.RemoveColorMap();
-            }
-            else
-            {
-                // Debug.Log("Setting colormap " + projectRenderSettings.ColorMapSettingsController.ParamName);
-                RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.ColorMapSettingsController.ParamRenderSettings);
-            }
-
-            if (projectRenderSettings.OpacitySettingsController is null)
-            {
-                // Debug.Log("Removing opacity");
-                RenderManager.Instance.RenderSettingsController.RemoveOpacity();
-            }
-            else
-            {
-                // Debug.Log("Setting opacity " + projectRenderSettings.OpacitySettingsController.ParamName);
-                RenderManager.Instance.RenderSettingsController.SetRenderSettings(projectRenderSettings.OpacitySettingsController.ParamRenderSettings);
-            }
+            CloseSettingsPanel();
+            // UpdateRenderManager();
+            UpdateMappingIcons();
+            // PrintAllMappings();
         }
 
         private void UpdateMappingIcons()
         {
-            string colormapParamName = projectRenderSettings.ColorMapSettingsController != null ? projectRenderSettings.ColorMapSettingsController.Variable.Name : "";
-            string opacityParamName = projectRenderSettings.OpacitySettingsController != null ? projectRenderSettings.OpacitySettingsController.Variable.Name : "";
 
-            // Debug.Log("colormapParamName " + colormapParamName);
-            // Debug.Log("opacityParamName " + opacityParamName);
-
-            foreach (var paramSettings in paramSettingsDatas)
+            foreach (Setting setting in settings.Variables)
             {
-                string paramName = paramSettings.Key;
-                ParamRow paramRow = paramSettings.Value;
 
-                VisualElement paramVisualElement = paramRow.VisualElement.Q<VisualElement>("Root");
-                paramVisualElement.RemoveFromClassList("colormap");
-                paramVisualElement.RemoveFromClassList("opacity");
-                paramVisualElement.RemoveFromClassList("haptics");
-                paramVisualElement.RemoveFromClassList("sound");
-                // Debug.Log("Remove all from " + paramName);
-
-                if (paramName == colormapParamName)
+                Button paramButton = null;
+                Label paramLabel = null;
+                paramScrollView.contentContainer.Query<Button>().ForEach(button =>
                 {
-                    paramVisualElement.AddToClassList("colormap");
-                    // Debug.Log("Add colormap to " + paramName);
-                }
-                else if (paramName == opacityParamName)
+                    paramButton = button;
+                    Label label = button.Q<Label>();
+                    if (label.text == setting.Name)
+                    {
+                        paramButton = button;
+                        paramLabel = label;
+                    }
+                });
+
+
+                switch (setting.Mapping)
                 {
-                    paramVisualElement.AddToClassList("opacity");
-                    // Debug.Log("Add opacity to " + paramName);
+                    case null:
+                        paramButton.RemoveFromClassList("colormap");
+                        paramButton.RemoveFromClassList("opacity");
+                        continue;
+                    case "Opacity":
+                        paramButton.RemoveFromClassList("colormap");
+                        paramButton.AddToClassList("opacity");
+                        break;
+                    case "Colormap":
+                        paramButton.AddToClassList("colormap");
+                        paramButton.RemoveFromClassList("opacity");
+                        break;
+                    default:
+                        paramButton.RemoveFromClassList("colormap");
+                        paramButton.RemoveFromClassList("opacity");
+                        continue;
                 }
+
+                // paramScrollView.contentContainer.Query<Button>().ForEach(button =>
+                // {
+                //     Label label = button.Q<Label>();
+                //     if (label.text == setting.Name)
+                //     {
+
+                //     }
+                // });
+
+                // string paramName = paramSettings.Key;
+                // ParamRow paramRow = paramSettings.Value;
+
+                // VisualElement paramVisualElement = paramRow.VisualElement.Q<VisualElement>("Root");
+                // paramVisualElement.RemoveFromClassList("colormap");
+                // paramVisualElement.RemoveFromClassList("opacity");
+                // paramVisualElement.RemoveFromClassList("haptics");
+                // paramVisualElement.RemoveFromClassList("sound");
+                // // Debug.Log("Remove all from " + paramName);
+
+                // if (paramName == colormapParamName)
+                // {
+                //     paramVisualElement.AddToClassList("colormap");
+                //     // Debug.Log("Add colormap to " + paramName);
+                // }
+                // else if (paramName == opacityParamName)
+                // {
+                //     paramVisualElement.AddToClassList("opacity");
+                //     // Debug.Log("Add opacity to " + paramName);
+                // }
             }
 
         }
 
-        private void PrintAllMappings()
-        {
-            string opacityParamName = (projectRenderSettings.OpacitySettingsController != null) ? projectRenderSettings.OpacitySettingsController.Variable.Name : "null";
-            string colormapParamName = (projectRenderSettings.ColorMapSettingsController != null) ? projectRenderSettings.ColorMapSettingsController.Variable.Name : "null";
+        // private void PrintAllMappings()
+        // {
+        //     string opacityParamName = (projectRenderSettings.OpacitySettingsController != null) ? projectRenderSettings.OpacitySettingsController.Variable.Name : "null";
+        //     string colormapParamName = (projectRenderSettings.ColorMapSettingsController != null) ? projectRenderSettings.ColorMapSettingsController.Variable.Name : "null";
 
-            Debug.Log("PrintAllMapping");
-            Debug.Log("Opacity: " + opacityParamName);
-            Debug.Log("Colormap: " + colormapParamName);
-        }
+        //     Debug.Log("PrintAllMapping");
+        //     Debug.Log("Opacity: " + opacityParamName);
+        //     Debug.Log("Colormap: " + colormapParamName);
+        // }
 
-        private void SetAxisRowSettingsController(string paramName, AxisRowSettingsController axisRowSettingsController)
-        {
-            if (axisSettingsData.TryGetValue(paramName, out AxisRow axisRow))
-            {
-                // Debug.Log($"Set: {axisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
-                axisRow.AxisRowSettingsController = axisRowSettingsController;
-            }
-        }
+        // private void SetAxisRowSettingsController(string paramName, AxisRowSettingsController axisRowSettingsController)
+        // {
+        //     if (axisSettingsData.TryGetValue(paramName, out AxisRow axisRow))
+        //     {
+        //         // Debug.Log($"Set: {axisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {axisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+        //         axisRow.AxisRowSettingsController = axisRowSettingsController;
+        //     }
+        // }
 
-        private void SetParamRowSettingsController(string paramName, ParamRowSettingsController paramRowSettingsController)
-        {
-            if (paramSettingsDatas.TryGetValue(paramName, out ParamRow paramRow))
-            {
-                paramRow.ParamRowSettingsController = paramRowSettingsController;
-            }
-        }
+        // private void SetParamRowSettingsController(string paramName, ParamRowSettingsController paramRowSettingsController)
+        // {
+        //     if (paramSettingsDatas.TryGetValue(paramName, out ParamRow paramRow))
+        //     {
+        //         paramRow.ParamRowSettingsController = paramRowSettingsController;
+        //     }
+        // }
 
         // private AxisRowSettingsController GetAxisRowSettingsController(string paramName)
         // {
@@ -459,52 +493,156 @@ namespace Astrovisio
         //     return null;
         // }
 
-        private void OnCancelSettings()
-        {
-            CloseSettingsPanel();
-            UpdateRenderManager();
-            UpdateMappingIcons();
-            // PrintAllMappings();
-        }
-
-        private void OnFileProcessed(Project project, File file, DataPack pack)
-        {
-            if (project == null || Project.Id != project.Id)
-            {
-                return;
-            }
-
-            Project = project;
-            UpdateReelLabel();
-        }
-
         private void UpdateReelLabel()
         {
-            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
-            if (fileId == null)
+            if (currentFile == null)
             {
                 reelLabel.text = "";
                 return;
             }
 
-            File file = Project.Files?.FirstOrDefault(f => f.Id == fileId.Value);
-            reelLabel.text = file?.Name ?? $"File {fileId.Value}";
+            reelLabel.text = currentFile.Name;
         }
 
-        private void UpdateParamsScrollView()
+        private void UpdateAxesButtons()
         {
-            paramSettingsScrollView.Clear();
-            axisSettingsData.Clear(); // GB
-            paramSettingsDatas.Clear(); // GB
-
-            int? fileId = RenderManager.Instance.GetReelCurrentFileId(Project.Id);
-            if (fileId == null)
+            if (currentFile == null)
             {
                 return;
             }
-            File file = Project.Files?.FirstOrDefault(f => f.Id == fileId.Value);
 
-            foreach (Variable variable in file.Variables)
+            // Update UI
+            Label xLabel = xButton.Q<Label>("ParamLabel");
+            Label yLabel = yButton.Q<Label>("ParamLabel");
+            Label zLabel = zButton.Q<Label>("ParamLabel");
+
+            xLabel.text = currentFile?.Variables.FirstOrDefault(v => v.XAxis)?.Name ?? "";
+            yLabel.text = currentFile?.Variables.FirstOrDefault(v => v.YAxis)?.Name ?? "";
+            zLabel.text = currentFile?.Variables.FirstOrDefault(v => v.ZAxis)?.Name ?? "";
+
+            VisualElement axisContainer = renderSettingsContainer.Q<VisualElement>("AxisContainer");
+            VisualElement xVisualElement = axisContainer.Q<VisualElement>("XLabel");
+            VisualElement yVisualElement = axisContainer.Q<VisualElement>("YLabel");
+            VisualElement zVisualElement = axisContainer.Q<VisualElement>("ZLabel");
+
+            foreach (Variable variable in currentFile.Variables)
+            {
+                if (!variable.Selected || (!variable.XAxis && !variable.YAxis && !variable.ZAxis))
+                {
+                    continue;
+                }
+
+                // Debug.LogWarning($"B {variable.Name} - {variable.XAxis} {variable.YAxis} {variable.ZAxis}");
+
+                VisualElement axisVisualElement = null;
+                Axis axis;
+                if (variable.XAxis)
+                {
+                    axis = Axis.X;
+                    axisVisualElement = xVisualElement;
+                }
+                else if (variable.YAxis)
+                {
+                    axis = Axis.Y;
+                    axisVisualElement = yVisualElement;
+                }
+                else if (variable.ZAxis)
+                {
+                    axis = Axis.Z;
+                    axisVisualElement = zVisualElement;
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (axisVisualElement != null)
+                {
+                    // Debug.Log("Axis " + variable.Name);
+
+                    // Unregister
+                    Button axisButton;
+                    if (variable.XAxis)
+                    {
+                        axisButton = xButton;
+                        // Debug.Log(xButton);
+                        xButton.RemoveFromClassList("active");
+                        if (xParamClickHandler != null)
+                        {
+                            xButton.UnregisterCallback(xParamClickHandler);
+                        }
+                    }
+                    else if (variable.YAxis)
+                    {
+                        axisButton = yButton;
+                        yButton.RemoveFromClassList("active");
+                        if (yParamClickHandler != null)
+                        {
+                            yButton.UnregisterCallback(yParamClickHandler);
+                        }
+                    }
+                    else if (variable.ZAxis)
+                    {
+                        axisButton = zButton;
+                        zButton.RemoveFromClassList("active");
+                        if (zParamClickHandler != null)
+                        {
+                            zButton.UnregisterCallback(zParamClickHandler);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("???");
+                        return;
+                    }
+
+                    // Define click handler
+                    EventCallback<ClickEvent> clickHandler = evt =>
+                    {
+                        if (axisButton.ClassListContains("active"))
+                        {
+                            UnselectAllButtons();
+                            CloseSettingsPanel();
+                        }
+                        else
+                        {
+                            UnselectAllButtons();
+                            axisButton.AddToClassList("active");
+                            settingsPanel.AddToClassList("active");
+
+                            Setting setting = SettingsManager.Instance.GetSetting(Project.Id, currentFile.Id, variable.Name);
+                            Debug.LogWarning($"Name: {setting.Name} - Mapping: {setting.Mapping} - ThrMin: {setting.ThrMin} - ThrMax: {setting.ThrMax}");
+                            settingsPanelController.InitAxisSettingsPanel(currentFile, axis, setting);
+                        }
+                    };
+
+                    // Save click handler
+                    if (variable.XAxis)
+                    {
+                        xParamClickHandler = clickHandler;
+                    }
+                    else if (variable.YAxis)
+                    {
+                        yParamClickHandler = clickHandler;
+                    }
+                    else if (variable.ZAxis)
+                    {
+                        zParamClickHandler = clickHandler;
+                    }
+
+                    // Register callback
+                    axisButton.RegisterCallback(clickHandler);
+                }
+            }
+        }
+
+        private void UpdateParamButtons()
+        {
+            paramScrollView.Clear();
+            // axisSettingsData.Clear(); // GB
+            // paramSettingsDatas.Clear(); // GB
+
+            foreach (Variable variable in currentFile.Variables)
             {
                 if (!variable.Selected || variable.XAxis || variable.YAxis || variable.ZAxis)
                 {
@@ -530,38 +668,64 @@ namespace Astrovisio
                 paramButton.RemoveFromClassList("active");
                 paramButton.clicked += () =>
                 {
-                    // Debug.Log("Clicked");
-                    // ParamRowSettingsController paramRowSettingsController = GetParamRowSettingsController(variable.Name);
+                    // Debug.Log("Clicked: " + variable.Name);
 
                     if (paramButton.ClassListContains("active"))
                     {
-                        UnselectAllSettingsButton();
+                        UnselectAllButtons();
                         CloseSettingsPanel();
                     }
                     else
                     {
-                        UnselectAllSettingsButton();
+                        UnselectAllButtons();
                         paramButton.AddToClassList("active");
                         settingsPanel.AddToClassList("active");
-                        // settingsPanelController.InitParamSettingsPanel(paramRowSettingsController);
-                        UpdateRenderManager();
+
+
+                        Setting setting = SettingsManager.Instance.GetSetting(Project.Id, currentFile.Id, variable.Name);
+                        Debug.LogWarning($"Name: {setting.Name} - Mapping: {setting.Mapping} - ThrMin: {setting.ThrMin} - ThrMax: {setting.ThrMax}");
+                        settingsPanelController.InitParamSettingsPanel(currentFile, setting);
+
+                        // UpdateRenderManager();
                     }
 
                 };
 
-                paramSettingsDatas.Add(variable.Name, paramRow);
-                paramSettingsScrollView.Add(paramRowSettings);
+                // paramSettingsDatas.Add(variable.Name, paramRow);
+                paramScrollView.Add(paramRowSettings);
             }
         }
 
-        private void OnProjectUpdatedForReelLabel(Project project)
+        private void OnProjectUpdated(Project project)
         {
             if (project == null || project.Id != Project.Id)
             {
                 return;
             }
+
             Project = project;
+
+            UpdateCurrentFile();
+
             UpdateReelLabel();
+            UpdateAxesButtons();
+            UpdateParamButtons();
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || Project.Id != project.Id)
+            {
+                return;
+            }
+
+            Project = project;
+
+            UpdateCurrentFile();
+
+            UpdateReelLabel();
+            UpdateAxesButtons();
+            UpdateParamButtons();
         }
 
     }

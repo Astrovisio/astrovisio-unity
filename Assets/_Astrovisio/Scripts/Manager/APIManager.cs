@@ -106,6 +106,8 @@ namespace Astrovisio
             string url = APIEndpoints.CreateProject();
             string json = JsonConvert.SerializeObject(req);
 
+            // Debug.Log("Creating project: " + json);
+
             using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
             {
                 byte[] bodyRaw = Encoding.UTF8.GetBytes(json);

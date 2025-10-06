@@ -68,7 +68,7 @@ namespace Astrovisio
 
             if (continueButton != null)
             {
-                continueButton.clicked += async () => await OnContinueClicked();
+                continueButton.clicked += OnContinueClickedHandler;
             }
 
             if (cancelButton != null)
@@ -86,7 +86,7 @@ namespace Astrovisio
 
             if (continueButton != null)
             {
-                continueButton.clicked -= async () => await OnContinueClicked();
+                continueButton.clicked -= OnContinueClickedHandler;
             }
 
             if (cancelButton != null)
@@ -94,6 +94,8 @@ namespace Astrovisio
                 cancelButton.clicked -= OnCancelClicked;
             }
         }
+
+
 
         private void OnUploadFileClicked()
         {
@@ -149,8 +151,14 @@ namespace Astrovisio
             return newProjectfilesController.GetTotalSizeBytes() > maxSize;
         }
 
+        private async void OnContinueClickedHandler()
+        {
+            await OnContinueClicked();
+        }
+
         private async Task OnContinueClicked()
         {
+            // Debug.LogWarning("OnContinueClicked()");
             string name = projectNameField?.value ?? "<empty>";
             string description = projectDescriptionField?.value ?? "<empty>";
             string[] paths = newProjectfilesController.Items

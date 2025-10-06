@@ -19,9 +19,37 @@ namespace Astrovisio
 
         }
 
+        public void SetAxisSettings(Axis axis, Setting setting)
+        {
+            ScalingType scalingType;
+            switch (setting.Scaling)
+            {
+                case "Linear":
+                    scalingType = ScalingType.Linear;
+                    break;
+                case "Sqrt":
+                    scalingType = ScalingType.Sqrt;
+                    break;
+                case "Log":
+                    scalingType = ScalingType.Log;
+                    break;
+                default:
+                    scalingType = ScalingType.Linear;
+                    break;
+            }
+
+            Debug.Log($"SetAxisSettings: {axis} {(float)setting.ThrMinSel} {(float)setting.ThrMaxSel} {scalingType}");
+            DataRenderer.SetAxisAstrovisio(
+                axis,
+                setting.Name,
+                (float)setting.ThrMinSel,
+                (float)setting.ThrMaxSel,
+                scalingType
+            );
+        }
+
         public void SetAxisSettings(AxisRenderSettings axisRenderSettings)
         {
-
             // Debug.Log($"SetAxisSettings: {axis} {thresholdMin} {thresholdMax} {scalingType}");
             DataRenderer.SetAxisAstrovisio(
                 axisRenderSettings.Axis,
@@ -67,7 +95,7 @@ namespace Astrovisio
                 ScalingType scalingType = colorMapSettings.ScalingType;
                 bool invert = colorMapSettings.Invert;
 
-                DataRenderer.SetColorMap(name, colorMap, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
+                DataRenderer.SetColormap(name, colorMap, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
             }
             else
             {
@@ -80,7 +108,7 @@ namespace Astrovisio
         {
             if (DataRenderer is not null)
             {
-                DataRenderer.RemoveColorMap();
+                DataRenderer.RemoveColormap();
             }
         }
 

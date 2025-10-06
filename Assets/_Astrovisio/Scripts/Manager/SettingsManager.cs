@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CatalogData;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -16,7 +17,6 @@ namespace Astrovisio
 
         // === Data ===
         private readonly Dictionary<ProjectFile, Settings> settingsDictionary = new();
-
 
         private void Awake()
         {
@@ -51,7 +51,7 @@ namespace Astrovisio
             }
         }
 
-
+        // === Events ===
         private async void OnFileProcessed(Project project, File file, DataPack pack)
         {
             if (project == null || file == null)
@@ -60,17 +60,16 @@ namespace Astrovisio
             try
             {
                 Settings settings = await GetSettings(project.Id, file.Id);
-                Debug.LogWarning(JsonConvert.SerializeObject(settings));
+                // Debug.LogWarning(JsonConvert.SerializeObject(settings));
 
                 settings.SetDefaults();
-                Debug.LogError(JsonConvert.SerializeObject(settings));
+                // Debug.LogError(JsonConvert.SerializeObject(settings));
 
                 ProjectFile key = new ProjectFile(project.Id, file.Id);
                 AddSettings(project.Id, file.Id, settings);
-                // settingsDictionary[key] = settings;
 
                 Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
-                Debug.LogWarning(JsonConvert.SerializeObject(updatedSettings));
+                // Debug.LogWarning(JsonConvert.SerializeObject(updatedSettings));
 
                 Debug.Log($"[SettingsManager] Settings cached for {key} " + $"(var count: {settingsDictionary[key]?.Variables?.Count ?? 0}).");
             }
@@ -103,9 +102,27 @@ namespace Astrovisio
             Debug.Log($"[SettingsManager] Project {project.Id} closed. Removed {toRemove.Count} settings entries.");
         }
 
+        // === Data ===
         public bool TryGetSettings(int projectId, int fileId, out Settings settings)
         {
             return settingsDictionary.TryGetValue(new ProjectFile(projectId, fileId), out settings);
+        }
+
+        public Setting GetSetting(int projectId, int fileId, string varName)
+        {
+            if (string.IsNullOrWhiteSpace(varName))
+            {
+                return null;
+            }
+
+            if (!settingsDictionary.TryGetValue(new ProjectFile(projectId, fileId), out Settings settings) ||
+                settings?.Variables == null || settings.Variables.Count == 0)
+            {
+                Debug.LogWarning($"[SettingsManager] No settings cached for P{projectId}-F{fileId} or no variables present.");
+                return null;
+            }
+
+            return settings.Variables.Find(s => string.Equals(s.Name, varName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void AddSettings(int projectId, int fileId, Settings settings)
@@ -140,6 +157,145 @@ namespace Astrovisio
             return removed;
         }
 
+        // === Settings ===
+        public void SetAxisSetting(Axis axis, Setting setting)
+        {
+            if (setting == null)
+            {
+                Debug.LogError("[SettingsManager] Setting è null.");
+                return;
+            }
+
+            if (!Enum.TryParse(setting.Scaling, ignoreCase: true, out ScalingType scalingType))
+            {
+                Debug.LogWarning($"[SettingsManager] Scaling '{setting.Scaling}' not valid. Using default: {ScalingType.Linear}");
+                scalingType = ScalingType.Linear;
+            }
+
+            float thrMin = (float)(setting.ThrMinSel ?? setting.ThrMin);
+            float thrMax = (float)(setting.ThrMaxSel ?? setting.ThrMax);
+
+            RenderManager.Instance.DataRenderer.SetAxisAstrovisio(
+                axis,
+                setting.Name,
+                thrMin,
+                thrMax,
+                scalingType
+            );
+        }
+
+        public void SetParamSetting(Setting setting)
+        {
+            switch (setting.Mapping)
+            {
+                case "None":
+                    return;
+                case "Opacity":
+                    SetOpacity(setting);
+                    break;
+                case "Colormap":
+                    SetColormap(setting);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void SetOpacity(Setting setting)
+        {
+            if (setting == null)
+            {
+                Debug.LogError("[SetOpacity] 'setting' is null.");
+                return;
+            }
+
+            if (!string.Equals(setting.Mapping, "Opacity", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogError("[SetOpacity] Invalid mapping (expected 'Opacity').");
+                return;
+            }
+
+            // Parse scaling string into enum with fallback
+            if (!Enum.TryParse(setting.Scaling, ignoreCase: true, out ScalingType scaling))
+            {
+                Debug.LogWarning($"[SetOpacity] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
+                scaling = ScalingType.Linear;
+            }
+
+            float min = (float)(setting.ThrMinSel ?? setting.ThrMin);
+            float max = (float)(setting.ThrMaxSel ?? setting.ThrMax);
+
+            RenderManager.Instance.DataRenderer.SetOpacity(
+                setting.Name,
+                min,
+                max,
+                scaling,
+                setting.InvertMapping
+            );
+        }
+
+        private void SetColormap(Setting setting)
+        {
+            if (setting == null)
+            {
+                Debug.LogError("[SetColormap] Setting is null.");
+                return;
+            }
+
+            if (!string.Equals(setting.Mapping, "Colormap", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogError("[SetColormap] Invalid mapping (expected 'Opacity').");
+                return;
+            }
+
+            // Parse colormap string into enum with fallback
+            if (!Enum.TryParse(setting.Colormap, ignoreCase: true, out ColorMapEnum colormap))
+            {
+                Debug.LogWarning($"[SetColormap] Invalid colormap value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
+                colormap = ColorMapEnum.Accent;
+            }
+
+            // Parse scaling string into enum with fallback
+            if (!Enum.TryParse(setting.Scaling, ignoreCase: true, out ScalingType scaling))
+            {
+                Debug.LogWarning($"[SetColormap] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
+                scaling = ScalingType.Linear;
+            }
+
+            float min = (float)(setting.ThrMinSel ?? setting.ThrMin);
+            float max = (float)(setting.ThrMaxSel ?? setting.ThrMax);
+
+            RenderManager.Instance.DataRenderer.SetColormap(
+                name,
+                colormap,
+                min,
+                max,
+                scaling,
+                setting.InvertMapping
+            );
+        }
+
+        public void RemoveOpacity()
+        {
+            RenderManager.Instance.DataRenderer.RemoveOpacity();
+        }
+
+        public void RemoveColormap()
+        {
+            RenderManager.Instance.DataRenderer.RemoveColormap();
+        }
+
+        // ???
+        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        {
+            if (RenderManager.Instance.DataRenderer is not null)
+            {
+                RenderManager.Instance.DataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+            }
+        }
+
+
+        // === API ===
         public async Task<Settings> GetSettings(int projectId, int fileId)
         {
             if (apiManager == null)

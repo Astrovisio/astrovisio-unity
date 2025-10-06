@@ -239,35 +239,40 @@ namespace Astrovisio
             }
         }
 
-        private void HandleOnAxisChanged(Axis? axis, ParamRowController newly)
+        private void HandleOnAxisChanged(Axis? axis, ParamRowController paramRowController)
         {
+            // Debug.LogWarning("HandleOnAxisChanged");
+
+            Debug.LogWarning(axis == null);
             if (axis == null)
             {
                 foreach (var kvp in selectedAxis.ToList())
                 {
-                    if (kvp.Value == newly)
+                    if (kvp.Value == paramRowController)
                     {
                         selectedAxis.Remove(kvp.Key);
                         switch (kvp.Key)
                         {
                             case Axis.X:
-                                newly.Variable.XAxis = false;
+                                paramRowController.Variable.XAxis = false;
                                 break;
                             case Axis.Y:
-                                newly.Variable.YAxis = false;
+                                paramRowController.Variable.YAxis = false;
                                 break;
                             case Axis.Z:
-                                newly.Variable.ZAxis = false;
+                                paramRowController.Variable.ZAxis = false;
                                 break;
                         }
                     }
                 }
+                UpdateFile();
                 return;
             }
 
-            if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != newly)
+            if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != paramRowController)
             {
                 previous.DeselectAxis(axis.Value);
+                Debug.LogWarning(axis.Value);
                 switch (axis.Value)
                 {
                     case Axis.X:
@@ -282,24 +287,24 @@ namespace Astrovisio
                 }
             }
 
-            selectedAxis[axis.Value] = newly;
+            selectedAxis[axis.Value] = paramRowController;
 
             switch (axis.Value)
             {
                 case Axis.X:
-                    newly.Variable.XAxis = true;
-                    newly.Variable.YAxis = false;
-                    newly.Variable.ZAxis = false;
+                    paramRowController.Variable.XAxis = true;
+                    paramRowController.Variable.YAxis = false;
+                    paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Y:
-                    newly.Variable.XAxis = false;
-                    newly.Variable.YAxis = true;
-                    newly.Variable.ZAxis = false;
+                    paramRowController.Variable.XAxis = false;
+                    paramRowController.Variable.YAxis = true;
+                    paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Z:
-                    newly.Variable.XAxis = false;
-                    newly.Variable.ZAxis = true;
-                    newly.Variable.YAxis = false;
+                    paramRowController.Variable.XAxis = false;
+                    paramRowController.Variable.ZAxis = true;
+                    paramRowController.Variable.YAxis = false;
                     break;
             }
 

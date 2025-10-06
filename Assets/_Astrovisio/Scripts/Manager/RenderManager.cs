@@ -143,7 +143,7 @@ namespace Astrovisio
                 return;
             }
 
-            Debug.Log($"SetReelOrder P{projectId} → [{(orderedIds == null ? "∅" : string.Join(",", orderedIds))}]");
+            Debug.Log($"[RenderManager] SetReelOrder P{projectId} → [{(orderedIds == null ? "∅" : string.Join(",", orderedIds))}]");
             ReelManager.Instance.SetReelOrder(projectId, orderedIds);
         }
 
@@ -181,19 +181,19 @@ namespace Astrovisio
         {
             if (ReelManager.Instance == null)
             {
-                Debug.LogWarning($"RenderReelCurrent: ReelManager missing for P{projectId}");
+                Debug.LogWarning($"[RenderManager] RenderReelCurrent: ReelManager missing for P{projectId}");
                 return;
             }
 
             DataContainer dc = ReelManager.Instance.GetReelCurrentDataContainer(projectId);
             if (dc == null)
             {
-                Debug.LogWarning($"RenderReelCurrent: empty or invalid reel for P{projectId}");
+                Debug.LogWarning($"[RenderManager] RenderReelCurrent: empty or invalid reel for P{projectId}");
                 return;
             }
 
             string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
-            Debug.Log($"RenderReelCurrent P{projectId} → {name}");
+            Debug.Log($"[RenderManager] RenderReelCurrent P{projectId} → {name}");
             RenderDataContainer(dc);
         }
 
@@ -201,7 +201,7 @@ namespace Astrovisio
         {
             if (ReelManager.Instance == null)
             {
-                Debug.LogWarning($"RenderReelNext: ReelManager missing for P{projectId}");
+                Debug.LogWarning($"[RenderManager] RenderReelNext: ReelManager missing for P{projectId}");
                 return;
             }
 
@@ -213,12 +213,12 @@ namespace Astrovisio
 
             if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
             {
-                Debug.LogWarning($"RenderReelNext: DataContainer not found for P{projectId} F{fileId}");
+                Debug.LogWarning($"[RenderManager] RenderReelNext: DataContainer not found for P{projectId} F{fileId}");
                 return;
             }
 
             string name = dc?.File?.Name ?? $"F{fileId}";
-            Debug.Log($"RenderReelNext P{projectId} → {name} (F{fileId})");
+            Debug.Log($"[RenderManager] RenderReelNext P{projectId} → {name} (F{fileId})");
             RenderDataContainer(dc);
         }
 
@@ -226,7 +226,7 @@ namespace Astrovisio
         {
             if (ReelManager.Instance == null)
             {
-                Debug.LogWarning($"RenderReelPrev: ReelManager missing for P{projectId}");
+                Debug.LogWarning($"[RenderManager] RenderReelPrev: ReelManager missing for P{projectId}");
                 return;
             }
 
@@ -238,12 +238,12 @@ namespace Astrovisio
 
             if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
             {
-                Debug.LogWarning($"RenderReelPrev: DataContainer not found for P{projectId} F{fileId}");
+                Debug.LogWarning($"[RenderManager] RenderReelPrev: DataContainer not found for P{projectId} F{fileId}");
                 return;
             }
 
             string name = dc?.File?.Name ?? $"F{fileId}";
-            Debug.Log($"RenderReelPrev P{projectId} → {name} (F{fileId})");
+            Debug.Log($"[RenderManager] RenderReelPrev P{projectId} → {name} (F{fileId})");
             RenderDataContainer(dc);
         }
 
@@ -252,12 +252,12 @@ namespace Astrovisio
         {
             if (!TryGetDataContainer(projectId, fileId, out var dc))
             {
-                Debug.LogWarning($"RenderDataContainer: no DataContainer for P{projectId} F{fileId}");
+                Debug.LogWarning($"[RenderManager] RenderDataContainer: no DataContainer for P{projectId} F{fileId}");
                 return;
             }
 
             string name = dc?.File?.Name ?? $"F{fileId}";
-            Debug.Log($"RenderFile direct P{projectId} → {name} (F{fileId})");
+            Debug.Log($"[RenderManager] RenderFile direct P{projectId} → {name} (F{fileId})");
             RenderDataContainer(dc);
         }
 
@@ -265,12 +265,12 @@ namespace Astrovisio
         {
             if (!TryGetDataContainer(project, file, out var dc))
             {
-                Debug.LogWarning($"RenderDataContainer: DataContainer not found for P{project?.Id} F{file?.Id}");
+                Debug.LogWarning($"[RenderManager] RenderDataContainer: DataContainer not found for P{project?.Id} F{file?.Id}");
                 return;
             }
 
             string name = dc?.File?.Name ?? $"F{file?.Id}";
-            Debug.Log($"RenderFile direct P{project?.Id} → {name} (F{file?.Id})");
+            Debug.Log($"[RenderManager] RenderFile direct P{project?.Id} → {name} (F{file?.Id})");
             RenderDataContainer(dc);
         }
 
@@ -278,7 +278,7 @@ namespace Astrovisio
         {
             if (dc == null)
             {
-                Debug.LogError("RenderDataContainer: DataContainer is null.");
+                Debug.LogError("[RenderManager] RenderDataContainer: DataContainer is null.");
                 return;
             }
 
@@ -299,7 +299,7 @@ namespace Astrovisio
             RenderSettingsController.DataRenderer = DataRenderer;
 
             string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
-            Debug.Log($"RenderDataContainer P{project?.Id} → {name}");
+            Debug.Log($"[RenderManager] RenderDataContainer P{project?.Id} → {name}");
 
             DataRenderer.RenderDataContainer(dc);
 

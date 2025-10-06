@@ -116,7 +116,7 @@ namespace Astrovisio
             }
         }
 
-        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
+        public void SetColormap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             if (astrovidioDataSetRenderer is not null)
             {
@@ -124,7 +124,7 @@ namespace Astrovisio
             }
         }
 
-        public void RemoveColorMap()
+        public void RemoveColormap()
         {
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }

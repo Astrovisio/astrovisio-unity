@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace Astrovisio
@@ -86,6 +87,38 @@ namespace Astrovisio
             get => invertMapping;
             set => invertMapping = value;
         }
+
+        internal Setting Clone()
+        {
+            return new Setting
+            {
+                Name = Name,
+                ThrMin = ThrMin,
+                ThrMax = ThrMax,
+                ThrMinSel = ThrMinSel,
+                ThrMaxSel = ThrMaxSel,
+                Scaling = Scaling,
+                Mapping = Mapping,
+                Colormap = Colormap,
+                Opacity = Opacity,
+                InvertMapping = InvertMapping
+            };
+        }
+
+        internal void UpdateFrom(Setting setting)
+        {
+            Name = setting.Name;
+            ThrMin = setting.ThrMin;
+            ThrMax = setting.ThrMax;
+            ThrMinSel = setting.ThrMinSel;
+            ThrMaxSel = setting.ThrMaxSel;
+            Scaling = setting.Scaling;
+            Mapping = setting.Mapping;
+            Colormap = setting.Colormap;
+            Opacity = setting.Opacity;
+            InvertMapping = setting.InvertMapping;
+        }
+
 
     }
 

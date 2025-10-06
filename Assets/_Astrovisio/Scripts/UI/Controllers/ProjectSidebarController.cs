@@ -97,45 +97,9 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
-            // Debug.Log($"[Sidebar] Render clicked for Project id={Project?.Id}, name='{Project?.Name}'");
-
-            if (Project?.Files == null)
-            {
-                Debug.LogWarning("[Sidebar] Project.Files is null");
-                return;
-            }
-
-            // Debug.Log($"[Sidebar] Files count = {Project.Files.Count}");
-
-            foreach (File f in Project.Files.OrderBy(f => f.Order))
-            {
-                bool hasDC = RenderManager.Instance.TryGetDataContainer(Project, f, out var _);
-                // Debug.Log($"[Sidebar] File id={f.Id}, name='{f.Name}', processed={f.Processed}, order={f.Order}, processedPath='{f.ProcessedPath}', hasDataContainer={hasDC}");
-            }
-
             SetActiveStep(ProjectSidebarStep.Render);
-
-            File fileToRender = Project.Files.FirstOrDefault(f => f.Processed);
-
-            if (fileToRender == null)
-            {
-                fileToRender = Project.Files.FirstOrDefault(f => RenderManager.Instance.TryGetDataContainer(Project, f, out var _));
-                if (fileToRender != null)
-                {
-                    Debug.Log($"[Sidebar] No file with Processed=true found, but a DataContainer for '{fileToRender.Name}' was found. Using it as fallback.");
-                }
-            }
-
-            if (fileToRender != null)
-            {
-                // Debug.Log($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
-                RenderManager.Instance.RenderFile(Project, fileToRender);
-                UIManager.SetGizmoTransformVisibility(true);
-            }
-            else
-            {
-                Debug.LogWarning($"[Sidebar] No processed file found and no DataContainer registered for Project id={Project.Id}, name='{Project.Name}'. See log above.");
-            }
+            projectSidebarRenderController.Render();
+            UIManager.SetGizmoTransformVisibility(true);
         }
 
         private void OnGoToVRButtonClicked()
@@ -167,7 +131,7 @@ namespace Astrovisio
                     dataSettingsContainer.RemoveFromClassList("active");
                     renderSettingsContainer.AddToClassList("active");
                     UIManager.SetSceneVisibility(false);
-                    projectSidebarRenderController.Update();
+                    projectSidebarRenderController.UpdateSidebar();
                     break;
             }
         }
