@@ -15,8 +15,8 @@ namespace Astrovisio
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
 
-        // === Data ===
         private readonly Dictionary<ProjectFile, Settings> settingsDictionary = new();
+
 
         private void Awake()
         {
@@ -38,8 +38,9 @@ namespace Astrovisio
                 return;
             }
 
-            projectManager.FileProcessed += OnFileProcessed;
+            projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectClosed += OnProjectClosed;
+            projectManager.FileProcessed += OnFileProcessed;
         }
 
         private void OnDestroy()
@@ -55,28 +56,41 @@ namespace Astrovisio
         private async void OnFileProcessed(Project project, File file, DataPack pack)
         {
             if (project == null || file == null)
+            {
                 return;
+            }
 
             try
             {
+                RemoveSettings(project.Id, file.Id);
+
                 Settings settings = await GetSettings(project.Id, file.Id);
                 // Debug.LogWarning(JsonConvert.SerializeObject(settings));
 
-                settings.SetDefaults();
-                // Debug.LogError(JsonConvert.SerializeObject(settings));
+                Debug.LogError((settings != null) + " " + settings.Variables.Count);
+                if (settings != null && settings.Variables.Count == 0)
+                {
+                    settings.SetDefaults(file);
+                    // Debug.LogError(JsonConvert.SerializeObject(settings));
+
+                    Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
+                    Debug.LogError(JsonConvert.SerializeObject(updatedSettings));
+
+                    Debug.Log($"[SettingsManager] Settings cached for {new ProjectFile(project.Id, file.Id)} " + $"(var count: {settingsDictionary[new ProjectFile(project.Id, file.Id)]?.Variables?.Count ?? 0}).");
+                }
 
                 ProjectFile key = new ProjectFile(project.Id, file.Id);
                 AddSettings(project.Id, file.Id, settings);
-
-                Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
-                // Debug.LogWarning(JsonConvert.SerializeObject(updatedSettings));
-
-                Debug.Log($"[SettingsManager] Settings cached for {key} " + $"(var count: {settingsDictionary[key]?.Variables?.Count ?? 0}).");
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[SettingsManager] OnFileProcessed -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
             }
+        }
+
+        private void OnProjectOpened(Project project)
+        {
+            Debug.Log("OnProjectOpened");
         }
 
         private void OnProjectClosed(Project project)
@@ -125,6 +139,108 @@ namespace Astrovisio
             return settings.Variables.Find(s => string.Equals(s.Name, varName, StringComparison.OrdinalIgnoreCase));
         }
 
+        public bool AddSetting(int projectId, int fileId, Setting setting, bool overwrite = true)
+        {
+            if (setting == null || string.IsNullOrWhiteSpace(setting.Name))
+            {
+                Debug.LogError("[SettingsManager] AddSetting failed: 'setting' is null or has no Name.");
+                return false;
+            }
+
+            var key = new ProjectFile(projectId, fileId);
+
+            // Ensure a Settings container exists for this key
+            if (!settingsDictionary.TryGetValue(key, out var settings) || settings == null)
+            {
+                settings = new Settings { Variables = new List<Setting>() };
+                settingsDictionary[key] = settings;
+                Debug.Log($"[SettingsManager] Created new Settings container for {key}.");
+            }
+
+            settings.Variables ??= new List<Setting>();
+
+            // Find existing by name (case-insensitive)
+            int idx = settings.Variables.FindIndex(s =>
+                s != null && string.Equals(s.Name, setting.Name, StringComparison.OrdinalIgnoreCase));
+
+            // If exists and overwrite is false -> skip
+            if (idx >= 0 && !overwrite)
+            {
+                Debug.LogWarning($"[SettingsManager] AddSetting skipped: '{setting.Name}' already exists for {key} and overwrite=false.");
+                return false;
+            }
+
+            // Determine mapping to enforce uniqueness on
+            string selectedMapping = setting.Mapping;
+            bool enforceUniqueness =
+                !string.IsNullOrWhiteSpace(selectedMapping) &&
+                (selectedMapping.Equals("Opacity", StringComparison.OrdinalIgnoreCase) ||
+                 selectedMapping.Equals("Colormap", StringComparison.OrdinalIgnoreCase));
+
+            // If we will apply this setting (insert or update), and mapping is Opacity/Colormap,
+            // clear the same mapping from all other settings in this file.
+            if (enforceUniqueness)
+            {
+                foreach (var s in settings.Variables)
+                {
+                    if (s == null) continue;
+                    if (string.Equals(s.Name, setting.Name, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    if (string.Equals(s.Mapping, selectedMapping, StringComparison.OrdinalIgnoreCase))
+                    {
+                        s.Mapping = null; // or "None" if preferisci un valore esplicito
+                                          // (opzionale) reset di altri campi legati al mapping
+                                          // es: s.InvertMapping = false; s.Colormap = null; ecc. se serve
+                    }
+                }
+            }
+
+            // Apply insert or update
+            if (idx >= 0)
+            {
+                settings.Variables[idx] = setting;
+                Debug.Log($"[SettingsManager] Updated setting '{setting.Name}' for {key} (mapping: {setting.Mapping ?? "None"}).");
+            }
+            else
+            {
+                settings.Variables.Add(setting);
+                Debug.Log($"[SettingsManager] Added setting '{setting.Name}' for {key} (mapping: {setting.Mapping ?? "None"}).");
+            }
+
+            return true;
+        }
+
+
+        public bool RemoveSetting(int projectId, int fileId, string varName)
+        {
+            if (string.IsNullOrWhiteSpace(varName))
+            {
+                Debug.LogError("[SettingsManager] RemoveSetting failed: 'varName' is null or empty.");
+                return false;
+            }
+
+            var key = new ProjectFile(projectId, fileId);
+
+            if (!settingsDictionary.TryGetValue(key, out var settings) || settings?.Variables == null)
+            {
+                Debug.LogWarning($"[SettingsManager] RemoveSetting: no cached Settings or Variables for {key}.");
+                return false;
+            }
+
+            int idx = settings.Variables.FindIndex(s =>
+                s != null && string.Equals(s.Name, varName, StringComparison.OrdinalIgnoreCase));
+
+            if (idx < 0)
+            {
+                Debug.LogWarning($"[SettingsManager] RemoveSetting: '{varName}' not found for {key}.");
+                return false;
+            }
+
+            settings.Variables.RemoveAt(idx);
+            Debug.Log($"[SettingsManager] Removed setting '{varName}' for {key}.");
+            return true;
+        }
+
         public void AddSettings(int projectId, int fileId, Settings settings)
         {
             if (settings == null)
@@ -157,7 +273,7 @@ namespace Astrovisio
             return removed;
         }
 
-        // === Settings ===
+        // === Render ===
         public void SetAxisSetting(Axis axis, Setting setting)
         {
             if (setting == null)
@@ -184,20 +300,51 @@ namespace Astrovisio
             );
         }
 
-        public void SetParamSetting(Setting setting)
+        public void SetParamSetting(Setting setting, Settings settings = null)
         {
             switch (setting.Mapping)
             {
-                case "None":
-                    return;
+                case null:
+                    Debug.Log("None: " + setting.Mapping);
+                    break;
                 case "Opacity":
                     SetOpacity(setting);
                     break;
                 case "Colormap":
+                    Debug.Log("1");
                     SetColormap(setting);
                     break;
                 default:
                     break;
+            }
+        }
+
+        public void SetSettings(int projectId, int fileId)
+        {
+            if (TryGetSettings(projectId, fileId, out var settings) == false)
+            {
+                return;
+            }
+
+            RemoveOpacity();
+            RemoveColormap();
+            foreach (Setting setting in settings.Variables)
+            {
+                Debug.LogWarning($"{setting.Name} - {setting.Mapping}");
+
+                switch (setting.Mapping)
+                {
+                    case null:
+                        break;
+                    case "Opacity":
+                        SetOpacity(setting);
+                        break;
+                    case "Colormap":
+                        SetColormap(setting);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -251,8 +398,8 @@ namespace Astrovisio
             // Parse colormap string into enum with fallback
             if (!Enum.TryParse(setting.Colormap, ignoreCase: true, out ColorMapEnum colormap))
             {
-                Debug.LogWarning($"[SetColormap] Invalid colormap value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
-                colormap = ColorMapEnum.Accent;
+                Debug.LogWarning($"[SetColormap] Invalid colormap value '{setting.Colormap}'. Using default: {ColorMapEnum.Autumn}");
+                colormap = ColorMapEnum.Autumn;
             }
 
             // Parse scaling string into enum with fallback
@@ -266,7 +413,7 @@ namespace Astrovisio
             float max = (float)(setting.ThrMaxSel ?? setting.ThrMax);
 
             RenderManager.Instance.DataRenderer.SetColormap(
-                name,
+                setting.Name,
                 colormap,
                 min,
                 max,
@@ -293,7 +440,6 @@ namespace Astrovisio
                 RenderManager.Instance.DataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
             }
         }
-
 
         // === API ===
         public async Task<Settings> GetSettings(int projectId, int fileId)
@@ -338,10 +484,14 @@ namespace Astrovisio
                 Variables = current.Variables ?? new List<Setting>()
             };
 
+            Debug.Log(JsonConvert.SerializeObject(req));
+
             TaskCompletionSource<Settings> tcs = new TaskCompletionSource<Settings>();
 
             _ = apiManager.UpdateSettings(
-                projectId, fileId, req,
+                projectId,
+                fileId,
+                req,
                 onSuccess: updated =>
                 {
                     settingsDictionary[key] = updated ?? new Settings { Variables = new List<Setting>() };

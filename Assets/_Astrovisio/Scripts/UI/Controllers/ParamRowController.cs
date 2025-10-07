@@ -108,7 +108,7 @@ namespace Astrovisio
             checkbox?.RegisterValueChangedCallback(evt =>
             {
                 Variable.Selected = evt.newValue;
-                Debug.Log($"Checkbox toggled for {Variable.Name}: {Variable.Selected}");
+                // Debug.Log($"Checkbox toggled for {Variable.Name}: {Variable.Selected}");
                 SetSelected(Variable.Selected);
             });
             SetSelected(Variable.Selected);

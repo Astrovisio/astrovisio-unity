@@ -424,7 +424,7 @@ namespace Astrovisio
             // Debug.Log(ReferenceEquals(currentFile, file));
             if (Project.Id == project.Id && currentFile.Id == file.Id)
             {
-                Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name} updated.");
+                // Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name} updated.");
                 UpdateParamsScrollView();
                 UpdateChipLabel();
             }

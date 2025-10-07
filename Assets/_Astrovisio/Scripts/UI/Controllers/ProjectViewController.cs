@@ -226,14 +226,17 @@ namespace Astrovisio
             {
                 if (paramController.Variable.XAxis)
                 {
+                    // Debug.Log(paramController.Variable.Name + " is X");
                     selectedAxis[Axis.X] = paramController;
                 }
                 if (paramController.Variable.YAxis)
                 {
+                    // Debug.Log(paramController.Variable.Name + " is Y");
                     selectedAxis[Axis.Y] = paramController;
                 }
                 if (paramController.Variable.ZAxis)
                 {
+                    // Debug.Log(paramController.Variable.Name + " is Z");
                     selectedAxis[Axis.Z] = paramController;
                 }
             }

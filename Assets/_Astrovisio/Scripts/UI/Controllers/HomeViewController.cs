@@ -124,7 +124,7 @@ namespace Astrovisio
                     {
                         if (file.Processed)
                         {
-                            Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
+                            // Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
                             ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
                         }
                     }

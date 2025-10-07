@@ -404,7 +404,7 @@ namespace Astrovisio
 							project.Files.Add(updatedFile);
 						}
 					}
-					Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
+					// Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
 				},
 				error =>
 				{

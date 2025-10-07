@@ -237,7 +237,7 @@ namespace Astrovisio
         {
             string url = APIEndpoints.ProcessFile(projectId, fileId);
 
-            Debug.Log($"[APIManager] POST {url}");
+            // Debug.Log($"[APIManager] POST {url}");
 
             using (UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
             {
@@ -417,7 +417,7 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetSettings(projectId, fileId);
-            Debug.Log($"[APIManager] GET {url}");
+            // Debug.Log($"[APIManager] GET {url}");
 
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -465,7 +465,7 @@ namespace Astrovisio
                 NullValueHandling = NullValueHandling.Ignore
             });
 
-            Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+            // Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
 
             using (UnityWebRequest request = UnityWebRequest.Put(url, json))
             {
@@ -548,7 +548,7 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetJobResult(jobID);
-            Debug.Log($"[APIManager] GET {url}");
+            // Debug.Log($"[APIManager] GET {url}");
 
             const int maxRetries = 3;
             const int retryDelayMs = 2000;
@@ -562,7 +562,7 @@ namespace Astrovisio
 
                     await SendWebRequestAsync(request);
 
-                    Debug.Log($"Attempt {attempt}");
+                    // Debug.Log($"Attempt {attempt}");
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {
@@ -570,7 +570,7 @@ namespace Astrovisio
                         {
                             byte[] rawBytes = request.downloadHandler.data;
                             DataPack processedData = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
-                            Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
+                            // Debug.Log($"[APIManager] Received {processedData.Rows.Length} rows, {processedData.Columns.Length} columns.");
                             return processedData;
                         }
                         catch (Exception ex)

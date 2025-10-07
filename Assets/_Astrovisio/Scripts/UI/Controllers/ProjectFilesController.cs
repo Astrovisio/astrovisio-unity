@@ -287,7 +287,7 @@ namespace Astrovisio
 
         private void UpdateFileCounter()
         {
-            Debug.Log("File counter: " + Project.Files.Count);
+            // Debug.Log("File counter: " + Project.Files.Count);
             fileCounterLabel.text = $"Files ({Project.Files.Count})";
         }
 
