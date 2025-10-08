@@ -92,6 +92,7 @@ namespace Astrovisio
                 RenderManager.Instance.RenderReelPrev(Project.Id);
                 UpdateCurrentFile();
                 UpdateSidebar();
+                SettingsManager.Instance.SetSettings(Project.Id, currentFile.Id);
             };
 
             // NEXT
@@ -100,6 +101,7 @@ namespace Astrovisio
                 RenderManager.Instance.RenderReelNext(Project.Id);
                 UpdateCurrentFile();
                 UpdateSidebar();
+                SettingsManager.Instance.SetSettings(Project.Id, currentFile.Id);
             };
 
 
@@ -130,7 +132,9 @@ namespace Astrovisio
 
             SettingsManager.Instance.AddSetting(Project.Id, currentFile.Id, setting);
             await SettingsManager.Instance.UpdateSettings(Project.Id, currentFile.Id);
+            SettingsManager.Instance.SetSettings(Project.Id, currentFile.Id);
 
+            UnselectAllButtons();
             CloseSettingsPanel();
             UpdateMappingIcons();
         }
@@ -150,6 +154,7 @@ namespace Astrovisio
                 SettingsManager.Instance.SetSettings(Project.Id, currentFile.Id);
             }
 
+            UnselectAllButtons();
             CloseSettingsPanel();
             UpdateMappingIcons();
         }
@@ -187,7 +192,9 @@ namespace Astrovisio
             {
                 // Debug.LogError($"[Sidebar] Rendering file id={fileToRender.Id}, name='{fileToRender.Name}'");
                 RenderManager.Instance.RenderReelCurrent(Project.Id);
-                SettingsManager.Instance.SetSettings(Project.Id, fileToRender.Id);
+                UpdateCurrentFile();
+                UpdateSidebar();
+                SettingsManager.Instance.SetSettings(Project.Id, currentFile.Id);
             }
             else
             {
@@ -207,7 +214,7 @@ namespace Astrovisio
             }
             currentFile = Project.Files?.FirstOrDefault(f => f.Id == fileId.Value);
             SettingsManager.Instance.TryGetSettings(Project.Id, currentFile.Id, out settings);
-            Debug.Log(settings);
+            // Debug.Log(settings);
             // Debug.LogError($"Updated current file: {currentFile != null}.");
         }
 
@@ -228,19 +235,6 @@ namespace Astrovisio
             yButton.RemoveFromClassList("active");
             zButton.RemoveFromClassList("active");
 
-            paramScrollView.contentContainer.Query<Button>().ForEach(button =>
-            {
-                button.RemoveFromClassList("active");
-            });
-
-            settingsPanel.RemoveFromClassList("active");
-            CloseSettingsPanel();
-        }
-
-        private void CloseSettingsPanel()
-        {
-            settingsPanelController.CloseSettingsPanel();
-
             foreach (VisualElement paramSettingButton in paramScrollView.Children())
             {
                 Button paramButton = paramSettingButton.Q<Button>();
@@ -250,35 +244,11 @@ namespace Astrovisio
             }
         }
 
-        // private void OnApplyAxisSettings(Setting setting)
-        // {
-        //     string appliedParamName = setting.Name;
-
-        //     // TODO: API call GB
-
-        //     CloseSettingsPanel();
-        //     xButton.RemoveFromClassList("active");
-        //     yButton.RemoveFromClassList("active");
-        //     zButton.RemoveFromClassList("active");
-        // }
-
-        // private void OnApplyParamSettings(Setting setting)
-        // {
-        //     string appliedParamName = setting.Name;
-
-        //     CloseSettingsPanel();
-        //     // UpdateRenderManager();
-        //     UpdateMappingIcons();
-        //     // PrintAllMappings();
-        // }
-
-        // private void OnCancelSettings()
-        // {
-        //     CloseSettingsPanel();
-        //     // UpdateRenderManager();
-        //     UpdateMappingIcons();
-        //     // PrintAllMappings();
-        // }
+        private void CloseSettingsPanel()
+        {
+            settingsPanel.RemoveFromClassList("active");
+            settingsPanelController.CloseSettingsPanel();
+        }
 
         private void UpdateMappingIcons()
         {
@@ -429,6 +399,8 @@ namespace Astrovisio
                     // Define click handler
                     EventCallback<ClickEvent> clickHandler = evt =>
                     {
+                        Debug.Log("Clicked: " + variable.Name);
+
                         if (axisButton.ClassListContains("active"))
                         {
                             UnselectAllButtons();

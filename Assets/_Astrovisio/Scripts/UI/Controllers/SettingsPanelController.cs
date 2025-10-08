@@ -26,10 +26,6 @@ namespace Astrovisio
         public UIContextSO UIContextSO { private set; get; }
 
         // === Other ===
-        public AxisRowSettingsController AxisRowSettingsController { private set; get; }
-        public AxisRowSettingsController TempAxisRowSettingsController { private set; get; }
-        public ParamRowSettingsController ParamRowSettingsController { private set; get; }
-        public ParamRowSettingsController TempParamRowSettingsController { private set; get; }
         private Label paramNameLabel;
         private DropdownField mappingDropdown;
         private MinMaxSlider thresholdSlider;
@@ -42,8 +38,6 @@ namespace Astrovisio
         private Toggle invertToggle;
         private Button applyButton;
         private Button cancelButton;
-        private EventCallback<ClickEvent> applyCallback;
-        private EventCallback<ClickEvent> cancelCallback;
         private bool isThresholdUpdating = false;
 
         // === Callbacks ===
@@ -57,22 +51,12 @@ namespace Astrovisio
         private Func<Setting, Task> applyButtonCallback;
         private Action cancelButtonCallback;
 
-        // === Events ===
-        public event Action<Setting> OnApplyAxisSetting;
-        public event Action<Setting> OnApplyParamSetting;
-        public event Action OnCancelSetting;
-
-
-
         // === NEW ===
         private File file;
         private Axis axis;
         private Setting originalSetting;
         private Setting tempSetting;
         private SettingMode settingMode;
-
-
-
 
 
         public SettingsPanelController(
@@ -121,34 +105,10 @@ namespace Astrovisio
             return settingMode;
         }
 
-
-        private void RegisterButtonCallbacks(EventCallback<ClickEvent> newApplyCallback, EventCallback<ClickEvent> newCancelCallback)
-        {
-            UnregisterButtonCallbacks();
-
-            cancelCallback = newCancelCallback;
-            applyCallback = newApplyCallback;
-
-            cancelButton.RegisterCallback(newCancelCallback);
-            applyButton.RegisterCallback(newApplyCallback);
-        }
-
-        private void UnregisterButtonCallbacks()
-        {
-            if (cancelCallback != null)
-            {
-                cancelButton.UnregisterCallback(cancelCallback);
-            }
-
-            if (applyCallback != null)
-            {
-                applyButton.UnregisterCallback(applyCallback);
-            }
-        }
-
-
         public void InitAxisSettingsPanel(File file, Axis axis, Setting setting)
         {
+            SettingsManager.Instance.SetSettings(Project.Id, file.Id);
+
             settingMode = SettingMode.Axis;
             this.file = file;
             this.axis = axis;
@@ -168,8 +128,8 @@ namespace Astrovisio
             thresholdSlider.highLimit = (float)tempSetting.ThrMax;
             thresholdSlider.minValue = (float)(tempSetting.ThrMinSel ?? tempSetting.ThrMin);
             thresholdSlider.maxValue = (float)(tempSetting.ThrMaxSel ?? tempSetting.ThrMax);
-            thresholdSliderMinFloatField.value = thresholdSlider.minValue;
-            thresholdSliderMaxFloatField.value = thresholdSlider.maxValue;
+            thresholdSliderMinFloatField.value = (float)(tempSetting.ThrMinSel ?? tempSetting.ThrMin);
+            thresholdSliderMaxFloatField.value = (float)(tempSetting.ThrMaxSel ?? tempSetting.ThrMax);
 
             thresholdSliderCallback = evt =>
             {
@@ -237,27 +197,12 @@ namespace Astrovisio
                 }
             };
             scalingDropdown?.RegisterCallback(scalingDropdownCallback);
-
-            // TODO: GB
-            EventCallback<ClickEvent> onApply = evt =>
-            {
-                AxisRowSettingsController = TempAxisRowSettingsController;
-                // RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
-                CloseSettingsPanel();
-                OnApplyAxisSetting?.Invoke(tempSetting);
-            };
-            EventCallback<ClickEvent> onCancel = evt =>
-            {
-                // RenderManager.Instance.RenderSettingsController.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
-                CloseSettingsPanel();
-                OnCancelSetting?.Invoke();
-            };
-
-            RegisterButtonCallbacks(onApply, onCancel);
         }
 
         public void InitParamSettingsPanel(File file, Setting setting)
         {
+            SettingsManager.Instance.SetSettings(Project.Id, file.Id);
+
             settingMode = SettingMode.Param;
             this.file = file;
 

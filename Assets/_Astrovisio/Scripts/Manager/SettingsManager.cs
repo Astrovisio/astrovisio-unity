@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CatalogData;
 using Newtonsoft.Json;
@@ -67,7 +68,7 @@ namespace Astrovisio
                 Settings settings = await GetSettings(project.Id, file.Id);
                 // Debug.LogWarning(JsonConvert.SerializeObject(settings));
 
-                Debug.LogError((settings != null) + " " + settings.Variables.Count);
+                // Debug.LogWarning((settings != null) + " " + settings.Variables.Count);
                 if (settings != null && settings.Variables.Count == 0)
                 {
                     settings.SetDefaults(file);
@@ -326,11 +327,52 @@ namespace Astrovisio
                 return;
             }
 
+            File file = projectManager.GetFile(projectId, fileId);
+            string xAxisName = file.Variables.FirstOrDefault(v => v.XAxis)?.Name;
+            string yAxisName = file.Variables.FirstOrDefault(v => v.YAxis)?.Name;
+            string zAxisName = file.Variables.FirstOrDefault(v => v.ZAxis)?.Name;
+
+
             RemoveOpacity();
             RemoveColormap();
             foreach (Setting setting in settings.Variables)
             {
-                Debug.LogWarning($"{setting.Name} - {setting.Mapping}");
+                // Debug.LogWarning($"{setting.Name} - {setting.Mapping}");
+
+                if (setting.Name == xAxisName)
+                {
+                    ScalingType scalingType = Enum.TryParse<ScalingType>(setting.Scaling, true, out var parsed) ? parsed : ScalingType.Linear;
+                    SetAxis(
+                        Axis.X,
+                        xAxisName,
+                        (float)(setting.ThrMinSel ?? setting.ThrMin),
+                        (float)(setting.ThrMaxSel ?? setting.ThrMax),
+                        scalingType);
+                }
+                else if (setting.Name == yAxisName)
+                {
+                    ScalingType scalingType = Enum.TryParse<ScalingType>(setting.Scaling, true, out var parsed) ? parsed : ScalingType.Linear;
+                    SetAxis(
+                        Axis.Y,
+                        yAxisName,
+                        (float)(setting.ThrMinSel ?? setting.ThrMin),
+                        (float)(setting.ThrMaxSel ?? setting.ThrMax),
+                        scalingType);
+                }
+                else if (setting.Name == zAxisName)
+                {
+                    ScalingType scalingType = Enum.TryParse<ScalingType>(setting.Scaling, true, out var parsed) ? parsed : ScalingType.Linear;
+                    SetAxis(
+                        Axis.Z,
+                        zAxisName,
+                        (float)(setting.ThrMinSel ?? setting.ThrMin),
+                        (float)(setting.ThrMaxSel ?? setting.ThrMax),
+                        scalingType);
+                }
+                else
+                {
+
+                }
 
                 switch (setting.Mapping)
                 {
@@ -432,13 +474,10 @@ namespace Astrovisio
             RenderManager.Instance.DataRenderer.RemoveColormap();
         }
 
-        // ???
-        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        public void SetAxis(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
         {
-            if (RenderManager.Instance.DataRenderer is not null)
-            {
-                RenderManager.Instance.DataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
-            }
+            // Debug.Log($"{paramName}, {thresholdMin}, {thresholdMax}, {scalingType}");
+            RenderManager.Instance.DataRenderer?.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
         }
 
         // === API ===
