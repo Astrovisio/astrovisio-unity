@@ -1,24 +1,31 @@
 ﻿/*
- * iDaVIE (immersive Data Visualisation Interactive Explorer)
- * Copyright (C) 2024 IDIA, INAF-OACT
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
  *
- * This file is part of the iDaVIE project.
+ * This file is part of the Astrovisio project.
  *
- * iDaVIE is free software: you can redistribute it and/or modify it under the terms 
+ * This file contains code derived from the iDaVIE project
+ * (immersive Data Visualisation Interactive Explorer)
+ * Original Copyright (C) 2024 IDIA, INAF-OACT
+ * Original file: "DataSetRenderer.cs"
+ *
+ * This file is free software: you can redistribute it and/or modify it under the terms 
  * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
  * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * iDaVIE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * This file is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
  * PURPOSE. See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License along with 
- * iDaVIE in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
  *
- * Additional information and disclaimers regarding liability and third-party 
- * components can be found in the DISCLAIMER and NOTICE files included with this project.
- *
+ * Substantial modifications from original iDaVIE code include:
+ * - General refactor
+ * - Removed all unnecessary data structures for Astrovisio Visualization
+ * - Reworked data initialization
  */
+
 using System;
 using Astrovisio;
 using UnityEngine;

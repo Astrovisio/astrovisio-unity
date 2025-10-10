@@ -18,7 +18,11 @@
  * Additional information and disclaimers regarding liability and third-party 
  * components can be found in the DISCLAIMER and NOTICE files included with this project.
  *
+ * Modifications:
+ * - Data Structure adapted to Astrovisio visualization necessities.
+ *
  */
+
 using System;
 using UnityEngine;
 
