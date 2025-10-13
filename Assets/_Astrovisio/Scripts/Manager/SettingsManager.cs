@@ -18,7 +18,6 @@ namespace Astrovisio
 
         private readonly Dictionary<ProjectFile, Settings> settingsDictionary = new();
 
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -272,6 +271,22 @@ namespace Astrovisio
             }
 
             return removed;
+        }
+
+        public List<Settings> GetCurrentProjectFilesSettings()
+        {
+            List<Settings> filesSettings = new List<Settings>();
+
+            foreach (File file in projectManager.GetCurrentProject().Files)
+            {
+                Settings settings;
+                if (TryGetSettings(projectManager.GetCurrentProject().Id, file.Id, out settings))
+                {
+                    filesSettings.Add(settings);
+                }
+            }
+
+            return filesSettings;
         }
 
         // === Render ===

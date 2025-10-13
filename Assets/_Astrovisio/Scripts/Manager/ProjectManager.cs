@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFB;
 using UnityEngine;
 
 namespace Astrovisio
@@ -13,6 +15,7 @@ namespace Astrovisio
 		[Header("Dependencies")]
 		[SerializeField] private APIManager apiManager;
 		[SerializeField] private UIManager uiManager;
+		[SerializeField] private SettingsManager settingsManager;
 
 		[Header("Debug")]
 		[SerializeField] private bool saveProjectCSV = false;
@@ -676,7 +679,7 @@ namespace Astrovisio
 			project.UpdateFrom(updatedFromApi);
 			ProjectUpdated?.Invoke(project);
 			uiManager.SetLoadingView(false);
-			
+
 			foreach (File file in project.Files)
 			{
 				Debug.Log($"{file.Name} order: {file.Order}");
@@ -684,7 +687,7 @@ namespace Astrovisio
 		}
 
 		// TODO: settings
-		
+
 
 		// --------------------
 		public void CloseProject(int id)
@@ -726,6 +729,62 @@ namespace Astrovisio
 			}
 
 			FileSelected?.Invoke(project, file);
+		}
+
+		public async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
+		{
+			Project project = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths());
+
+			if (project == null)
+			{
+				return null;
+			}
+
+			savedProject.Project.Id = project.Id;
+
+			project.UpdateFrom(savedProject.Project);
+
+			//DebugUtility.SaveJson("ASD_" + savedProject.Project.Name, JsonConvert.SerializeObject(project), true, "F:/");
+
+			List<File> SortedList = project.Files.OrderBy(o => o.Order).ToList();
+			List<int> OrderedFileIDs = new List<int>();
+
+			foreach (File f in SortedList)
+			{
+				UpdateFile(project.Id, f);
+				OrderedFileIDs.Add(f.Id);
+			}
+
+			await UpdateFileOrder(project.Id, OrderedFileIDs.ToArray());
+
+			return project;
+		}
+
+		[ContextMenu("SaveProjectToJSON")]
+		public void SaveProjectToJSON()
+		{
+			SavedProject savedProject = new SavedProject();
+			savedProject.Project = GetCurrentProject();
+			savedProject.FilesSettings = new List<Settings>(settingsManager.GetCurrentProjectFilesSettings());
+
+			string file = StandaloneFileBrowser.SaveFilePanel("Save Project", "", savedProject.Project.Name + ".json", "json");
+			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+		}
+
+		[ContextMenu("LoadProjectFromJSON")]
+		public void LoadProjectFromJSON()
+		{
+			string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "json", false);
+			if (paths.Length > 0)
+			{
+				StreamReader sr = new StreamReader(paths[0]);
+				string fileContents = sr.ReadToEnd();
+				sr.Close();
+
+				SavedProject savedProject = JsonConvert.DeserializeObject<SavedProject>(fileContents);
+
+				_ = CreateProjectFromSavedProject(savedProject);
+			}
 		}
 
 		private void SaveProjectCSV(DataPack dataPack)

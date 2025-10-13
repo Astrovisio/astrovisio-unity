@@ -1176,6 +1176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiManager: {fileID: 1328975545}
   uiManager: {fileID: 1869469690}
+  settingsManager: {fileID: 1399382619}
   saveProjectCSV: 0
 --- !u!1 &553139021
 GameObject:
@@ -4903,7 +4904,7 @@ PrefabInstance:
     - target: {fileID: 1770384898517674952, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: debugMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5304179595479019890, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
@@ -4975,12 +4976,42 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: -0.030000001
       objectReference: {fileID: 0}
+    - target: {fileID: 5882603884747226952, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -0.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 5882603884747226952, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -0.030000001
+      objectReference: {fileID: 0}
     - target: {fileID: 7100781570967162086, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_SizeDelta.x
       value: -0.86
       objectReference: {fileID: 0}
     - target: {fileID: 7100781570967162086, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -0.030000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8704111753858872344, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8704111753858872344, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -0.030000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8990117981508833567, guid: 4aad8470d81d77e47abf52cd6c427199,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8990117981508833567, guid: 4aad8470d81d77e47abf52cd6c427199,
         type: 3}
       propertyPath: m_SizeDelta.y
       value: -0.030000001

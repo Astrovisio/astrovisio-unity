@@ -135,9 +135,13 @@ namespace Astrovisio
 
         public bool IsPointerOverVisibleUI()
         {
-            if (uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
+            if (uiDocument == null || uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
             {
-                Debug.Log("rootVisualElement or panel is null");
+                if (uiDocument)
+                {
+                    Debug.Log("rootVisualElement or panel is null");
+                }
+   
                 return false;
             }
 

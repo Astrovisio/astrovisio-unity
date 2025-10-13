@@ -2,19 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogData;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Astrovisio
 {
+    [Serializable]
     public readonly struct ProjectFile : IEquatable<ProjectFile>
     {
-        public readonly int ProjectId;
-        public readonly int FileId;
+        
+        private readonly int projectId;
+        private readonly int fileId;
+
+        public int ProjectId
+        {
+            get => projectId;
+        }
+
+        public int FileId
+        {
+            get => fileId;
+        }
 
         public ProjectFile(int projectId, int fileId)
         {
-            ProjectId = projectId;
-            FileId = fileId;
+            this.projectId = projectId;
+            this.fileId = fileId;
         }
 
         public bool Equals(ProjectFile other)
