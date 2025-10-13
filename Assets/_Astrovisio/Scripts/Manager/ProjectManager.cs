@@ -733,31 +733,27 @@ namespace Astrovisio
 
 		public async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
 		{
-			Project project = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths());
+			Project createdProject = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths());
 
-			if (project == null)
+			if (createdProject == null)
 			{
 				return null;
 			}
 
-			savedProject.Project.Id = project.Id;
+			savedProject.Project.Id = createdProject.Id;
 
-			project.UpdateFrom(savedProject.Project);
-
-			//DebugUtility.SaveJson("ASD_" + savedProject.Project.Name, JsonConvert.SerializeObject(project), true, "F:/");
-
-			List<File> SortedList = project.Files.OrderBy(o => o.Order).ToList();
+			List<File> SortedList = savedProject.Project.Files.OrderBy(o => o.Order).ToList();
 			List<int> OrderedFileIDs = new List<int>();
 
 			foreach (File f in SortedList)
 			{
-				UpdateFile(project.Id, f);
+				UpdateFile(savedProject.Project.Id, f);
 				OrderedFileIDs.Add(f.Id);
 			}
 
-			await UpdateFileOrder(project.Id, OrderedFileIDs.ToArray());
+			await UpdateFileOrder(createdProject.Id, OrderedFileIDs.ToArray());
 
-			return project;
+			return createdProject;
 		}
 
 		[ContextMenu("SaveProjectToJSON")]
