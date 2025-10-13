@@ -282,6 +282,7 @@ namespace Astrovisio
                 Settings settings;
                 if (TryGetSettings(projectManager.GetCurrentProject().Id, file.Id, out settings))
                 {
+                    settings.Path = file.Path;
                     filesSettings.Add(settings);
                 }
             }

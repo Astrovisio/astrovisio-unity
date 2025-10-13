@@ -15,7 +15,6 @@ namespace Astrovisio
 		[Header("Dependencies")]
 		[SerializeField] private APIManager apiManager;
 		[SerializeField] private UIManager uiManager;
-		[SerializeField] private SettingsManager settingsManager;
 
 		[Header("Debug")]
 		[SerializeField] private bool saveProjectCSV = false;
@@ -753,6 +752,16 @@ namespace Astrovisio
 
 			await UpdateFileOrder(createdProject.Id, OrderedFileIDs.ToArray());
 
+			foreach (Settings settings in savedProject.FilesSettings)
+            {
+				File f = SortedList.Find(i => i.Path == settings.Path);
+
+				if (f != null)
+                {
+					SettingsManager.Instance.AddSettings(createdProject.Id, f.Id, settings);
+                }
+            }
+
 			return createdProject;
 		}
 
@@ -761,7 +770,7 @@ namespace Astrovisio
 		{
 			SavedProject savedProject = new SavedProject();
 			savedProject.Project = GetCurrentProject();
-			savedProject.FilesSettings = new List<Settings>(settingsManager.GetCurrentProjectFilesSettings());
+			savedProject.FilesSettings = new List<Settings>(SettingsManager.Instance.GetCurrentProjectFilesSettings());
 
 			string file = StandaloneFileBrowser.SaveFilePanel("Save Project", "", savedProject.Project.Name + ".json", "json");
 			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));

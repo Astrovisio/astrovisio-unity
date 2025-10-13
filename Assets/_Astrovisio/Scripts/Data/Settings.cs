@@ -8,12 +8,20 @@ namespace Astrovisio
     {
 
         private List<Setting> variables;
+        private string path;
 
         [JsonProperty("variables")]
         public List<Setting> Variables
         {
             get => variables;
             set => variables = value;
+        }
+
+        [JsonProperty("path")]
+        public string Path
+        {
+            get => path;
+            set => path = value;
         }
 
         public void SetDefaults(File file)
