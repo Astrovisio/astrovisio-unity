@@ -732,7 +732,34 @@ namespace Astrovisio
 			FileSelected?.Invoke(project, file);
 		}
 
-		public async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
+		[ContextMenu("SaveProjectToJSON")]
+		public void SaveProjectToJSON()
+		{
+			SavedProject savedProject = new SavedProject();
+			savedProject.Project = GetCurrentProject();
+			savedProject.FilesSettings = new List<Settings>(SettingsManager.Instance.GetCurrentProjectFilesSettings());
+
+			string file = StandaloneFileBrowser.SaveFilePanel("Save Project", "", savedProject.Project.Name + ".json", "json");
+			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+		}
+
+		[ContextMenu("LoadProjectFromJSON")]
+		public void LoadProjectFromJSON()
+		{
+			string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "json", false);
+			if (paths.Length > 0)
+			{
+				StreamReader sr = new StreamReader(paths[0]);
+				string fileContents = sr.ReadToEnd();
+				sr.Close();
+
+				SavedProject savedProject = JsonConvert.DeserializeObject<SavedProject>(fileContents);
+
+				_ = CreateProjectFromSavedProject(savedProject);
+			}
+		}
+
+		private async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
 		{
 			Project createdProject = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths(), false);
 
@@ -762,37 +789,11 @@ namespace Astrovisio
 				{
 					//Debug.Log("APPLYING RENDERING SETTINGS TO " + settings.Path);
 					SettingsManager.Instance.AddSettings(createdProject.Id, file.Id, settings);
+					await SettingsManager.Instance.UpdateSettings(createdProject.Id, file.Id);
                 }
             }
 
 			return createdProject;
-		}
-
-		[ContextMenu("SaveProjectToJSON")]
-		public void SaveProjectToJSON()
-		{
-			SavedProject savedProject = new SavedProject();
-			savedProject.Project = GetCurrentProject();
-			savedProject.FilesSettings = new List<Settings>(SettingsManager.Instance.GetCurrentProjectFilesSettings());
-
-			string file = StandaloneFileBrowser.SaveFilePanel("Save Project", "", savedProject.Project.Name + ".json", "json");
-			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
-		}
-
-		[ContextMenu("LoadProjectFromJSON")]
-		public void LoadProjectFromJSON()
-		{
-			string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "json", false);
-			if (paths.Length > 0)
-			{
-				StreamReader sr = new StreamReader(paths[0]);
-				string fileContents = sr.ReadToEnd();
-				sr.Close();
-
-				SavedProject savedProject = JsonConvert.DeserializeObject<SavedProject>(fileContents);
-
-				_ = CreateProjectFromSavedProject(savedProject);
-			}
 		}
 
 		private void SaveProjectCSV(DataPack dataPack)
