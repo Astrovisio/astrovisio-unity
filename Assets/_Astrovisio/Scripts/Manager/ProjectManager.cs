@@ -648,7 +648,7 @@ namespace Astrovisio
 				return;
 			}
 
-			UpdateProjectRequest req = new UpdateProjectRequest
+			UpdateProjectOrderedRequest req = new UpdateProjectOrderedRequest
 			{
 				Name = project.Name,
 				Description = project.Description,

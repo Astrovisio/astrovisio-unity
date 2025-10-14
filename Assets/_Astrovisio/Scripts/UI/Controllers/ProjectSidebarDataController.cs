@@ -122,7 +122,7 @@ namespace Astrovisio
                         currentFile.Downsampling = value;
 
                         Debug.Log($"[Downsampling] Set to {percentage:0}% → value={value:0.##}");
-                        ProjectManager.UpdateFile(Project.Id, currentFile);
+                        _ = ProjectManager.UpdateFile(Project.Id, currentFile);
                         UpdateProcessDataButton();
                     }
                     else
@@ -257,7 +257,7 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             // SetProcessDataButton(false);
-            ProjectManager.ProcessFile(Project.Id, currentFile.Id);
+            _ = ProjectManager.ProcessFile(Project.Id, currentFile.Id);
             // UpdateRenderingParams();
         }
 

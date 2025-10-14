@@ -18,6 +18,7 @@ namespace Astrovisio
         private ProjectManager projectManager;
         private UIContextSO uiContextSO;
         private Button newProjectButton;
+        private Button loadJSONButton;
 
         // === Controllers ===
         private NewProjectViewController newProjectController;
@@ -54,12 +55,14 @@ namespace Astrovisio
         private void Start()
         {
             EnableNewProjectButton();
+            EnableLoadJSONButton();
             EnableHomeView();
         }
 
         private void OnDisable()
         {
             DisableNewProjectButton();
+            DisableLoadJSONButton();
 
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectUnselected -= OnProjectUnselected;
@@ -83,11 +86,35 @@ namespace Astrovisio
             }
         }
 
+        private void EnableLoadJSONButton()
+        {
+            VisualElement root = uiDocument.rootVisualElement;
+            VisualElement loadJSONButtonInstance = root.Q<VisualElement>("LoadProjectButton");
+            loadJSONButton = loadJSONButtonInstance?.Q<Button>();
+
+            if (loadJSONButton != null)
+            {
+                loadJSONButton.RegisterCallback<ClickEvent>(OnLoadJSONClicked);
+            }
+            else
+            {
+                Debug.LogWarning("Button not found.");
+            }
+        }
+
         private void DisableNewProjectButton()
         {
             if (newProjectButton != null)
             {
                 newProjectButton.UnregisterCallback<ClickEvent>(OnNewProjectClicked);
+            }
+        }
+
+        private void DisableLoadJSONButton()
+        {
+            if (loadJSONButton != null)
+            {
+                loadJSONButton.UnregisterCallback<ClickEvent>(OnNewProjectClicked);
             }
         }
 
@@ -102,6 +129,11 @@ namespace Astrovisio
                 newProjectController?.Dispose();
                 newProjectController.Init(newProjectViewInstance);
             }
+        }
+
+        private void OnLoadJSONClicked(ClickEvent evt)
+        {
+            projectManager.LoadProjectFromJSON();
         }
 
         private void EnableHomeView()
@@ -164,5 +196,5 @@ namespace Astrovisio
         }
 
     }
-    
+
 }

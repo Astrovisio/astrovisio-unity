@@ -175,7 +175,7 @@ namespace Astrovisio
             {
                 paramController.SetSelected(isChecked, true);
             }
-            ProjectManager.UpdateFile(Project.Id, currentFile);
+            _ = ProjectManager.UpdateFile(Project.Id, currentFile);
         }
 
         private void InitScrollView()
@@ -337,7 +337,7 @@ namespace Astrovisio
             {
                 // Debug.Log("UpdateFile -> " + currentFile.Order);
                 currentFile.Processed = false;
-                ProjectManager.UpdateFile(Project.Id, currentFile);
+                _ = ProjectManager.UpdateFile(Project.Id, currentFile);
             }
 
         }

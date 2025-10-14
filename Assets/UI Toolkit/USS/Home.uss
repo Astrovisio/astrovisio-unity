@@ -59,3 +59,7 @@
     padding-left: 10px;
     padding-right: 0;
 }
+
+#Root > #HeaderContainer > #RightContainer > #LoadProjectButton > .btn-secondary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/upload.svg?fileID=7388822144124034973&guid=241c81af96d148f45ab42d03d5812f13&type=3#upload");
+}

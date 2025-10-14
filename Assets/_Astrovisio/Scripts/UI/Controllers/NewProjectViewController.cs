@@ -194,7 +194,7 @@ namespace Astrovisio
                         if (file != null)
                         {
                             file.Order = i;
-                            ProjectManager.UpdateFile(createdProject.Id, file);
+                            await ProjectManager.UpdateFile(createdProject.Id, file);
                             // Debug.Log("Done: " + file.Order + " - " + file.Name);
 
 

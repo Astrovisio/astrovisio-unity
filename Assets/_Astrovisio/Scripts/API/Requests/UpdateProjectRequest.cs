@@ -14,9 +14,6 @@ namespace Astrovisio
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("order")]
-        public int[] Order { get; set; }
-
     }
     
 }
