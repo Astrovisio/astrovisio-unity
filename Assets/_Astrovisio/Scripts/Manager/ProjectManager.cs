@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -167,7 +168,7 @@ namespace Astrovisio
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingView(false);		
+					uiManager.SetLoadingView(false);
 				});
 			return created;
 		}
@@ -245,7 +246,7 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessFile(int projectId, int fileId)
+		public async Task ProcessFile(int projectId, int fileId)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
@@ -782,16 +783,33 @@ namespace Astrovisio
 			await UpdateFileOrder(createdProject.Id, OrderedFileIDs.ToArray());
 
 			foreach (Settings settings in savedProject.FilesSettings)
-            {
-				File file = SortedList.Find(i => i.Path == settings.Path);
-
-				if (file != null)
+			{
+				try
 				{
-					//Debug.Log("APPLYING RENDERING SETTINGS TO " + settings.Path);
-					SettingsManager.Instance.AddSettings(createdProject.Id, file.Id, settings);
-					await SettingsManager.Instance.UpdateSettings(createdProject.Id, file.Id);
+					File file = SortedList.Find(i => i.Path == settings.Path);
+
+					if (file != null)
+					{
+						if (file.Processed)
+						{
+							await ProcessFile(createdProject.Id, file.Id);
+							uiManager.SetLoadingView(true);
+							await SettingsManager.Instance.UpdateSettings(createdProject.Id, file.Id, settings);
+						}
+
+						continue;
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] UpdateSettings failed: {ex.Message}");
+					ApiError?.Invoke("Error during update settings: " + ex.Message);
+				}
+				finally
+                {
+                    uiManager.SetLoadingView(false);
                 }
-            }
+			}
 
 			return createdProject;
 		}

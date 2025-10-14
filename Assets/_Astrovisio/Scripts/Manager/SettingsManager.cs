@@ -48,6 +48,7 @@ namespace Astrovisio
         {
             if (projectManager != null)
             {
+                projectManager.ProjectOpened -= OnProjectOpened;
                 // projectManager.FileProcessed -= OnFileProcessed;
                 projectManager.ProjectClosed -= OnProjectClosed;
                 projectManager.FileUpdated -= OnFileUpdated;
@@ -127,9 +128,28 @@ namespace Astrovisio
             }
         }
 
-        private void OnProjectOpened(Project project)
+        private async void OnProjectOpened(Project project)
         {
             Debug.Log("OnProjectOpened");
+
+            if (project == null)
+            {
+                return;
+            }
+
+            foreach (File file in project.Files)
+            {
+                Settings settings = await GetSettings(project.Id, file.Id);
+                if (settings == null)
+                {
+                    Debug.Log($"No settings found for P{project.Id}-F{file.Id}");
+                }
+                else
+                {
+                    AddSettings(project.Id, file.Id, settings);
+                }
+            }
+
         }
 
         private void OnProjectClosed(Project project)
@@ -248,7 +268,6 @@ namespace Astrovisio
 
             return true;
         }
-
 
         public bool RemoveSetting(int projectId, int fileId, string varName)
         {
@@ -558,7 +577,7 @@ namespace Astrovisio
             return await tcs.Task;
         }
 
-        public async Task<Settings> UpdateSettings(int projectId, int fileId)
+        public async Task<Settings> UpdateSettings(int projectId, int fileId, Settings settings = null)
         {
             if (apiManager == null)
             {
@@ -567,15 +586,20 @@ namespace Astrovisio
             }
 
             ProjectFile key = new ProjectFile(projectId, fileId);
-            if (!settingsDictionary.TryGetValue(key, out Settings current) || current?.Variables == null)
+
+            if (settings == null)
             {
-                Debug.LogWarning($"[SettingsManager] No cached settings for {key}. " + "Run GetSettings (or wait for FileProcessed) before UpdateSettings.");
-                return null;
+
+                if (!settingsDictionary.TryGetValue(key, out settings) || settings?.Variables == null)
+                {
+                    Debug.LogWarning($"[SettingsManager] No cached settings for {key}. " + "Run GetSettings (or wait for FileProcessed) before UpdateSettings.");
+                    return null;
+                }
             }
 
             UpdateSettingsRequest req = new UpdateSettingsRequest
             {
-                Variables = current.Variables ?? new List<Setting>()
+                Variables = settings.Variables ?? new List<Setting>()
             };
 
             Debug.Log(JsonConvert.SerializeObject(req));
