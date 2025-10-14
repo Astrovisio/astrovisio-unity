@@ -82,7 +82,7 @@ namespace Astrovisio
 
         public void ResetDataRendererTransform()
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             dataRenderer.ResetDatasetTransform();
         }
 

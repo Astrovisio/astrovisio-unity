@@ -9,6 +9,6 @@ namespace Astrovisio
         public float Downsampling { get; set; }
 
         [JsonProperty("variables")]
-        public Dictionary<string, ConfigParam> ConfigParam { get; set; }
+        public Dictionary<string, Variable> Variables { get; set; }
     }
 }

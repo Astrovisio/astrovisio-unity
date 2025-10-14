@@ -18,6 +18,7 @@ namespace Astrovisio
         private ProjectManager projectManager;
         private UIContextSO uiContextSO;
         private Button newProjectButton;
+        private Button loadJSONButton;
 
         // === Controllers ===
         private NewProjectViewController newProjectController;
@@ -27,7 +28,7 @@ namespace Astrovisio
         // === Containers ===
         private VisualElement contentContainer;
         private VisualElement homeViewContainer;
-        private List<VisualElement> projectViewContainerList = new List<VisualElement>();
+        // private List<VisualElement> projectViewContainerList = new List<VisualElement>();
 
         private void Awake()
         {
@@ -54,12 +55,14 @@ namespace Astrovisio
         private void Start()
         {
             EnableNewProjectButton();
+            EnableLoadJSONButton();
             EnableHomeView();
         }
 
         private void OnDisable()
         {
             DisableNewProjectButton();
+            DisableLoadJSONButton();
 
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectUnselected -= OnProjectUnselected;
@@ -83,11 +86,35 @@ namespace Astrovisio
             }
         }
 
+        private void EnableLoadJSONButton()
+        {
+            VisualElement root = uiDocument.rootVisualElement;
+            VisualElement loadJSONButtonInstance = root.Q<VisualElement>("LoadProjectButton");
+            loadJSONButton = loadJSONButtonInstance?.Q<Button>();
+
+            if (loadJSONButton != null)
+            {
+                loadJSONButton.RegisterCallback<ClickEvent>(OnLoadJSONClicked);
+            }
+            else
+            {
+                Debug.LogWarning("Button not found.");
+            }
+        }
+
         private void DisableNewProjectButton()
         {
             if (newProjectButton != null)
             {
                 newProjectButton.UnregisterCallback<ClickEvent>(OnNewProjectClicked);
+            }
+        }
+
+        private void DisableLoadJSONButton()
+        {
+            if (loadJSONButton != null)
+            {
+                loadJSONButton.UnregisterCallback<ClickEvent>(OnNewProjectClicked);
             }
         }
 
@@ -100,8 +127,13 @@ namespace Astrovisio
             {
                 newProjectViewInstance.AddToClassList("active");
                 newProjectController?.Dispose();
-                newProjectController.Initialize(newProjectViewInstance);
+                newProjectController.Init(newProjectViewInstance);
             }
+        }
+
+        private void OnLoadJSONClicked(ClickEvent evt)
+        {
+            projectManager.LoadProjectFromJSON();
         }
 
         private void EnableHomeView()
@@ -122,15 +154,22 @@ namespace Astrovisio
             if (projectViewControllerDictionary.TryGetValue(project.Id, out var existingController))
             {
                 existingController.Root.style.display = DisplayStyle.Flex;
+                // Debug.Log("Existing controller for " + project.Name);
                 return;
             }
 
             VisualElement projectViewInstance = uiContextSO.projectViewTemplate.CloneTree();
+            projectViewInstance.name = project.Id.ToString() + "-" + project.Name.ToString();
             contentContainer.Add(projectViewInstance);
 
             // var newProjectViewController = new ProjectViewController(projectManager, projectViewInstance, projectManager.GetFakeProject(), uiContextSO.paramRowTemplate);
-            ProjectViewController newProjectViewController = new ProjectViewController(projectManager, uiManager, projectViewInstance, project);
+            ProjectViewController newProjectViewController = new ProjectViewController(
+                projectManager,
+                uiManager,
+                projectViewInstance,
+                project);
             projectViewControllerDictionary[project.Id] = newProjectViewController;
+            // Debug.Log("Created new controller for " + project.Name);
         }
 
         private void OnProjectUnselected()
@@ -145,16 +184,17 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            foreach (var controller in projectViewControllerDictionary.Values)
-            {
-                controller.Root.style.display = DisplayStyle.None;
-            }
-            homeViewContainer.style.display = DisplayStyle.Flex;
+            // foreach (var controller in projectViewControllerDictionary.Values)
+            // {
+            //     controller.Root.style.display = DisplayStyle.None;
+            // }
+            // homeViewContainer.style.display = DisplayStyle.Flex;
 
+            projectViewControllerDictionary[project.Id].Dispose();
+            contentContainer.Remove(projectViewControllerDictionary[project.Id].Root);
             projectViewControllerDictionary.Remove(project.Id);
         }
 
-
-
     }
+
 }

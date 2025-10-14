@@ -3,8 +3,8 @@
     <Style src="project://database/Assets/UI%20Toolkit/USS/ProjectFilesContainer.uss?fileID=7433441132597879392&amp;guid=dd9abc6124655f947be2d1be7c11e43c&amp;type=3#ProjectFilesContainer" />
     <engine:VisualElement name="FilesContainerRoot">
         <engine:VisualElement name="HeaderFiles">
-            <engine:Label text="Files (12)" name="Label" />
-            <engine:Instance template="TertiaryButton" name="ButtonAddFile">
+            <engine:Label text="Files (12)" name="FileCounterLabel" />
+            <engine:Instance template="TertiaryButton" name="ButtonAddFile" style="display: flex;">
                 <AttributeOverrides element-name="Label" text="Add a file" />
             </engine:Instance>
         </engine:VisualElement>

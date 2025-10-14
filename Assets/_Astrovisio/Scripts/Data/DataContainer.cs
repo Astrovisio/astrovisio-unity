@@ -7,6 +7,7 @@ namespace Astrovisio
     {
         public DataPack DataPack { private set; get; }
         public Project Project { private set; get; }
+        public File File { private set; get; }
 
         // Axis
         public int XAxisIndex { private set; get; }
@@ -33,10 +34,11 @@ namespace Astrovisio
         public Vector3 Center { private set; get; }
 
 #nullable enable
-        public DataContainer(DataPack dataPack, Project? project)
+        public DataContainer(DataPack dataPack, Project? project, File? file)
         {
             DataPack = dataPack ?? throw new ArgumentNullException(nameof(dataPack));
             Project = project;
+            File = file;
 
             InitAxis();
             InitMinMax();
@@ -50,25 +52,25 @@ namespace Astrovisio
         private void InitAxisThreshold()
         {
             if (Project != null)
-                foreach (var param in Project.ConfigProcess.Params)
+                foreach (Variable variable in File.Variables)
                 {
                     // Debug.Log(param.Key + " " + param.Value);
-                    if (param.Value.Selected)
+                    if (variable.Selected)
                     {
-                        if (param.Value.XAxis)
+                        if (variable.XAxis)
                         {
-                            XMinThreshold = (float)param.Value.ThrMinSel;
-                            XMaxThreshold = (float)param.Value.ThrMaxSel;
+                            XMinThreshold = (float)variable.ThrMinSel;
+                            XMaxThreshold = (float)variable.ThrMaxSel;
                         }
-                        else if (param.Value.YAxis)
+                        else if (variable.YAxis)
                         {
-                            YMinThreshold = (float)param.Value.ThrMinSel;
-                            YMaxThreshold = (float)param.Value.ThrMaxSel;
+                            YMinThreshold = (float)variable.ThrMinSel;
+                            YMaxThreshold = (float)variable.ThrMaxSel;
                         }
-                        else if (param.Value.ZAxis)
+                        else if (variable.ZAxis)
                         {
-                            ZMinThreshold = (float)param.Value.ThrMinSel;
-                            ZMaxThreshold = (float)param.Value.ThrMaxSel;
+                            ZMinThreshold = (float)variable.ThrMinSel;
+                            ZMaxThreshold = (float)variable.ThrMaxSel;
                         }
                     }
                 }
@@ -88,25 +90,22 @@ namespace Astrovisio
             YAxisName = "";
             ZAxisName = "";
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (Variable variable in File.Variables)
             {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
-
-                if (param.XAxis)
+                if (variable.XAxis)
                 {
-                    // Debug.Log("x: " + paramName);
-                    XAxisName = paramName;
+                    // Debug.Log("x: " + variable.Name);
+                    XAxisName = variable.Name;
                 }
-                else if (param.YAxis)
+                else if (variable.YAxis)
                 {
-                    // Debug.Log("y: " + paramName);
-                    YAxisName = paramName;
+                    // Debug.Log("y: " + variable.Name);
+                    YAxisName = variable.Name;
                 }
-                else if (param.ZAxis)
+                else if (variable.ZAxis)
                 {
-                    // Debug.Log("z: " + paramName);
-                    ZAxisName = paramName;
+                    // Debug.Log("z: " + variable.Name);
+                    ZAxisName = variable.Name;
                 }
             }
             // Debug.Log("XAxisName: " + XAxisName);
@@ -199,25 +198,22 @@ namespace Astrovisio
             string yAxisName = "";
             string zAxisName = "";
             if (Project != null)
-                foreach (var kvp in Project.ConfigProcess.Params)
+                foreach (Variable variable in File.Variables)
                 {
-                    string paramName = kvp.Key;
-                    ConfigParam param = kvp.Value;
-
                     // Debug.Log($"Parametro: {paramName}");
                     // Debug.Log($"Valore: {param.XAxis}");
 
-                    if (param.XAxis)
+                    if (variable.XAxis)
                     {
-                        xAxisName = paramName;
+                        xAxisName = variable.Name;
                     }
-                    else if (param.YAxis)
+                    else if (variable.YAxis)
                     {
-                        yAxisName = paramName;
+                        yAxisName = variable.Name;
                     }
-                    else if (param.ZAxis)
+                    else if (variable.ZAxis)
                     {
-                        zAxisName = paramName;
+                        zAxisName = variable.Name;
                     }
                 }
             // Debug.Log("xAxisName: " + xAxisName);

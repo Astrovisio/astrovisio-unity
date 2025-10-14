@@ -135,9 +135,13 @@ namespace Astrovisio
 
         public bool IsPointerOverVisibleUI()
         {
-            if (uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
+            if (uiDocument == null || uiDocument.rootVisualElement == null || uiDocument.rootVisualElement.panel == null)
             {
-                Debug.Log("rootVisualElement or panel is null");
+                if (uiDocument)
+                {
+                    Debug.Log("rootVisualElement or panel is null");
+                }
+
                 return false;
             }
 
@@ -335,16 +339,13 @@ namespace Astrovisio
 
         public async void TakeScreenshot(bool uiVisibility = false)
         {
-            if (uiVisibility)
-            {
-                await ScreenshotUtils.TakeScreenshot();
-            }
-            else
-            {
-                await ScreenshotUtils.TakeScreenshot(Camera.main);
-            }
-        }
+            Project currentProject = projectManager.GetCurrentProject();
+            Settings settings = SettingsManager.Instance.GetCurrentFileSettings();
+            File file = projectManager.GetCurrentProject().Files.Find(i => i.Id == ReelManager.Instance.GetReelCurrentFileId(projectManager.GetCurrentProject().Id));
+            settings.Path = file.Path;
 
+            await ScreenshotUtils.TakeScreenshotWithJson(currentProject.Name, file, Camera.main, renderManager.DataRenderer.GetAstrovidioDataSetRenderer().gameObject, settings, uiVisibility);
+        }
     }
 
 }

@@ -10,10 +10,9 @@ namespace Astrovisio
     public class NavbarController
     {
         // === Dependencies ===
-        private readonly UIManager uiManager;
-        private readonly ProjectManager projectManager;
-        private readonly VisualTreeAsset projectButtonTemplate;
-        private readonly VisualElement root;
+        public ProjectManager ProjectManager { get; set; }
+        public UIManager UIManager { get; set; }
+        public VisualElement Root { private set; get; }
 
         // === Local ===
         private VisualElement homeContainer;
@@ -22,37 +21,39 @@ namespace Astrovisio
 
         private readonly Dictionary<int, ProjectTabInfo> projectTabDictionary = new();
 
-        public NavbarController(UIManager uiManager, ProjectManager projectManager, VisualTreeAsset projectButtonTemplate, VisualElement root)
+        public NavbarController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root)
         {
-            this.uiManager = uiManager;
-            this.projectManager = projectManager;
-            this.projectButtonTemplate = projectButtonTemplate;
-            this.root = root;
+            ProjectManager = projectManager;
+            UIManager = uiManager;
+            Root = root;
 
             Init();
         }
 
         public void Init()
         {
-            homeContainer = root.Q<VisualElement>("HomeContainer");
+            homeContainer = Root.Q<VisualElement>("HomeContainer");
             homeButton = homeContainer.Q<Button>();
             if (homeButton != null)
             {
                 homeButton.RegisterCallback<ClickEvent>(_ =>
                 {
                     SetActiveHome();
-                    projectManager.UnselectProject();
+                    ProjectManager.UnselectProject();
                 });
                 homeButton.AddToClassList("active");
             }
 
-            projectTabContainer = root.Q<VisualElement>("ProjectContainer");
+            projectTabContainer = Root.Q<VisualElement>("ProjectContainer");
             projectTabContainer.Clear();
             projectTabDictionary.Clear();
 
-            projectManager.ProjectOpened += OnProjectOpened;
-            projectManager.ProjectUpdated += OnProjectUpdated;
-            projectManager.ProjectDeleted += OnProjectDeleted;
+            ProjectManager.ProjectOpened += OnProjectOpened;
+            ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void OnProjectOpened(Project project)
@@ -74,12 +75,10 @@ namespace Astrovisio
 
         private void OnProjectUpdated(Project updatedProject)
         {
-
             if (projectTabDictionary.TryGetValue(updatedProject.Id, out ProjectTabInfo projectTabInfo))
             {
                 projectTabInfo.TabElement.Q<Label>("Label").text = updatedProject.Name;
             }
-
         }
 
         private void OnProjectDeleted(Project project)
@@ -89,15 +88,15 @@ namespace Astrovisio
 
         private VisualElement CreateProjectTab(Project project)
         {
-            TemplateContainer projectTab = projectButtonTemplate.CloneTree();
+            TemplateContainer projectTab = UIManager.GetUIContext().projectButtonTemplate.CloneTree();
             projectTab.name = $"ProjectTab_{project.Id}";
             projectTab.Q<Label>("Label").text = project.Name;
 
             // Left Click
-            projectTab.Q<Button>().RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>().RegisterCallback<ClickEvent>(evt =>
             {
                 SetActiveTab(project.Id);
-                projectManager.OpenProject(project.Id);
+                _ = ProjectManager.OpenProject(project.Id);
             });
 
             // MiddleMouse Click
@@ -106,14 +105,17 @@ namespace Astrovisio
                 if (evt.button == (int)MouseButton.MiddleMouse)
                 {
                     RemoveProjectTab(project.Id);
-                    evt.StopPropagation();
+                    // evt.StopPropagation();
+                    ProjectManager.CloseProject(project.Id);
                 }
             });
 
             // Close Button
-            projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(_ =>
+            projectTab.Q<Button>("CloseButton").RegisterCallback<ClickEvent>(evt =>
             {
                 RemoveProjectTab(project.Id);
+                // evt.StopPropagation();
+                ProjectManager.CloseProject(project.Id);
             });
 
             return projectTab;
@@ -122,6 +124,8 @@ namespace Astrovisio
 
         private void RemoveProjectTab(int projectId)
         {
+            // Debug.Log("RemoveProjectTab " + projectId);
+
             if (!projectTabDictionary.TryGetValue(projectId, out var tabInfo))
             {
                 return;
@@ -142,7 +146,7 @@ namespace Astrovisio
                 return;
             }
 
-            var after = projectTabContainer.Children().ToList();
+            List<VisualElement> after = projectTabContainer.Children().ToList();
             if (after.Any())
             {
                 int newIndex = removedIndex < after.Count ? removedIndex : after.Count - 1;
@@ -152,12 +156,12 @@ namespace Astrovisio
                     .Key;
 
                 SetActiveTab(newProjectId);
-                projectManager.OpenProject(newProjectId);
+                _ = ProjectManager.OpenProject(newProjectId);
             }
             else
             {
                 SetActiveHome();
-                projectManager.UnselectProject();
+                ProjectManager.UnselectProject();
             }
         }
 
@@ -196,14 +200,14 @@ namespace Astrovisio
             }
 
             homeButton?.AddToClassList("active");
-            uiManager.SetSceneVisibility(true);
+            UIManager.SetSceneVisibility(true);
         }
 
         public void Dispose()
         {
-            projectManager.ProjectOpened -= OnProjectOpened;
-            projectManager.ProjectUpdated -= OnProjectUpdated;
-            projectManager.ProjectDeleted -= OnProjectDeleted;
+            ProjectManager.ProjectOpened -= OnProjectOpened;
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.ProjectDeleted -= OnProjectDeleted;
         }
 
 

@@ -3,6 +3,9 @@ using UnityEngine.UIElements;
 using SFB;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 
 namespace Astrovisio
 {
@@ -23,7 +26,7 @@ namespace Astrovisio
 
         // === Local ===
         private VisualElement root;
-        private FilesController<FileInfo> filesController;
+        private NewProjectFilesController newProjectfilesController;
 
         public NewProjectViewController(ProjectManager projectManager, UIManager uiManager)
         {
@@ -31,7 +34,7 @@ namespace Astrovisio
             UIManager = uiManager;
         }
 
-        public void Initialize(VisualElement root)
+        public void Init(VisualElement root)
         {
             this.root = root;
             projectNameField = root.Q<VisualElement>("ProjectNameInputField")?.Q<TextField>();
@@ -40,7 +43,7 @@ namespace Astrovisio
 
 
             VisualElement filesContainer = this.root.Q<VisualElement>("FilesContainer");
-            filesController = new FilesController<FileInfo>(
+            newProjectfilesController = new NewProjectFilesController(
                 filesContainer,
                 UIManager.GetUIContext(),
                 () => UpdateFilesSizeLabel()
@@ -65,7 +68,7 @@ namespace Astrovisio
 
             if (continueButton != null)
             {
-                continueButton.clicked += OnContinueClicked;
+                continueButton.clicked += OnContinueClickedHandler;
             }
 
             if (cancelButton != null)
@@ -83,7 +86,7 @@ namespace Astrovisio
 
             if (continueButton != null)
             {
-                continueButton.clicked -= OnContinueClicked;
+                continueButton.clicked -= OnContinueClickedHandler;
             }
 
             if (cancelButton != null)
@@ -92,6 +95,8 @@ namespace Astrovisio
             }
         }
 
+
+
         private void OnUploadFileClicked()
         {
             string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "", true);
@@ -99,7 +104,7 @@ namespace Astrovisio
             {
                 foreach (string path in paths)
                 {
-                    if (!File.Exists(path))
+                    if (!System.IO.File.Exists(path))
                     {
                         Debug.LogWarning($"File not found: {path}");
                         continue;
@@ -114,7 +119,7 @@ namespace Astrovisio
                     }
 
                     // Skip if the file is already in the list
-                    if (filesController.Items.Any(file => file.path == path))
+                    if (newProjectfilesController.Items.Any(file => file.Path == path))
                     {
                         Debug.Log($"File already added: {path}");
                         continue;
@@ -122,8 +127,8 @@ namespace Astrovisio
 
                     System.IO.FileInfo sysInfo = new System.IO.FileInfo(path);
                     FileInfo fileInfo = new FileInfo(path, sysInfo.Name, sysInfo.Length);
-                    filesController.AddFile(fileInfo);
-                    Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");
+                    newProjectfilesController.AddFile(fileInfo);
+                    // Debug.Log($"File added: {fileInfo.name} ({fileInfo.size} bytes) - {fileInfo.path}");
                 }
             }
 
@@ -132,7 +137,7 @@ namespace Astrovisio
 
         private void UpdateFilesSizeLabel()
         {
-            filesSizeLabel.text = filesController.GetFormattedTotalSize();
+            filesSizeLabel.text = newProjectfilesController.GetFormattedTotalSize();
 
             bool overLimit = IsSizeOverLimit();
 
@@ -143,18 +148,73 @@ namespace Astrovisio
         private bool IsSizeOverLimit()
         {
             const long maxSize = 5L * 1024 * 1024 * 1024;
-            return filesController.GetTotalSizeBytes() > maxSize;
+            return newProjectfilesController.GetTotalSizeBytes() > maxSize;
         }
 
-        private void OnContinueClicked()
+        private async void OnContinueClickedHandler()
         {
+            await OnContinueClicked();
+        }
+
+        private async Task OnContinueClicked()
+        {
+            // Debug.LogWarning("OnContinueClicked()");
             string name = projectNameField?.value ?? "<empty>";
             string description = projectDescriptionField?.value ?? "<empty>";
-            string[] paths = filesController.Items.Select(file => $"data/{Path.GetFileName(file.path)}").ToArray();
-            // Debug.Log($"Create project: {name}, {description} with {paths.Length} files.");
-            ProjectManager.CreateProject(name, description, paths);
-            OnExit();
+            string[] paths = newProjectfilesController.Items
+                .Select(file => $"data/{Path.GetFileName(file.Path)}")
+                .ToArray();
+
+            try
+            {
+                Project createdProject = await ProjectManager.CreateProject(name, description, paths);
+                if (createdProject == null)
+                {
+                    return;
+                }
+
+                // TODO: Back-end should popolate order, not front-end
+                List<FileInfo> fileList = newProjectfilesController.GetFileList();
+                // Debug.Log("=== createdProject.Files ===");
+                // foreach (var f in createdProject.Files)
+                //     Debug.Log($"{f.Name} | {f.Path} | {f.Size} | Order={f.Order}");
+
+                // Debug.Log("=== fileList ===");
+                // foreach (var f in fileList)
+                //     Debug.Log($"{f.Name} | {f.Path} | {f.Size}");
+
+                // int[] fileIdOrder = new int[createdProject.Files.Count];
+
+                if (createdProject.Files != null && createdProject.Files.Count > 0 && fileList.Count == createdProject.Files.Count)
+                {
+                    for (int i = 0; i < fileList.Count; i++)
+                    {
+                        // Debug.Log($"{createdProject.Files.Count} @ {createdProject.Files[i].Order} @ {createdProject.Files[i].Name}");
+                        File file = createdProject.Files.FirstOrDefault(f => (f.Name + "." + f.Type) == fileList[i].Name); //  && f.Size == fileList[i].Size
+                        if (file != null)
+                        {
+                            file.Order = i;
+                            await ProjectManager.UpdateFile(createdProject.Id, file);
+                            // Debug.Log("Done: " + file.Order + " - " + file.Name);
+
+
+                            // fileIdOrder[i] = file.Id;
+                        }
+                    }
+                }
+
+                // createdProject.order
+                // _ = ProjectManager.UpdateProject(createdProject.Id, createdProject);
+
+                OnExit();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[OnContinueClicked] {ex.Message}");
+                throw;
+            }
         }
+
 
         private void OnCancelClicked()
         {

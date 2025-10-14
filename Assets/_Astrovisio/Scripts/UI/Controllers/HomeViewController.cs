@@ -23,7 +23,12 @@ namespace Astrovisio
         private bool isSearching = false;
         private string searchValue = "";
 
-        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, UIContextSO uiContextSO, SideController sideController)
+        public HomeViewController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root,
+            UIContextSO uiContextSO,
+            SideController sideController)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
@@ -111,7 +116,20 @@ namespace Astrovisio
                 ProjectRowController projectRowController = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
                 projectControllers[project.Id] = projectRowController;
 
-                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
+                projectRow.RegisterCallback<ClickEvent>(async evt =>
+                {
+                    Project projectOpened = await ProjectManager.OpenProject(project.Id);
+
+                    foreach (File file in projectOpened.Files)
+                    {
+                        if (file.Processed)
+                        {
+                            // Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
+                            ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
+                        }
+                    }
+                });
+
                 target.Add(projectRow);
             }
         }

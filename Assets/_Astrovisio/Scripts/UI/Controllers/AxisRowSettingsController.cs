@@ -7,20 +7,20 @@ namespace Astrovisio
     {
         public AxisRenderSettings AxisRenderSettings { get; private set; }
 
-        public AxisRowSettingsController(string paramName, Project project)
-            : base(paramName, project)
+        public AxisRowSettingsController(Variable variable)
+            : base(variable)
         {
-            ConfigParam configParam = project.ConfigProcess.Params[paramName];
+            Variable Variable = variable;
 
-            if (TryGetAxis(configParam, out Axis axis))
+            if (TryGetAxis(Variable, out Axis axis))
             {
                 AxisRenderSettings = new AxisRenderSettings(
-                    paramName,
+                    variable.Name,
                     axis,
-                    (float)configParam.ThrMin,
-                    (float)configParam.ThrMax,
-                    (float)(configParam.ThrMinSel ?? configParam.ThrMin),
-                    (float)(configParam.ThrMaxSel ?? configParam.ThrMax),
+                    (float)Variable.ThrMin,
+                    (float)Variable.ThrMax,
+                    (float)(Variable.ThrMinSel ?? Variable.ThrMin),
+                    (float)(Variable.ThrMaxSel ?? Variable.ThrMax),
                     ScalingType.Linear
                 );
             }
@@ -30,19 +30,19 @@ namespace Astrovisio
             }
         }
 
-        private bool TryGetAxis(ConfigParam param, out Axis axis)
+        private bool TryGetAxis(Variable variable, out Axis axis)
         {
-            if (param.XAxis)
+            if (variable.XAxis)
             {
                 axis = Axis.X;
                 return true;
             }
-            if (param.YAxis)
+            if (variable.YAxis)
             {
                 axis = Axis.Y;
                 return true;
             }
-            if (param.ZAxis)
+            if (variable.ZAxis)
             {
                 axis = Axis.Z;
                 return true;
@@ -54,7 +54,7 @@ namespace Astrovisio
 
         public object Clone()
         {
-            return new AxisRowSettingsController(ParamName, Project)
+            return new AxisRowSettingsController(Variable)
             {
                 AxisRenderSettings = AxisRenderSettings?.Clone() as AxisRenderSettings
             };

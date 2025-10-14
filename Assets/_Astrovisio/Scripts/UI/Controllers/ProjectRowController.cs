@@ -12,8 +12,6 @@ namespace Astrovisio
         public Project Project { get; set; }
         public VisualElement Root { private set; get; }
 
-        // === Events ===
-
         // === UI ===
         private Label projectNameLabel;
         private Label filesLabel;
@@ -25,7 +23,11 @@ namespace Astrovisio
         private Button deleteButton;
 
 
-        public ProjectRowController(ProjectManager projectManager, UIManager uiManager, Project project, VisualElement root)
+        public ProjectRowController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            Project project,
+            VisualElement root)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
@@ -55,7 +57,7 @@ namespace Astrovisio
             deleteButton = Root.Q<Button>("DeleteButton");
 
             projectNameLabel.text = Project.Name;
-            filesLabel.text = Project.Paths.Length.ToString() + " files";
+            filesLabel.text = (Project.Files.Count == 1) ? "1 file" : Project.Files.Count + " files";
 
             if (Project.LastOpened is null && Project.Created is null)
             {
@@ -111,7 +113,7 @@ namespace Astrovisio
             favouriteToggle.RegisterValueChangedCallback(evt =>
             {
                 Project.Favourite = evt.newValue;
-                ProjectManager.UpdateProject(Project.Id, Project);
+                _ = ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 

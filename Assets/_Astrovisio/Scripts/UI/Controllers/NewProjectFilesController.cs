@@ -7,24 +7,26 @@ using UnityEngine.UIElements;
 namespace Astrovisio
 {
 
-    public class FilesController<T> where T : IFileEntry
+    public class NewProjectFilesController
     {
         public VisualElement Root { get; }
         public UIContextSO UIContextSO { get; }
 
-        public IReadOnlyList<T> Items => fileList;
+        public IReadOnlyList<FileInfo> Items => fileList;
 
-        private readonly List<T> fileList = new();
+        private readonly List<FileInfo> fileList = new();
         private readonly ListView listView;
 
         private readonly Action onUpdateAction;
+        private readonly Action<FileInfo> onClickAction;
 
 
-        public FilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null)
+        public NewProjectFilesController(VisualElement root, UIContextSO ctx, Action onUpdateAction = null, Action<FileInfo> onClickAction = null)
         {
             Root = root;
             UIContextSO = ctx;
             this.onUpdateAction = onUpdateAction;
+            this.onClickAction = onClickAction;
 
             listView = Root.Q<ListView>();
             if (listView == null)
@@ -39,14 +41,37 @@ namespace Astrovisio
             listView.reorderMode = ListViewReorderMode.Animated;
 
             listView.makeItem = () =>
-                (typeof(T) == typeof(FileState)
-                    ? UIContextSO.listItemFileStateTemplate
-                    : (UIContextSO.listItemFileTemplate ?? UIContextSO.listItemFileStateTemplate)
-                ).CloneTree();
+            {
+                VisualElement ve = UIContextSO.listItemFileTemplate.CloneTree();
+
+                ve.RegisterCallback<ClickEvent>(evt =>
+                {
+                    if (onClickAction == null)
+                    {
+                        Debug.LogWarning("[FilesController] onClickAction is null; skipping invocation");
+                        return;
+                    }
+
+                    if (ve.userData is FileInfo item)
+                    {
+                        onClickAction(item);
+                        evt.StopPropagation();
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[FilesController] userData is not of type FileInfo; click ignored");
+                    }
+                });
+
+                return ve;
+            };
+
 
             listView.bindItem = (listItemVisualElement, i) =>
             {
-                T entry = fileList[i];
+                FileInfo entry = fileList[i];
+
+                listItemVisualElement.userData = entry;
 
                 // Name
                 Label name = listItemVisualElement.Q<Label>("NameLabel");
@@ -63,33 +88,16 @@ namespace Astrovisio
                 }
 
                 // State
-                VisualElement listItemState = listItemVisualElement.Q<VisualElement>("State");
-                if (entry is FileState fileState)
-                {
-                    bool state = fileState.state;
-                    if (listItemState != null)
-                    {
-                        if (state)
-                        {
-                            listItemState.AddToClassList("active");
-                        }
-                        else
-                        {
-                            listItemState.RemoveFromClassList("active");
-                        }
-                    }
-                }
-                else
-                {
-                    listItemState?.RemoveFromClassList("active");
-                }
+                listItemVisualElement.Q<VisualElement>("State");
+                listItemVisualElement.RemoveFromClassList("active");
+
 
                 // Delete
                 Button deleteButton = listItemVisualElement.Q<Button>("CloseButton");
                 if (deleteButton != null)
                 {
                     deleteButton.clickable = null;
-                    T current = entry;
+                    FileInfo current = entry;
                     deleteButton.clickable = new Clickable(() =>
                     {
                         RemoveFile(current);
@@ -98,25 +106,34 @@ namespace Astrovisio
                 }
 
             };
+
+            listView.itemIndexChanged += (oldIndex, newIndex) =>
+            {
+                Debug.Log("itemIndexChanged");
+                onUpdateAction?.Invoke();
+                listView.RefreshItems();
+                // PrintListView();
+            };
         }
 
-        public void AddFile(T entry)
+        public void AddFile(FileInfo entry)
         {
-            if (entry == null)
-            {
-                Debug.LogWarning("AddFile: null");
-                return;
-            }
             fileList.Add(entry);
             Refresh();
         }
 
-        public void RemoveFile(T entry)
+
+        public void RemoveFile(FileInfo entry)
         {
             if (fileList.Remove(entry))
             {
                 Refresh();
             }
+        }
+
+        public List<FileInfo> GetFileList()
+        {
+            return fileList;
         }
 
         public void ClearAll()
@@ -179,11 +196,7 @@ namespace Astrovisio
             {
                 if (listView.itemsSource[i] is FileInfo fileInfo)
                 {
-                    Debug.Log($"[{i}] FileInfo -> Name={fileInfo.name}, Size={fileInfo.size}, Path={fileInfo.path}");
-                }
-                else if (listView.itemsSource[i] is FileState fs)
-                {
-                    Debug.Log($"[{i}] FileState -> Name={fs.fileInfo.name}, Size={fs.fileInfo.size}, Path={fs.fileInfo.path}, State={fs.state}");
+                    Debug.Log($"[{i}] FileInfo -> Name={fileInfo.Name}, Size={fileInfo.Size}, Path={fileInfo.Path}");
                 }
                 else
                 {
@@ -191,7 +204,6 @@ namespace Astrovisio
                 }
             }
         }
-
 
     }
 

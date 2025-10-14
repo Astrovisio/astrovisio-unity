@@ -1,14 +1,34 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Hjg.Pngcs;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Astrovisio
 {
     public static class ScreenshotUtils
     {
+        /// <summary>
+        /// Takes a screenshot and writes metadata as soon as the file is ready.
+        /// Fully async, does NOT block the main thread.
+        /// </summary>
+        public static async Task<string> TakeScreenshotWithJson(string projectName, File file, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false)
+        {
+
+            string path = uiVisibility ? await TakeScreenshot() : await TakeScreenshot(camera);
+        
+            string jsonPath = Path.ChangeExtension(path, "json");
+            System.IO.File.WriteAllText(
+                jsonPath,
+                DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(new ScreenshotMetadata(projectName, file, camera.gameObject, dataCube, settings))),
+                new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+            );
+    
+            return path;
+        }
 
         /// <summary>
         /// Takes a screenshot and writes metadata as soon as the file is ready.
@@ -20,19 +40,20 @@ namespace Astrovisio
             Dictionary<string, string> metadata = null,
             int timeoutSeconds = 10)
         {
+            Debug.Log("TAKING SCREENSHOT");
             string folderPath = Path.Combine(Application.persistentDataPath, "Screenshots");
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string filename = $"screenshot_{timestamp}.png";
-            string fullPath = Path.Combine(folderPath, filename);
+            string fullScreenshotPath = Path.Combine(folderPath, filename);
 
             if (camera == null)
             {
-                ScreenCapture.CaptureScreenshot(fullPath);
-                Debug.Log($"Screenshot saved to: {fullPath}");
-                await WaitForFile(fullPath, timeoutSeconds);
+                ScreenCapture.CaptureScreenshot(fullScreenshotPath);
+                Debug.Log($"Screenshot saved to: {fullScreenshotPath}");
+                await WaitForFile(fullScreenshotPath, timeoutSeconds);
             }
             else
             {
@@ -70,7 +91,7 @@ namespace Astrovisio
                 tex.Apply();
 
                 byte[] bytes = tex.EncodeToPNG();
-                File.WriteAllBytes(fullPath, bytes);
+                System.IO.File.WriteAllBytes(fullScreenshotPath, bytes);
 
                 // Reset camera settings
                 camera.targetTexture = prevRT;
@@ -80,16 +101,16 @@ namespace Astrovisio
                 UnityEngine.Object.Destroy(rt);
                 UnityEngine.Object.Destroy(tex);
 
-                Debug.Log($"Camera screenshot saved to: {fullPath} (transparent: {transparentBackground})");
+                Debug.Log($"Camera screenshot saved to: {fullScreenshotPath} (transparent: {transparentBackground})");
             }
 
             if (metadata != null)
             {
-                AddMetadataToPNG(fullPath, metadata);
-                Debug.Log("Metadata written to PNG: " + fullPath);
+                AddMetadataToPNG(fullScreenshotPath, metadata);
+                Debug.Log("Metadata written to PNG: " + fullScreenshotPath);
             }
 
-            return fullPath;
+            return fullScreenshotPath;
         }
 
 
@@ -103,11 +124,11 @@ namespace Astrovisio
             var sw = System.Diagnostics.Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < timeoutSeconds)
             {
-                if (File.Exists(filePath))
+                if (System.IO.File.Exists(filePath))
                 {
                     try
                     {
-                        using (FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (FileStream fs = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             if (fs.Length > 0)
                                 return;
@@ -131,8 +152,8 @@ namespace Astrovisio
 
             try
             {
-                using (FileStream input = File.OpenRead(filePath))
-                using (FileStream output = File.OpenWrite(tempPath))
+                using (FileStream input = System.IO.File.OpenRead(filePath))
+                using (FileStream output = System.IO.File.OpenWrite(tempPath))
                 {
                     // Debug.Log("Opening PngReader...");
                     PngReader pngr = new PngReader(input);
@@ -171,16 +192,16 @@ namespace Astrovisio
 
                 // Replace the original file
                 // Debug.Log("Deleting the original file and renaming the temp file...");
-                File.Delete(filePath);
-                File.Move(tempPath, filePath);
+                System.IO.File.Delete(filePath);
+                System.IO.File.Move(tempPath, filePath);
                 // Debug.Log("Final PNG file updated!");
             }
             catch// (Exception ex)
             {
                 // Debug.LogError("Error in AddPngMetadata: " + ex);
-                if (File.Exists(tempPath))
+                if (System.IO.File.Exists(tempPath))
                 {
-                    try { File.Delete(tempPath); } catch { }
+                    try { System.IO.File.Delete(tempPath); } catch { }
                 }
             }
         }

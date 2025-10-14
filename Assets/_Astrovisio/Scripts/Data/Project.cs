@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Astrovisio
 {
-    public class Project : INotifyPropertyChanged
+    public class Project
     {
         private string name;
         private bool favourite;
@@ -14,8 +15,8 @@ namespace Astrovisio
         private int id;
         private DateTime? created;
         private DateTime? lastOpened;
-        private string[] paths;
-        private ConfigProcess configProcess;
+        private List<File> files;
+
 
         [JsonProperty("name")]
         public string Name
@@ -26,7 +27,6 @@ namespace Astrovisio
                 if (name != value)
                 {
                     name = value;
-                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -40,7 +40,6 @@ namespace Astrovisio
                 if (favourite != value)
                 {
                     favourite = value;
-                    OnPropertyChanged(nameof(Favourite));
                 }
             }
         }
@@ -54,7 +53,6 @@ namespace Astrovisio
                 if (description != value)
                 {
                     description = value;
-                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
@@ -68,7 +66,6 @@ namespace Astrovisio
                 if (id != value)
                 {
                     id = value;
-                    OnPropertyChanged(nameof(Id));
                 }
             }
         }
@@ -82,7 +79,6 @@ namespace Astrovisio
                 if (created != value)
                 {
                     created = value;
-                    OnPropertyChanged(nameof(Created));
                 }
             }
         }
@@ -96,76 +92,126 @@ namespace Astrovisio
                 if (lastOpened != value)
                 {
                     lastOpened = value;
-                    OnPropertyChanged(nameof(LastOpened));
                 }
             }
         }
 
-        [JsonProperty("paths")]
-        public string[] Paths
+        [JsonProperty("files")]
+        public List<File> Files
         {
-            get => paths;
+            get => files;
             set
             {
-                if (paths != value)
+                if (files != value)
                 {
-                    paths = value;
-                    OnPropertyChanged(nameof(Paths));
+                    files = value;
                 }
             }
         }
 
-        [JsonProperty("config_process")]
-        public ConfigProcess ConfigProcess
-        {
-            get => configProcess;
-            set
-            {
-                if (configProcess != value)
-                {
-                    configProcess = value;
-                    OnPropertyChanged(nameof(ConfigProcess));
-                }
-            }
-        }
-
-        public Project(string name, string description, bool favourite = false, string[] paths = null)
+        public Project(string name, string description, bool favourite = false)
         {
             Name = name;
             Description = description;
             Favourite = favourite;
-            Paths = paths ?? Array.Empty<string>();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void UpdateFrom(Project other)
         {
+            // If 'other' is null, there is nothing to merge/update.
+            if (other == null)
+            {
+                return;
+            }
+
+            // Copy basic project metadata from 'other' (shallow copy).
             Name = other.Name;
-            Description = other.Description;
             Favourite = other.Favourite;
+            Description = other.Description;
+            Id = other.Id;
             Created = other.Created;
             LastOpened = other.LastOpened;
 
-            // Copy the values of the paths
-            if (other.Paths != null)
+
+            // If the source project has no files, it means the canonical state is "no files".
+            // In that case, clear our local list (if any) and notify the UI/bindings, then return.
+            if (other.Files == null)
             {
-                Paths = other.Paths.ToArray();
+                if (Files != null && Files.Count > 0)
+                {
+                    Files.Clear();
+                }
+                return;
             }
 
-            // Copy the values of ConfigProcess, but without creating a new instance if not necessary
-            if (ConfigProcess != null && other.ConfigProcess != null)
+            // Ensure our local list exists before proceeding with sync.
+            if (Files == null)
             {
-                ConfigProcess.UpdateFrom(other.ConfigProcess);
+                Files = new List<File>();
             }
-            else if (other.ConfigProcess != null)
+
+            // --- Removal pass ---
+            // Iterate backwards so we can safely remove items by index.
+            // For each local file, check if it still exists in 'other' by Id; if not, remove it.
+            for (int i = Files.Count - 1; i >= 0; i--)
             {
-                ConfigProcess = other.ConfigProcess.DeepCopy();
+                File current = Files[i];
+                // Defensive check: remove null entries if any have crept in.
+                if (current == null)
+                {
+                    Files.RemoveAt(i);
+                    continue;
+                }
+
+                bool existsInOther = false;
+                // Linear scan of 'other.Files' to find a matching Id.
+                foreach (File of in other.Files)
+                {
+                    if (of != null && of.Id == current.Id)
+                    {
+                        existsInOther = true;
+                        break;
+                    }
+                }
+                // If not found in 'other', this file was removed on the source side -> remove locally.
+                if (!existsInOther)
+                {
+                    Files.RemoveAt(i);
+                }
+            }
+
+            // --- Upsert pass (update or insert) ---
+            // For each file in 'other':
+            //   - If we already have it (same Id), update the existing instance (preserve reference).
+            //   - If we don't have it, create a new instance and copy values from 'other'.
+            foreach (File otherFile in other.Files)
+            {
+                if (otherFile == null)
+                {
+                    continue;
+                }
+
+                bool found = false;
+                // Look for a local file with the same Id.
+                for (int i = 0; i < Files.Count; i++)
+                {
+                    File current = Files[i];
+                    if (current != null && current.Id == otherFile.Id)
+                    {
+                        // Keep the same reference and just update its fields.
+                        current.UpdateFrom(otherFile);
+                        found = true;
+                        break;
+                    }
+                }
+
+                // If not found, this is a new file -> instantiate and copy data.
+                if (!found)
+                {
+                    File newFile = new File();
+                    newFile.UpdateFrom(otherFile);
+                    Files.Add(newFile);
+                }
             }
         }
 
@@ -182,5 +228,5 @@ namespace Astrovisio
         }
 
     }
-    
+
 }

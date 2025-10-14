@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFB;
 using UnityEngine;
 
 namespace Astrovisio
@@ -17,16 +20,21 @@ namespace Astrovisio
 		[Header("Debug")]
 		[SerializeField] private bool saveProjectCSV = false;
 
+		// === Events ===
 		public event Action<List<Project>> ProjectsFetched;
 		public event Action<Project> ProjectOpened;
 		public event Action<Project> ProjectCreated;
 		public event Action<Project> ProjectUpdated;
 		public event Action<Project> ProjectClosed;
-		public event Action<Project, DataPack> ProjectProcessed;
-		public event Action ProjectUnselected;
 		public event Action<Project> ProjectDeleted;
+		public event Action ProjectUnselected;
+		public event Action<Project, File> FileSelected;
+		public event Action<Project, File> FileUpdated;
+		public event Action<Project, File> FileAdded;
+		public event Action<Project, File, DataPack> FileProcessed;
 		public event Action<string> ApiError;
 
+		// === Local ===
 		private List<Project> projectList = new();
 		private List<Project> openedProjectList = new();
 		private Project currentProject;
@@ -40,33 +48,35 @@ namespace Astrovisio
 			}
 		}
 
-		public bool IsProjectOpened(int id) => openedProjectList.Any(p => p.Id == id);
-		public Project GetProject(int id) => projectList.FirstOrDefault(p => p.Id == id);
-		public Project GetCurrentProject() => currentProject;
-		public Project GetOpenedProject(int id) => openedProjectList.Find(p => p.Id == id);
-		public List<Project> GetProjectList() => projectList;
-
-		public void CloseProject(int id)
+		public bool IsProjectOpened(int projectId)
 		{
-			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
-			if (projectToRemove != null)
-			{
-				openedProjectList.Remove(projectToRemove);
-				if (currentProject?.Id == id)
-				{
-					currentProject = null;
-				}
-				ProjectClosed?.Invoke(projectToRemove);
-			}
+			return openedProjectList.Any(p => p.Id == projectId);
 		}
 
-		public void UnselectProject()
+		public Project GetProject(int projectId)
 		{
-			if (currentProject != null)
-			{
-				currentProject = null;
-				ProjectUnselected?.Invoke();
-			}
+			return projectList.FirstOrDefault(p => p.Id == projectId);
+		}
+
+		public File GetFile(int projectId, int fileId)
+		{
+			Project project = GetProject(projectId);
+			return project?.Files?.FirstOrDefault(f => f.Id == fileId);
+		}
+
+		public Project GetCurrentProject()
+		{
+			return currentProject;
+		}
+
+		public Project GetOpenedProject(int id)
+		{
+			return openedProjectList.Find(p => p.Id == id);
+		}
+
+		public List<Project> GetProjectList()
+		{
+			return projectList;
 		}
 
 		public async void FetchAllProjects()
@@ -87,41 +97,52 @@ namespace Astrovisio
 				});
 		}
 
-		public async void OpenProject(int id)
+		public async Task<Project> OpenProject(int id)
 		{
-			Project alreadyOpened = openedProjectList.Find(p => p.Id == id);
-			if (alreadyOpened != null)
+			Project opened = GetOpenedProject(id);
+			if (opened != null)
 			{
-				currentProject = alreadyOpened;
-				ProjectOpened?.Invoke(alreadyOpened);
-				return;
+				currentProject = opened;
+				ProjectOpened?.Invoke(opened);
+				return opened;
 			}
 
-			await apiManager.ReadProject(id,
-				project =>
+			Project projectResult = null;
+
+			await apiManager.ReadProject(
+				id,
+				projectFromApi =>
 				{
-					Project existing = projectList.FirstOrDefault(p => p.Id == project.Id);
+					Project existing = projectList.FirstOrDefault(p => p.Id == projectFromApi.Id);
 					if (existing != null)
 					{
-						existing.UpdateFrom(project);
+						existing.UpdateFrom(projectFromApi);
+						projectResult = existing;
 					}
 					else
 					{
-						projectList.Add(project);
+						projectList.Add(projectFromApi);
+						projectResult = projectFromApi;
 					}
 
-					if (!openedProjectList.Any(p => p.Id == project.Id))
+					if (!openedProjectList.Any(p => p.Id == projectResult.Id))
 					{
-						openedProjectList.Add(project);
+						openedProjectList.Add(projectResult);
 					}
 
-					currentProject = project;
-					ProjectOpened?.Invoke(project);
+					currentProject = projectResult;
+					ProjectOpened?.Invoke(projectResult);
 				},
-				error => ApiError?.Invoke(error));
+				error =>
+				{
+					ApiError?.Invoke(error);
+				}
+			);
+
+			return projectResult;
 		}
 
-		public async void CreateProject(string name, string description, string[] paths)
+		public async Task<Project> CreateProject(string name, string description, string[] paths, bool clearLoader = true)
 		{
 			uiManager.SetLoadingView(true);
 
@@ -133,103 +154,82 @@ namespace Astrovisio
 				Paths = paths
 			};
 
+			Project created = null;
 			await apiManager.CreateNewProject(req,
-				created =>
+				createdProj =>
 				{
-					projectList.Add(created);
-					ProjectCreated?.Invoke(created);
-					uiManager.SetLoadingView(false);
+					created = createdProj;
+					projectList.Add(createdProj);
+					ProjectCreated?.Invoke(createdProj);
+
+					if (clearLoader)
+						uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
 				});
+			return created;
 		}
 
-		public async void DuplicateProject(string name, string description, Project projectToDuplicate)
+		public async Task<Project> DuplicateProject(string name, string description, Project projectToDuplicate)
 		{
 			uiManager.SetLoadingView(true);
 
-			CreateProjectRequest createReq = new CreateProjectRequest
+			DuplicateProjectRequest req = new DuplicateProjectRequest
 			{
 				Name = name,
-				Description = description,
-				Favourite = false,
-				Paths = projectToDuplicate.Paths
+				Description = description
 			};
 
-			Project createdProject = null;
-			bool createSuccess = false;
-
-			await apiManager.CreateNewProject(createReq,
-				created =>
+			Project duplicated = null;
+			await apiManager.DuplicateProject(
+				projectToDuplicate.Id,
+				req,
+				duplicatedProj =>
 				{
-					createdProject = created;
-					projectList.Add(created);
-					createSuccess = true;
-				},
-				error =>
-				{
-					ApiError?.Invoke(error);
-					createSuccess = false;
-				});
-
-			if (!createSuccess || createdProject == null)
-			{
-				uiManager.SetLoadingView(false);
-				return;
-			}
-
-			UpdateProjectRequest updateReq = new UpdateProjectRequest
-			{
-				Name = createdProject.Name,
-				Description = createdProject.Description,
-				Favourite = false,
-				Paths = createdProject.Paths,
-				ConfigProcess = projectToDuplicate.ConfigProcess.DeepCopy()
-			};
-
-			await apiManager.UpdateProject(createdProject.Id, updateReq,
-				updated =>
-				{
-					createdProject.UpdateFrom(updated);
-					ProjectCreated?.Invoke(createdProject);
+					duplicated = duplicatedProj;
+					projectList.Add(duplicatedProj);
+					ProjectCreated?.Invoke(duplicatedProj);
 					uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
-				});
+				}
+			);
+			return duplicated;
 		}
 
-		public async void UpdateProject(int id, Project project)
+		public async Task<Project> UpdateProject(int id, Project project)
 		{
 			UpdateProjectRequest req = new UpdateProjectRequest
 			{
 				Name = project.Name,
 				Favourite = project.Favourite,
-				Description = project.Description,
-				Paths = project.Paths,
-				ConfigProcess = project.ConfigProcess
+				Description = project.Description
 			};
 
+			Project updated = null;
 			await apiManager.UpdateProject(id, req,
-				updated =>
+				updatedProj =>
 				{
-					Project projectToUpdate = projectList.FirstOrDefault(p => p.Id == updated.Id);
+					updated = updatedProj;
+					Project projectToUpdate = projectList.FirstOrDefault(p => p.Id == updatedProj.Id);
 					if (projectToUpdate != null)
 					{
-						projectToUpdate.UpdateFrom(updated);
+						projectToUpdate.UpdateFrom(updatedProj);
 					}
 					else
 					{
-						projectList.Add(updated);
+						projectList.Add(updatedProj);
 					}
-					ProjectUpdated?.Invoke(updated);
+					ProjectUpdated?.Invoke(updatedProj);
 				},
 				error => ApiError?.Invoke(error));
+			return updated;
 		}
 
 		public async void DeleteProject(int id, Project project)
@@ -246,21 +246,15 @@ namespace Astrovisio
 				error => ApiError?.Invoke(error));
 		}
 
-		public async void ProcessProject(int id, ConfigProcess configProcess)
+		public async Task ProcessFile(int projectId, int fileId)
 		{
 			uiManager.SetLoadingBarProgress(0.0f, ProcessingStatusMessages.GetClientMessage("sending"));
 			uiManager.SetLoadingView(true, LoaderType.Bar);
 
-			ProcessProjectRequest req = new ProcessProjectRequest
-			{
-				Downsampling = configProcess.Downsampling,
-				ConfigParam = configProcess.Params
-			};
-
 			try
 			{
 				// Get Job ID
-				int? jobID = await apiManager.ProcessProject(id, req, error =>
+				int? jobID = await apiManager.ProcessFile(projectId, fileId, error =>
 				{
 					ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
@@ -271,7 +265,7 @@ namespace Astrovisio
 					Debug.LogError("Job ID is null. Aborting process.");
 					return;
 				}
-				Debug.Log($"[ProjectManager] Job ID: {jobID}");
+				// Debug.Log($"[ProjectManager] Job ID: {jobID}");
 
 
 				// Polling
@@ -282,14 +276,14 @@ namespace Astrovisio
 					{
 						await Task.Delay(250);
 
-						JobStatusResponse statusResponse = await apiManager.GetProjectJobStatus(id, jobID.Value, error =>
+						JobStatusResponse statusResponse = await apiManager.GetJobProgress(jobID.Value, error =>
 						{
 							ApiError?.Invoke(error);
 						});
 
 						if (statusResponse == null)
 						{
-							Debug.LogWarning("Null statusResponse");
+							Debug.LogWarning("Null statusResponse"); // Err
 							continue;
 						}
 
@@ -307,9 +301,10 @@ namespace Astrovisio
 				}
 
 
+
 				// Get DataPack
 				uiManager.SetLoadingBarProgress(1.0f, ProcessingStatusMessages.GetClientMessage("loading"));
-				DataPack dataPack = await apiManager.FetchProjectProcessedData(id, jobID.Value, error =>
+				DataPack dataPack = await apiManager.GetJobResult(jobID.Value, error =>
 				{
 					ApiError?.Invoke(error);
 				});
@@ -325,11 +320,43 @@ namespace Astrovisio
 					SaveProjectCSV(dataPack);
 				}
 
-				Project project = GetProject(id);
-				if (project != null)
+
+				// Get project and file
+				Project project = GetProject(projectId);
+				File file = GetFile(projectId, fileId);
+
+				// Get updated project and update file
+				await apiManager.ReadProject(
+				projectId,
+				onSuccess: (p) =>
 				{
-					ProjectProcessed?.Invoke(project, dataPack);
-					Debug.Log($"[ProjectManager] Process completed, rows: {dataPack.Rows.Length}");
+					File updatedFile = p.Files?.FirstOrDefault(f => f.Id == fileId);
+					// Debug.Log($"A {updatedFile.Id} {updatedFile.Name} {updatedFile.Processed}");
+					file.UpdateFrom(updatedFile);
+					// Debug.Log($"B {file.Id} {file.Name} {file.Processed}");
+				},
+				onError: (err) =>
+				{
+					ApiError?.Invoke(err);
+					return;
+				});
+
+
+				if (project != null && project.Files != null)
+				{
+					if (file != null)
+					{
+						// Debug.Log($"Found file: {file.Name}, id={file.Id}, proc={file.Processed}");
+						FileProcessed.Invoke(project, file, dataPack);
+					}
+					else
+					{
+						Debug.LogWarning($"No file found with id={fileId} in project={projectId}");
+					}
+				}
+				else
+				{
+					Debug.LogError($"Project with id={projectId} not found or has no files");
 				}
 
 				uiManager.SetLoadingView(false);
@@ -337,12 +364,454 @@ namespace Astrovisio
 			catch (Exception ex)
 			{
 				Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
-				ApiError?.Invoke("Errore nel processamento: " + ex.Message);
+				ApiError?.Invoke("Error during processing: " + ex.Message);
 			}
 			finally
 			{
 				uiManager.SetLoadingView(false);
 			}
+		}
+
+		public async Task UpdateFile(int projectId, File file)
+		{
+			UpdateFileRequest req = new UpdateFileRequest
+			{
+				Type = file.Type,
+				Name = file.Name,
+				Path = file.Path,
+				Size = file.Size,
+				Processed = file.Processed,
+				Downsampling = file.Downsampling,
+				Order = file.Order,
+				ProcessedPath = file.ProcessedPath,
+				Variables = file.Variables
+			};
+
+			// Debug.Log($"Request: {file.Id} {file.Name} {file.Order}");
+
+			await apiManager.UpdateFile(projectId, file.Id, req,
+				updatedFile =>
+				{
+					// Debug.Log("Sended: " + req.Order);
+					// Debug.Log("Received: " + updatedFile.Order);
+
+					Project project = projectList.FirstOrDefault(p => p.Id == projectId);
+					if (project != null && project.Files != null)
+					{
+						File fileToUpdate = project.Files.FirstOrDefault(f => f.Id == updatedFile.Id);
+						if (fileToUpdate != null)
+						{
+							fileToUpdate.UpdateFrom(updatedFile);
+							FileUpdated?.Invoke(project, fileToUpdate);
+						}
+						else
+						{
+							project.Files.Add(updatedFile);
+						}
+					}
+					// Debug.Log($"[ProjectManager] File {updatedFile.Name} updated successfully.");
+				},
+				error =>
+				{
+					ApiError?.Invoke(error);
+				});
+		}
+
+		public async void GetProcessedFile(int projectId, int fileId)
+		{
+			uiManager.SetLoadingView(true);
+
+			await apiManager.GetProcessedFile(
+				projectId,
+				fileId,
+				dataPack =>
+				{
+					try
+					{
+						int rows = dataPack?.Rows?.Length ?? 0;
+						int cols = dataPack?.Columns?.Length ?? 0;
+						// Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
+
+						Project project = GetProject(projectId);
+						if (project == null)
+						{
+							Debug.LogWarning($"[GetProcessedFile] Project {projectId} not found.");
+							return;
+						}
+
+						if (project.Files == null)
+						{
+							Debug.LogWarning($"[GetProcessedFile] Project {projectId} has no file list.");
+							return;
+						}
+
+						File file = project.Files.FirstOrDefault(f => f.Id == fileId);
+						if (file == null)
+						{
+							Debug.LogWarning($"[GetProcessedFile] File {fileId} not found in project {projectId}.");
+							return;
+						}
+
+						if (!file.Processed)
+						{
+							file.Processed = true;
+							ProjectUpdated?.Invoke(project);
+							Debug.Log($"[GetProcessedFile] File {fileId} marked as processed.");
+						}
+
+						FileProcessed?.Invoke(project, file, dataPack);
+						// Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
+
+						bool hasDC = RenderManager.Instance.TryGetDataContainer(projectId, fileId, out var _);
+						// Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
+					}
+					finally
+					{
+						uiManager.SetLoadingView(false);
+					}
+				},
+				error =>
+				{
+					ApiError?.Invoke(error);
+					Debug.LogError($"[GetProcessedFile] API error: {error}");
+					uiManager.SetLoadingView(false);
+				}
+			);
+		}
+
+		public async Task<File> AddFile(int projectId, string path)
+		{
+			// Pre-checks
+			Project project = GetProject(projectId);
+			if (project == null)
+			{
+				Debug.LogWarning($"[ProjectManager] AddFile: project {projectId} not found.");
+				return null;
+			}
+			if (string.IsNullOrWhiteSpace(path))
+			{
+				Debug.LogWarning($"[ProjectManager] AddFile: invalid path.");
+				return null;
+			}
+			if (project.Files != null && project.Files.Any(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase)))
+			{
+				// Already present locally
+				return project.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
+			}
+
+			// Build payload with the new path appended
+			string[] newPaths = (project.Files ?? new List<File>())
+				.Select(f => f.Path)
+				.Where(p => !string.IsNullOrEmpty(p))
+				.Concat(new[] { path })
+				.ToArray();
+
+			ReplaceProjectFilesRequest req = new ReplaceProjectFilesRequest { Paths = newPaths };
+
+			uiManager.SetLoadingView(true);
+			try
+			{
+				// Server update
+				try
+				{
+					await apiManager.ReplaceProjectFiles(projectId, req);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] AddFile: API error replacing files. {ex.Message}");
+					ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
+					return null;
+				}
+
+				// Read back authoritative state
+				Project updated;
+				try
+				{
+					TaskCompletionSource<Project> tcs = new TaskCompletionSource<Project>();
+					await apiManager.ReadProject(
+						projectId,
+						onSuccess: p => tcs.TrySetResult(p),
+						onError: err => tcs.TrySetException(new Exception(err))
+					);
+					updated = await tcs.Task;
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] AddFile: ReadProject exception. {ex.Message}");
+					return null;
+				}
+				if (updated == null)
+				{
+					Debug.LogWarning($"[ProjectManager] AddFile: ReadProject returned null for {projectId}.");
+					return null;
+				}
+
+				Project updatedProject = GetProject(projectId) ?? project;
+				updatedProject.UpdateFrom(updated);
+				ProjectUpdated?.Invoke(updatedProject);
+				return updatedProject.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
+			}
+			finally
+			{
+				uiManager.SetLoadingView(false);
+			}
+		}
+
+		public async Task<bool> RemoveFile(int projectId, int fileId)
+		{
+			// Pre-checks
+			Project project = GetProject(projectId);
+			if (project == null || project.Files == null || project.Files.Count == 0)
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found or has no files.");
+				return false;
+			}
+			if (!project.Files.Any(f => f.Id == fileId))
+			{
+				Debug.LogWarning($"[ProjectManager] RemoveFile: file {fileId} not found in project {projectId}.");
+				return false;
+			}
+
+			uiManager.SetLoadingView(true);
+			try
+			{
+				// Build server payload without the removed file
+				string[] remainingPaths = project.Files
+					.Where(f => f.Id != fileId)
+					.Select(f => f.Path)
+					.Where(p => !string.IsNullOrEmpty(p))
+					.ToArray();
+
+				ReplaceProjectFilesRequest req = new ReplaceProjectFilesRequest { Paths = remainingPaths };
+
+				// Server update
+				try
+				{
+					await apiManager.ReplaceProjectFiles(projectId, req);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] RemoveFile: API error replacing files. {ex.Message}");
+					ApiError?.Invoke($"ReplaceProjectFiles failed: {ex.Message}");
+					return false;
+				}
+
+				// Read back authoritative state
+				Project updated;
+				try
+				{
+					var tcs = new TaskCompletionSource<Project>();
+					await apiManager.ReadProject(
+						projectId,
+						onSuccess: p => tcs.TrySetResult(p),
+						onError: err => tcs.TrySetException(new Exception(err))
+					);
+					updated = await tcs.Task;
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] RemoveFile: ReadProject exception. {ex.Message}");
+					return false;
+				}
+				if (updated == null)
+				{
+					Debug.LogWarning($"[ProjectManager] RemoveFile: ReadProject returned null for {projectId}.");
+					return false;
+				}
+
+				Project updatedProject = GetProject(projectId) ?? project;
+
+				Debug.Log("updatedProject.Files.Count " + updatedProject.Files.Count);
+				Debug.Log("updated.Files.Count " + updated.Files.Count);
+
+				updatedProject.UpdateFrom(updated);
+				ProjectUpdated?.Invoke(updatedProject);
+				return true;
+			}
+			finally
+			{
+				uiManager.SetLoadingView(false);
+			}
+		}
+
+		public async Task UpdateFileOrder(int projectId, int[] orderIds)
+		{
+			Project project = GetProject(projectId);
+			if (project == null || project.Files == null || project.Files.Count == 0)
+			{
+				Debug.LogWarning($"[UpdateFileOrder] Project {projectId} not found or has no files.");
+				return;
+			}
+			if (orderIds == null || orderIds.Length != project.Files.Count)
+			{
+				Debug.LogWarning($"[UpdateFileOrder] Invalid order length. Expected {project.Files.Count}, got {orderIds?.Length ?? 0}.");
+				return;
+			}
+
+			UpdateProjectOrderedRequest req = new UpdateProjectOrderedRequest
+			{
+				Name = project.Name,
+				Description = project.Description,
+				Favourite = project.Favourite,
+				Order = orderIds
+			};
+
+			uiManager.SetLoadingView(true);
+			Project updatedFromApi = null;
+
+			await apiManager.UpdateProject(
+				projectId,
+				req,
+				onSuccess: p =>
+				{
+					updatedFromApi = p;
+				},
+				onError: err =>
+				{
+					ApiError?.Invoke(err);
+					Debug.LogError($"[UpdateFileOrder] API error: {err}");
+				});
+
+
+			if (updatedFromApi == null)
+			{
+				return;
+			}
+
+			project.UpdateFrom(updatedFromApi);
+			ProjectUpdated?.Invoke(project);
+			uiManager.SetLoadingView(false);
+
+			foreach (File file in project.Files)
+			{
+				Debug.Log($"{file.Name} order: {file.Order}");
+			}
+		}
+
+		// TODO: settings
+
+
+		// --------------------
+		public void CloseProject(int id)
+		{
+			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
+			if (projectToRemove != null)
+			{
+				// Debug.Log("Closed project " + GetProject(id).Name);
+				openedProjectList.Remove(projectToRemove);
+				if (currentProject?.Id == id)
+				{
+					currentProject = null;
+				}
+				ProjectClosed?.Invoke(projectToRemove);
+			}
+		}
+
+		public void UnselectProject()
+		{
+			if (currentProject != null)
+			{
+				currentProject = null;
+				ProjectUnselected?.Invoke();
+			}
+		}
+
+		public void NotifyFileSelected(Project project, File file)
+		{
+			if (file == null)
+			{
+				Debug.LogWarning("[ProjectManager] NotifyFileSelected: file is null");
+				return;
+			}
+
+			if (project == null)
+			{
+				Debug.LogWarning($"[ProjectManager] NotifyFileSelected: project {project.Name} not found");
+				return;
+			}
+
+			FileSelected?.Invoke(project, file);
+		}
+
+		[ContextMenu("SaveProjectToJSON")]
+		public void SaveProjectToJSON()
+		{
+			SavedProject savedProject = new SavedProject();
+			savedProject.Project = GetCurrentProject();
+			savedProject.FilesSettings = new List<Settings>(SettingsManager.Instance.GetCurrentProjectFilesSettings());
+
+			string file = StandaloneFileBrowser.SaveFilePanel("Save Project", "", savedProject.Project.Name + ".json", "json");
+			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+		}
+
+		[ContextMenu("LoadProjectFromJSON")]
+		public void LoadProjectFromJSON()
+		{
+			string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "json", false);
+			if (paths.Length > 0)
+			{
+				StreamReader sr = new StreamReader(paths[0]);
+				string fileContents = sr.ReadToEnd();
+				sr.Close();
+
+				SavedProject savedProject = JsonConvert.DeserializeObject<SavedProject>(fileContents);
+
+				_ = CreateProjectFromSavedProject(savedProject);
+			}
+		}
+
+		private async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
+		{
+			Project createdProject = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths(), false);
+
+			if (createdProject == null)
+			{
+				return null;
+			}
+
+			savedProject.Project.Id = createdProject.Id;
+
+			List<File> SortedList = savedProject.Project.Files.OrderBy(o => o.Order).ToList();
+			List<int> OrderedFileIDs = new List<int>();
+
+			foreach (File file in SortedList)
+			{
+				await UpdateFile(savedProject.Project.Id, file);
+				OrderedFileIDs.Add(file.Id);
+			}
+
+			await UpdateFileOrder(createdProject.Id, OrderedFileIDs.ToArray());
+
+			foreach (Settings settings in savedProject.FilesSettings)
+			{
+				try
+				{
+					File file = SortedList.Find(i => i.Path == settings.Path);
+
+					if (file != null)
+					{
+						if (file.Processed)
+						{
+							await ProcessFile(createdProject.Id, file.Id);
+							uiManager.SetLoadingView(true);
+							await SettingsManager.Instance.UpdateSettings(createdProject.Id, file.Id, settings);
+						}
+
+						continue;
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[ProjectManager] UpdateSettings failed: {ex.Message}");
+					ApiError?.Invoke("Error during update settings: " + ex.Message);
+				}
+				finally
+                {
+                    uiManager.SetLoadingView(false);
+                }
+			}
+
+			return createdProject;
 		}
 
 		private void SaveProjectCSV(DataPack dataPack)
@@ -355,34 +824,27 @@ namespace Astrovisio
 
 			StringBuilder sb = new StringBuilder();
 
-			// 1. Intestazioni (columns)
 			if (dataPack.Columns != null && dataPack.Columns.Length > 0)
 			{
 				sb.AppendLine(string.Join(",", dataPack.Columns));
 			}
 
-			// 2. Righe (rows)
 			if (dataPack.Rows != null)
 			{
 				foreach (var row in dataPack.Rows)
 				{
-					// row è double[], convertiamolo in stringhe
 					string[] values = new string[row.Length];
 					for (int i = 0; i < row.Length; i++)
 					{
-						// Usa ToString con InvariantCulture per evitare problemi con la virgola decimale
 						values[i] = row[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
 					}
 					sb.AppendLine(string.Join(",", values));
 				}
 			}
 
-			// 3. Percorso del file (Unity: cartella scrivibile sicura)
 			string filePath = Path.Combine(Application.persistentDataPath, "project.csv");
-
-			File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
-
-			Debug.Log("CSV salvato in: " + filePath);
+			System.IO.File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+			Debug.Log("CSV saved in: " + filePath);
 		}
 
 		private void OnDisable()
@@ -391,8 +853,10 @@ namespace Astrovisio
 			ProjectOpened = null;
 			ProjectCreated = null;
 			ProjectUpdated = null;
+			ProjectClosed = null;
+			FileProcessed = null;
+			ProjectUnselected = null;
 			ProjectDeleted = null;
-			ProjectProcessed = null;
 			ApiError = null;
 		}
 

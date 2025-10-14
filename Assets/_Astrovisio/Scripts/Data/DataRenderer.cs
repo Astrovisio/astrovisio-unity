@@ -34,7 +34,7 @@ namespace Astrovisio
                     return;
                 }
 
-                dataContainer = new DataContainer(dataPack, null);
+                dataContainer = new DataContainer(dataPack, null, null);
                 RenderDataContainer(dataContainer);
             }
 
@@ -51,13 +51,13 @@ namespace Astrovisio
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
-            if (!File.Exists(filePath))
+            if (!System.IO.File.Exists(filePath))
             {
                 Debug.LogError("File CSV non trovato: " + filePath);
                 return null;
             }
 
-            string[] lines = File.ReadAllLines(filePath);
+            string[] lines = System.IO.File.ReadAllLines(filePath);
             if (lines.Length < 2)
             {
                 Debug.LogWarning("CSV vuoto o senza dati.");
@@ -116,7 +116,7 @@ namespace Astrovisio
             }
         }
 
-        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
+        public void SetColormap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             if (astrovidioDataSetRenderer is not null)
             {
@@ -124,7 +124,7 @@ namespace Astrovisio
             }
         }
 
-        public void RemoveColorMap()
+        public void RemoveColormap()
         {
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }

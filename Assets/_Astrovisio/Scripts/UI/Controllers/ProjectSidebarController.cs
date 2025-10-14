@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,7 +33,12 @@ namespace Astrovisio
         private Button goToVRButton;
         // private DataContainer dataContainer;
 
-        public ProjectSidebarController(UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
+        public ProjectSidebarController(
+            UIManager uiManager,
+            ProjectManager projectManager,
+            UIContextSO uiContextSO,
+            Project project,
+            VisualElement root)
         {
             UIManager = uiManager;
             ProjectManager = projectManager;
@@ -40,8 +46,9 @@ namespace Astrovisio
             Project = project;
             Root = root;
 
-            RenderManager.Instance.OnProjectRenderReady += OnProjectReadyToGetRendered;
             ProjectManager.ProjectOpened += OnProjectOpened;
+            ProjectManager.FileProcessed += OnFileProcessed;
+            ProjectManager.FileUpdated += OnFileUpdated;
 
             Init();
             SetActiveStep(ProjectSidebarStep.Data);
@@ -51,6 +58,8 @@ namespace Astrovisio
 
         private void Init()
         {
+            bool anyFileProcessed = Project?.Files?.Any(f => f.Processed) ?? false;
+
             // Data
             dataSettingsContainer = Root.Q<VisualElement>("DataSettingsContainer");
             dataSettingsButton = dataSettingsContainer.Q<Button>("AccordionHeader");
@@ -60,7 +69,7 @@ namespace Astrovisio
             renderSettingsContainer = Root.Q<VisualElement>("RenderSettingsContainer");
             renderSettingsButton = renderSettingsContainer.Q<Button>("AccordionHeader");
             renderSettingsButton.clicked += OnRenderSettingsButtonClicked;
-            renderSettingsButton.SetEnabled(false);
+            renderSettingsButton.SetEnabled(anyFileProcessed);
 
             // VR
             goToVRButton = Root.Q<Button>("GoToVRButton");
@@ -72,32 +81,11 @@ namespace Astrovisio
             projectSidebarRenderController = new ProjectSidebarRenderController(this, UIManager, ProjectManager, UIContextSO, Project, renderSettingsContainer);
         }
 
-        private void OnProjectOpened(Project project)
+        public void Dispose()
         {
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-
-            SetActiveStep(ProjectSidebarStep.Data);
-        }
-
-        private void OnProjectReadyToGetRendered(Project project)
-        {
-            // Debug.Log($"Returned {Project.Id} {Project.Name} - {project.Id} {project.Name}");
-            // Debug.Log(Project == project);
-            // Debug.Log(ReferenceEquals(project, Project));
-
-            if (Project.Id != project.Id)
-            {
-                return;
-            }
-            else
-            {
-                Project = project;
-            }
-
-            SetNextStepButtons(true);
+            ProjectManager.ProjectOpened -= OnProjectOpened;
+            ProjectManager.FileProcessed -= OnFileProcessed;
+            ProjectManager.FileUpdated -= OnFileUpdated;
         }
 
         private void OnDataSettingsButtonClicked()
@@ -109,9 +97,8 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
-            // Debug.Log("OnRenderSettingsButtonClicked " + Project.Name);
             SetActiveStep(ProjectSidebarStep.Render);
-            RenderManager.Instance.RenderDataContainer(Project);
+            projectSidebarRenderController.Render();
             UIManager.SetGizmoTransformVisibility(true);
         }
 
@@ -144,7 +131,7 @@ namespace Astrovisio
                     dataSettingsContainer.RemoveFromClassList("active");
                     renderSettingsContainer.AddToClassList("active");
                     UIManager.SetSceneVisibility(false);
-                    projectSidebarRenderController.Update();
+                    projectSidebarRenderController.UpdateSidebar();
                     break;
             }
         }
@@ -178,6 +165,54 @@ namespace Astrovisio
                 label.text = "Go To VR";
             }
             goToVRButton.Blur();
+        }
+
+        // private void OnProjectReadyToGetRendered(Project project)
+        // {
+        //     if (Project.Id != project.Id)
+        //     {
+        //         return;
+        //     }
+        //     else
+        //     {
+        //         Project = project;
+        //     }
+
+        //     SetNextStepButtons(true);
+        // }
+
+        private void OnProjectOpened(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            SetActiveStep(ProjectSidebarStep.Data);
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, processed {file.Processed}.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
+        }
+
+        private void OnFileUpdated(Project project, File file)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
+            bool activateNextStepButtons = project.Files.Any(f => f.Processed);
+            SetNextStepButtons(activateNextStepButtons);
         }
 
     }

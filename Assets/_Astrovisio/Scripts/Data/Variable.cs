@@ -1,77 +1,55 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Astrovisio
 {
-    public class ConfigParam : INotifyPropertyChanged
+    public class Variable
     {
+        private string name;
         private double thrMin;
-        private double? thrMinSel;
         private double thrMax;
+        private double? thrMinSel;
         private double? thrMaxSel;
         private bool selected;
         private string unit;
         private bool xAxis;
         private bool yAxis;
         private bool zAxis;
-        private string[] files;
+
+        [JsonProperty("var_name")]
+        public string Name
+        {
+            get => name;
+            set => name = value;
+        }
 
         [JsonProperty("thr_min")]
         public double ThrMin
         {
             get => thrMin;
-            set
-            {
-                if (thrMin != value)
-                {
-                    thrMin = value;
-                    OnPropertyChanged(nameof(ThrMin));
-                }
-            }
+            set => thrMin = value;
         }
 
         [JsonProperty("thr_min_sel")]
         public double? ThrMinSel
         {
             get => thrMinSel;
-            set
-            {
-                if (thrMinSel != value)
-                {
-                    thrMinSel = value;
-                    OnPropertyChanged(nameof(ThrMinSel));
-                }
-            }
+            set => thrMinSel = value;
         }
 
         [JsonProperty("thr_max")]
         public double ThrMax
         {
             get => thrMax;
-            set
-            {
-                if (thrMax != value)
-                {
-                    thrMax = value;
-                    OnPropertyChanged(nameof(ThrMax));
-                }
-            }
+            set => thrMax = value;
         }
 
         [JsonProperty("thr_max_sel")]
         public double? ThrMaxSel
         {
             get => thrMaxSel;
-            set
-            {
-                if (thrMaxSel != value)
-                {
-                    thrMaxSel = value;
-                    OnPropertyChanged(nameof(ThrMaxSel));
-                }
-            }
+            set => thrMaxSel = value;
         }
 
         [JsonProperty("selected")]
@@ -83,7 +61,6 @@ namespace Astrovisio
                 if (selected != value)
                 {
                     selected = value;
-                    OnPropertyChanged(nameof(Selected));
                 }
             }
         }
@@ -92,14 +69,7 @@ namespace Astrovisio
         public string Unit
         {
             get => unit;
-            set
-            {
-                if (unit != value)
-                {
-                    unit = value;
-                    OnPropertyChanged(nameof(Unit));
-                }
-            }
+            set => unit = value;
         }
 
         [JsonProperty("x_axis")]
@@ -111,7 +81,6 @@ namespace Astrovisio
                 if (xAxis != value)
                 {
                     xAxis = value;
-                    OnPropertyChanged(nameof(XAxis));
                 }
             }
         }
@@ -125,7 +94,6 @@ namespace Astrovisio
                 if (yAxis != value)
                 {
                     yAxis = value;
-                    OnPropertyChanged(nameof(YAxis));
                 }
             }
         }
@@ -139,34 +107,13 @@ namespace Astrovisio
                 if (zAxis != value)
                 {
                     zAxis = value;
-                    OnPropertyChanged(nameof(ZAxis));
                 }
             }
         }
 
-        [JsonProperty("files")]
-        public string[] Files
+        public void UpdateFrom(Variable other)
         {
-            get => files;
-            set
-            {
-                if (files != value)
-                {
-                    files = value;
-                    OnPropertyChanged(nameof(Files));
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            // Debug.Log($"OnPropertyChanged fired: {propertyName} on {this}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void UpdateFrom(ConfigParam other)
-        {
+            Name = other.name;
             ThrMin = other.ThrMin;
             ThrMinSel = other.ThrMinSel;
             ThrMax = other.ThrMax;
@@ -176,15 +123,14 @@ namespace Astrovisio
             XAxis = other.XAxis;
             YAxis = other.YAxis;
             ZAxis = other.ZAxis;
-
-            Files = other.Files != null ? (string[])other.Files.Clone() : null;
         }
 
-        public ConfigParam DeepCopy()
+        public Variable DeepCopy()
         {
             string json = JsonConvert.SerializeObject(this);
-            return JsonConvert.DeserializeObject<ConfigParam>(json);
+            return JsonConvert.DeserializeObject<Variable>(json);
         }
 
     }
+    
 }
