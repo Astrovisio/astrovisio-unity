@@ -178,7 +178,7 @@ public class KDTreeComponent : MonoBehaviour
                     SelectedIndices = indices,
                     SelectedArray = visibilityArray,
                     CenterPoint = GetNearestWorldSpaceCoordinates(nearest.Value.index),
-                    SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : (selectionMode == SelectionMode.Cube ? selectionCubeHalfSize : 0),
+                    SelectionRadius = 0,
                     AggregatedValues = AggregateData(indices),
                     SelectionMode = selectionMode
                 };
@@ -349,14 +349,14 @@ public class KDTreeComponent : MonoBehaviour
 
         if (selectionMode == SelectionMode.Sphere && areaSphereDataInspector != null)
         {
-            areaSphereDataInspector.transform.localScale = Vector3.one * (selectionRadius * 2);
+            areaSphereDataInspector.transform.localScale = Vector3.one * selectionRadius;
             areaSphereDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaSphereDataInspector;
         }
 
         if (selectionMode == SelectionMode.Cube && areaBoxDataInspector != null)
         {
-            areaBoxDataInspector.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
+            areaBoxDataInspector.transform.localScale = Vector3.one * selectionCubeHalfSize;
             areaBoxDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaBoxDataInspector;
         }
@@ -623,7 +623,7 @@ public class KDTreeComponent : MonoBehaviour
             case SelectionMode.Sphere:
             case SelectionMode.Cube:
                 dataSpaceSize = TransformRadiusToDataSpace(
-                    selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize
+                    (selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize) / 2
                 );
                 break;
         }
