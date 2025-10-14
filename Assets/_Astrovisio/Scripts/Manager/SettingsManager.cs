@@ -40,7 +40,7 @@ namespace Astrovisio
 
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectClosed += OnProjectClosed;
-            // projectManager.FileProcessed += OnFileProcessed;
+            projectManager.FileProcessed += OnFileProcessed;
             projectManager.FileUpdated += OnFileUpdated;
         }
 
@@ -49,8 +49,8 @@ namespace Astrovisio
             if (projectManager != null)
             {
                 projectManager.ProjectOpened -= OnProjectOpened;
-                // projectManager.FileProcessed -= OnFileProcessed;
                 projectManager.ProjectClosed -= OnProjectClosed;
+                projectManager.FileProcessed -= OnFileProcessed;
                 projectManager.FileUpdated -= OnFileUpdated;
             }
         }
@@ -124,7 +124,7 @@ namespace Astrovisio
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[SettingsManager] OnFileProcessed -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
+                Debug.LogWarning($"[SettingsManager] OnFileProcessed -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
             }
         }
 
