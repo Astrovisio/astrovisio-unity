@@ -40,15 +40,17 @@ namespace Astrovisio
 
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectClosed += OnProjectClosed;
-            projectManager.FileProcessed += OnFileProcessed;
+            // projectManager.FileProcessed += OnFileProcessed;
+            projectManager.FileUpdated += OnFileUpdated;
         }
 
         private void OnDestroy()
         {
             if (projectManager != null)
             {
-                projectManager.FileProcessed -= OnFileProcessed;
+                // projectManager.FileProcessed -= OnFileProcessed;
                 projectManager.ProjectClosed -= OnProjectClosed;
+                projectManager.FileUpdated -= OnFileUpdated;
             }
         }
 
@@ -75,6 +77,43 @@ namespace Astrovisio
 
                     Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
                     Debug.LogError(JsonConvert.SerializeObject(updatedSettings));
+
+                    Debug.Log($"[SettingsManager] Settings cached for {new ProjectFile(project.Id, file.Id)} " + $"(var count: {settingsDictionary[new ProjectFile(project.Id, file.Id)]?.Variables?.Count ?? 0}).");
+                }
+
+                ProjectFile key = new ProjectFile(project.Id, file.Id);
+                AddSettings(project.Id, file.Id, settings);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[SettingsManager] OnFileProcessed -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
+            }
+        }
+
+        private async void OnFileUpdated(Project project, File file)
+        {
+
+            if (project == null || file == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Debug.Log(">>>>>>>>> OnFileUpdated " + file.Path);
+                RemoveSettings(project.Id, file.Id);
+
+                Settings settings = await GetSettings(project.Id, file.Id);
+                // Debug.LogWarning(JsonConvert.SerializeObject(settings));
+
+                // Debug.LogWarning((settings != null) + " " + settings.Variables.Count);
+                if (settings != null && settings.Variables.Count == 0)
+                {
+                    settings.SetDefaults(file);
+                    // Debug.LogError(JsonConvert.SerializeObject(settings));
+
+                    // Settings updatedSettings = await UpdateSettings(project.Id, file.Id);
+                    // Debug.LogError(JsonConvert.SerializeObject(updatedSettings));
 
                     Debug.Log($"[SettingsManager] Settings cached for {new ProjectFile(project.Id, file.Id)} " + $"(var count: {settingsDictionary[new ProjectFile(project.Id, file.Id)]?.Variables?.Count ?? 0}).");
                 }

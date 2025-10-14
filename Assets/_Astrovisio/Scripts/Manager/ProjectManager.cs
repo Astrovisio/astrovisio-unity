@@ -141,7 +141,7 @@ namespace Astrovisio
 			return projectResult;
 		}
 
-		public async Task<Project> CreateProject(string name, string description, string[] paths)
+		public async Task<Project> CreateProject(string name, string description, string[] paths, bool clearLoader = true)
 		{
 			uiManager.SetLoadingView(true);
 
@@ -160,12 +160,14 @@ namespace Astrovisio
 					created = createdProj;
 					projectList.Add(createdProj);
 					ProjectCreated?.Invoke(createdProj);
-					uiManager.SetLoadingView(false);
+
+					if (clearLoader)
+						uiManager.SetLoadingView(false);
 				},
 				error =>
 				{
 					ApiError?.Invoke(error);
-					uiManager.SetLoadingView(false);
+					uiManager.SetLoadingView(false);		
 				});
 			return created;
 		}
@@ -369,7 +371,7 @@ namespace Astrovisio
 			}
 		}
 
-		public async void UpdateFile(int projectId, File file)
+		public async Task UpdateFile(int projectId, File file)
 		{
 			UpdateFileRequest req = new UpdateFileRequest
 			{
@@ -732,7 +734,7 @@ namespace Astrovisio
 
 		public async Task<Project> CreateProjectFromSavedProject(SavedProject savedProject)
 		{
-			Project createdProject = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths());
+			Project createdProject = await CreateProject(savedProject.Project.Name, savedProject.Project.Description, savedProject.GetFilePaths(), false);
 
 			if (createdProject == null)
 			{
@@ -744,21 +746,22 @@ namespace Astrovisio
 			List<File> SortedList = savedProject.Project.Files.OrderBy(o => o.Order).ToList();
 			List<int> OrderedFileIDs = new List<int>();
 
-			foreach (File f in SortedList)
+			foreach (File file in SortedList)
 			{
-				UpdateFile(savedProject.Project.Id, f);
-				OrderedFileIDs.Add(f.Id);
+				await UpdateFile(savedProject.Project.Id, file);
+				OrderedFileIDs.Add(file.Id);
 			}
 
 			await UpdateFileOrder(createdProject.Id, OrderedFileIDs.ToArray());
 
 			foreach (Settings settings in savedProject.FilesSettings)
             {
-				File f = SortedList.Find(i => i.Path == settings.Path);
+				File file = SortedList.Find(i => i.Path == settings.Path);
 
-				if (f != null)
-                {
-					SettingsManager.Instance.AddSettings(createdProject.Id, f.Id, settings);
+				if (file != null)
+				{
+					//Debug.Log("APPLYING RENDERING SETTINGS TO " + settings.Path);
+					SettingsManager.Instance.AddSettings(createdProject.Id, file.Id, settings);
                 }
             }
 
