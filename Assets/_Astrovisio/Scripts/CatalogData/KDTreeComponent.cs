@@ -306,10 +306,17 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
+        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
         data = pointData;
+        int[] xyz = new int[] {
+            mapping.X.SourceIndex,
+            mapping.Y.SourceIndex,
+            mapping.Z.SourceIndex
+        };
+
         visibilityArray = new int[data[0].Length];
 
-        await initKDTree(pivot);
+        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz, visibilityArray));
 
         if (!Application.isPlaying)
         {
@@ -335,17 +342,6 @@ public class KDTreeComponent : MonoBehaviour
         }
 
         OnInitializationPerformed?.Invoke();
-    }
-
-    public Task initKDTree(Vector3 pivot)
-    {
-        mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
-        int[] xyz = new int[] {
-            mapping.X.SourceIndex,
-            mapping.Y.SourceIndex,
-            mapping.Z.SourceIndex
-        };
-        return Task.Run(() => manager = new KDTreeManager(data, pivot, xyz, visibilityArray));
     }
 
     private void UpdateSelectionVisualizer()
@@ -602,17 +598,17 @@ public class KDTreeComponent : MonoBehaviour
     {
         Mapping mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
 
-        point.x = RemapUnclamped(
+        point.x = RemapInverseUnclamped(
             point.x,
             new Vector2(mapping.X.DataMinVal, mapping.X.DataMaxVal),
             mapping.X.InverseMapping ? new Vector2(mapping.X.TargetMaxVal, mapping.X.TargetMinVal) : new Vector2(mapping.X.TargetMinVal, mapping.X.TargetMaxVal)
             );
-        point.y = RemapUnclamped(
+        point.y = RemapInverseUnclamped(
             point.y,
             new Vector2(mapping.Y.DataMinVal, mapping.Y.DataMaxVal),
             mapping.Y.InverseMapping ? new Vector2(mapping.Y.TargetMaxVal, mapping.Y.TargetMinVal) : new Vector2(mapping.Y.TargetMinVal, mapping.Y.TargetMaxVal)
         );
-        point.z = RemapUnclamped(
+        point.z = RemapInverseUnclamped(
             point.z,
             new Vector2(mapping.Z.DataMinVal, mapping.Z.DataMaxVal),
             mapping.Z.InverseMapping ? new Vector2(mapping.Z.TargetMaxVal, mapping.Z.TargetMinVal) : new Vector2(mapping.Z.TargetMinVal, mapping.Z.TargetMaxVal)
@@ -723,7 +719,7 @@ public class KDTreeComponent : MonoBehaviour
         switch (entry.ScalingType)
         {
             case ScalingType.Linear:
-                return RemapUnclamped(localValue, targetRange, dataRange);
+                return RemapInverseUnclamped(localValue, targetRange, dataRange);
 
             case ScalingType.Log:
             case ScalingType.Sqrt:
@@ -877,6 +873,12 @@ public class KDTreeComponent : MonoBehaviour
     {
         float t = Mathf.InverseLerp(from.x, from.y, val);
         return Mathf.Lerp(to.x, to.y, t);
+    }
+
+    private float RemapInverseUnclamped(float val, Vector2 from, Vector2 to)
+    {
+        float t = InverseLerpUnclamped(from.x, from.y, val);
+        return Mathf.LerpUnclamped(to.x, to.y, t);
     }
 
     private float RemapUnclamped(float value, Vector2 fromRange, Vector2 toRange)
