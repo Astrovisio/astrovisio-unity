@@ -440,6 +440,11 @@ namespace Astrovisio
 
         private void UpdateParamButtons()
         {
+            if (currentFile == null)
+            {
+                return;
+            }
+
             paramScrollView.Clear();
 
             foreach (Variable variable in currentFile.Variables)
