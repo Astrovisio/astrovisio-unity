@@ -8,20 +8,34 @@ namespace Astrovisio
     [Serializable]
     public class ScreenshotMetadata
     {
-        private Project project;
+        private string projectName;
+        private File file;
         private Settings fileSettings;
         private ObjectTransform cameraSettings;
         private ObjectTransform cubeSettings;
 
-        [JsonProperty("project")]
-        public Project Project
+        [JsonProperty("projectName")]
+        public string ProjectName
         {
-            get => project;
+            get => projectName;
             set
             {
-                if (project != value)
+                if (projectName != value)
                 {
-                    project = value;
+                    projectName = value;
+                }
+            }
+        }
+
+        [JsonProperty("file")]
+        public File File
+        {
+            get => file;
+            set
+            {
+                if (file != value)
+                {
+                    file = value;
                 }
             }
         }
@@ -65,9 +79,10 @@ namespace Astrovisio
             }
         }
 
-        public ScreenshotMetadata(Project project, GameObject camera, GameObject dataCube, Settings settings = null)
+        public ScreenshotMetadata(string projectName, File file, GameObject camera, GameObject dataCube, Settings settings = null)
         {
-            Project = project;
+            ProjectName = projectName;
+            File = file;
             CameraSettings = new ObjectTransform(camera);
             CubeSettings = new ObjectTransform(dataCube);
             if (settings != null)

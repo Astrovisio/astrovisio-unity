@@ -340,10 +340,11 @@ namespace Astrovisio
         public async void TakeScreenshot(bool uiVisibility = false)
         {
             Project currentProject = projectManager.GetCurrentProject();
-            int? currentFile = ReelManager.Instance.GetReelCurrentFileId(currentProject.Id);
-            Settings settings;
-            SettingsManager.Instance.TryGetSettings(currentProject.Id, (int)currentFile, out settings);
-            await ScreenshotUtils.TakeScreenshotWithJson(currentProject, Camera.main, renderManager.DataRenderer.GetAstrovidioDataSetRenderer().gameObject, settings, uiVisibility);
+            Settings settings = SettingsManager.Instance.GetCurrentFileSettings();
+            File file = projectManager.GetCurrentProject().Files.Find(i => i.Id == ReelManager.Instance.GetReelCurrentFileId(projectManager.GetCurrentProject().Id));
+            settings.Path = file.Path;
+
+            await ScreenshotUtils.TakeScreenshotWithJson(currentProject.Name, file, Camera.main, renderManager.DataRenderer.GetAstrovidioDataSetRenderer().gameObject, settings, uiVisibility);
         }
     }
 

@@ -15,7 +15,7 @@ namespace Astrovisio
         /// Takes a screenshot and writes metadata as soon as the file is ready.
         /// Fully async, does NOT block the main thread.
         /// </summary>
-        public static async Task<string> TakeScreenshotWithJson(Project project, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false)
+        public static async Task<string> TakeScreenshotWithJson(string projectName, File file, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false)
         {
 
             string path = uiVisibility ? await TakeScreenshot() : await TakeScreenshot(camera);
@@ -23,7 +23,7 @@ namespace Astrovisio
             string jsonPath = Path.ChangeExtension(path, "json");
             System.IO.File.WriteAllText(
                 jsonPath,
-                DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(new ScreenshotMetadata(project, camera.gameObject, dataCube, settings))),
+                DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(new ScreenshotMetadata(projectName, file, camera.gameObject, dataCube, settings))),
                 new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
             );
     

@@ -348,6 +348,17 @@ namespace Astrovisio
             return filesSettings;
         }
 
+        public Settings GetCurrentFileSettings()
+        {
+            Settings settings;
+            if (TryGetSettings(projectManager.GetCurrentProject().Id, (int)ReelManager.Instance.GetReelCurrentFileId(projectManager.GetCurrentProject().Id), out settings))
+            {
+                return settings;
+            }
+
+            return null;
+        }
+
         // === Render ===
         public void SetAxisSetting(Axis axis, Setting setting)
         {
