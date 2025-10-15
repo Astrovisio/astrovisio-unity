@@ -14,7 +14,7 @@
                     <AttributeOverrides element-name="Label" text="New project" />
                 </engine:Instance>
                 <engine:Instance template="SecondaryButton" name="LoadProjectButton" style="height: 40px; min-height: 40px; max-height: 40px;">
-                    <AttributeOverrides element-name="Label" text="Load" />
+                    <AttributeOverrides element-name="Label" text="Import" />
                 </engine:Instance>
             </engine:VisualElement>
         </engine:VisualElement>

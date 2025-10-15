@@ -733,7 +733,6 @@ namespace Astrovisio
 			FileSelected?.Invoke(project, file);
 		}
 
-		[ContextMenu("SaveProjectToJSON")]
 		public void SaveProjectToJSON()
 		{
 			SavedProject savedProject = new SavedProject();
@@ -744,7 +743,6 @@ namespace Astrovisio
 			System.IO.File.WriteAllText(file, DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(savedProject)), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
 		}
 
-		[ContextMenu("LoadProjectFromJSON")]
 		public void LoadProjectFromJSON()
 		{
 			string[] paths = StandaloneFileBrowser.OpenFilePanel("Select file", "", "json", false);
