@@ -194,7 +194,7 @@ public class KDTreeComponent : MonoBehaviour
         {
             case SelectionMode.SinglePoint:
                 nearest = await ComputeNearestPoint(controllerTransform.position);
-                List<int> indices = new List<int>(new int[1] { nearest.Value.index });
+                HashSet<int> indices = new HashSet<int>(new int[1] { nearest.Value.index });
                 selectionResult = new SelectionResult
                 {
                     SelectedIndices = indices,
@@ -475,7 +475,7 @@ public class KDTreeComponent : MonoBehaviour
         return areaSelectionResult.AggregatedValues;
     }
 
-    private float[] AggregateData(List<int> indices)
+    private float[] AggregateData(HashSet<int> indices)
     {
         if (data == null || data.Length == 0 || indices.Count == 0)
         {
@@ -689,7 +689,7 @@ public class KDTreeComponent : MonoBehaviour
                 break;
         }
 
-        List<int> indices = null;
+        HashSet<int> indices = null;
 
         // Copy values for use in async context
         var mode = selectionMode;
@@ -710,7 +710,7 @@ public class KDTreeComponent : MonoBehaviour
                     break;
 
                 default:
-                    indices = new List<int>();
+                    indices = new HashSet<int>();
                     break;
             }
 

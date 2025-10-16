@@ -39,13 +39,13 @@ public class KDTree
         public KDTreeNode right;
     }
 
-    public KDTree(float[][] data, List<int> pointIndices, int[] xyz, int[] visibilityArray, CancellationToken token = default)
+    public KDTree(float[][] data, int[] pointIndices, int[] xyz, int[] visibilityArray, CancellationToken token = default)
     {
         this.data = data;
         this.xyz = xyz;
         this.visibilityArray = visibilityArray;
         this.cancellationToken = token;
-        indices = pointIndices.ToArray();
+        indices = pointIndices;
         root = BuildTree(0, indices.Length, 0);
     }
 
@@ -142,15 +142,15 @@ public class KDTree
     }
 
 
-    public List<int> FindPointsInSphere(Vector3 center, float radius)
+    public HashSet<int> FindPointsInSphere(Vector3 center, float radius)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         float radiusSq = radius * radius;
         SearchSphere(root, center, radiusSq, 0, result);
         return result;
     }
 
-    private void SearchSphere(KDTreeNode node, Vector3 center, float radiusSq, int depth, List<int> result)
+    private void SearchSphere(KDTreeNode node, Vector3 center, float radiusSq, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -182,16 +182,16 @@ public class KDTree
         }
     }
 
-    public List<int> FindPointsInCube(Vector3 center, float halfSize)
+    public HashSet<int> FindPointsInCube(Vector3 center, float halfSize)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         Vector3 min = center - Vector3.one * halfSize;
         Vector3 max = center + Vector3.one * halfSize;
         SearchCube(root, min, max, 0, result);
         return result;
     }
 
-    private void SearchCube(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    private void SearchCube(KDTreeNode node, Vector3 min, Vector3 max, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -218,14 +218,14 @@ public class KDTree
             SearchCube(node.right, min, max, depth + 1, result);
     }
 
-    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
+    public HashSet<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         SearchEllipsoid(root, center, radii, 0, result);
         return result;
     }
 
-    private void SearchEllipsoid(KDTreeNode node, Vector3 center, Vector3 radii, int depth, List<int> result)
+    private void SearchEllipsoid(KDTreeNode node, Vector3 center, Vector3 radii, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -262,16 +262,16 @@ public class KDTree
         }
     }
 
-    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
+    public HashSet<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         Vector3 min = center - halfSizes;
         Vector3 max = center + halfSizes;
         SearchBox(root, min, max, 0, result);
         return result;
     }
 
-    private void SearchBox(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    private void SearchBox(KDTreeNode node, Vector3 min, Vector3 max, int depth, HashSet<int> result)
     {
         if (node == null) return;
 

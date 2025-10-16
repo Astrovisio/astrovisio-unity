@@ -49,8 +49,8 @@ public class KDTreeManager
         int N = data[0].Length;
         //int[] distribution = new int[8];
 
-        List<int>[] buckets = new List<int>[8];
-        for (int i = 0; i < 8; i++) buckets[i] = new List<int>();
+        HashSet<int>[] buckets = new HashSet<int>[8];
+        for (int i = 0; i < 8; i++) buckets[i] = new HashSet<int>();
 
         for (int i = 0; i < N; i++)
         {
@@ -69,7 +69,7 @@ public class KDTreeManager
 
         Parallel.For(0, 8, i =>
         {
-            trees[i] = new KDTree(data, buckets[i], xyz, visibilityArray, cancellationToken);
+            trees[i] = new KDTree(data, buckets[i].ToArray(), xyz, visibilityArray, cancellationToken);
         });
     }
 
@@ -114,7 +114,7 @@ public class KDTreeManager
         return list;
     }
 
-    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
+    public HashSet<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
         var localSets = new HashSet<int>[8];
 
@@ -124,8 +124,7 @@ public class KDTreeManager
             if (EllipsoidIntersectsOctant(center, radii, i))
             {
                 var results = trees[i].FindPointsInEllipsoid(center, radii);
-                localSets[i] = new HashSet<int>();
-                localSets[i].UnionWith(results);
+                localSets[i] = results;
             }
         });
 
@@ -136,11 +135,10 @@ public class KDTreeManager
             if (set != null)
                 allResults.UnionWith(set);
         }
-        List<int> orderedResult = allResults.ToList();
-        return orderedResult;
+        return allResults;
     }
 
-    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
+    public HashSet<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
         var localSets = new HashSet<int>[8];
 
@@ -150,8 +148,7 @@ public class KDTreeManager
             if (EllipsoidIntersectsOctant(center, halfSizes, i))
             {
                 var results = trees[i].FindPointsInBox(center, halfSizes);
-                localSets[i] = new HashSet<int>();
-                localSets[i].UnionWith(results);
+                localSets[i] = results;
             }
         });
 
@@ -162,8 +159,7 @@ public class KDTreeManager
             if (set != null)
                 allResults.UnionWith(set);
         }
-        List<int> orderedResult = allResults.ToList();
-        return orderedResult;
+        return allResults;
     }
 
     private bool EllipsoidIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)
