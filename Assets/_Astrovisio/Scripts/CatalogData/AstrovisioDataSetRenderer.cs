@@ -213,7 +213,8 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
 
             // Init KDTree
-            _ = kdTreeComponent.Initialize(data, Vector3.negativeInfinity);
+            Vector3 dataCenter = DataMapping.CoordinateSystem == CoordinateSystem.Astrophysics ? new Vector3(dataContainer.Center.x, dataContainer.Center.z, dataContainer.Center.y) : dataContainer.Center;
+            _ = kdTreeComponent.Initialize(data, dataCenter);
 
         }
 

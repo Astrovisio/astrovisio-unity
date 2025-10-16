@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
+using System.Threading;
 
 public readonly struct PointDistance
 {
@@ -105,6 +106,8 @@ public class KDTreeComponent : MonoBehaviour
     private Mapping mapping;
 
     private int[] visibilityArray;
+
+    private CancellationTokenSource initializationCts;
 
 
     [ContextMenu("ComputeNearestPoint")]
@@ -306,6 +309,13 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
+        // Cancella qualsiasi inizializzazione precedente in corso
+        CancelInitialization();
+
+        // Crea un nuovo CancellationTokenSource per questa inizializzazione
+        initializationCts = new CancellationTokenSource();
+        var token = initializationCts.Token;
+
         mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
         data = pointData;
         int[] xyz = new int[] {
@@ -316,32 +326,67 @@ public class KDTreeComponent : MonoBehaviour
 
         visibilityArray = new int[data[0].Length];
 
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz, visibilityArray));
-
-        if (!Application.isPlaying)
+        try
         {
-            return;
+            manager = await Task.Run(() =>
+            {
+                // Controlla se la cancellazione è stata richiesta prima di iniziare
+                token.ThrowIfCancellationRequested();
+
+                return new KDTreeManager(data, pivot, xyz, visibilityArray, token);
+
+
+            }, token);
+
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            if (pointDataInspector == null)
+            {
+                pointDataInspector = Instantiate(pointDataInspectorPrefab);
+                pointDataInspector.SetActiveState(false);
+            }
+
+            if (areaSphereDataInspector == null)
+            {
+                areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
+                areaSphereDataInspector.SetActiveState(false);
+            }
+
+            if (areaBoxDataInspector == null)
+            {
+                areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
+                areaBoxDataInspector.SetActiveState(false);
+            }
+
+            OnInitializationPerformed?.Invoke();
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.LogWarning("KDTree initialization was cancelled");
+            manager = null;
+        }
+        finally
+        {
+            if (initializationCts != null && !initializationCts.Token.IsCancellationRequested)
+            {
+                initializationCts.Dispose();
+                initializationCts = null;
+            }
         }
 
-        if (pointDataInspector == null)
-        {
-            pointDataInspector = Instantiate(pointDataInspectorPrefab);
-            pointDataInspector.SetActiveState(false);
-        }
+    }
 
-        if (areaSphereDataInspector == null)
+    public void CancelInitialization()
+    {
+        if (initializationCts != null)
         {
-            areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
-            areaSphereDataInspector.SetActiveState(false);
+            initializationCts.Cancel();
+            initializationCts.Dispose();
+            initializationCts = null;
         }
-
-        if (areaBoxDataInspector == null)
-        {
-            areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
-            areaBoxDataInspector.SetActiveState(false);
-        }
-
-        OnInitializationPerformed?.Invoke();
     }
 
     private void UpdateSelectionVisualizer()
@@ -931,6 +976,9 @@ public class KDTreeComponent : MonoBehaviour
 
         // Rimuovi il listener per evitare memory leak
         selectAction.action.performed -= OnSpacebarPressed;
+
+        // Cancella qualsiasi inizializzazione in corso
+        CancelInitialization();
     }
 
     private void OnDrawGizmosSelected()

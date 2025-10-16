@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
+using System.Threading;
 
 public class KDTreeManager
 {
@@ -29,22 +31,30 @@ public class KDTreeManager
     private float[][] data;
     private int[] xyz;
     private int[] visibilityArray;
+    private CancellationToken cancellationToken;
 
-    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz, int[] visibilityArray)
+    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz, int[] visibilityArray, CancellationToken token = default)
     {
         this.data = data;
         this.pivot = pivot;
         this.xyz = xyz;
         this.visibilityArray = visibilityArray;
+        this.cancellationToken = token;
         BuildTrees();
     }
 
     private void BuildTrees()
     {
+
+        // Controlla la cancellazione prima di iniziare
+        cancellationToken.ThrowIfCancellationRequested();
+
+        int N = data[0].Length;
+        int[] distribution = new int[8];
+
         List<int>[] buckets = new List<int>[8];
         for (int i = 0; i < 8; i++) buckets[i] = new List<int>();
 
-        int N = data[0].Length;
         for (int i = 0; i < N; i++)
         {
             int idx = 0;
@@ -52,11 +62,14 @@ public class KDTreeManager
             if (data[xyz[1]][i] < pivot.y) idx |= 2;
             if (data[xyz[2]][i] < pivot.z) idx |= 4;
             buckets[idx].Add(i);
+            distribution[idx]++;
         }
+
+        Debug.Log(string.Join(", ", distribution));
 
         Parallel.For(0, 8, i =>
         {
-            trees[i] = new KDTree(data, buckets[i], xyz, visibilityArray);
+            trees[i] = new KDTree(data, buckets[i], xyz, visibilityArray, cancellationToken);
         });
     }
 

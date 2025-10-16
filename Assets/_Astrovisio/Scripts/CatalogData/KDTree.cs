@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class KDTree
@@ -28,6 +29,7 @@ public class KDTree
     private KDTreeNode root;
     private int[] xyz;
     private int[] visibilityArray;
+    private CancellationToken cancellationToken;
 
     private class KDTreeNode
     {
@@ -37,11 +39,12 @@ public class KDTree
         public KDTreeNode right;
     }
 
-    public KDTree(float[][] data, List<int> pointIndices, int[] xyz, int[] visibilityArray)
+    public KDTree(float[][] data, List<int> pointIndices, int[] xyz, int[] visibilityArray, CancellationToken token = default)
     {
         this.data = data;
         this.xyz = xyz;
         this.visibilityArray = visibilityArray;
+        this.cancellationToken = token;
         indices = pointIndices.ToArray();
         root = BuildTree(0, indices.Length, 0);
     }
@@ -49,6 +52,13 @@ public class KDTree
     private KDTreeNode BuildTree(int start, int end, int depth)
     {
         if (start >= end) return null;
+
+        // if (cancellationToken.IsCancellationRequested)
+        // {
+        //     cancellationToken.ThrowIfCancellationRequested();
+        //     return null;
+        // }
+        cancellationToken.ThrowIfCancellationRequested();
 
         int axis = this.xyz[depth % 3];
         Array.Sort(indices, start, end - start, Comparer<int>.Create((a, b) =>

@@ -82,7 +82,7 @@ namespace Astrovisio
             {
                 XAxisIndex = 0;
                 YAxisIndex = 1;
-                ZAxisIndex = 3;
+                ZAxisIndex = 2;
                 return;
             }
 
@@ -173,6 +173,7 @@ namespace Astrovisio
         private void InitCenter()
         {
             Center = (MinPoint + MaxPoint) / 2f;
+            Debug.Log(File.Name + ": -----> " + Center);
         }
 
         // private Vector3 ToVector3(double[] row)
