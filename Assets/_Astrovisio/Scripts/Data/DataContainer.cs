@@ -173,7 +173,6 @@ namespace Astrovisio
         private void InitCenter()
         {
             Center = (MinPoint + MaxPoint) / 2f;
-            Debug.Log(File.Name + ": -----> " + Center);
         }
 
         // private Vector3 ToVector3(double[] row)

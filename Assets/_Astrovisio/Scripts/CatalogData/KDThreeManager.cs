@@ -50,7 +50,7 @@ public class KDTreeManager
         cancellationToken.ThrowIfCancellationRequested();
 
         int N = data[0].Length;
-        int[] distribution = new int[8];
+        //int[] distribution = new int[8];
 
         List<int>[] buckets = new List<int>[8];
         for (int i = 0; i < 8; i++) buckets[i] = new List<int>();
@@ -62,10 +62,10 @@ public class KDTreeManager
             if (data[xyz[1]][i] < pivot.y) idx |= 2;
             if (data[xyz[2]][i] < pivot.z) idx |= 4;
             buckets[idx].Add(i);
-            distribution[idx]++;
+            //distribution[idx]++;
         }
 
-        Debug.Log(string.Join(", ", distribution));
+        // Debug.Log(string.Join(", ", distribution));
 
         Parallel.For(0, 8, i =>
         {
