@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Threading;
+using System.Collections.Concurrent;
 
 public class KDTreeManager
 {
@@ -45,10 +46,6 @@ public class KDTreeManager
 
     private void BuildTrees()
     {
-
-        // Controlla la cancellazione prima di iniziare
-        cancellationToken.ThrowIfCancellationRequested();
-
         int N = data[0].Length;
         //int[] distribution = new int[8];
 
@@ -57,6 +54,9 @@ public class KDTreeManager
 
         for (int i = 0; i < N; i++)
         {
+            // Controlla se la cancellazione è stata richiesta
+            cancellationToken.ThrowIfCancellationRequested();
+
             int idx = 0;
             if (data[xyz[0]][i] < pivot.x) idx |= 1;
             if (data[xyz[1]][i] < pivot.y) idx |= 2;
@@ -116,42 +116,54 @@ public class KDTreeManager
 
     public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
-        var allResults = new HashSet<int>();
+        var localSets = new HashSet<int>[8];
 
         // Check which octants the ellipsoid intersects
-        for (int i = 0; i < 8; i++)
+        Parallel.For(0, 8, i =>
         {
             if (EllipsoidIntersectsOctant(center, radii, i))
             {
                 var results = trees[i].FindPointsInEllipsoid(center, radii);
-                foreach (var idx in results)
-                {
-                    allResults.Add(idx);
-                }
+                localSets[i] = new HashSet<int>();
+                localSets[i].UnionWith(results);
             }
-        }
+        });
 
-        return allResults.ToList();
+        // Merge finale (single-threaded)
+        var allResults = new HashSet<int>();
+        foreach (var set in localSets)
+        {
+            if (set != null)
+                allResults.UnionWith(set);
+        }
+        List<int> orderedResult = allResults.ToList();
+        return orderedResult;
     }
 
     public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
-        var allResults = new HashSet<int>();
+        var localSets = new HashSet<int>[8];
 
-        // Check which octants the box intersects
-        for (int i = 0; i < 8; i++)
+        // Check which octants the ellipsoid intersects
+        Parallel.For(0, 8, i =>
         {
-            if (BoxIntersectsOctant(center, halfSizes, i))
+            if (EllipsoidIntersectsOctant(center, halfSizes, i))
             {
                 var results = trees[i].FindPointsInBox(center, halfSizes);
-                foreach (var idx in results)
-                {
-                    allResults.Add(idx);
-                }
+                localSets[i] = new HashSet<int>();
+                localSets[i].UnionWith(results);
             }
-        }
+        });
 
-        return allResults.ToList();
+        // Merge finale (single-threaded)
+        var allResults = new HashSet<int>();
+        foreach (var set in localSets)
+        {
+            if (set != null)
+                allResults.UnionWith(set);
+        }
+        List<int> orderedResult = allResults.ToList();
+        return orderedResult;
     }
 
     private bool EllipsoidIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)

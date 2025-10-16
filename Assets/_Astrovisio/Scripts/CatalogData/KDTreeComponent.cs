@@ -330,11 +330,8 @@ public class KDTreeComponent : MonoBehaviour
         {
             manager = await Task.Run(() =>
             {
-                // Controlla se la cancellazione è stata richiesta prima di iniziare
-                token.ThrowIfCancellationRequested();
 
                 return new KDTreeManager(data, pivot, xyz, visibilityArray, token);
-
 
             }, token);
 

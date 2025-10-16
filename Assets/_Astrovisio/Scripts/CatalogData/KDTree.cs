@@ -53,11 +53,7 @@ public class KDTree
     {
         if (start >= end) return null;
 
-        // if (cancellationToken.IsCancellationRequested)
-        // {
-        //     cancellationToken.ThrowIfCancellationRequested();
-        //     return null;
-        // }
+        // Controlla se la cancellazione è stata richiesta
         cancellationToken.ThrowIfCancellationRequested();
 
         int axis = this.xyz[depth % 3];
