@@ -642,6 +642,16 @@ namespace CatalogData
             DataMapping.Uniforms.NoiseStrength = value;
         }
 
+        public float GetNoiseValue()
+        {
+            return DataMapping.Uniforms.NoiseStrength;
+        }
+
+        public bool GetNoiseState()
+        {
+            return DataMapping.UseNoise;
+        }
+
         // Add this method to get detailed info about area selection
         public SelectionResult GetAreaSelectionInfo()
         {

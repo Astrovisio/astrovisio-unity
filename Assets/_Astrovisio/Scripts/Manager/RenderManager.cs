@@ -10,7 +10,7 @@ namespace Astrovisio
     [Serializable]
     public readonly struct ProjectFile : IEquatable<ProjectFile>
     {
-        
+
         private readonly int projectId;
         private readonly int fileId;
 
@@ -311,7 +311,7 @@ namespace Astrovisio
             Project project = dc.Project;
             OnFileRenderStart?.Invoke(project);
 
-            SceneManager.Instance.ResetCameraTransform();
+            // SceneManager.Instance.ResetCameraTransform();
 
             paramRenderSettings = null;
 
@@ -329,6 +329,7 @@ namespace Astrovisio
 
             DataRenderer.RenderDataContainer(dc);
 
+            SetNoise(false, 0f);
             SetDataInspector(false, true);
             OnFileRenderEnd?.Invoke(project);
         }
@@ -356,6 +357,18 @@ namespace Astrovisio
         {
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
             astrovisioDataSetRenderer.SetNoise(state, value);
+        }
+
+        public float GetNoiseValue()
+        {
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
+            return astrovisioDataSetRenderer.GetNoiseValue();
+        }
+
+        public bool GetNoiseState()
+        {
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
+            return astrovisioDataSetRenderer.GetNoiseState();
         }
 
         // === Other ===

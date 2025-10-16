@@ -57,6 +57,8 @@ namespace Astrovisio
         {
             rootButton = Root.Q<Button>("RootButton");
 
+            // Debug.LogWarning($"{Variable.Name} - {Variable.ThrMin} {Variable.ThrMinSel} - {Variable.ThrMax} {Variable.ThrMaxSel}");
+
             // Name
             nameContainer = Root.Q<VisualElement>("NameContainer");
             nameLabel = nameContainer.Q<Label>("Label");

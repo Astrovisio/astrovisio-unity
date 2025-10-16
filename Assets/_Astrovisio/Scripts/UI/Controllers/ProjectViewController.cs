@@ -20,6 +20,7 @@ namespace Astrovisio
         // === UI ===
         private Label projectNameLabel;
         private Label descriptionLabel;
+        private Button saveButton;
         private Toggle favouriteToggle;
         private Button editButton;
         private Button deleteButton;
@@ -83,6 +84,7 @@ namespace Astrovisio
             descriptionLabel.text = Project.Description;
 
             // Project Buttons
+            saveButton = topContainer.Q<Button>("SaveButton");
             favouriteToggle = topContainer.Q<VisualElement>("FavouriteToggle").Q<Toggle>("CheckboxRoot");
             editButton = topContainer.Q<Button>("EditButton");
             deleteButton = topContainer.Q<Button>("DeleteButton");
@@ -125,6 +127,7 @@ namespace Astrovisio
             currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
 
             InitFileContainer();
+            InitSaveButton();
             InitDeleteButton();
             InitEditButton();
             InitFavouriteToggle();
@@ -203,6 +206,12 @@ namespace Astrovisio
 
             foreach (Variable variable in currentFile.Variables)
             {
+                // Fix to avoid breaking the double slider component
+                if (variable.ThrMin == variable.ThrMax)
+                {
+                    continue;
+                }
+
                 TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = variable.Name;
@@ -352,6 +361,16 @@ namespace Astrovisio
                 // Debug.Log($"File /// Name: {file.Name} - Processed: {file.Processed}");
                 // Debug.Log($"File added: {fileState.fileInfo.Name} ({fileState.fileInfo.Size} bytes) - {fileState.fileInfo.Path}");
             }
+        }
+
+        private void InitSaveButton()
+        {
+            saveButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                ProjectManager.SaveProjectToJSON();
+                evt.StopPropagation();
+                // Debug.Log("SaveButton clicked");
+            });
         }
 
         private void InitDeleteButton()

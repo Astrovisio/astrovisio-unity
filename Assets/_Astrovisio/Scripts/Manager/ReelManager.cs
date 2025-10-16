@@ -257,6 +257,26 @@ namespace Astrovisio
             return reel.GetAt(cursor).FileId;
         }
 
+        public File GetReelCurrentFile(int projectId)
+        {
+            if (!reelByProject.TryGetValue(projectId, out var reel) || reel == null)
+            {
+                return null;
+            }
+
+            int count = reel.Enumerate().Count();
+            if (count == 0)
+            {
+                return null;
+            }
+
+            int cursor = cursorByProject.TryGetValue(projectId, out var c) ? c : 0;
+            cursor = Mathf.Clamp(cursor, 0, count - 1);
+
+            return reel.GetAt(cursor).Data?.File;
+        }
+
+
         public DataContainer GetReelCurrentDataContainer(int projectId)
         {
             if (!reelByProject.TryGetValue(projectId, out var reel) || reel == null)
