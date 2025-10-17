@@ -53,8 +53,9 @@ public class KDTreeManager
 
         for (int i = 0; i < N; i++)
         {
-            // Controlla se la cancellazione è stata richiesta
-            cancellationToken.ThrowIfCancellationRequested();
+            // Controlla se la cancellazione è stata richiesta ogni 1024 iterazioni
+            if ((i & 0x3FF) == 0)  // Equivale a i % 1024 == 0, ma più veloce
+                cancellationToken.ThrowIfCancellationRequested();
 
             int idx = 0;
             if (data[xyz[0]][i] < pivot.x) idx |= 1;

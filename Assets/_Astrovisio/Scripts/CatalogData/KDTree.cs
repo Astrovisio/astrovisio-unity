@@ -53,8 +53,8 @@ public class KDTree
     {
         if (start >= end) return null;
 
-        // Controlla se la cancellazione è stata richiesta
-        cancellationToken.ThrowIfCancellationRequested();
+        if (((start + depth) & 0x3FF) == 0)
+            cancellationToken.ThrowIfCancellationRequested();
 
         int axis = this.xyz[depth % 3];
         Array.Sort(indices, start, end - start, Comparer<int>.Create((a, b) =>
