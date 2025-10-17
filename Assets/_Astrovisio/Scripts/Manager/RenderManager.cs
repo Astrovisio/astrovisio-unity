@@ -321,12 +321,7 @@ namespace Astrovisio
             // SceneManager.Instance.ResetCameraTransform();
 
             paramRenderSettings = null;
-
-            if (DataRenderer != null)
-            {
-                Destroy(DataRenderer.gameObject);
-                DataRenderer = null;
-            }
+            ClearDataContainer();
 
             DataRenderer = Instantiate(dataRendererPrefab);
             // RenderSettingsController.DataRenderer = DataRenderer;
@@ -340,6 +335,15 @@ namespace Astrovisio
             SetDataInspector(false, true);
             UpdateRenderedProjectFile(project, file);
             OnFileRenderEnd?.Invoke(project, file);
+        }
+
+        public void ClearDataContainer()
+        {
+            if (DataRenderer != null)
+            {
+                Destroy(DataRenderer.gameObject);
+                DataRenderer = null;
+            }
         }
 
         private void UpdateRenderedProjectFile(Project project, File file)
