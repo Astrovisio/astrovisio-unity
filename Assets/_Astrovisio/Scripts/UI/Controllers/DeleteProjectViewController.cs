@@ -33,6 +33,11 @@ namespace Astrovisio
         private void OnDeleteClicked()
         {
             // Debug.Log("OnDeleteClicked");
+            foreach (File file in projectToDelete.Files)
+            {
+                SettingsManager.Instance.RemoveSettings(projectToDelete.Id, file.Id);
+            }
+            ReelManager.Instance.RemoveReel(projectToDelete.Id);
             ProjectManager.DeleteProject(projectToDelete.Id, projectToDelete);
             Root.RemoveFromClassList("active");
         }

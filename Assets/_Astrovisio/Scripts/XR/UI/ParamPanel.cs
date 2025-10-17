@@ -25,7 +25,7 @@ namespace Astrovisio
             foreach (ParamButton paramButton in paramButtons)
             {
                 paramButton.SetButtonState(false);
-                paramButton.OnButtonClicked += OnButtonClicked;
+                paramButton.OnParamButtonClicked += OnButtonClicked;
             }
 
             settingPanelGO.SetActive(false);
@@ -39,7 +39,7 @@ namespace Astrovisio
             {
                 settingPanelGO.SetActive(true);
                 ResetAllButton(button);
-                panelTitleTMP.text = button.settings.Name;
+                // panelTitleTMP.text = button.settings.Name;
             }
             else
             {

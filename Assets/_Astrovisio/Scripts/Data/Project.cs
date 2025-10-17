@@ -109,11 +109,16 @@ namespace Astrovisio
             }
         }
 
-        public Project(string name, string description, bool favourite = false)
+        // public Project(string name, string description, bool favourite = false)
+        // {
+        //     Name = name;
+        //     Description = description;
+        //     Favourite = favourite;
+        // }
+
+        public File GetFile(int fileId)
         {
-            Name = name;
-            Description = description;
-            Favourite = favourite;
+            return Files.FirstOrDefault(f => f.Id == fileId);
         }
 
         public void UpdateFrom(Project other)

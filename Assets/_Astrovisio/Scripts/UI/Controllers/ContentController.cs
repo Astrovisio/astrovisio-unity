@@ -50,6 +50,7 @@ namespace Astrovisio
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectUnselected += OnProjectUnselected;
             projectManager.ProjectClosed += OnProjectClosed;
+            projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void Start()
@@ -67,6 +68,7 @@ namespace Astrovisio
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectUnselected -= OnProjectUnselected;
             projectManager.ProjectClosed -= OnProjectClosed;
+            projectManager.ProjectDeleted -= OnProjectDeleted;
         }
 
         private void EnableNewProjectButton()
@@ -114,7 +116,7 @@ namespace Astrovisio
         {
             if (loadJSONButton != null)
             {
-                loadJSONButton.UnregisterCallback<ClickEvent>(OnNewProjectClicked);
+                loadJSONButton.UnregisterCallback<ClickEvent>(OnLoadJSONClicked);
             }
         }
 
@@ -184,15 +186,21 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            // foreach (var controller in projectViewControllerDictionary.Values)
-            // {
-            //     controller.Root.style.display = DisplayStyle.None;
-            // }
-            // homeViewContainer.style.display = DisplayStyle.Flex;
+            SafeDisposeAndRemove(project);
+        }
+        private void OnProjectDeleted(Project project)
+        {
+            SafeDisposeAndRemove(project);
+        }
 
-            projectViewControllerDictionary[project.Id].Dispose();
-            contentContainer.Remove(projectViewControllerDictionary[project.Id].Root);
-            projectViewControllerDictionary.Remove(project.Id);
+        private void SafeDisposeAndRemove(Project project)
+        {
+            if (projectViewControllerDictionary.Remove(project.Id, out var controller) && controller != null)
+            {
+                if (controller.Root != null)
+                    contentContainer.Remove(controller.Root);
+                controller.Dispose();
+            }
         }
 
     }

@@ -53,14 +53,14 @@ namespace Astrovisio
 			return openedProjectList.Any(p => p.Id == projectId);
 		}
 
-		public Project GetProject(int projectId)
+		public Project GetLocalProject(int projectId)
 		{
 			return projectList.FirstOrDefault(p => p.Id == projectId);
 		}
 
-		public File GetFile(int projectId, int fileId)
+		public File GetLocalFile(int projectId, int fileId)
 		{
-			Project project = GetProject(projectId);
+			Project project = GetLocalProject(projectId);
 			return project?.Files?.FirstOrDefault(f => f.Id == fileId);
 		}
 
@@ -79,6 +79,7 @@ namespace Astrovisio
 			return projectList;
 		}
 
+		// === API ===
 		public async void FetchAllProjects()
 		{
 			uiManager.SetLoadingView(true);
@@ -116,11 +117,13 @@ namespace Astrovisio
 					Project existing = projectList.FirstOrDefault(p => p.Id == projectFromApi.Id);
 					if (existing != null)
 					{
+						// Debug.LogError("1 " + existing + " - " + existing?.Files.Count);
 						existing.UpdateFrom(projectFromApi);
 						projectResult = existing;
 					}
 					else
 					{
+						// Debug.LogError("2 " + projectFromApi + " - " + projectFromApi?.Files.Count);
 						projectList.Add(projectFromApi);
 						projectResult = projectFromApi;
 					}
@@ -141,6 +144,43 @@ namespace Astrovisio
 
 			return projectResult;
 		}
+
+		public async Task<Project> GetProject(int id)
+        {
+            Project projectResult = null;
+
+			await apiManager.ReadProject(
+				id,
+				projectFromApi =>
+				{
+					Project existing = projectList.FirstOrDefault(p => p.Id == projectFromApi.Id);
+					if (existing != null)
+					{
+						existing.UpdateFrom(projectFromApi);
+						projectResult = existing;
+					}
+					else
+					{
+						projectList.Add(projectFromApi);
+						projectResult = projectFromApi;
+					}
+
+					if (!openedProjectList.Any(p => p.Id == projectResult.Id))
+					{
+						openedProjectList.Add(projectResult);
+					}
+
+					currentProject = projectResult;
+					// ProjectOpened?.Invoke(projectResult);
+				},
+				error =>
+				{
+					ApiError?.Invoke(error);
+				}
+			);
+
+			return projectResult;
+        }
 
 		public async Task<Project> CreateProject(string name, string description, string[] paths, bool clearLoader = true)
 		{
@@ -274,7 +314,7 @@ namespace Astrovisio
 					float progress = 0f;
 					while (progress < 1.0f)
 					{
-						await Task.Delay(250);
+						await Task.Delay(1000);
 
 						JobStatusResponse statusResponse = await apiManager.GetJobProgress(jobID.Value, error =>
 						{
@@ -322,8 +362,8 @@ namespace Astrovisio
 
 
 				// Get project and file
-				Project project = GetProject(projectId);
-				File file = GetFile(projectId, fileId);
+				Project project = GetLocalProject(projectId);
+				File file = GetLocalFile(projectId, fileId);
 
 				// Get updated project and update file
 				await apiManager.ReadProject(
@@ -432,7 +472,7 @@ namespace Astrovisio
 						int cols = dataPack?.Columns?.Length ?? 0;
 						// Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
 
-						Project project = GetProject(projectId);
+						Project project = GetLocalProject(projectId);
 						if (project == null)
 						{
 							Debug.LogWarning($"[GetProcessedFile] Project {projectId} not found.");
@@ -482,7 +522,7 @@ namespace Astrovisio
 		public async Task<File> AddFile(int projectId, string path)
 		{
 			// Pre-checks
-			Project project = GetProject(projectId);
+			Project project = GetLocalProject(projectId);
 			if (project == null)
 			{
 				Debug.LogWarning($"[ProjectManager] AddFile: project {projectId} not found.");
@@ -546,7 +586,7 @@ namespace Astrovisio
 					return null;
 				}
 
-				Project updatedProject = GetProject(projectId) ?? project;
+				Project updatedProject = GetLocalProject(projectId) ?? project;
 				updatedProject.UpdateFrom(updated);
 				ProjectUpdated?.Invoke(updatedProject);
 				return updatedProject.Files.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
@@ -560,7 +600,7 @@ namespace Astrovisio
 		public async Task<bool> RemoveFile(int projectId, int fileId)
 		{
 			// Pre-checks
-			Project project = GetProject(projectId);
+			Project project = GetLocalProject(projectId);
 			if (project == null || project.Files == null || project.Files.Count == 0)
 			{
 				Debug.LogWarning($"[ProjectManager] RemoveFile: project {projectId} not found or has no files.");
@@ -619,7 +659,7 @@ namespace Astrovisio
 					return false;
 				}
 
-				Project updatedProject = GetProject(projectId) ?? project;
+				Project updatedProject = GetLocalProject(projectId) ?? project;
 
 				Debug.Log("updatedProject.Files.Count " + updatedProject.Files.Count);
 				Debug.Log("updated.Files.Count " + updated.Files.Count);
@@ -636,7 +676,7 @@ namespace Astrovisio
 
 		public async Task UpdateFileOrder(int projectId, int[] orderIds)
 		{
-			Project project = GetProject(projectId);
+			Project project = GetLocalProject(projectId);
 			if (project == null || project.Files == null || project.Files.Count == 0)
 			{
 				Debug.LogWarning($"[UpdateFileOrder] Project {projectId} not found or has no files.");
@@ -688,10 +728,7 @@ namespace Astrovisio
 			}
 		}
 
-		// TODO: settings
-
-
-		// --------------------
+		// === Other ===
 		public void CloseProject(int id)
 		{
 			Project projectToRemove = openedProjectList.Find(p => p.Id == id);
@@ -804,9 +841,9 @@ namespace Astrovisio
 					ApiError?.Invoke("Error during update settings: " + ex.Message);
 				}
 				finally
-                {
-                    uiManager.SetLoadingView(false);
-                }
+				{
+					uiManager.SetLoadingView(false);
+				}
 			}
 
 			return createdProject;

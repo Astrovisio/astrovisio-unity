@@ -46,7 +46,6 @@ namespace Astrovisio
 
             ProjectManager.ProjectOpened += OnProjectOpened;
             ProjectManager.ProjectUpdated += OnProjectUpdated;
-            ProjectManager.ProjectClosed += OnProjectClosed;
             ProjectManager.FileSelected += OnFileSelected;
             ProjectManager.FileUpdated += OnFileUpdated;
 
@@ -67,6 +66,14 @@ namespace Astrovisio
             InitParamsScrollView();
             InitActualSizeLabel();
             InitDownsamplingDropdown();
+        }
+
+        public void Dispose()
+        {
+            ProjectManager.ProjectOpened -= OnProjectOpened;
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileSelected -= OnFileSelected;
+            ProjectManager.FileUpdated -= OnFileUpdated;
         }
 
         private void InitParamsScrollView()
@@ -378,19 +385,6 @@ namespace Astrovisio
             UpdateChipLabel();
         }
 
-        private void OnProjectClosed(Project project)
-        {
-            if (project == null || project.Id != Project.Id)
-            {
-                return;
-            }
-
-            // ProjectManager.ProjectOpened += OnProjectOpened;
-            // ProjectManager.ProjectUpdated -= OnProjectUpdated;
-            ProjectManager.FileSelected -= OnFileSelected;
-            ProjectManager.ProjectClosed -= OnProjectClosed;
-        }
-
         private void OnFileSelected(Project project, File file)
         {
             // Debug.Log("I'm: " + Project.Name + " @ " + project.Name + " - " + file.Name);
@@ -402,6 +396,7 @@ namespace Astrovisio
 
             if (ReferenceEquals(currentFile, file))
             {
+                Debug.LogError("Return?");
                 return;
             }
 
@@ -415,16 +410,18 @@ namespace Astrovisio
 
         private void OnFileUpdated(Project project, File file)
         {
-            if (project == null || file == null)
+            if (project == null || file == null || project.Id != Project.Id)
             {
                 return;
             }
 
             // Debug.Log(ReferenceEquals(Project, project));
+            currentFile = ProjectManager.GetLocalFile(Project.Id, file.Id);
             // Debug.Log(ReferenceEquals(currentFile, file));
+
             if (Project.Id == project.Id && currentFile.Id == file.Id)
             {
-                // Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name} updated.");
+                Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name} updated.");
                 UpdateParamsScrollView();
                 UpdateChipLabel();
             }

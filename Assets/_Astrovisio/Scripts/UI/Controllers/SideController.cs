@@ -50,6 +50,7 @@ namespace Astrovisio
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectUnselected += OnProjectUnselected;
             projectManager.ProjectClosed += OnProjectClosed;
+            projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void OnDisable()
@@ -57,6 +58,7 @@ namespace Astrovisio
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectUnselected -= OnProjectUnselected;
             projectManager.ProjectClosed -= OnProjectClosed;
+            projectManager.ProjectDeleted -= OnProjectDeleted;
         }
 
         private void EnableHomeSidebar()
@@ -108,15 +110,22 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            // foreach (var controller in projectSidebarControllerDictionary.Values)
-            // {
-            //     controller.Root.style.display = DisplayStyle.None;
-            // }
-            // sidebarContainer.style.display = DisplayStyle.Flex;
+            SafeDisposeAndRemove(project);
+        }
 
-            projectSidebarControllerDictionary[project.Id].Dispose();
-            sideContainer.Remove(projectSidebarControllerDictionary[project.Id].Root);
-            projectSidebarControllerDictionary.Remove(project.Id);
+        private void OnProjectDeleted(Project project)
+        {
+            SafeDisposeAndRemove(project);
+        }
+
+        private void SafeDisposeAndRemove(Project project)
+        {
+            if (projectSidebarControllerDictionary.Remove(project.Id, out var controller) && controller != null)
+            {
+                if (controller.Root != null)
+                    sideContainer.Remove(controller.Root);
+                controller.Dispose();
+            }
         }
 
     }

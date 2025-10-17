@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using CatalogData;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Astrovisio
@@ -70,8 +69,8 @@ namespace Astrovisio
         [SerializeField] private DataRenderer dataRendererPrefab;
 
         // === Events ===
-        public event Action<Project> OnFileRenderStart;
-        public event Action<Project> OnFileRenderEnd;
+        public event Action<Project, File> OnFileRenderStart;
+        public event Action<Project, File> OnFileRenderEnd;
 
         // === Settings ===
         // public RenderSettingsController RenderSettingsController { get; set; }
@@ -81,6 +80,8 @@ namespace Astrovisio
 
         // === Local ===
         public bool isInspectorModeActive = false;
+        public Project renderedProject = null;
+        public File renderedFile = null;
 
         private void Awake()
         {
@@ -92,11 +93,6 @@ namespace Astrovisio
             }
 
             Instance = this;
-        }
-
-        private void Start()
-        {
-            // RenderSettingsController = new RenderSettingsController();
         }
 
         // === DataContainer ===
@@ -219,7 +215,7 @@ namespace Astrovisio
                 return;
             }
 
-            if (projectManager.GetProject(projectId).Files.Count <= 1)
+            if (projectManager.GetLocalProject(projectId).Files.Count <= 1)
             {
                 Debug.LogWarning($"[RenderManager] RenderReelNext: not many file into P{projectId}");
                 return;
@@ -250,7 +246,7 @@ namespace Astrovisio
                 return;
             }
 
-            if (projectManager.GetProject(projectId).Files.Count <= 1)
+            if (projectManager.GetLocalProject(projectId).Files.Count <= 1)
             {
                 Debug.LogWarning($"[RenderManager] RenderReelPrev: not many file into P{projectId}");
                 return;
@@ -271,6 +267,16 @@ namespace Astrovisio
             string name = dc?.File?.Name ?? $"F{fileId}";
             Debug.Log($"[RenderManager] RenderReelPrev P{projectId} → {name} (F{fileId})");
             RenderDataContainer(dc);
+        }
+
+        public int? GetReelCurrentFileId(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return null;
+            }
+
+            return ReelManager.Instance.GetReelCurrentFileId(projectId);
         }
 
         // === Render ===
@@ -309,7 +315,8 @@ namespace Astrovisio
             }
 
             Project project = dc.Project;
-            OnFileRenderStart?.Invoke(project);
+            File file = dc.File;
+            OnFileRenderStart?.Invoke(project, file);
 
             // SceneManager.Instance.ResetCameraTransform();
 
@@ -331,7 +338,14 @@ namespace Astrovisio
 
             SetNoise(false, 0f);
             SetDataInspector(false, true);
-            OnFileRenderEnd?.Invoke(project);
+            UpdateRenderedProjectFile(project, file);
+            OnFileRenderEnd?.Invoke(project, file);
+        }
+
+        private void UpdateRenderedProjectFile(Project project, File file)
+        {
+            renderedProject = project;
+            renderedFile = file;
         }
 
         // === Inspector ===
@@ -370,19 +384,6 @@ namespace Astrovisio
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
             return astrovisioDataSetRenderer.GetNoiseState();
         }
-
-        // === Other ===
-
-        public int? GetReelCurrentFileId(int projectId)
-        {
-            if (ReelManager.Instance == null)
-            {
-                return null;
-            }
-
-            return ReelManager.Instance.GetReelCurrentFileId(projectId);
-        }
-
 
     }
 

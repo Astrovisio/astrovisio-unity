@@ -124,7 +124,8 @@ namespace Astrovisio
                 ApplyScrollViewOrderType();
             };
 
-            currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
+            currentFile = (Project.Files != null && Project.Files.Count > 0) ? Project.Files.OrderBy(f => f.Order).FirstOrDefault() : null;
+            // Debug.Log(currentFile.Id + " - " + currentFile.Name);
 
             InitFileContainer();
             InitSaveButton();
@@ -144,15 +145,25 @@ namespace Astrovisio
             ProjectManager.FileUpdated -= OnFileUpdated;
         }
 
-        private void OnFileRowClicked(FileState fileState)
+        private async void OnFileRowClicked(FileState fileState)
         {
             if (fileState.file == null || fileState.file == currentFile)
             {
                 return;
             }
-
-            currentFile = fileState.file;
             // Debug.Log("Is current clicked file processed? " + currentFile.Processed);
+
+            Project project = await ProjectManager.GetProject(Project.Id);
+            currentFile = project.GetFile(fileState.file.Id);
+            fileState.file = currentFile;
+
+            // foreach (Variable variable in currentFile.Variables)
+            // {
+            //     if (variable.Selected == true)
+            //     {
+            //         Debug.LogError($"{variable.Name} - {variable.XAxis} {variable.YAxis} {variable.ZAxis}");
+            //     }
+            // }
 
             InitScrollView();
             InitCheckAllToggle();
@@ -216,7 +227,7 @@ namespace Astrovisio
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = variable.Name;
 
-                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, variable);
+                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, currentFile, variable);
                 paramControllers.Add(paramRowController);
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
@@ -254,8 +265,11 @@ namespace Astrovisio
         private void HandleOnAxisChanged(Axis? axis, ParamRowController paramRowController)
         {
             // Debug.LogWarning("HandleOnAxisChanged");
+            // Debug.LogWarning(axis == null);
 
-            Debug.LogWarning(axis == null);
+            // File file = ProjectManager.GetFile(Project.Id, paramRowController.File.Id);
+            // Variable variableToEdit = file.GetVariable(paramRowController.Variable.Name);
+
             if (axis == null)
             {
                 foreach (var kvp in selectedAxis.ToList())
@@ -266,12 +280,15 @@ namespace Astrovisio
                         switch (kvp.Key)
                         {
                             case Axis.X:
+                                // Debug.Log("Axis.X 1");
                                 paramRowController.Variable.XAxis = false;
                                 break;
                             case Axis.Y:
+                                // Debug.Log("Axis.Y 1");
                                 paramRowController.Variable.YAxis = false;
                                 break;
                             case Axis.Z:
+                                // Debug.Log("Axis.Z 1");
                                 paramRowController.Variable.ZAxis = false;
                                 break;
                         }
@@ -288,12 +305,15 @@ namespace Astrovisio
                 switch (axis.Value)
                 {
                     case Axis.X:
+                        // Debug.Log("Axis.X 2");
                         previous.Variable.XAxis = false;
                         break;
                     case Axis.Y:
+                        // Debug.Log("Axis.Y 2");
                         previous.Variable.YAxis = false;
                         break;
                     case Axis.Z:
+                        // Debug.Log("Axis.Z 2");
                         previous.Variable.ZAxis = false;
                         break;
                 }
@@ -304,16 +324,19 @@ namespace Astrovisio
             switch (axis.Value)
             {
                 case Axis.X:
+                    // Debug.Log("Axis.X 3");
                     paramRowController.Variable.XAxis = true;
                     paramRowController.Variable.YAxis = false;
                     paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Y:
+                    // Debug.Log("Axis.Y 3");
                     paramRowController.Variable.XAxis = false;
                     paramRowController.Variable.YAxis = true;
                     paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Z:
+                    // Debug.Log("Axis.Z 3");
                     paramRowController.Variable.XAxis = false;
                     paramRowController.Variable.ZAxis = true;
                     paramRowController.Variable.YAxis = false;

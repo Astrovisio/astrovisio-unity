@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -151,15 +152,18 @@ namespace Astrovisio
             }
         }
 
+        public Variable GetVariable(string varName)
+        {
+            return Variables.FirstOrDefault(v => v.Name == varName);
+        }
+
         public void UpdateFrom(File other)
         {
-            // If 'other' is null, there is nothing to merge/update.
             if (other == null)
             {
                 return;
             }
 
-            // Copy scalar/file-level fields from 'other' (shallow copy).
             Type = other.Type;
             Path = other.Path;
             Processed = other.Processed;
@@ -170,9 +174,7 @@ namespace Astrovisio
             Size = other.Size;
             Id = other.Id;
 
-            // --- Variables sync (remove/update/add) ---
-            // If the source file has no variables, the canonical state is "no variables".
-            // Clear local list (if any) and return.
+
             if (other.Variables == null)
             {
                 if (Variables != null && Variables.Count > 0)
@@ -182,7 +184,6 @@ namespace Astrovisio
                 return;
             }
 
-            // Ensure our local list exists before proceeding.
             if (Variables == null)
             {
                 Variables = new List<Variable>();
@@ -193,36 +194,33 @@ namespace Astrovisio
             // For each local variable, check if it still exists in 'other' by Name; if not, remove it.
             for (int i = Variables.Count - 1; i >= 0; i--)
             {
-                Variable current = Variables[i];
-                // Defensive check: remove null entries if any have crept in.
-                if (current == null)
+                Variable currentVar = Variables[i];
+
+                if (currentVar == null)
                 {
                     Variables.RemoveAt(i);
                     continue;
                 }
 
                 bool existsInOther = false;
-                // Linear scan of 'other.Variables' to find a matching Name.
+
                 foreach (Variable ov in other.Variables)
                 {
-                    // Matching key: Variable.Name (adjust here if you later introduce an Id).
-                    if (ov != null && ov.Name == current.Name)
+
+                    if (ov != null && ov.Name == currentVar.Name)
                     {
                         existsInOther = true;
                         break;
                     }
                 }
-                // If not found in 'other', this variable was removed on the source side -> remove locally.
+
                 if (!existsInOther)
                 {
                     Variables.RemoveAt(i);
                 }
             }
 
-            // --- Upsert pass (update or insert) ---
-            // For each variable in 'other':
-            //   - If we already have it (same Name), update the existing instance (preserve reference).
-            //   - If we don't have it, create a new instance and copy values from 'other'.
+
             foreach (Variable otherVar in other.Variables)
             {
                 if (otherVar == null)
@@ -231,7 +229,7 @@ namespace Astrovisio
                 }
 
                 bool found = false;
-                // Look for a local variable with the same Name.
+
                 for (int i = 0; i < Variables.Count; i++)
                 {
                     Variable current = Variables[i];
@@ -253,7 +251,6 @@ namespace Astrovisio
                 }
             }
         }
-
 
         public File DeepCopy()
         {

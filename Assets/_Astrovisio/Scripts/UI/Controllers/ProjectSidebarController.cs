@@ -47,6 +47,8 @@ namespace Astrovisio
             Root = root;
 
             ProjectManager.ProjectOpened += OnProjectOpened;
+            // ProjectManager.ProjectClosed += OnProjectClosed;
+            // ProjectManager.ProjectDeleted += OnProjectDeleted;
             ProjectManager.FileProcessed += OnFileProcessed;
             ProjectManager.FileUpdated += OnFileUpdated;
 
@@ -84,8 +86,13 @@ namespace Astrovisio
         public void Dispose()
         {
             ProjectManager.ProjectOpened -= OnProjectOpened;
+            // ProjectManager.ProjectClosed -= OnProjectClosed;
+            // ProjectManager.ProjectDeleted -= OnProjectDeleted;
             ProjectManager.FileProcessed -= OnFileProcessed;
             ProjectManager.FileUpdated -= OnFileUpdated;
+
+            projectSidebarDataController.Dispose();
+            projectSidebarRenderController.Dispose();
         }
 
         private void OnDataSettingsButtonClicked()
@@ -166,20 +173,6 @@ namespace Astrovisio
             }
             goToVRButton.Blur();
         }
-
-        // private void OnProjectReadyToGetRendered(Project project)
-        // {
-        //     if (Project.Id != project.Id)
-        //     {
-        //         return;
-        //     }
-        //     else
-        //     {
-        //         Project = project;
-        //     }
-
-        //     SetNextStepButtons(true);
-        // }
 
         private void OnProjectOpened(Project project)
         {

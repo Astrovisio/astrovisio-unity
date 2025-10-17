@@ -38,16 +38,18 @@ namespace Astrovisio
         private Toggle checkbox;
 
         // === Data ===
+        public File File { get; set; }
         public Variable Variable { get; set; }
 
         // === Local ===
         private UIDebouncer _thrDebouncer;
 
 
-        public ParamRowController(ProjectManager projectManager, VisualElement root, Variable variable)
+        public ParamRowController(ProjectManager projectManager, VisualElement root, File file, Variable variable)
         {
             ProjectManager = projectManager;
             Root = root;
+            File = file;
             Variable = variable;
 
             Init();
@@ -242,7 +244,6 @@ namespace Astrovisio
 
             DebouncedNotifyThresholdsChanged();
         }
-
 
         public void SetSelected(bool value, bool silent = false)
         {

@@ -124,7 +124,7 @@ namespace Astrovisio
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[SettingsManager] OnFileProcessed -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
+                Debug.LogWarning($"[SettingsManager] OnFileUpdated -> GetSettings failed for P{project.Id}-F{file.Id}: {ex.Message}");
             }
         }
 
@@ -412,7 +412,7 @@ namespace Astrovisio
                 return;
             }
 
-            File file = projectManager.GetFile(projectId, fileId);
+            File file = projectManager.GetLocalFile(projectId, fileId);
             string xAxisName = file.Variables.FirstOrDefault(v => v.XAxis)?.Name;
             string yAxisName = file.Variables.FirstOrDefault(v => v.YAxis)?.Name;
             string zAxisName = file.Variables.FirstOrDefault(v => v.ZAxis)?.Name;

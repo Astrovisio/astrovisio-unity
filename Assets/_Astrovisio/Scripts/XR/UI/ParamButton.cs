@@ -5,10 +5,6 @@ using UnityEngine.UI;
 
 namespace Astrovisio
 {
-    public class TestSettings
-    {
-        public string Name { get; set; }
-    }
 
     public class ParamButton : MonoBehaviour
     {
@@ -30,36 +26,33 @@ namespace Astrovisio
         [SerializeField] private Color activeButtonColorIcon;
 
         // Events
-        public event Action<ParamButton> OnButtonClicked;
+        public event Action<ParamButton> OnParamButtonClicked;
 
         // Local
         public bool State { get; private set; }
-        public TestSettings settings { get; private set; }
+        public string Name { get; private set; }
+        public Setting Setting { get; private set; }
 
         private void Start()
         {
             SetButtonState(false);
-
-            if (button != null)
-            {
-                button.onClick.AddListener(() =>
-                {
-                    SetButtonState(!State);
-                    OnButtonClicked?.Invoke(this);
-                });
-            }
-
-            settings = new TestSettings
-            {
-                Name = gameObject.name
-            };
-
-            SetSettings(settings);
         }
 
-        public void SetSettings(TestSettings settings)
+        public void InitButtonSetting(string name, Setting setting, Action onButtonClicked)
         {
-            labelTMP.text = settings.Name;
+            button.onClick.RemoveAllListeners();
+            SetButtonState(false);
+
+            labelTMP.text = name;
+            Name = name;
+            Setting = setting;
+
+            button.onClick.AddListener(() =>
+            {
+                SetButtonState(!State);
+                OnParamButtonClicked?.Invoke(this);
+                onButtonClicked?.Invoke();
+            });
         }
 
         public void SetButtonState(bool state)
