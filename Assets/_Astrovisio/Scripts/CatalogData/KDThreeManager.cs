@@ -47,10 +47,9 @@ public class KDTreeManager
     private void BuildTrees()
     {
         int N = data[0].Length;
-        //int[] distribution = new int[8];
 
         HashSet<int>[] buckets = new HashSet<int>[8];
-        for (int i = 0; i < 8; i++) buckets[i] = new HashSet<int>();
+        for (int i = 0; i < 8; i++) buckets[i] = new HashSet<int>(N);
 
         for (int i = 0; i < N; i++)
         {
@@ -62,15 +61,15 @@ public class KDTreeManager
             if (data[xyz[1]][i] < pivot.y) idx |= 2;
             if (data[xyz[2]][i] < pivot.z) idx |= 4;
             buckets[idx].Add(i);
-            //distribution[idx]++;
         }
-
-        // Debug.Log(string.Join(", ", distribution));
 
         Parallel.For(0, 8, i =>
         {
-            trees[i] = new KDTree(data, buckets[i].ToArray(), xyz, visibilityArray, cancellationToken);
+            int[] indices = buckets[i].ToArray();
+            buckets[i] = null;
+            trees[i] = new KDTree(data, indices, xyz, visibilityArray, cancellationToken);
         });
+        buckets = null;
     }
 
     private int GetOctant(Vector3 point)
@@ -145,7 +144,7 @@ public class KDTreeManager
         // Check which octants the ellipsoid intersects
         Parallel.For(0, 8, i =>
         {
-            if (EllipsoidIntersectsOctant(center, halfSizes, i))
+            if (EllipsoidIntersectsOctant(center, halfSizes, i)) //EllipsoidIntersectsOctant seems to work better than BoxIntersectsOctant even for Box Selection (???)
             {
                 var results = trees[i].FindPointsInBox(center, halfSizes);
                 localSets[i] = results;

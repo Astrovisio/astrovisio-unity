@@ -513,7 +513,6 @@ namespace CatalogData
         {
             if (!_catalogMaterial)
             {
-                Debug.Log("AAA");
                 return false;
             }
 
@@ -682,11 +681,6 @@ namespace CatalogData
                 Graphics.DrawProceduralNow(MeshTopology.Points, _dataSet.N);
                 GL.PopMatrix();
             }
-            else
-            {
-                Debug.Log("AAA");
-            }
-
         }
 
         private void ReleaseAllGpuResources()
