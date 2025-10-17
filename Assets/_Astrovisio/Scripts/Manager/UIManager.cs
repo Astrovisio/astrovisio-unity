@@ -88,16 +88,20 @@ namespace Astrovisio
             projectManager.FetchAllProjects();
         }
 
-
         private void Update()
         {
             CheckClickStart();
         }
 
-
-        public ProjectManager GetProjectManager() => projectManager;
-        public RenderManager GetRenderManager() => renderManager;
-        public UIContextSO GetUIContext() => uiContextSO;
+        public ProjectManager GetProjectManager()
+        {
+            return projectManager;
+        }
+        
+        public UIContextSO GetUIContext()
+        {
+            return uiContextSO;
+        }
 
         public void SwitchEventSystemToVR()
         {
@@ -184,6 +188,11 @@ namespace Astrovisio
             mainViewController.SetBackgroundVisibility(state);
             settingsViewController.SetSettingsVisibility(!state);
             SetGizmoTransformVisibility(false);
+
+            if (state == true)
+            {
+                RenderManager.Instance.ClearDataContainer();
+            }
         }
 
         public void SetUIVisibility(bool state)
