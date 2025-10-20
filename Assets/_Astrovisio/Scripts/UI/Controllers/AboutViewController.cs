@@ -11,6 +11,7 @@ namespace Astrovisio
         public UIManager UIManager { get; }
 
         private Button closeButton;
+        private Label title;
 
         public AboutViewController(VisualElement root, UIManager uiManager)
         {
@@ -19,6 +20,9 @@ namespace Astrovisio
 
             closeButton = Root.Q<Button>("CloseButton");
             closeButton.clicked += Close;
+
+            title = Root.Q<Label>("Title");
+            title.text = "Astrovisio v " + Application.version;
 
             Init();
         }

@@ -39,6 +39,11 @@ namespace Astrovisio
             DataPack = dataPack ?? throw new ArgumentNullException(nameof(dataPack));
             Project = project;
             File = file;
+            if (File != null)
+            {
+                File.ProcessedPoints = DataPack.Rows.Length;
+            }
+
 
             InitAxis();
             InitMinMax();

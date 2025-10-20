@@ -17,38 +17,7 @@
     border-right-color: var(--grey-200);
     border-top-color: var(--grey-200);
     border-bottom-color: var(--grey-200);
-    height: 242px;
-    min-height: 242px;
-    max-height: 242px;
-}
-
-#DownsamplingRoot > #TotalContainer {
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    height: 10px;
-    min-height: 10px;
-    max-height: 10px;
-    flex-direction: row;
-}
-
-#DownsamplingRoot > #TotalContainer > #Label {
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    color: var(--grey-600);
-    font-size: 12px;
-    -unity-text-align: middle-left;
-}
-
-#DownsamplingRoot > #TotalContainer > #PointsNumber {
-    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
-    color: var(--grey-600);
-    -unity-text-align: middle-left;
-    font-size: 12px;
+    height: auto;
 }
 
 #DownsamplingRoot > #TotalContainer > #SizeContainer {
@@ -127,4 +96,29 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
+}
+
+.pointsContainer {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    height: 10px;
+    min-height: 10px;
+    max-height: 10px;
+    flex-direction: row;
+}
+
+.pointsContainer > #Label {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: var(--grey-600);
+    font-size: 12px;
+    -unity-text-align: middle-left;
+}
+
+.pointsContainer > #PointsNumberLabel {
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    color: var(--grey-600);
+    -unity-text-align: middle-left;
+    font-size: 12px;
 }

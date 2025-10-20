@@ -13,6 +13,8 @@ namespace Astrovisio
         private string type;
         private string path;
         private bool processed;
+        private int? totalPoints;
+        private int? processedPoints;
         private float downsampling = 1f;
         private string processedPath;
         private int order;
@@ -47,6 +49,7 @@ namespace Astrovisio
                 }
             }
         }
+        
 
         [JsonProperty("processed")]
         public bool Processed
@@ -57,6 +60,44 @@ namespace Astrovisio
                 if (processed != value)
                 {
                     processed = value;
+                }
+            }
+        }
+
+        public int ProcessedPoints
+        {
+            get
+            {
+                if (processedPoints.HasValue)
+                {
+                    return processedPoints.Value;
+                }
+                return 0;
+            }
+            set
+            {
+                if (processedPoints != value)
+                {
+                    processedPoints = value;
+                }
+            }
+        }
+
+        public int TotalPoints
+        {
+            get
+            {
+                if (totalPoints.HasValue)
+                {
+                    return totalPoints.Value;
+                }
+                return 0;
+            }
+            set
+            {
+                if (totalPoints != value)
+                {
+                    totalPoints = value;
                 }
             }
         }

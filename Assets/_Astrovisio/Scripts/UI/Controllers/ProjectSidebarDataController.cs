@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine.UIElements;
 using System.Linq;
 using UnityEngine;
+using System.Threading.Tasks;
+using System;
 
 namespace Astrovisio
 {
@@ -20,7 +22,7 @@ namespace Astrovisio
         private Label warningLabel;
         private ScrollView paramsScrollView;
         private DropdownField downsamplingDropdown;
-        private Label actualSizeLabel;
+        private Label processedPointsLabel;
         private Button processDataButton;
         private int chipLabelCounter;
         private bool isReadyToProcessData;
@@ -48,6 +50,7 @@ namespace Astrovisio
             ProjectManager.ProjectUpdated += OnProjectUpdated;
             ProjectManager.FileSelected += OnFileSelected;
             ProjectManager.FileUpdated += OnFileUpdated;
+            ProjectManager.FileProcessed += OnFileProcessed;
 
 
             Init();
@@ -64,8 +67,9 @@ namespace Astrovisio
 
             InitWarningLabel();
             InitParamsScrollView();
-            InitActualSizeLabel();
             InitDownsamplingDropdown();
+            InitTotalPointsLabel();
+            InitProcessedPointsLabel();
         }
 
         public void Dispose()
@@ -74,6 +78,7 @@ namespace Astrovisio
             ProjectManager.ProjectUpdated -= OnProjectUpdated;
             ProjectManager.FileSelected -= OnFileSelected;
             ProjectManager.FileUpdated -= OnFileUpdated;
+            ProjectManager.FileProcessed -= OnFileProcessed;
         }
 
         private void InitParamsScrollView()
@@ -142,9 +147,46 @@ namespace Astrovisio
             downsamplingDropdown.RegisterValueChangedCallback(_downsamplingCallback);
         }
 
-        private void InitActualSizeLabel()
+        private void InitTotalPointsLabel()
         {
-            actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
+
+            if (currentFile.Processed)
+            {
+                processedPointsLabel = dataSettingsContainer.Q<VisualElement>("TotalContainer").Q<Label>("PointsNumberLabel");
+                processedPointsLabel.text = "UNKNOWN"; //currentFile.TotalPoints.ToString();
+            }
+            else
+            {
+                ResetTotalPointsLabel();
+            }
+
+        }
+        
+        private void ResetTotalPointsLabel()
+        {
+            processedPointsLabel = dataSettingsContainer.Q<VisualElement>("TotalContainer").Q<Label>("PointsNumberLabel");
+            processedPointsLabel.text = "0";
+        }
+
+        private void InitProcessedPointsLabel()
+        {
+
+            if (currentFile.Processed)
+            {
+                processedPointsLabel = dataSettingsContainer.Q<VisualElement>("ProcessedContainer").Q<Label>("PointsNumberLabel");
+                processedPointsLabel.text = currentFile.ProcessedPoints.ToString();
+            } else
+            {
+                ResetProcessedPointsLabel();
+            }
+
+        }
+        
+
+        private void ResetProcessedPointsLabel()
+        {
+            processedPointsLabel = dataSettingsContainer.Q<VisualElement>("ProcessedContainer").Q<Label>("PointsNumberLabel");
+            processedPointsLabel.text = "0";
         }
 
         private void InitWarningLabel()
@@ -254,6 +296,7 @@ namespace Astrovisio
             if (isReadyToProcessData)
             {
                 SetProcessDataButton(true);
+                ResetProcessedPointsLabel();
             }
             else
             {
@@ -264,8 +307,14 @@ namespace Astrovisio
         private void OnProcessDataClicked()
         {
             // SetProcessDataButton(false);
-            _ = ProjectManager.ProcessFile(Project.Id, currentFile.Id);
+            _ = ProcessData();
             // UpdateRenderingParams();
+        }
+
+        private async Task ProcessData()
+        {
+            await ProjectManager.ProcessFile(Project.Id, currentFile.Id);
+            InitProcessedPointsLabel();
         }
 
         private void UpdateChipLabel()
@@ -404,8 +453,8 @@ namespace Astrovisio
 
             InitWarningLabel();
             InitParamsScrollView();
-            InitActualSizeLabel();
             InitDownsamplingDropdown();
+            InitProcessedPointsLabel();
         }
 
         private void OnFileUpdated(Project project, File file)
@@ -426,6 +475,11 @@ namespace Astrovisio
                 UpdateChipLabel();
             }
 
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            InitProcessedPointsLabel();
         }
 
     }
