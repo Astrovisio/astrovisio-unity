@@ -48,3 +48,12 @@
     overflow: hidden;
     flex-grow: 1;
 }
+
+#FilesContainerRoot .unity-collection-view__item--selected{
+        border-top-right-radius: 30px;
+}
+
+#FilesContainerRoot .unity-collection-view__item--selected #RootListItemFileState {
+    border-width: 2px;
+    border-color: var(--grey-400);
+}
