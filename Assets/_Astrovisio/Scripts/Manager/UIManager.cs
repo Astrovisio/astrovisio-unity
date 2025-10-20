@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Hjg.Pngcs;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -346,7 +347,7 @@ namespace Astrovisio
             }
         }
 
-        public async void TakeScreenshot(bool uiVisibility = false)
+        public async Task TakeScreenshot(bool uiVisibility = false)
         {
             Project currentProject = projectManager.GetCurrentProject();
             Settings settings = SettingsManager.Instance.GetCurrentFileSettings();

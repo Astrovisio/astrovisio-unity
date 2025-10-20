@@ -137,9 +137,10 @@ namespace Astrovisio
             // 2. Action-only buttons
             buttonActions.Add(new ButtonAction(
                 "Screenshot", screenshotButton, null, screenshotIcon, false,
-                () =>
+                async () =>
                 {
-                    UIManager.TakeScreenshot();
+                    screenshotButton.Blur();
+                    await UIManager.TakeScreenshot();
                 }
             ));
             buttonActions.Add(new ButtonAction(

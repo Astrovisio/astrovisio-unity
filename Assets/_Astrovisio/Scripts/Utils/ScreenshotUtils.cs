@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hjg.Pngcs;
 using Newtonsoft.Json;
+using SFB;
 using UnityEngine;
 
 namespace Astrovisio
@@ -18,7 +19,12 @@ namespace Astrovisio
         public static async Task<string> TakeScreenshotWithJson(string projectName, File file, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false)
         {
 
-            string path = uiVisibility ? await TakeScreenshot() : await TakeScreenshot(camera);
+            string path = uiVisibility ? await TakeScreenshot(projectName, file.Name) : await TakeScreenshot(projectName, file.Name, camera);
+
+            if (path == null)
+            {
+                return null;
+            }
         
             string jsonPath = Path.ChangeExtension(path, "json");
             System.IO.File.WriteAllText(
@@ -35,19 +41,24 @@ namespace Astrovisio
         /// Fully async, does NOT block the main thread.
         /// </summary>
         public static async Task<string> TakeScreenshot(
+            string projectName,
+            string fileName,
             Camera camera = null,
             bool transparentBackground = false,
             Dictionary<string, string> metadata = null,
             int timeoutSeconds = 10)
         {
-            Debug.Log("TAKING SCREENSHOT");
-            string folderPath = Path.Combine(Application.persistentDataPath, "Screenshots");
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
 
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string filename = $"screenshot_{timestamp}.png";
-            string fullScreenshotPath = Path.Combine(folderPath, filename);
+            string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            string fullScreenshotPath = StandaloneFileBrowser.SaveFilePanel("Save Screenshot", "", projectName + "_" + fileName + "_" + timestamp + ".png", "png");
+
+            if (fullScreenshotPath.Length == 0)
+            {
+                return null;
+            }
+
+            // string filename = $"screenshot_{timestamp}.png";
+            // string fullScreenshotPath = Path.Combine(folderPath, filename);
 
             if (camera == null)
             {
