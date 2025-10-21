@@ -7,7 +7,6 @@ namespace Astrovisio
     {
         public VisualElement Root { get; }
 
-        private Toggle noiseToggle;
         private MinMaxSlider noiseSlider;
         private FloatField noiseFloatField;
 
@@ -24,31 +23,10 @@ namespace Astrovisio
 
         private void Init()
         {
-            noiseToggle = Root.Q<VisualElement>("NoiseToggle").Q<Toggle>();
             noiseSlider = Root.Q<VisualElement>("NoiseSlider").Q<MinMaxSlider>();
             noiseFloatField = Root.Q<FloatField>("NoiseInputField");
 
-            noiseSlider.SetEnabled(noiseState);
-            noiseFloatField.SetEnabled(noiseState);
             noiseFloatField.formatString = "F3";
-
-            // Debug.Log(noiseToggle);
-            // Debug.Log(noiseSlider);
-            // Debug.Log(noiseFloatField);
-
-            // Toggle
-            noiseToggle.value = noiseState;
-
-            noiseToggle.RegisterValueChangedCallback(evt =>
-            {
-                noiseState = evt.newValue;
-
-                noiseSlider.SetEnabled(noiseState);
-                noiseFloatField.SetEnabled(noiseState);
-
-                SetNoise(noiseState, noiseValue);
-            });
-
 
             bool isUpdating = false;
 
@@ -73,7 +51,7 @@ namespace Astrovisio
                 noiseValue = newValue;
                 noiseFloatField.value = newValue;
 
-                SetNoise(noiseToggle.value, newValue);
+                SetNoise(newValue);
 
                 isUpdating = false;
             });
@@ -93,7 +71,7 @@ namespace Astrovisio
                 noiseValue = newValue;
                 noiseSlider.maxValue = newValue;
 
-                SetNoise(noiseToggle.value, newValue);
+                SetNoise(newValue);
 
                 isUpdating = false;
             });
@@ -104,14 +82,13 @@ namespace Astrovisio
             return noiseState;
         }
 
-        private void SetNoise(bool state, float value)
+        private void SetNoise(float value)
         {
-            RenderManager.Instance.SetNoise(state, value);
+            RenderManager.Instance.SetNoise(value);
         }
 
         public void Reset()
         {
-            noiseToggle.value = false;
             noiseSlider.maxValue = noiseMinValue;
             noiseFloatField.value = noiseMinValue;
             // noiseSlider.SetEnabled(noiseState);

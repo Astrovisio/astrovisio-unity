@@ -331,7 +331,7 @@ namespace Astrovisio
 
             DataRenderer.RenderDataContainer(dc);
 
-            SetNoise(false, 0f);
+            SetNoise(0f);
             SetDataInspector(false, true);
             UpdateRenderedProjectFile(project, file);
             OnFileRenderEnd?.Invoke(project, file);
@@ -371,10 +371,10 @@ namespace Astrovisio
         }
 
         // === Noise ===
-        public void SetNoise(bool state, float value = 0f)
+        public void SetNoise(float value = 0f)
         {
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
-            astrovisioDataSetRenderer.SetNoise(state, value);
+            astrovisioDataSetRenderer.SetNoise(value == 0f ? false : true, value);
         }
 
         public float GetNoiseValue()
