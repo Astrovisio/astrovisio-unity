@@ -7,7 +7,9 @@
     <Style src="project://database/Assets/UI%20Toolkit/USS/Project.uss?fileID=7433441132597879392&amp;guid=deec784016811ab44986b898b4af8339&amp;type=3#Project" />
     <engine:VisualElement name="Root">
         <engine:VisualElement name="TopContainer">
-            <engine:Instance template="ProjectFilesContainer" name="FilesContainer" />
+            <engine:Instance template="ProjectFilesContainer" name="FilesContainer">
+                <AttributeOverrides element-name="FileStateListView" show-alternating-row-backgrounds="None" />
+            </engine:Instance>
             <engine:VisualElement name="InfoContainer" style="flex-grow: 1;">
                 <engine:VisualElement name="HeaderContainer">
                     <engine:Label text="Project Serra Project Serra Project Serra Project Serra " name="ProjectNameLabel" style="flex-shrink: 1;" />

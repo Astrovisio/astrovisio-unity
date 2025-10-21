@@ -29,7 +29,6 @@ namespace Astrovisio
         private Label fileCounterLabel;
         private Button addFileButton;
 
-
         public ProjectFilesController(
             ProjectManager projectManager,
             Project project,
@@ -44,7 +43,9 @@ namespace Astrovisio
             UIContextSO = ctx;
 
             this.onUpdateAction = onUpdateAction;
-            this.onClickAction = onClickAction;
+            // this.onClickAction += OnClickActionInternal;
+            this.onClickAction += onClickAction;
+
 
             ProjectManager.ProjectUpdated += OnProjectUpdated;
 
@@ -79,9 +80,14 @@ namespace Astrovisio
             }
 
             listView.itemsSource = fileList;
-            listView.selectionType = SelectionType.None;
+            listView.selectionType = SelectionType.Single;
             listView.reorderable = true;
             listView.reorderMode = ListViewReorderMode.Animated;
+
+            listView.schedule.Execute(() =>
+            {
+                listView.selectedIndex = 0; // oppure listView.SetSelection(0);
+            }).StartingIn(0);
 
             listView.makeItem = () =>
             {
@@ -118,6 +124,7 @@ namespace Astrovisio
 
             listView.bindItem = (listItemVisualElement, i) =>
             {
+
                 FileState entry = fileList[i];
 
                 listItemVisualElement.userData = entry;
@@ -137,7 +144,7 @@ namespace Astrovisio
                 VisualElement listItemState = listItemVisualElement.Q<VisualElement>("State");
                 if (listItemState != null)
                 {
-                    if (entry.state)
+                    if (entry.processed)
                     {
                         listItemState.AddToClassList("active");
                     }
@@ -171,6 +178,7 @@ namespace Astrovisio
 
                         // Final updates
                         onClickAction(fileList[0]);
+                        listView.selectedIndex = 0;
                         UpdateFileCounter();
                     });
                 }
@@ -272,9 +280,9 @@ namespace Astrovisio
                     continue;
                 }
 
-                if (fs.state != value)
+                if (fs.processed != value)
                 {
-                    fs.state = value;
+                    fs.processed = value;
                     fileList[i] = fs;
                 }
 
@@ -368,7 +376,7 @@ namespace Astrovisio
             {
                 if (listView.itemsSource[i] is FileState fileState)
                 {
-                    Debug.Log($"[{i}] FileState -> Name={fileState.fileInfo.Name}, Size={fileState.fileInfo.Size}, Path={fileState.fileInfo.Path}, State={fileState.state}");
+                    Debug.Log($"[{i}] FileState -> Name={fileState.fileInfo.Name}, Size={fileState.fileInfo.Size}, Path={fileState.fileInfo.Path}, State={fileState.processed}");
                 }
                 else
                 {

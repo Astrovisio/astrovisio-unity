@@ -40,6 +40,10 @@
     border-radius: 5px;
     border-width: 1px;
     margin-right: 8px;
+    min-width: 10px;
+    min-height: 10px;
+    max-width: 10px;
+    max-height: 10px;
 }
 
 #RootListItemFileState > #State.active {
@@ -72,7 +76,6 @@
     padding: 0;
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
     overflow: hidden;
-    background: red;
     text-overflow: ellipsis;
     -unity-text-align: middle-left;
     max-width: 705px;

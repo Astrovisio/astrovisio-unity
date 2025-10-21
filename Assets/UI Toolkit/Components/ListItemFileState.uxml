@@ -4,7 +4,7 @@
         <engine:VisualElement name="Icon" style="flex-grow: 0;" />
         <engine:VisualElement name="State" class="active" />
         <engine:VisualElement name="InfoContainer" style="flex-grow: 0;">
-            <engine:Label text="Sperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdf.hdf5Sperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdfSperra3asjkshaffas&lt;zx&lt;zdf.hdf5" name="NameLabel" />
+            <engine:Label text="FileName" name="NameLabel" />
             <engine:Label text="25MB" name="SizeLabel" style="margin-top: 0;" />
         </engine:VisualElement>
         <engine:Button text="&#10;" name="CloseButton" />

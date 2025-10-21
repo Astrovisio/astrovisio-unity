@@ -31,13 +31,13 @@ namespace Astrovisio
     {
         public FileInfo fileInfo;
         public File file;
-        public bool state;
+        public bool processed;
 
-        public FileState(FileInfo fileInfo, File file, bool state)
+        public FileState(FileInfo fileInfo, File file, bool processed)
         {
             this.fileInfo = fileInfo;
             this.file = file;
-            this.state = state;
+            this.processed = processed;
         }
 
         public string Path => fileInfo.Path;

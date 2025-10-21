@@ -8,6 +8,6 @@
                 <AttributeOverrides element-name="Label" text="Add a file" />
             </engine:Instance>
         </engine:VisualElement>
-        <engine:ListView name="FileStateListView" fixed-item-height="41" reorderable="true" reorder-mode="Animated" selection-type="None" />
+        <engine:ListView name="FileStateListView" fixed-item-height="41" reorderable="true" reorder-mode="Animated" selection-type="Single" binding-source-selection-mode="AutoAssign" show-bound-collection-size="true" show-alternating-row-backgrounds="None" />
     </engine:VisualElement>
 </engine:UXML>
