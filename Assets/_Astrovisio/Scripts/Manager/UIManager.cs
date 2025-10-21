@@ -14,6 +14,7 @@ namespace Astrovisio
 {
     public class UIManager : MonoBehaviour
     {
+        private static UIManager Instance { get; set; }
         [Header("Dependencies")]
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private RenderManager renderManager;
@@ -42,6 +43,17 @@ namespace Astrovisio
         private bool uiVisibility = true;
         private bool clickStartedOnUI = false;
 
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Debug.LogWarning("Multiple instances of UIManager found. Destroying the new one.");
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+        }
 
         private void Start()
         {
@@ -217,8 +229,8 @@ namespace Astrovisio
         public void SetLoadingView(bool state, LoaderType loaderType = LoaderType.Spinner)
         {
             VisualElement loaderView = uiDocument.rootVisualElement.Q<VisualElement>("LoaderView");
-            VisualElement loadingSpinner = loaderView.Q<VisualElement>("LoadingSpinner");
-            VisualElement loadingBar = loaderView.Q<VisualElement>("LoadingBar");
+            // VisualElement loadingSpinner = loaderView.Q<VisualElement>("LoadingSpinner");
+            // VisualElement loadingBar = loaderView.Q<VisualElement>("LoadingBar");
 
             if (state)
             {
@@ -243,6 +255,11 @@ namespace Astrovisio
             {
                 loaderView.RemoveFromClassList("active");
             }
+        }
+
+        public static void SetLoadingView(bool active)
+        {
+            Instance.SetLoadingView(active);
         }
 
         public void SetLoadingBarProgress(float value, string text = "", bool visibility = true)

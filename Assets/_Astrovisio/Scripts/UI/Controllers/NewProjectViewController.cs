@@ -167,14 +167,16 @@ namespace Astrovisio
 
             try
             {
-                Project createdProject = await ProjectManager.CreateProject(name, description, paths);
+                Project createdProject = await ProjectManager.CreateProject(name, description, paths, false);
                 if (createdProject == null)
                 {
+                    UIManager.SetLoadingView(false);
                     return;
                 }
 
                 // TODO: Back-end should popolate order, not front-end
                 List<FileInfo> fileList = newProjectfilesController.GetFileList();
+
                 // Debug.Log("=== createdProject.Files ===");
                 // foreach (var f in createdProject.Files)
                 //     Debug.Log($"{f.Name} | {f.Path} | {f.Size} | Order={f.Order}");
@@ -197,7 +199,6 @@ namespace Astrovisio
                             await ProjectManager.UpdateFile(createdProject.Id, file);
                             // Debug.Log("Done: " + file.Order + " - " + file.Name);
 
-
                             // fileIdOrder[i] = file.Id;
                         }
                     }
@@ -205,6 +206,8 @@ namespace Astrovisio
 
                 // createdProject.order
                 // _ = ProjectManager.UpdateProject(createdProject.Id, createdProject);
+
+                UIManager.SetLoadingView(false);
 
                 OnExit();
             }
