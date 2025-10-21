@@ -13,8 +13,8 @@ namespace Astrovisio
         private string type;
         private string path;
         private bool processed;
-        private int? totalPoints;
-        private int? processedPoints;
+        private long? totalPoints;
+        private long? processedPoints;
         private float downsampling = 1f;
         private string processedPath;
         private int order;
@@ -64,7 +64,7 @@ namespace Astrovisio
             }
         }
 
-        public int ProcessedPoints
+        public long ProcessedPoints
         {
             get
             {
@@ -83,7 +83,8 @@ namespace Astrovisio
             }
         }
 
-        public int TotalPoints
+        [JsonProperty("total_points")]
+        public long TotalPoints
         {
             get
             {

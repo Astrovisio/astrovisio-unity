@@ -149,23 +149,8 @@ namespace Astrovisio
 
         private void InitTotalPointsLabel()
         {
-
-            if (currentFile.Processed)
-            {
-                processedPointsLabel = dataSettingsContainer.Q<VisualElement>("TotalContainer").Q<Label>("PointsNumberLabel");
-                processedPointsLabel.text = "UNKNOWN"; //currentFile.TotalPoints.ToString();
-            }
-            else
-            {
-                ResetTotalPointsLabel();
-            }
-
-        }
-        
-        private void ResetTotalPointsLabel()
-        {
             processedPointsLabel = dataSettingsContainer.Q<VisualElement>("TotalContainer").Q<Label>("PointsNumberLabel");
-            processedPointsLabel.text = "0";
+            processedPointsLabel.text = currentFile.TotalPoints.ToString();
         }
 
         private void InitProcessedPointsLabel()
@@ -175,13 +160,14 @@ namespace Astrovisio
             {
                 processedPointsLabel = dataSettingsContainer.Q<VisualElement>("ProcessedContainer").Q<Label>("PointsNumberLabel");
                 processedPointsLabel.text = currentFile.ProcessedPoints.ToString();
-            } else
+            }
+            else
             {
                 ResetProcessedPointsLabel();
             }
 
         }
-        
+
 
         private void ResetProcessedPointsLabel()
         {
@@ -454,6 +440,7 @@ namespace Astrovisio
             InitWarningLabel();
             InitParamsScrollView();
             InitDownsamplingDropdown();
+            InitTotalPointsLabel();
             InitProcessedPointsLabel();
         }
 

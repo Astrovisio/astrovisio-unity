@@ -9,6 +9,7 @@ namespace Astrovisio
 
         private List<Setting> variables;
         private string path;
+        private float noise;
 
         [JsonProperty("variables")]
         public List<Setting> Variables
@@ -24,8 +25,17 @@ namespace Astrovisio
             set => path = value;
         }
 
+        [JsonProperty("noise")]
+        public float Noise
+        {
+            get =>  noise;
+            set => noise = value;
+        }
+
         public void SetDefaults(File file)
         {
+            Noise = 0f;
+
             variables.Clear();
 
             foreach (Variable variable in file.Variables)

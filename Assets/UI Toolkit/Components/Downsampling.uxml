@@ -2,7 +2,7 @@
     <engine:Template name="DropdownSimple" src="project://database/Assets/UI%20Toolkit/Components/DropdownSimple.uxml?fileID=9197481963319205126&amp;guid=8ab5ade032c81ed45911a48ecd2265d5&amp;type=3#DropdownSimple" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Downsampling.uss?fileID=7433441132597879392&amp;guid=d330c84d4a4136d47a2f7489ed23c75f&amp;type=3#Downsampling" />
     <engine:VisualElement name="DownsamplingRoot" style="align-content: flex-start;">
-        <engine:VisualElement name="TotalContainer" class="pointsContainer" style="flex-direction: row; height: 8px; min-height: 8px; max-height: 8px; display: none; margin-bottom: 10px;">
+        <engine:VisualElement name="TotalContainer" class="pointsContainer" style="flex-direction: row; height: 8px; min-height: 8px; max-height: 8px; display: flex; margin-bottom: 10px;">
             <engine:Label text="Total Points:" name="Label" style="margin-right: 8px;" />
             <engine:Label text="0" name="PointsNumberLabel" style="margin-right: 8px;" />
         </engine:VisualElement>
