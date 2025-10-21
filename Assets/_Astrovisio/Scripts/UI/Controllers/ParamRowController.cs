@@ -93,6 +93,7 @@ namespace Astrovisio
             {
                 Variable.ThrMinSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Min);
+                minMaxSlider.SetValueWithoutNotify(new Vector2((float)evt.newValue, minMaxSlider.value.y));
                 OnThresholdChanged?.Invoke(Threshold.Min, this);
                 Debug.Log($"[UI] {Variable.Name} → ThrMin aggiornato a {evt.newValue}");
             });
@@ -100,6 +101,7 @@ namespace Astrovisio
             {
                 Variable.ThrMaxSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Max);
+                minMaxSlider.SetValueWithoutNotify(new Vector2(minMaxSlider.value.x, (float)evt.newValue));
                 OnThresholdChanged?.Invoke(Threshold.Max, this);
                 Debug.Log($"[UI] {Variable.Name} → ThrMax aggiornato a {evt.newValue}");
             });
