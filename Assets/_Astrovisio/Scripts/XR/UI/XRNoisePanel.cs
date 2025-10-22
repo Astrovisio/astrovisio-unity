@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,7 @@ namespace Astrovisio
     public class XRNoisePanel : MonoBehaviour
     {
 
-        [SerializeField] private Toggle noiseToggle;
+        // [SerializeField] private Toggle noiseToggle;
         [SerializeField] private Slider noiseSlider;
         [SerializeField] private TextMeshProUGUI noiseTMP;
 
@@ -15,14 +16,21 @@ namespace Astrovisio
         {
             noiseSlider.minValue = 0f;
             noiseSlider.maxValue = 0.1f;
+
+            noiseSlider.onValueChanged.AddListener(HandleNoiseSliderChange);
         }
 
         [ContextMenu("Update")]
         public void UpdateUI()
         {
-            noiseToggle.isOn = RenderManager.Instance.GetNoiseState();
-            noiseSlider.value = RenderManager.Instance.GetNoiseValue();
+            // noiseToggle.isOn = RenderManager.Instance.GetNoiseState();
+            noiseSlider.value = RenderManager.Instance.GetNoise();
             noiseTMP.text = $"{noiseSlider.value:F3}%";
+        }
+
+        private void HandleNoiseSliderChange(float newValue)
+        {
+            RenderManager.Instance.SetNoise(newValue);
         }
 
     }

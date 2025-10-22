@@ -397,7 +397,7 @@ namespace Astrovisio
                     SetOpacity(setting);
                     break;
                 case "Colormap":
-                    Debug.Log("1");
+                    Debug.Log("1 " + setting.Name);
                     SetColormap(setting);
                     break;
                 default:
@@ -492,7 +492,7 @@ namespace Astrovisio
             // Parse scaling string into enum with fallback
             if (!Enum.TryParse(setting.Scaling, ignoreCase: true, out ScalingType scaling))
             {
-                Debug.LogWarning($"[SetOpacity] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
+                // Debug.LogWarning($"[SetOpacity] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
                 scaling = ScalingType.Linear;
             }
 
@@ -532,7 +532,7 @@ namespace Astrovisio
             // Parse scaling string into enum with fallback
             if (!Enum.TryParse(setting.Scaling, ignoreCase: true, out ScalingType scaling))
             {
-                Debug.LogWarning($"[SetColormap] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
+                // Debug.LogWarning($"[SetColormap] Invalid scaling value '{setting.Scaling}'. Using default: {ScalingType.Linear}");
                 scaling = ScalingType.Linear;
             }
 

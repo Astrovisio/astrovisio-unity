@@ -72,8 +72,15 @@ namespace TS.DoubleSlider
 
         protected virtual void UpdateLabel()
         {
-            if (_label == null) { return; }
-            _label.Text = Value.ToString();
+            // if (_label == null) { return; }
+            // _label.Text = Value.ToString();
         }
+
+        public void SetValueWithoutNotify(float value)
+        {
+            _slider.SetValueWithoutNotify(value);
+            UpdateLabel();
+        }
+
     }
 }

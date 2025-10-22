@@ -51,7 +51,7 @@ namespace Astrovisio
         private Func<Setting, Task> applyButtonCallback;
         private Action cancelButtonCallback;
 
-        // === NEW ===
+        // === Local ===
         private File file;
         private Axis axis;
         private Setting originalSetting;
@@ -219,11 +219,11 @@ namespace Astrovisio
                     Debug.Log("InitParamSettingsPanel -> None");
                     InitNone();
                     break;
-                case "Opacity":
+                case OPACITY:
                     Debug.Log("InitParamSettingsPanel -> Opacity");
                     InitOpacity();
                     break;
-                case "Colormap":
+                case COLORMAP:
                     Debug.Log("InitParamSettingsPanel -> Colormap");
                     InitColormap();
                     break;
@@ -261,7 +261,7 @@ namespace Astrovisio
 
         private void InitColormap(bool render = false)
         {
-            SetColorMapDisplayStyle();
+            SetColormapDisplayStyle();
 
             SetThresholdSlider();
             SetColormapDropdown();
@@ -276,11 +276,7 @@ namespace Astrovisio
             }
         }
 
-
-
-
-
-
+        // === Setters ===
         private void SetMappingDropdown()
         {
             if (mappingDropdown is null)
@@ -568,9 +564,7 @@ namespace Astrovisio
             invertToggle.RegisterValueChangedCallback(invertToggleCallback);
         }
 
-
-
-
+        // === Styles ===
         private void SetAxisDisplayStyle()
         {
             VisualElement mappingContainer = Root.Q<VisualElement>("MappingContainer");
@@ -648,7 +642,7 @@ namespace Astrovisio
             SetMappingDropdownValue(mappingDropdown.choices[1]);
         }
 
-        private void SetColorMapDisplayStyle()
+        private void SetColormapDisplayStyle()
         {
             VisualElement mappingContainer = Root.Q<VisualElement>("MappingContainer");
             mappingContainer.style.display = DisplayStyle.Flex;

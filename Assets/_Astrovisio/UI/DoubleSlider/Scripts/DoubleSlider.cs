@@ -1,4 +1,5 @@
 ﻿#region Includes
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 #endregion
@@ -14,6 +15,8 @@ namespace TS.DoubleSlider
         [SerializeField] private SingleSlider _sliderMin;
         [SerializeField] private SingleSlider _sliderMax;
         [SerializeField] private RectTransform _fillArea;
+        [SerializeField] private TextMeshProUGUI _minLabel;
+        [SerializeField] private TextMeshProUGUI _maxLabel;
 
         [Header("Configuration")]
         [SerializeField] private bool _setupOnStart;
@@ -26,6 +29,8 @@ namespace TS.DoubleSlider
 
         [Header("Events")]
         public UnityEvent<float, float> OnValueChanged;
+
+        private bool _isInternalSet;
 
         public bool IsEnabled
         {
@@ -90,6 +95,8 @@ namespace TS.DoubleSlider
 
         public void Setup(float minValue, float maxValue, float initialMinValue, float initialMaxValue)
         {
+            Debug.LogError($"{minValue} {initialMinValue} - {maxValue} {initialMaxValue}");
+
             _minValue = minValue;
             _maxValue = maxValue;
             _initialMinValue = initialMinValue;
@@ -100,35 +107,78 @@ namespace TS.DoubleSlider
 
             MinValueChanged(_initialMinValue);
             MaxValueChanged(_initialMaxValue);
+            UpdateLabels();
         }
 
         private void MinValueChanged(float value)
         {
-            float offset = ((MinValue - _minValue) / (_maxValue - _minValue)) * _fillArea.rect.width;
+            if (_isInternalSet)
+            {
+                _isInternalSet = false;
+                return;
+            }
 
-            _fillRect.offsetMin = new Vector2(offset, _fillRect.offsetMin.y);
+            float range = _maxValue - _minValue;
+            if (Mathf.Approximately(range, 0f) || _fillArea.rect.width <= 0f)
+                return;
 
             if ((MaxValue - value) < _minDistance)
             {
-                _sliderMin.Value = MaxValue - _minDistance;
+                float clamped = MaxValue - _minDistance;
+                _isInternalSet = true;
+                _sliderMin.SetValueWithoutNotify(clamped);
+                value = clamped;
             }
+
+            float offset = ((MinValue - _minValue) / range) * _fillArea.rect.width;
+            _fillRect.offsetMin = new Vector2(offset, _fillRect.offsetMin.y);
+
+            UpdateLabels();
 
             OnValueChanged.Invoke(MinValue, MaxValue);
             _sliderMin.transform.SetAsLastSibling();
         }
+
+
         private void MaxValueChanged(float value)
         {
-            float offset = (1 - ((MaxValue - _minValue) / (_maxValue - _minValue))) * _fillArea.rect.width;
+            if (_isInternalSet)
+            {
+                _isInternalSet = false;
+                return;
+            }
 
-            _fillRect.offsetMax = new Vector2(-offset, _fillRect.offsetMax.y);
+            float range = _maxValue - _minValue;
+            if (Mathf.Approximately(range, 0f) || _fillArea.rect.width <= 0f)
+                return;
 
             if ((value - MinValue) < _minDistance)
             {
-                _sliderMax.Value = MinValue + _minDistance;
+                float clamped = MinValue + _minDistance;
+                _isInternalSet = true;
+                _sliderMax.SetValueWithoutNotify(clamped);
+                value = clamped;
             }
+
+            float offset = (1 - ((MaxValue - _minValue) / range)) * _fillArea.rect.width;
+            _fillRect.offsetMax = new Vector2(-offset, _fillRect.offsetMax.y);
+
+            UpdateLabels();
 
             OnValueChanged.Invoke(MinValue, MaxValue);
             _sliderMax.transform.SetAsLastSibling();
         }
+
+        private string FormatValue(float v)
+        {
+            return _wholeNumbers ? Mathf.RoundToInt(v).ToString() : v.ToString("0.###");
+        }
+
+        private void UpdateLabels()
+        {
+            if (_minLabel != null) _minLabel.text = FormatValue(MinValue);
+            if (_maxLabel != null) _maxLabel.text = FormatValue(MaxValue);
+        }
+
     }
 }

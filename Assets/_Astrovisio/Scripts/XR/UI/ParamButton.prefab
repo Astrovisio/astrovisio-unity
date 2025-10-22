@@ -65,7 +65,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1888234363, guid: 947058cdb6ae2458cb36de45bfc27b62, type: 3}
+  m_Sprite: {fileID: 3286163911610860551, guid: 1b7bc02b5c10a48438450e7a339fe155,
+    type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -210,9 +211,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2860c3e5b91812e4eae6c9b0802cc2a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAxis: 0
   button: {fileID: 3847782434488301870}
   backgroundImage: {fileID: 6432717150732167951}
   iconImage: {fileID: 1656351834196370180}
+  colormapSprite: {fileID: 3286163911610860551, guid: 1b7bc02b5c10a48438450e7a339fe155,
+    type: 3}
+  opacitySprite: {fileID: 3286163911610860551, guid: 2bac7fd99f47a4549b8367c9b69834f0,
+    type: 3}
   labelTMP: {fileID: 5361886362585661042}
   normalButtonColorBackground: {r: 0, g: 0, b: 0, a: 0}
   activeButtonColorBackground: {r: 0.29803923, g: 0.29803923, b: 0.29803923, a: 1}

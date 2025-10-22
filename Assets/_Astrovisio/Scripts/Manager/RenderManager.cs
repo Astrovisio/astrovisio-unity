@@ -377,7 +377,7 @@ namespace Astrovisio
             astrovisioDataSetRenderer.SetNoise(value == 0f ? false : true, value);
         }
 
-        public float GetNoiseValue()
+        public float GetNoise()
         {
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
             return astrovisioDataSetRenderer.GetNoiseValue();

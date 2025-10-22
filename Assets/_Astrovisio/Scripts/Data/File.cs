@@ -199,6 +199,21 @@ namespace Astrovisio
             return Variables.FirstOrDefault(v => v.Name == varName);
         }
 
+        public Variable GetAxisVariable(Axis axis)
+        {
+            switch (axis)
+            {
+                case Axis.X:
+                    return Variables.FirstOrDefault(v => v.XAxis == true);
+                case Axis.Y:
+                    return Variables.FirstOrDefault(v => v.YAxis == true);
+                case Axis.Z:
+                    return Variables.FirstOrDefault(v => v.ZAxis == true);
+                default:
+                    return null;
+            }
+        }
+
         public void UpdateFrom(File other)
         {
             if (other == null)
