@@ -366,14 +366,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitVRButton: {fileID: 8471133805632909789}
   settingsButton: {fileID: 5146152872493156043}
-  settingsCanvas: {fileID: 0}
+  settingsCanvas: {fileID: 5060966905789176788, guid: acec91fcd1103e149ba2ed2f6c451f4e,
+    type: 3}
   dataInspectorButton: {fileID: 7674322279420416082}
-  dataInspectorCanvas: {fileID: 0}
+  dataInspectorCanvas: {fileID: 4937604815159263196, guid: 389bef88f43ce87449b198e5ee3ddebf,
+    type: 3}
   noiseButton: {fileID: 5344770462127368736}
-  NoiseCanvas: {fileID: 0}
+  NoiseCanvas: {fileID: 4369138520648927599, guid: 96891ba01f96dab4c84332d145a253cb,
+    type: 3}
   reelsButton: {fileID: 2337565382317614144}
-  reelsCanvas: {fileID: 0}
-  screenRecorderButton: {fileID: 2337565382317614144}
+  reelsCanvas: {fileID: 2195485540242553750, guid: 0e76fd5a8a132c9498cdf69e9c4a303b,
+    type: 3}
+  screenRecorderButton: {fileID: 8647642852318857283}
   screenshotButton: {fileID: 1090884434129863702}
   axisButton: {fileID: 4089085365499775504}
 --- !u!1 &4726327869944875923
@@ -2180,7 +2184,7 @@ RectTransform:
   m_GameObject: {fileID: 9078238630939611385}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.0025, y: 0.0025, z: 0.0025}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8833079533697706830}
@@ -2189,7 +2193,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 50}
+  m_SizeDelta: {x: 100, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2162795836216161787
 Canvas:
@@ -2236,7 +2240,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4600075183177092717
 MonoBehaviour:
   m_ObjectHideFlags: 0

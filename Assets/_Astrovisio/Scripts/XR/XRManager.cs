@@ -45,7 +45,7 @@ namespace Astrovisio
         {
             if (beginOnPlay)
             {
-                EnterVR(() => {});
+                EnterVR(() => { });
             }
 
             xrOriginOriginalPosition = xrOrigin.transform.position;
@@ -193,7 +193,6 @@ namespace Astrovisio
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 
-
         private void OnXRFailed()
         {
             VRActive = false;
@@ -204,7 +203,6 @@ namespace Astrovisio
             xrOrigin.SetActive(false);
             mainCamera.gameObject.SetActive(true);
         }
-
 
         private void InitVRSettings()
         {
@@ -246,6 +244,67 @@ namespace Astrovisio
                 XRGeneralSettings.Instance.Manager.DeinitializeLoader();
             }
         }
+
+        /// <summary>
+        /// Instantiates a UI panel in front of the user's view (XR or desktop mode),
+        /// placing it at ~1.5 meters from the camera and facing toward the user.
+        /// </summary>
+        public void InstantiatePanel(GameObject panelGO)
+        {
+            if (panelGO == null)
+            {
+                Debug.LogWarning("[XRManager] InstantiatePanel: panelGO is null.");
+                return;
+            }
+
+            // Target distance from the user's view
+            const float targetDistance = 1.5f;
+
+            // Get the user view transform (XR camera if in VR, otherwise mainCamera)
+            Transform viewTf = GetUserViewTransform();
+            if (viewTf == null)
+            {
+                Debug.LogWarning("[XRManager] InstantiatePanel: could not determine user view transform.");
+                return;
+            }
+
+            // Compute position and rotation in front of the user
+            Vector3 spawnPos = viewTf.position + viewTf.forward * targetDistance;
+            Quaternion spawnRot = Quaternion.LookRotation(viewTf.forward, Vector3.up);
+
+            // Instantiate panel
+            GameObject instance = Instantiate(panelGO);
+            instance.transform.SetPositionAndRotation(spawnPos, spawnRot);
+        }
+
+        /// <summary>
+        /// Returns the transform representing the user's view:
+        /// - In VR: XR camera under xrOrigin (active or inactive)
+        /// - Otherwise: mainCamera
+        /// - Fallback: xrOrigin or any available Camera in scene
+        /// </summary>
+        private Transform GetUserViewTransform()
+        {
+            if (VRActive && xrOrigin != null)
+            {
+                // Try to find the XR camera under the origin
+                Camera xrCamera = xrOrigin.GetComponentInChildren<Camera>(true);
+                if (xrCamera != null)
+                    return xrCamera.transform;
+            }
+
+            // Desktop mode or fallback
+            if (mainCamera != null)
+                return mainCamera.transform;
+
+            if (xrOrigin != null)
+                return xrOrigin.transform;
+
+            // Final fallback: search for any camera
+            Camera anyCamera = FindAnyObjectByType<Camera>();
+            return anyCamera != null ? anyCamera.transform : null;
+        }
+
 
     }
 

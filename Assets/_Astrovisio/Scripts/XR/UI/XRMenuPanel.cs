@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,6 +36,8 @@ namespace Astrovisio.XR
 
         private void Start()
         {
+            exitVRButton.onClick.AddListener(HandleExitVRButtonClick);
+
             settingsButton.onClick.AddListener(HandleSettingsButtonClick);
             dataInspectorButton.onClick.AddListener(HandleDataInspectorButtonClick);
             noiseButton.onClick.AddListener(HandleNoiseButtonClick);
@@ -46,6 +49,8 @@ namespace Astrovisio.XR
 
         private void OnDestroy()
         {
+            exitVRButton.onClick.RemoveListener(HandleExitVRButtonClick);
+
             settingsButton.onClick.RemoveListener(HandleSettingsButtonClick);
             dataInspectorButton.onClick.RemoveListener(HandleDataInspectorButtonClick);
             noiseButton.onClick.RemoveListener(HandleNoiseButtonClick);
@@ -56,6 +61,11 @@ namespace Astrovisio.XR
         }
 
         // === Handlers ===
+        private void HandleExitVRButtonClick()
+        {
+            XRManager.Instance.ExitVR();
+        }
+
         private void HandleSettingsButtonClick()
         {
             Debug.Log("HandleSettingsButtonClick");
@@ -95,6 +105,7 @@ namespace Astrovisio.XR
             Debug.Log("HandleAxisButtonClick");
         }
 
+
         private void OpenOrReplacePanel<TPanel>(GameObject prefab) where TPanel : Component
         {
             var existing = FindAnyObjectByType<TPanel>();
@@ -109,16 +120,23 @@ namespace Astrovisio.XR
                 Destroy(toDestroy);
             }
 
-            if (prefab != null)
+            if (prefab == null)
             {
-                Instantiate(prefab);
+                Debug.LogWarning($"Prefab for {typeof(TPanel).Name} is not assigned.");
+                return;
+            }
+
+            if (XRManager.Instance != null)
+            {
+                XRManager.Instance.InstantiatePanel(prefab);
             }
             else
             {
-                Debug.LogWarning($"Prefab for {typeof(TPanel).Name} is not assigned.");
+                Debug.LogWarning("XRManager.Instance is null. Falling back to plain Instantiate.");
+                Instantiate(prefab);
             }
         }
 
     }
-
+    
 }
