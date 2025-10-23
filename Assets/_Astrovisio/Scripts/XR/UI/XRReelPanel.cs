@@ -15,8 +15,10 @@ namespace Astrovisio
         {
             projectManager = FindAnyObjectByType<ProjectManager>();
 
-            if (prevButton != null) prevButton.onClick.AddListener(OnPrevClick);
-            if (nextButton != null) nextButton.onClick.AddListener(OnNextClick);
+            prevButton.onClick.AddListener(OnPrevClick);
+            nextButton.onClick.AddListener(OnNextClick);
+
+            UpdateUI();
         }
 
         private void OnEnable()
@@ -26,8 +28,8 @@ namespace Astrovisio
 
         private void OnDestroy()
         {
-            if (prevButton != null) prevButton.onClick.RemoveListener(OnPrevClick);
-            if (nextButton != null) nextButton.onClick.RemoveListener(OnNextClick);
+            prevButton.onClick.RemoveListener(OnPrevClick);
+            nextButton.onClick.RemoveListener(OnNextClick);
         }
 
         [ContextMenu("Update")]
