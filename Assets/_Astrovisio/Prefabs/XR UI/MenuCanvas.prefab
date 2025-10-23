@@ -366,16 +366,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitVRButton: {fileID: 8471133805632909789}
   settingsButton: {fileID: 5146152872493156043}
-  settingsCanvas: {fileID: 5060966905789176788, guid: acec91fcd1103e149ba2ed2f6c451f4e,
+  settingsCanvas: {fileID: 5638760067126818722, guid: e6e4ffaba58c07c4ba95bc6f90b03ac0,
     type: 3}
   dataInspectorButton: {fileID: 7674322279420416082}
-  dataInspectorCanvas: {fileID: 4937604815159263196, guid: 389bef88f43ce87449b198e5ee3ddebf,
+  dataInspectorCanvas: {fileID: 6072261662164962649, guid: cc6b813fb3eda894e955fed59f17cdb8,
     type: 3}
   noiseButton: {fileID: 5344770462127368736}
-  NoiseCanvas: {fileID: 4369138520648927599, guid: 96891ba01f96dab4c84332d145a253cb,
+  NoiseCanvas: {fileID: 2463580868094123960, guid: d9e265407583b744f847ef03323e6178,
     type: 3}
   reelsButton: {fileID: 2337565382317614144}
-  reelsCanvas: {fileID: 2195485540242553750, guid: 0e76fd5a8a132c9498cdf69e9c4a303b,
+  reelsCanvas: {fileID: 1993306911488680473, guid: dd61107fca1379a459d73898c67a74cb,
     type: 3}
   screenRecorderButton: {fileID: 8647642852318857283}
   screenshotButton: {fileID: 1090884434129863702}

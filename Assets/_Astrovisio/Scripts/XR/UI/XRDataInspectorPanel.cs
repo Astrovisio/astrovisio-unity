@@ -25,6 +25,7 @@ namespace Astrovisio
         [SerializeField] private Button processButton;
         [SerializeField] private Toggle isolateToggle;
         [SerializeField] private TextMeshProUGUI dataTMP;
+        [SerializeField] private Button closeButton;
 
         // Local
         private SelectionMode selectionMode = SelectionMode.Sphere;
@@ -36,6 +37,8 @@ namespace Astrovisio
 
         private void Start()
         {
+            closeButton.onClick.AddListener(HandleCloseButton);
+
             // Shape
             sphereButton.onClick.AddListener(() => SetSelectionMode(SelectionMode.Sphere));
             cubeButton.onClick.AddListener(() => SetSelectionMode(SelectionMode.Cube));
@@ -68,8 +71,15 @@ namespace Astrovisio
 
         private void OnDestroy()
         {
+            closeButton.onClick.RemoveListener(HandleCloseButton);
+
             processButton.onClick.RemoveListener(OnProcessClicked);
             isolateToggle.onValueChanged.RemoveListener(SetIsolateToggle);
+        }
+
+        private void HandleCloseButton()
+        {
+            Destroy(transform.parent.parent.gameObject, 0.1f);
         }
 
         private void SetSelectionMode(SelectionMode selectionMode)

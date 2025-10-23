@@ -10,13 +10,14 @@ namespace Astrovisio
 {
     public class XRSettingsPanel : MonoBehaviour
     {
-        [SerializeField] private ProjectManager projectManager;
         [SerializeField] private ParamButton xAxisButton;
         [SerializeField] private ParamButton yAxisButton;
         [SerializeField] private ParamButton zAxisButton;
         [SerializeField] private ScrollRect paramScrollRect;
         [SerializeField] private ParamButton paramButtonPrefab;
         [SerializeField] private XRSettingPanel xrSettingPanel;
+        [SerializeField] private Button closeButton;
+
 
         private Project currentProject;
         private File currentFile;
@@ -24,6 +25,8 @@ namespace Astrovisio
 
         private void Start()
         {
+            closeButton.onClick.AddListener(HandleCloseButton);
+
             RenderManager.Instance.OnFileRenderEnd += OnFileRenderEnd;
 
             SetSettingPanelVisibility(false);
@@ -31,7 +34,13 @@ namespace Astrovisio
 
         private void OnDestroy()
         {
+            closeButton.onClick.RemoveListener(HandleCloseButton);
             RenderManager.Instance.OnFileRenderEnd -= OnFileRenderEnd;
+        }
+
+        private void HandleCloseButton()
+        {
+            Destroy(transform.parent.parent.gameObject, 0.1f);
         }
 
         private void OnFileRenderEnd(Project project, File file)

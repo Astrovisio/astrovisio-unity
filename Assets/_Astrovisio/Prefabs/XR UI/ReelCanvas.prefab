@@ -1001,6 +1001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c786f7308dbfba4c8afb4b1e0862568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closeButton: {fileID: 4059707832731513035}
   prevButton: {fileID: 5853684229563005131}
   nextButton: {fileID: 440934294692158988}
   labelTMP: {fileID: 8374871778141161124}

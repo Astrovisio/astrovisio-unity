@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ namespace Astrovisio
 {
     public class XRReelPanel : MonoBehaviour
     {
+        [SerializeField] private Button closeButton;
         [SerializeField] private Button prevButton;
         [SerializeField] private Button nextButton;
         [SerializeField] private TextMeshProUGUI labelTMP;
@@ -13,6 +15,8 @@ namespace Astrovisio
 
         private void Start()
         {
+            closeButton.onClick.AddListener(HandleCloseButton);
+
             projectManager = FindAnyObjectByType<ProjectManager>();
 
             prevButton.onClick.AddListener(OnPrevClick);
@@ -28,8 +32,14 @@ namespace Astrovisio
 
         private void OnDestroy()
         {
+            closeButton.onClick.RemoveListener(HandleCloseButton);
             prevButton.onClick.RemoveListener(OnPrevClick);
             nextButton.onClick.RemoveListener(OnNextClick);
+        }
+
+        private void HandleCloseButton()
+        {
+            Destroy(transform.parent.parent.gameObject, 0.1f);
         }
 
         [ContextMenu("Update")]

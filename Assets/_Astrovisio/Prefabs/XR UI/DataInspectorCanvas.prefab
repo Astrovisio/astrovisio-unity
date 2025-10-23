@@ -2875,7 +2875,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.18, y: -0.32}
+  m_AnchoredPosition: {x: 0.17999268, y: -0.32000732}
   m_SizeDelta: {x: 100, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1577755543461421233
@@ -2923,7 +2923,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6656491662302742195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4366,8 +4366,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8184913409504615353}
-  - {fileID: 8562044642814192534}
   - {fileID: 1446055108917764071}
+  - {fileID: 8562044642814192534}
   m_Father: {fileID: 5637643670495710300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4429,10 +4429,11 @@ MonoBehaviour:
   cubeButton: {fileID: 419324410164548026}
   sizeLabel: {fileID: 7631408577814715765}
   sizeInputField: {fileID: 8721807535739927974}
-  aggregationDropdown: {fileID: 0}
+  aggregationDropdown: {fileID: 7559380507929193677}
   processButton: {fileID: 101295516651486728}
   isolateToggle: {fileID: 8479361469894575823}
   dataTMP: {fileID: 7614395137312319035}
+  closeButton: {fileID: 641670672267187595}
 --- !u!1 &7640451127513731772
 GameObject:
   m_ObjectHideFlags: 0
