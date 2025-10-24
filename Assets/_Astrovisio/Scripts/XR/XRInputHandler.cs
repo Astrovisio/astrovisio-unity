@@ -99,7 +99,7 @@ namespace Astrovisio
         private void OnRightPrimaryButtonPressed()
         {
             Debug.Log("START");
-            SetDataInspector(true);
+            // SetDataInspector(true);
             // StartResetPosition();
             // ToggleDataInspector();
         }
@@ -118,7 +118,7 @@ namespace Astrovisio
         private void OnRightPrimaryButtonReleased()
         {
             Debug.Log("STOP");
-            SetDataInspector(false);
+            // SetDataInspector(false);
         }
 
         private void OnRightSecondaryButtonReleased()

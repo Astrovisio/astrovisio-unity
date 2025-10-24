@@ -275,7 +275,7 @@ namespace Astrovisio
             SetSelectionSize(selectionSize);
         }
 
-                private void SetSelectionSize(float selectionSize)
+        private void SetSelectionSize(float selectionSize)
         {
             DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();

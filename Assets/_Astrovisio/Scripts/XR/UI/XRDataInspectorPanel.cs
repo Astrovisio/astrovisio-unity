@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using CatalogData;
 using TMPro;
@@ -16,7 +17,8 @@ namespace Astrovisio
 
         [Header("Size")]
         [SerializeField] private TextMeshProUGUI sizeLabel;
-        [SerializeField] private TMP_InputField sizeInputField;
+        [SerializeField] private Slider sizeSlider;
+        [SerializeField] private TextMeshProUGUI sizeTMP;
 
         [Header("Aggregation")]
         [SerializeField] private TMP_Dropdown aggregationDropdown;
@@ -33,6 +35,7 @@ namespace Astrovisio
         private float selectionSize;
         private AggregationMode aggregationMode = AggregationMode.Average;
         private bool selectionState = true;
+        private KDTreeComponent kDTreeComponent;
 
 
         private void Start()
@@ -44,15 +47,14 @@ namespace Astrovisio
             cubeButton.onClick.AddListener(() => SetSelectionMode(SelectionMode.Cube));
 
             // Size
-            sizeInputField.onValueChanged.AddListener(text =>
+            sizeSlider.minValue = 0.01f;
+            sizeSlider.maxValue = 1f;
+            sizeSlider.onValueChanged.AddListener(value =>
             {
-                if (float.TryParse(text, System.Globalization.NumberStyles.Float,
-                                   System.Globalization.CultureInfo.InvariantCulture, out float val))
-                {
-                    selectionSize = val;
-                    SetSelectionSize(val);
-                }
+                selectionSize = value;
+                SetSelectionSize(value);
             });
+            SetSelectionSize(defaultSelectionSize);
 
             // Aggregation
             aggregationDropdown.ClearOptions();
@@ -67,12 +69,29 @@ namespace Astrovisio
 
             // Data
             dataTMP.text = "";
+
+
+
+            // ----
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
+            kDTreeComponent = dataRenderer?.GetKDTreeComponent();
+
+            if (kDTreeComponent == null)
+            {
+                return;
+            }
+            kDTreeComponent.showSelectionGizmo = true;
         }
 
         private void OnDestroy()
         {
-            closeButton.onClick.RemoveListener(HandleCloseButton);
+            if (kDTreeComponent == null)
+            {
+                return;
+            }
+            kDTreeComponent.showSelectionGizmo = false;
 
+            closeButton.onClick.RemoveListener(HandleCloseButton);
             processButton.onClick.RemoveListener(OnProcessClicked);
             isolateToggle.onValueChanged.RemoveListener(SetIsolateToggle);
         }
@@ -132,6 +151,8 @@ namespace Astrovisio
                     kDTreeComponent.selectionCubeHalfSize = selectionSize;
                     break;
             }
+
+            sizeTMP.text = selectionSize.ToString("F2", CultureInfo.InvariantCulture);
         }
 
         private void SetAggregationMode(AggregationMode aggregationMode)

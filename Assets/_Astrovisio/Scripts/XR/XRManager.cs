@@ -213,7 +213,7 @@ namespace Astrovisio
             if (kdTreeComponent != null && xrController != null)
             {
                 //kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
-                kdTreeComponent.setControllerTransform(xrController.GetRightPokePoint());
+                kdTreeComponent.SetControllerTransform(xrController.GetRightPokePoint());
                 transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
             }
             if (transformManipulator != null && xrController != null)
@@ -232,7 +232,7 @@ namespace Astrovisio
             if (kdTreeComponent != null)
             {
                 // kdTreeComponent.controllerTransform = cameraTarget.gameObject.transform;
-                kdTreeComponent.setControllerTransform(cameraTarget.gameObject.transform);
+                kdTreeComponent.SetControllerTransform(cameraTarget.gameObject.transform);
             }
         }
 

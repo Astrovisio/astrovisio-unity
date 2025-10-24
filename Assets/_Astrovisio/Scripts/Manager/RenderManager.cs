@@ -355,19 +355,19 @@ namespace Astrovisio
         // === Inspector ===
         public void SetDataInspector(bool state, bool debugSphereVisibility)
         {
-            kdTreeComponent = DataRenderer.GetKDTreeComponent();
-            kdTreeComponent.SetDataInspectorVisibility(debugSphereVisibility);
-            isInspectorModeActive = state;
+            // kdTreeComponent = DataRenderer.GetKDTreeComponent();
+            // kdTreeComponent.SetDataInspectorVisibility(debugSphereVisibility);
+            // isInspectorModeActive = state;
 
-            if (!XRManager.Instance.IsVRActive)
-            {
-                Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
-                DataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
-            }
-            else
-            {
-                // VR Controller...
-            }
+            // if (!XRManager.Instance.IsVRActive)
+            // {
+            //     Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
+            //     DataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
+            // }
+            // else
+            // {
+            //     // VR Controller...
+            // }
         }
 
         // === Noise ===

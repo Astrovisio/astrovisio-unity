@@ -10,7 +10,7 @@ namespace Astrovisio
 
         [Header("Poke Point References")]
         [SerializeField] private Transform leftPokePoint;
-        [SerializeField] private Transform rightPokePoint;
+        [SerializeField] public Transform rightPokePoint;
 
         [Header("Input Bindings")]
         [SerializeField] public InputActionReference leftPrimaryButton;

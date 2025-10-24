@@ -26,10 +26,10 @@ namespace Astrovisio
         private void Start()
         {
             closeButton.onClick.AddListener(HandleCloseButton);
-
             RenderManager.Instance.OnFileRenderEnd += OnFileRenderEnd;
-
             SetSettingPanelVisibility(false);
+
+            UpdateUI();
         }
 
         private void OnDestroy()
@@ -187,7 +187,6 @@ namespace Astrovisio
                 }
             };
         }
-
 
         private UnityAction OnCancelSetting()
         {

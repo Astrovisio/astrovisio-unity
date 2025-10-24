@@ -108,25 +108,25 @@ namespace Astrovisio.XR
 
         private void HandleSettingsButtonClick()
         {
-            Debug.Log("HandleSettingsButtonClick");
+            // Debug.Log("HandleSettingsButtonClick");
             OpenOrReplacePanel<XRSettingsPanel>(settingsCanvas);
         }
 
         private void HandleDataInspectorButtonClick()
         {
-            Debug.Log("HandleDataInspectorButtonClick");
+            // Debug.Log("HandleDataInspectorButtonClick");
             OpenOrReplacePanel<XRDataInspectorPanel>(dataInspectorCanvas);
         }
 
         private void HandleNoiseButtonClick()
         {
-            Debug.Log("HandleNoiseButtonClick");
+            // Debug.Log("HandleNoiseButtonClick");
             OpenOrReplacePanel<XRNoisePanel>(NoiseCanvas);
         }
 
         private void HandleReelsButtonClick()
         {
-            Debug.Log("HandleReelsButtonClick");
+            // Debug.Log("HandleReelsButtonClick");
             OpenOrReplacePanel<XRReelPanel>(reelsCanvas);
         }
 
@@ -149,7 +149,7 @@ namespace Astrovisio.XR
 
         private void HandleAxisButtonClick()
         {
-            Debug.Log("HandleAxisButtonClick");
+            // Debug.Log("HandleAxisButtonClick");
             axisVisibility = SceneManager.Instance.GetAxisGizmoVisibility();
             axisVisibility = !axisVisibility;
             SceneManager.Instance.SetAxesGizmoVisibility(axisVisibility);

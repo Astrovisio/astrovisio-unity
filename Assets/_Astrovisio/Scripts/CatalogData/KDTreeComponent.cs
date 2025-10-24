@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
 using System.Threading;
+using Astrovisio;
 
 public readonly struct PointDistance
 {
@@ -147,6 +148,16 @@ public class KDTreeComponent : MonoBehaviour
     private void Start()
     {
         selectAction.action.performed += OnSpacebarPressed;
+
+        if (XRManager.Instance.IsVRActive)
+        {
+            XRInputController xrInputController = FindFirstObjectByType<XRInputController>();
+            controllerTransform = xrInputController.rightPokePoint;
+        } else
+        {
+            CameraTarget cameraTarget = FindFirstObjectByType<CameraTarget>();
+            controllerTransform = cameraTarget.transform;
+        }
     }
 
     private void OnSpacebarPressed(InputAction.CallbackContext context)
@@ -270,7 +281,7 @@ public class KDTreeComponent : MonoBehaviour
         UpdateSelectionVisualizer();
     }
 
-    public void setControllerTransform(Transform controllerTransform)
+    public void SetControllerTransform(Transform controllerTransform)
     {
         this.controllerTransform = controllerTransform;
         areaSphereDataInspector.transform.position = this.controllerTransform.transform.position;
