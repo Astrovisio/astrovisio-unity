@@ -13,7 +13,15 @@ namespace Astrovisio
     {
         [Header("Shape")]
         [SerializeField] private Button sphereButton;
+        [SerializeField] private Image sphereIcon;
+        [SerializeField] private TextMeshProUGUI sphereText;
         [SerializeField] private Button cubeButton;
+        [SerializeField] private Image cubeIcon;
+        [SerializeField] private TextMeshProUGUI cubeText;
+        [SerializeField] private Color inactiveButtonColor;
+        [SerializeField] private Color activeButtonColor;
+        [SerializeField] private Color inactiveIconColor;
+        [SerializeField] private Color activeIconColor;
 
         [Header("Size")]
         [SerializeField] private TextMeshProUGUI sizeLabel;
@@ -81,6 +89,8 @@ namespace Astrovisio
                 return;
             }
             kDTreeComponent.showSelectionGizmo = true;
+
+            kDTreeComponent.OnSelectionPerformed += OnSelectionPerformed;
         }
 
         private void OnDestroy()
@@ -114,15 +124,15 @@ namespace Astrovisio
             switch (selectionMode)
             {
                 case SelectionMode.Sphere:
-                    // sphereButton.AddToClassList("active");
-                    // cubeButton.RemoveFromClassList("active");
+                    SetButtonStyle(sphereButton, sphereIcon, sphereText, true);
+                    SetButtonStyle(cubeButton, cubeIcon, cubeText, false);
                     this.selectionMode = SelectionMode.Sphere;
                     kDTreeComponent.selectionMode = SelectionMode.Sphere;
                     sizeLabel.text = "Diameter";
                     break;
                 case SelectionMode.Cube:
-                    // cubeButton.AddToClassList("active");
-                    // sphereButton.RemoveFromClassList("active");
+                    SetButtonStyle(cubeButton, cubeIcon, cubeText, true);
+                    SetButtonStyle(sphereButton, sphereIcon, sphereText, false);
                     this.selectionMode = SelectionMode.Cube;
                     kDTreeComponent.selectionMode = SelectionMode.Cube;
                     sizeLabel.text = "Side";
@@ -130,6 +140,16 @@ namespace Astrovisio
             }
 
             SetSelectionSize(selectionSize);
+        }
+
+        private void SetButtonStyle(Button button, Image icon, TextMeshProUGUI label, bool active)
+        {
+            button.gameObject.GetComponent<Image>().color = active ? activeButtonColor : inactiveButtonColor;
+            // button.GetComponentInChildren<Image>().color = active ? activeIconColor : inactiveIconColor;
+            // button.GetComponentInChildren<TextMeshProUGUI>().color = active ? activeIconColor : inactiveIconColor;
+
+            icon.color = active ? activeIconColor : inactiveIconColor;
+            label.color = active ? activeIconColor : inactiveIconColor;
         }
 
         private void SetSelectionSize(float selectionSize)
@@ -213,6 +233,11 @@ namespace Astrovisio
         {
             DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
+        }
+
+        private void OnSelectionPerformed(float[] obj)
+        {
+            SetInspectorInfo(obj);
         }
 
     }

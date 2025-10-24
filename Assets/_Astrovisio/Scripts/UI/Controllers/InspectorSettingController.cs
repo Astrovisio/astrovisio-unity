@@ -75,9 +75,7 @@ namespace Astrovisio
                 dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
             });
 
-
-            // inspectorInfoScrollView.conte TODO
-
+            inspectorInfoScrollView.Clear();
 
             // Shape
             SetSelectionMode(SelectionMode.Sphere);

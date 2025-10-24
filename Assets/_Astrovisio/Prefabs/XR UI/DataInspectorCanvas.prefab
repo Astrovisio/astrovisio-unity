@@ -1476,7 +1476,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &2695883655188718557
 GameObject:
   m_ObjectHideFlags: 0
@@ -2938,7 +2938,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6656491662302742195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3133,10 +3133,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 3293214509938678327}
   m_HandleRect: {fileID: 4669476333724170266}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 0.01
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.614
+  m_Value: 0.05
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4321,7 +4321,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0.01
+  m_text: 0.05
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b92ce26d90e1f514382425c61deccc9f, type: 2}
   m_sharedMaterial: {fileID: 1012955731989252672, guid: b92ce26d90e1f514382425c61deccc9f,
@@ -4621,7 +4621,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphereButton: {fileID: 6157206034343515913}
+  sphereIcon: {fileID: 1873145339092530206}
+  sphereText: {fileID: 6251948763850948226}
   cubeButton: {fileID: 419324410164548026}
+  cubeIcon: {fileID: 3013272071646574317}
+  cubeText: {fileID: 3134051990948532652}
+  inactiveButtonColor: {r: 0.37254903, g: 0.37254903, b: 0.34901962, a: 1}
+  activeButtonColor: {r: 0.96470594, g: 0.9607844, b: 0.95294124, a: 1}
+  inactiveIconColor: {r: 0.9176471, g: 0.909804, b: 0.8941177, a: 1}
+  activeIconColor: {r: 1, g: 0.4039216, b: 0.10980393, a: 1}
   sizeLabel: {fileID: 7631408577814715765}
   sizeSlider: {fileID: 101539027224980855}
   sizeTMP: {fileID: 837757746937236613}
