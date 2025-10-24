@@ -10,7 +10,7 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
         [SerializeField] private KDTreeComponent kdTreeComponent;
-        [SerializeField] private AxesCanvasHandler axesCanvasHandler;
+        [SerializeField] public AxesCanvasHandler axesCanvasHandler;
 
         [Header("Debug")]
         [SerializeField] private bool debugMode = false;

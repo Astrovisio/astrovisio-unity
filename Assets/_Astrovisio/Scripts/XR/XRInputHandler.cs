@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Astrovisio.XR;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,7 @@ namespace Astrovisio
 
 
         [Header("Controllers")]
+        [SerializeField] private XRMenuPanel xrMenuPanel;
         [SerializeField] private XRMenuUIController xrMenuUIController;
         [SerializeField] private XRDataInfoUIController xrDataInfoUIController;
         [SerializeField] private XRResetTransformUIController xrResetTransformUIController;
@@ -172,7 +174,8 @@ namespace Astrovisio
 
         private void ToggleMenu()
         {
-            xrMenuUIController.TogglePanel();
+            // xrMenuUIController.TogglePanel();
+            xrMenuPanel.TogglePanel();
         }
 
         private void SetDataInspector(bool state)

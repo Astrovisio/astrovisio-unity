@@ -66,10 +66,20 @@ namespace CatalogData
 
         private KDTreeComponent kdTreeComponent;
         private DataContainer dataContainer;
+        private AxesCanvasHandler axesCanvasHandler;
 
         private void Awake()
         {
             kdTreeComponent = GetComponent<KDTreeComponent>();
+        }
+
+        private void Start()
+        {
+            if (XRManager.Instance.IsVRActive)
+            {
+                TransformManipulator transformManipulator = FindAnyObjectByType<TransformManipulator>();
+                transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
+            }
         }
 
         private void GetPropertyIds()

@@ -3971,7 +3971,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47de805ac46b896448631c376b1160f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectManager: {fileID: 0}
   xAxisButton: {fileID: 962783094474381844}
   yAxisButton: {fileID: 7958302517789796350}
   zAxisButton: {fileID: 6065071840456041539}
@@ -5063,7 +5062,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &5978003429231054892
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,12 +14,13 @@ namespace Astrovisio
 
         private void Start()
         {
-            closeButton.onClick.AddListener(HandleCloseButton);
 
             noiseSlider.minValue = 0f;
             noiseSlider.maxValue = 0.1f;
 
+            closeButton.onClick.AddListener(HandleCloseButton);
             noiseSlider.onValueChanged.AddListener(HandleNoiseSliderChange);
+            UpdateUI();
         }
 
         private void OnDestroy()
@@ -36,7 +37,6 @@ namespace Astrovisio
         [ContextMenu("Update")]
         public void UpdateUI()
         {
-            // noiseToggle.isOn = RenderManager.Instance.GetNoiseState();
             noiseSlider.value = RenderManager.Instance.GetNoise();
             noiseTMP.text = $"{noiseSlider.value:F3}%";
         }
@@ -44,6 +44,7 @@ namespace Astrovisio
         private void HandleNoiseSliderChange(float newValue)
         {
             RenderManager.Instance.SetNoise(newValue);
+            UpdateUI();
         }
 
     }

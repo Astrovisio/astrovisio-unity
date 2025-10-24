@@ -95,12 +95,16 @@ namespace Astrovisio
                 return;
             }
 
+            CaptureDataTransform();
+
             RenderManager.Instance.RenderReelPrev(project.Id);
             int? currentFileId = RenderManager.Instance.GetReelCurrentFileId(project.Id);
             if (currentFileId.HasValue == false)
             {
                 return;
             }
+
+            RestoreDataTransform();
 
             SettingsManager.Instance.SetSettings(project.Id, currentFileId.Value);
             UpdateUI();
@@ -114,6 +118,8 @@ namespace Astrovisio
                 return;
             }
 
+            CaptureDataTransform();
+
             RenderManager.Instance.RenderReelNext(project.Id);
             int? currentFileId = RenderManager.Instance.GetReelCurrentFileId(project.Id);
             if (currentFileId.HasValue == false)
@@ -121,8 +127,23 @@ namespace Astrovisio
                 return;
             }
 
+            RestoreDataTransform();
+
             SettingsManager.Instance.SetSettings(project.Id, currentFileId.Value);
             UpdateUI();
+        }
+
+        private Transform dataTransform;
+
+        private void CaptureDataTransform()
+        {
+            dataTransform = RenderManager.Instance.DataRenderer.GetAstrovidioDataSetRenderer().transform;
+        }
+
+        private void RestoreDataTransform()
+        {
+            RenderManager.Instance.DataRenderer.GetAstrovidioDataSetRenderer().transform.SetPositionAndRotation(dataTransform.position, dataTransform.rotation);
+            RenderManager.Instance.DataRenderer.GetAstrovidioDataSetRenderer().transform.localScale = dataTransform.localScale;
         }
 
     }

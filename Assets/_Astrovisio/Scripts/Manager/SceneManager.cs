@@ -111,6 +111,17 @@ namespace Astrovisio
             }
         }
 
+        public bool GetAxisGizmoVisibility()
+        {
+            DataRenderer dataRenderer = renderManager != null ? renderManager.DataRenderer : null;
+            // AstrovisioDataSetRenderer datasetRenderer = dataRenderer != null ? dataRenderer.GetAstrovidioDataSetRenderer() : null;
+            AxesCanvasHandler axesHandler = dataRenderer.axesCanvasHandler;
+
+            // AxesCanvasHandler axesHandler = datasetRenderer != null ? datasetRenderer.GetComponentInChildren<AxesCanvasHandler>(true) : null;
+
+            return axesHandler != null && axesHandler.gameObject.activeSelf;
+        }
+
         public void ResetCameraTransform()
         {
             if (orbitController != null)

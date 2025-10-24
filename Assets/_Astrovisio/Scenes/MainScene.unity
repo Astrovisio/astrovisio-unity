@@ -1280,6 +1280,18 @@ MonoBehaviour:
   zoomSpeed: 1
   rotationDamping: 0.1
   zoomDamping: 0.1
+--- !u!114 &873535526 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8993621242523140627, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1354790069}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81757d53f64cbf642bf2113db2c291b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &898404383
 GameObject:
   m_ObjectHideFlags: 0
@@ -2461,6 +2473,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -9.1105
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394420927256222226, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4586625919622451409, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
         type: 3}
@@ -4919,6 +4936,11 @@ PrefabInstance:
       propertyPath: leftCanvas
       value: 
       objectReference: {fileID: 1354790071}
+    - target: {fileID: 2530079261963172026, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+        type: 3}
+      propertyPath: xrMenuPanel
+      value: 
+      objectReference: {fileID: 873535526}
     - target: {fileID: 2644172041705971299, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
         type: 3}
       propertyPath: m_AnchorMax.y
