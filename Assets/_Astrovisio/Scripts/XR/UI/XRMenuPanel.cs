@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,6 +10,7 @@ namespace Astrovisio.XR
 {
     public class XRMenuPanel : MonoBehaviour
     {
+        [SerializeField] private XRScreenshotUIController xrScreenshotUIController;
         [SerializeField] private TextMeshProUGUI infoTMP;
         [SerializeField] private Button exitVRButton;
         [SerializeField] private GameObject visual;
@@ -138,13 +141,29 @@ namespace Astrovisio.XR
         private void HandleScreenshotButtonClick()
         {
             Debug.Log("HandleScreenshotButtonClick");
+            _ = TakeScreenshot();
+        }
 
-            // Project currentProject = FindObjectsByType<ProjectManager>()?.GetCurrentProject();
-            // Settings settings = SettingsManager.Instance.GetCurrentFileSettings();
-            // File file = projectManager.GetCurrentProject().Files.Find(i => i.Id == ReelManager.Instance.GetReelCurrentFileId(projectManager.GetCurrentProject().Id));
-            // settings.Path = file.Path;
+        public async Task TakeScreenshot(bool uiVisibility = false)
+        {
+            Project currentProject = RenderManager.Instance.renderedProject;
+            File currentFile = RenderManager.Instance.renderedFile;
+            Settings settings = SettingsManager.Instance.GetCurrentFileSettings();
+            settings.Path = currentFile.Path;
 
-            // await ScreenshotUtils.TakeScreenshotWithJson(currentProject.Name, file, Camera.main, renderManager.DataRenderer.GetAstrovidioDataSetRenderer().gameObject, settings, uiVisibility);
+            xrScreenshotUIController.SetLabel("TAKING SCREENSHOT...");
+            await RunTimerAsync(3f);
+
+            await ScreenshotUtils.TakeScreenshotWithJson(
+                currentProject.Name,
+                currentFile,
+                Camera.main,
+                RenderManager.Instance.DataRenderer.GetAstrovidioDataSetRenderer().gameObject,
+                settings,
+                uiVisibility,
+                false);
+
+            xrScreenshotUIController.SetLabel("DONE");
         }
 
         private void HandleAxisButtonClick()
@@ -157,6 +176,23 @@ namespace Astrovisio.XR
         }
 
         // === Utils ===
+        private async Task RunTimerAsync(float duration)
+        {
+            xrScreenshotUIController.SetLoaderImage(true, 1f);
+
+            float t = 0f;
+            while (t < duration)
+            {
+                await Task.Yield();
+
+                t += Time.deltaTime;
+                float remaining = 1f - Mathf.Clamp01(t / duration);
+                xrScreenshotUIController.SetLoaderImage(true, remaining);
+            }
+
+            xrScreenshotUIController.SetLoaderImage(false, 0f);
+        }
+
         public void TogglePanel()
         {
             if (visual.activeSelf)

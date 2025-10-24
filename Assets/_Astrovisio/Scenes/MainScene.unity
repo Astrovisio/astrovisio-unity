@@ -1109,6 +1109,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &683334828 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1696944403489257623, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+    type: 3}
+  m_PrefabInstance: {fileID: 5061524304675062943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &699000378 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3274052486653216285, guid: 243907f793854514a8aa18fe2b704edc,
@@ -2634,6 +2640,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -9.1105
       objectReference: {fileID: 0}
+    - target: {fileID: 8993621242523140627, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
+        type: 3}
+      propertyPath: xrCanvas
+      value: 
+      objectReference: {fileID: 683334828}
+    - target: {fileID: 8993621242523140627, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
+        type: 3}
+      propertyPath: xrScreenshotUIController
+      value: 
+      objectReference: {fileID: 5061524304675062945}
     - target: {fileID: 9078238630939611385, guid: ac97f8a03c16a9e40ad32b804e5ea4fb,
         type: 3}
       propertyPath: m_Name
@@ -5547,6 +5563,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5061524304675062943}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5061524304675062945 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 582745238851741688, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+    type: 3}
+  m_PrefabInstance: {fileID: 5061524304675062943}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8152baecb9e471f4fb3eb5b74d52a8f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5061524304675062951 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 365629816261047350, guid: d8f7b5e6dd745d643ab627cdaf21bc32,

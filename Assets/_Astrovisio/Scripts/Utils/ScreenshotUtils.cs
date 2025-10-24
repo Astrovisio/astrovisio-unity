@@ -16,23 +16,23 @@ namespace Astrovisio
         /// Takes a screenshot and writes metadata as soon as the file is ready.
         /// Fully async, does NOT block the main thread.
         /// </summary>
-        public static async Task<string> TakeScreenshotWithJson(string projectName, File file, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false)
+        public static async Task<string> TakeScreenshotWithJson(string projectName, File file, Camera camera, GameObject dataCube, Settings settings = null, bool uiVisibility = false, bool askForPath = true)
         {
 
-            string path = uiVisibility ? await TakeScreenshot(projectName, file.Name) : await TakeScreenshot(projectName, file.Name, camera);
+            string path = uiVisibility ? await TakeScreenshot(projectName, file.Name, askForPath) : await TakeScreenshot(projectName, file.Name, askForPath, camera);
 
             if (path == null)
             {
                 return null;
             }
-        
+
             string jsonPath = Path.ChangeExtension(path, "json");
             System.IO.File.WriteAllText(
                 jsonPath,
                 DebugUtility.TryPrettifyJson(JsonConvert.SerializeObject(new ScreenshotMetadata(projectName, file, camera.gameObject, dataCube, settings))),
                 new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
             );
-    
+
             return path;
         }
 
@@ -43,28 +43,46 @@ namespace Astrovisio
         public static async Task<string> TakeScreenshot(
             string projectName,
             string fileName,
+            bool askForPath,
             Camera camera = null,
             bool transparentBackground = false,
-            Dictionary<string, string> metadata = null,
-            int timeoutSeconds = 10)
+            Dictionary<string, string> metadata = null)
         {
 
-            string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-            string fullScreenshotPath = StandaloneFileBrowser.SaveFilePanel("Save Screenshot", "", projectName + "_" + fileName + "_" + timestamp + ".png", "png");
+            string fullScreenshotPath;
+            if (askForPath)
+            {
+                string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                fullScreenshotPath = StandaloneFileBrowser.SaveFilePanel(
+                    "Save Screenshot", "", $"{projectName}_{fileName}_{timestamp}.png", "png");
+            }
+            else
+            {
+                string dir = GetScreenshotsFolder();
+                string ts = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                string fname = $"{SanitizeFileName(projectName)}_{SanitizeFileName(fileName)}_{ts}.png";
+                fullScreenshotPath = Path.Combine(dir, fname);
+            }
 
-            if (fullScreenshotPath.Length == 0)
+            if (string.IsNullOrEmpty(fullScreenshotPath))
             {
                 return null;
             }
 
-            // string filename = $"screenshot_{timestamp}.png";
-            // string fullScreenshotPath = Path.Combine(folderPath, filename);
+            if (!string.Equals(Path.GetExtension(fullScreenshotPath), ".png", StringComparison.OrdinalIgnoreCase))
+            {
+                fullScreenshotPath = Path.ChangeExtension(fullScreenshotPath, ".png");
+            }
+
+            Debug.Log("Saving screenshot into: " + fullScreenshotPath);
+            Debug.Log(camera);
+
 
             if (camera == null)
             {
                 ScreenCapture.CaptureScreenshot(fullScreenshotPath);
                 Debug.Log($"Screenshot saved to: {fullScreenshotPath}");
-                await WaitForFile(fullScreenshotPath, timeoutSeconds);
+                await WaitForFile(fullScreenshotPath);
             }
             else
             {
@@ -100,6 +118,7 @@ namespace Astrovisio
                 RenderTexture.active = rt;
                 tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
                 tex.Apply();
+
 
                 byte[] bytes = tex.EncodeToPNG();
                 System.IO.File.WriteAllBytes(fullScreenshotPath, bytes);
@@ -215,6 +234,32 @@ namespace Astrovisio
                     try { System.IO.File.Delete(tempPath); } catch { }
                 }
             }
+        }
+
+        public static string GetBuildLikeFolder()
+        {
+#if UNITY_EDITOR
+            // <Project>/Assets  ->  <Project>
+            return Directory.GetParent(Application.dataPath)!.FullName;
+#elif UNITY_STANDALONE_WIN
+        // <...>/YourApp_Data  ->  <...>/ (cartella con YourApp.exe)
+        return Directory.GetParent(Application.dataPath)!.FullName;
+#else
+        return Application.persistentDataPath; // fallback per altre piattaforme
+#endif
+        }
+
+        public static string GetScreenshotsFolder()
+        {
+            var dir = Path.Combine(GetBuildLikeFolder(), "Screenshots");
+            Directory.CreateDirectory(dir);
+            return dir;
+        }
+
+        public static string SanitizeFileName(string name)
+        {
+            foreach (var c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
+            return name;
         }
 
     }
