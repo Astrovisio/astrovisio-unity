@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using CatalogData;
 using UnityEngine;
 // Alias to avoid name clash with your Astrovisio.SceneManager class
@@ -16,9 +35,6 @@ namespace Astrovisio
         [Header("Additive Scene (Gizmo)")]
         [Tooltip("Name of the scene that contains only the gizmo UI/objects.")]
         [SerializeField] private string gizmoSceneName = "GizmoScene";
-
-        [Tooltip("If true, loads the gizmo scene additively in player builds; in Editor this is skipped.")]
-        [SerializeField] private bool loadGizmoAdditiveInBuild = true;
 
         // Camera
         private Vector3 initialCameraTargetPosition;
@@ -51,7 +67,7 @@ namespace Astrovisio
 
 #if !UNITY_EDITOR
             // In build: load gizmo scene additively if requested and not already loaded
-            if (loadGizmoAdditiveInBuild && !string.IsNullOrWhiteSpace(gizmoSceneName))
+            if (!string.IsNullOrWhiteSpace(gizmoSceneName))
             {
                 TryLoadGizmoSceneAdditive();
             }
