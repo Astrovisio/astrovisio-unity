@@ -11,11 +11,11 @@
             <engine:VisualElement name="ShapeContainer" style="flex-grow: 1;">
                 <engine:Label text="Shape" name="ShapeTitle" class="title" />
                 <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; justify-content: space-between;">
-                    <engine:Button name="SphereButton" class="shape-button active">
+                    <engine:Button name="SphereButton" class="shape-button active" style="width: 125px; max-width: 125px; min-width: 125px;">
                         <engine:VisualElement name="Icon" class="shape-button-icon" style="background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/language_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&amp;guid=0d2865df0c60bc94a9ca358b5b1d814e&amp;type=3#language_24dp_000_FILL0_wght400_GRAD0_opsz24 1&quot;); width: 24px; height: 24px; min-width: 24px; min-height: 24px; max-width: 24px; max-height: 24px;" />
                         <engine:Label text="Sphere" name="Label" class="shape-button-label" />
                     </engine:Button>
-                    <engine:Button name="CubeButton" class="shape-button">
+                    <engine:Button name="CubeButton" class="shape-button" style="width: 125px; min-width: 125px; max-width: 125px;">
                         <engine:VisualElement name="Icon" class="shape-button-icon" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/UI%20Toolkit/Icons/deployed_code_24dp_000_FILL0_wght400_GRAD0_opsz24%201.svg?fileID=7388822144124034973&amp;guid=04e2efec6092391429ef3bebf432ba0c&amp;type=3#deployed_code_24dp_000_FILL0_wght400_GRAD0_opsz24 1&quot;); width: 24px; height: 24px; min-height: 24px; max-height: 24px; max-width: 24px; min-width: 24px;" />
                         <engine:Label text="Cube" name="Label" class="shape-button-label" />
                     </engine:Button>
@@ -40,7 +40,7 @@
                 <engine:Instance template="CheckboxSimple" name="Checkbox" />
                 <engine:Label text="Isolate selection" name="Label" />
             </engine:VisualElement>
-            <engine:VisualElement name="DataInspectorContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="DataInspectorContainer" style="flex-grow: 1; height: 250px; min-height: 250px; max-height: 250px;">
                 <engine:Label text="Data info" name="DataInpectorTitle" class="title" />
                 <engine:ScrollView name="DataInspectorScollView" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" touch-scroll-type="Clamped">
                     <engine:Label text="Brightness: -231" />
