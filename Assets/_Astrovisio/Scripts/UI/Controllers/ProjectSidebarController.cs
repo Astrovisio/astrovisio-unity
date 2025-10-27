@@ -19,6 +19,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -128,12 +129,15 @@ namespace Astrovisio
             UIManager.SetGizmoTransformVisibility(true);
         }
 
-        private void OnGoToVRButtonClicked()
+        private async void OnGoToVRButtonClicked()
         {
             // Debug.Log("OnGoToVRButtonClicked");
+            goToVRButton.SetEnabled(false);
 
             if (!XRManager.Instance.IsVRActive)
             {
+                OnRenderSettingsButtonClicked();
+                await Task.Delay(3000);
                 XRManager.Instance.EnterVR(() => SetGoToVRButtonState(true));
             }
             else
@@ -142,6 +146,8 @@ namespace Astrovisio
                 SetGoToVRButtonState(false);
             }
             // UIManager.SetErrorVR(true);
+
+            goToVRButton.SetEnabled(true);
         }
 
         private void SetActiveStep(ProjectSidebarStep projectSidebarStep)
@@ -182,14 +188,7 @@ namespace Astrovisio
         private void SetGoToVRButtonState(bool active)
         {
             Label label = goToVRButton.Q<Label>("Label");
-            if (active)
-            {
-                label.text = "Exit VR";
-            }
-            else
-            {
-                label.text = "Go To VR";
-            }
+            label.text = active ? "Exit VR" : "Go To VR";
             goToVRButton.Blur();
         }
 
