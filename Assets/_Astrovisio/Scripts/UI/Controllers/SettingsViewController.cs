@@ -109,7 +109,13 @@ namespace Astrovisio
             inspectorSettingController.Reset();
             noiseSettingController.Reset();
             hideUIController.Reset();
-            axesGizmoController.Reset();
+
+            // axesGizmoController.Reset();
+            if (axesGizmoController.GetState() == false)
+            {
+                SceneManager.Instance.SetAxesGizmoVisibility(false);
+            }
+
             // screenrecorderSettingController.Reset();
             DeactivateAllPanels();
         }

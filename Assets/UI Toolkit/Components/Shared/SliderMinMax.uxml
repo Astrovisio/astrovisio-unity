@@ -4,8 +4,14 @@
         <engine:Label text="Thresholds" name="Label" />
         <engine:MinMaxSlider value="0,100" low-limit="0" high-limit="100" name="MinMaxSlider" style="height: 16px; min-height: 16px; max-height: 16px; margin-bottom: 15px;" />
         <engine:VisualElement name="FloatFieldsElement">
-            <engine:DoubleField name="MinFloatField" placeholder-text="0" class="min-max-slider-input" />
-            <engine:DoubleField name="MaxFloatField" placeholder-text="100" class="min-max-slider-input" />
+            <engine:VisualElement name="MinContainer" class="min-max-container" style="flex-grow: 1;">
+                <engine:DoubleField name="MinFloatField" placeholder-text="0" class="min-max-slider-input" />
+                <engine:Label text="Value too low" name="MinWarningLabel" class="warning-label" style="width: 118px; min-width: 118px; max-width: 118px; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="MaxContainer" class="min-max-container" style="flex-grow: 1;">
+                <engine:DoubleField name="MaxFloatField" placeholder-text="100" class="min-max-slider-input" />
+                <engine:Label text="Value too high" name="MaxWarningLabel" class="warning-label" style="width: 118px; min-width: 118px; max-width: 118px; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

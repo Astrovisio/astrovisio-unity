@@ -1614,7 +1614,6 @@ MonoBehaviour:
   renderManager: {fileID: 917013866}
   mainCamera: {fileID: 794102724}
   gizmoSceneName: GizmoScene
-  loadGizmoAdditiveInBuild: 1
 --- !u!1 &1166252297
 GameObject:
   m_ObjectHideFlags: 0

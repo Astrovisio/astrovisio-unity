@@ -18,13 +18,10 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CatalogData;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -50,6 +47,8 @@ namespace Astrovisio
         private MinMaxSlider thresholdSlider;
         private DoubleField thresholdSliderMinFloatField;
         private DoubleField thresholdSliderMaxFloatField;
+        private Label thresholdSliderMinWarningLabel;
+        private Label thresholdSliderMaxWarningLabel;
         private MinMaxSlider rangeSlider;
         private VisualElement colorMapVisualPreview;
         private DropdownField colormapDropdown;
@@ -104,6 +103,10 @@ namespace Astrovisio
             thresholdSlider = Root.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             thresholdSliderMinFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
             thresholdSliderMaxFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
+            thresholdSliderMinWarningLabel = Root.Q<VisualElement>("ThresholdSlider")?.Q<VisualElement>("MinContainer")?.Q<Label>("MinWarningLabel");
+            thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+            thresholdSliderMaxWarningLabel = Root.Q<VisualElement>("ThresholdSlider")?.Q<VisualElement>("MaxContainer")?.Q<Label>("MaxWarningLabel");
+            thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
             rangeSlider = Root.Q<VisualElement>("RangeSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             colorMapVisualPreview = Root.Q<VisualElement>("ColorMapContainer")?.Q<VisualElement>("Preview");
             colormapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
@@ -152,7 +155,6 @@ namespace Astrovisio
 
             thresholdSliderCallback = evt =>
             {
-                // Debug.Log("Changing THRESHOLD " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
@@ -168,26 +170,54 @@ namespace Astrovisio
 
             thresholdMinFloatFieldCallback = evt =>
             {
+                // Debug.Log("Changing THRESHOLD Min " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
                 }
                 isThresholdUpdating = true;
+                // Debug.Log($"{thresholdSlider.minValue} - {(float)evt.newValue}");
                 thresholdSlider.minValue = (float)evt.newValue;
                 tempSetting.ThrMinSel = thresholdSlider.minValue;
+                // Debug.LogWarning($"{thresholdSlider.minValue} - {tempSetting.ThrMinSel}");
+
+                // Debug.Log($"{(float)evt.newValue} et {thresholdSlider.minValue} = {(float)evt.newValue < thresholdSlider.minValue}");
+                if ((float)evt.newValue < thresholdSlider.minValue)
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
                 SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 isThresholdUpdating = false;
             };
 
             thresholdMaxFloatFieldCallback = evt =>
             {
+                // Debug.Log("Changing THRESHOLD Max " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
                 }
                 isThresholdUpdating = true;
+                // Debug.Log($"{thresholdSlider.maxValue} - {(float)evt.newValue}");
                 thresholdSlider.maxValue = (float)evt.newValue;
                 tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+                // Debug.LogWarning($"{thresholdSlider.maxValue} - {tempSetting.ThrMaxSel}");
+
+                // Debug.Log($"{(float)evt.newValue} et {thresholdSlider.maxValue} = {(float)evt.newValue < thresholdSlider.maxValue}");
+                if ((float)evt.newValue > thresholdSlider.maxValue)
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
                 SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 isThresholdUpdating = false;
             };
@@ -432,6 +462,16 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.minValue = (float)evt.newValue;
                 tempSetting.ThrMinSel = thresholdSlider.minValue;
+
+                if ((float)evt.newValue < thresholdSlider.minValue)
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
                 SettingsManager.Instance.SetParamSetting(tempSetting);
                 isThresholdUpdating = false;
             };
@@ -445,6 +485,16 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSlider.maxValue = (float)evt.newValue;
                 tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+
+                if ((float)evt.newValue > thresholdSlider.maxValue)
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
                 SettingsManager.Instance.SetParamSetting(tempSetting);
                 isThresholdUpdating = false;
             };
