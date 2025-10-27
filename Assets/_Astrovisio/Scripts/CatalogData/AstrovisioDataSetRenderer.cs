@@ -1,24 +1,31 @@
 ﻿/*
- * iDaVIE (immersive Data Visualisation Interactive Explorer)
- * Copyright (C) 2024 IDIA, INAF-OACT
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
  *
- * This file is part of the iDaVIE project.
+ * This file is part of the Astrovisio project.
  *
- * iDaVIE is free software: you can redistribute it and/or modify it under the terms 
+ * This file contains code derived from the iDaVIE project
+ * (immersive Data Visualisation Interactive Explorer)
+ * Original Copyright (C) 2024 IDIA, INAF-OACT
+ * Original file: "DataSetRenderer.cs"
+ *
+ * This file is free software: you can redistribute it and/or modify it under the terms 
  * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
  * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * iDaVIE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * This file is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
  * PURPOSE. See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License along with 
- * iDaVIE in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
  *
- * Additional information and disclaimers regarding liability and third-party 
- * components can be found in the DISCLAIMER and NOTICE files included with this project.
- *
+ * Substantial modifications from original iDaVIE code include:
+ * - General refactor
+ * - Removed all unnecessary data structures for Astrovisio Visualization
+ * - Reworked data initialization
  */
+
 using System;
 using Astrovisio;
 using UnityEngine;
@@ -59,10 +66,20 @@ namespace CatalogData
 
         private KDTreeComponent kdTreeComponent;
         private DataContainer dataContainer;
+        private AxesCanvasHandler axesCanvasHandler;
 
         private void Awake()
         {
             kdTreeComponent = GetComponent<KDTreeComponent>();
+        }
+
+        private void Start()
+        {
+            if (XRManager.Instance.IsVRActive)
+            {
+                TransformManipulator transformManipulator = FindAnyObjectByType<TransformManipulator>();
+                transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
+            }
         }
 
         private void GetPropertyIds()
@@ -206,7 +223,8 @@ namespace CatalogData
             _initialOpacity = DataMapping.Uniforms.Opacity;
 
             // Init KDTree
-            _ = kdTreeComponent.Initialize(data, Vector3.negativeInfinity);
+            Vector3 dataCenter = DataMapping.CoordinateSystem == CoordinateSystem.Astrophysics ? new Vector3(dataContainer.Center.x, dataContainer.Center.z, dataContainer.Center.y) : dataContainer.Center;
+            _ = kdTreeComponent.Initialize(data, dataCenter);
 
         }
 
@@ -505,7 +523,6 @@ namespace CatalogData
         {
             if (!_catalogMaterial)
             {
-                Debug.Log("AAA");
                 return false;
             }
 
@@ -634,6 +651,16 @@ namespace CatalogData
             DataMapping.Uniforms.NoiseStrength = value;
         }
 
+        public float GetNoiseValue()
+        {
+            return DataMapping.Uniforms.NoiseStrength;
+        }
+
+        public bool GetNoiseState()
+        {
+            return DataMapping.UseNoise;
+        }
+
         // Add this method to get detailed info about area selection
         public SelectionResult GetAreaSelectionInfo()
         {
@@ -664,11 +691,6 @@ namespace CatalogData
                 Graphics.DrawProceduralNow(MeshTopology.Points, _dataSet.N);
                 GL.PopMatrix();
             }
-            else
-            {
-                Debug.Log("AAA");
-            }
-
         }
 
         private void ReleaseAllGpuResources()

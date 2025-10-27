@@ -1,9 +1,29 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using NUnit.Framework.Internal;
+using System.Threading.Tasks;
+
 
 namespace Astrovisio
 {
@@ -13,32 +33,38 @@ namespace Astrovisio
         // === Dependencies ===
         public ProjectManager ProjectManager { get; }
         public UIManager UIManager { get; }
-
-        // === Local ===
-        public Project Project { get; }
         public VisualElement Root { get; }
+        public Project Project { get; }
 
         // === UI ===
         private Label projectNameLabel;
         private Label descriptionLabel;
+        private Button saveButton;
         private Toggle favouriteToggle;
         private Button editButton;
         private Button deleteButton;
         private Button readMoreButton;
+        private Label configFileNameLabel;
         private Toggle checkAllToggle;
         private Button headerNameButton;
         private ScrollView paramScrollView;
 
         // === Local ===
+        private File currentFile;
         private float _nextAllowedUpdate;
+        private ProjectFilesController projectFilesController;
         private readonly Dictionary<Axis, ParamRowController> selectedAxis = new();
-        private readonly Dictionary<string, ParamRowController> paramControllers = new();
+        private readonly List<ParamRowController> paramControllers = new();
 
         private enum ScrollViewOrderType { None, AZ, ZA }
         private ScrollViewOrderType scrollViewOrderType = ScrollViewOrderType.None;
 
 
-        public ProjectViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, Project project)
+        public ProjectViewController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root,
+            Project project)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
@@ -46,6 +72,8 @@ namespace Astrovisio
             Project = project;
 
             ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.FileProcessed += OnFileProcessed;
+            ProjectManager.FileUpdated += OnFileUpdated;
 
             Init();
         }
@@ -53,10 +81,18 @@ namespace Astrovisio
         private void Init()
         {
             VisualElement topContainer = Root.Q<VisualElement>("TopContainer");
+            VisualElement labelContainer = Root.Q<VisualElement>("LabelContainer");
 
             // Files
             VisualElement filesContainer = topContainer.Q<VisualElement>("FilesContainer");
-            _ = new FilesController<FileState>(filesContainer, UIManager.GetUIContext());
+            projectFilesController = new ProjectFilesController(
+                ProjectManager,
+                Project,
+                filesContainer,
+                UIManager.GetUIContext(),
+                async () => await UpdateFileOrderCallback(),
+                OnFileRowClicked
+            );
 
             // Project Name
             projectNameLabel = topContainer.Q<Label>("ProjectNameLabel");
@@ -66,15 +102,22 @@ namespace Astrovisio
             descriptionLabel = topContainer.Q<Label>("DescriptionLabel");
             descriptionLabel.text = Project.Description;
 
-
+            // Project Buttons
+            saveButton = topContainer.Q<Button>("SaveButton");
             favouriteToggle = topContainer.Q<VisualElement>("FavouriteToggle").Q<Toggle>("CheckboxRoot");
             editButton = topContainer.Q<Button>("EditButton");
             deleteButton = topContainer.Q<Button>("DeleteButton");
 
-
             // Project Read More
             readMoreButton = topContainer.Q<Button>("ReadMoreButton");
             readMoreButton.clicked += () => UIManager.SetReadMoreViewVisibility(true, Project.Name, Project.Description);
+
+            // Configuration file Label
+            configFileNameLabel = labelContainer.Q<Label>("SubtitleLabel");
+
+            // Scroll View
+            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
+            paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
 
             // Header Checkbox
             checkAllToggle = Root.Q<VisualElement>("AllCheckbox")?.Q<Toggle>("CheckboxRoot");
@@ -100,161 +143,239 @@ namespace Astrovisio
                 ApplyScrollViewOrderType();
             };
 
+            currentFile = (Project.Files != null && Project.Files.Count > 0) ? Project.Files.OrderBy(f => f.Order).FirstOrDefault() : null;
+            // Debug.Log(currentFile.Id + " - " + currentFile.Name);
+
+            InitFileContainer();
+            InitSaveButton();
             InitDeleteButton();
             InitEditButton();
             InitFavouriteToggle();
             InitScrollView();
             InitCheckAllToggle();
+            UpdateConfigurationFileLabel();
         }
 
-        private void OnProjectUpdated(Project project)
+        public void Dispose()
         {
-            if (Project.Id != project.Id)
+            projectFilesController.Dispose();
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileProcessed -= OnFileProcessed;
+            ProjectManager.FileUpdated -= OnFileUpdated;
+        }
+
+        private async void OnFileRowClicked(FileState fileState)
+        {
+            if (fileState.file == null || fileState.file == currentFile)
+            {
+                return;
+            }
+            // Debug.Log("Is current clicked file processed? " + currentFile.Processed);
+
+            Project project = await ProjectManager.GetProject(Project.Id);
+            currentFile = project.GetFile(fileState.file.Id);
+            fileState.file = currentFile;
+
+            // foreach (Variable variable in currentFile.Variables)
+            // {
+            //     if (variable.Selected == true)
+            //     {
+            //         Debug.LogError($"{variable.Name} - {variable.XAxis} {variable.YAxis} {variable.ZAxis}");
+            //     }
+            // }
+
+            InitScrollView();
+            InitCheckAllToggle();
+            UpdateConfigurationFileLabel();
+
+            // Debug.Log($"[ProjectViewController] Showing file: {currentFile?.Name ?? "none"}");
+            ProjectManager.NotifyFileSelected(Project, currentFile);
+        }
+
+        private void UpdateConfigurationFileLabel()
+        {
+            if (currentFile == null)
             {
                 return;
             }
 
-            projectNameLabel.text = project.Name;
-            descriptionLabel.text = project.Description;
+            configFileNameLabel.text = currentFile.Name;
         }
 
         private void OnCheckAllToggled(bool isChecked)
         {
-            foreach (var kvp in paramControllers)
+            foreach (ParamRowController paramController in paramControllers)
             {
-                kvp.Value.SetSelected(isChecked);
+                paramController.SetSelected(isChecked, true);
             }
+            _ = ProjectManager.UpdateFile(Project.Id, currentFile);
         }
 
         private void InitScrollView()
         {
-            VisualElement paramsContainer = Root.Q<VisualElement>("ParamsContainer");
-            paramScrollView = paramsContainer.Q<ScrollView>("ParamScrollView");
-            paramScrollView.contentContainer.Clear();
-            paramControllers.Clear();
-
-            if (Project.ConfigProcess?.Params == null)
+            if (currentFile == null)
             {
-                Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+
+            foreach (ParamRowController paramRowController in paramControllers)
             {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
+                paramRowController.OnAxisChanged -= HandleOnAxisChanged;
+                paramRowController.OnThresholdChanged -= HandleOnThresholdChanged;
+                paramRowController.OnStateChanged -= HandleStateChanged;
+            }
+            paramControllers.Clear();
+            paramScrollView.contentContainer.Clear();
+
+            if (Project.Files.Count == 0)
+            {
+                Debug.LogWarning("No files to display.");
+                return;
+            }
+
+            foreach (Variable variable in currentFile.Variables)
+            {
+                // Fix to avoid breaking the double slider component
+                if (variable.ThrMin == variable.ThrMax)
+                {
+                    continue;
+                }
 
                 TemplateContainer paramRow = UIManager.GetUIContext().paramRowTemplate.CloneTree();
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
-                nameContainer.Q<Label>("Label").text = paramName;
+                nameContainer.Q<Label>("Label").text = variable.Name;
 
-                ParamRowController paramRowController = new ParamRowController(paramRow, paramName, param);
-                paramControllers[paramName] = paramRowController;
+                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, currentFile, variable);
+                paramControllers.Add(paramRowController);
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;
                 paramRowController.OnThresholdChanged += HandleOnThresholdChanged;
+                paramRowController.OnStateChanged += HandleStateChanged;
 
                 paramScrollView.Add(paramRowController.Root);
             }
 
-            InitializeSelectedAxes();
+            InitSelectedAxes();
         }
 
-        private void InitializeSelectedAxes()
+        private void InitSelectedAxes()
         {
-            foreach (var kvp in paramControllers)
+            foreach (ParamRowController paramController in paramControllers)
             {
-                var controller = kvp.Value;
-                var param = controller.Param;
-
-                if (param.XAxis)
+                if (paramController.Variable.XAxis)
                 {
-                    selectedAxis[Axis.X] = controller;
+                    // Debug.Log(paramController.Variable.Name + " is X");
+                    selectedAxis[Axis.X] = paramController;
                 }
-                if (param.YAxis)
+                if (paramController.Variable.YAxis)
                 {
-                    selectedAxis[Axis.Y] = controller;
+                    // Debug.Log(paramController.Variable.Name + " is Y");
+                    selectedAxis[Axis.Y] = paramController;
                 }
-                if (param.ZAxis)
+                if (paramController.Variable.ZAxis)
                 {
-                    selectedAxis[Axis.Z] = controller;
+                    // Debug.Log(paramController.Variable.Name + " is Z");
+                    selectedAxis[Axis.Z] = paramController;
                 }
             }
         }
 
-        private void HandleOnAxisChanged(Axis? axis, ParamRowController newly)
+        private void HandleOnAxisChanged(Axis? axis, ParamRowController paramRowController)
         {
+            // Debug.LogWarning("HandleOnAxisChanged");
+            // Debug.LogWarning(axis == null);
+
+            // File file = ProjectManager.GetFile(Project.Id, paramRowController.File.Id);
+            // Variable variableToEdit = file.GetVariable(paramRowController.Variable.Name);
+
             if (axis == null)
             {
                 foreach (var kvp in selectedAxis.ToList())
                 {
-                    if (kvp.Value == newly)
+                    if (kvp.Value == paramRowController)
                     {
                         selectedAxis.Remove(kvp.Key);
                         switch (kvp.Key)
                         {
                             case Axis.X:
-                                newly.Param.XAxis = false;
+                                // Debug.Log("Axis.X 1");
+                                paramRowController.Variable.XAxis = false;
                                 break;
                             case Axis.Y:
-                                newly.Param.YAxis = false;
+                                // Debug.Log("Axis.Y 1");
+                                paramRowController.Variable.YAxis = false;
                                 break;
                             case Axis.Z:
-                                newly.Param.ZAxis = false;
+                                // Debug.Log("Axis.Z 1");
+                                paramRowController.Variable.ZAxis = false;
                                 break;
                         }
                     }
                 }
+                UpdateFile();
                 return;
             }
 
-            if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != newly)
+            if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != paramRowController)
             {
                 previous.DeselectAxis(axis.Value);
+                Debug.LogWarning(axis.Value);
                 switch (axis.Value)
                 {
                     case Axis.X:
-                        previous.Param.XAxis = false;
+                        // Debug.Log("Axis.X 2");
+                        previous.Variable.XAxis = false;
                         break;
                     case Axis.Y:
-                        previous.Param.YAxis = false;
+                        // Debug.Log("Axis.Y 2");
+                        previous.Variable.YAxis = false;
                         break;
                     case Axis.Z:
-                        previous.Param.ZAxis = false;
+                        // Debug.Log("Axis.Z 2");
+                        previous.Variable.ZAxis = false;
                         break;
                 }
             }
 
-            selectedAxis[axis.Value] = newly;
+            selectedAxis[axis.Value] = paramRowController;
 
             switch (axis.Value)
             {
                 case Axis.X:
-                    newly.Param.XAxis = true;
-                    newly.Param.YAxis = false;
-                    newly.Param.ZAxis = false;
+                    // Debug.Log("Axis.X 3");
+                    paramRowController.Variable.XAxis = true;
+                    paramRowController.Variable.YAxis = false;
+                    paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Y:
-                    newly.Param.XAxis = false;
-                    newly.Param.YAxis = true;
-                    newly.Param.ZAxis = false;
+                    // Debug.Log("Axis.Y 3");
+                    paramRowController.Variable.XAxis = false;
+                    paramRowController.Variable.YAxis = true;
+                    paramRowController.Variable.ZAxis = false;
                     break;
                 case Axis.Z:
-                    newly.Param.XAxis = false;
-                    newly.Param.ZAxis = true;
-                    newly.Param.YAxis = false;
+                    // Debug.Log("Axis.Z 3");
+                    paramRowController.Variable.XAxis = false;
+                    paramRowController.Variable.ZAxis = true;
+                    paramRowController.Variable.YAxis = false;
                     break;
             }
 
-            UpdateProject();
+            UpdateFile();
         }
 
         private void HandleOnThresholdChanged(Threshold threshold, ParamRowController controller)
         {
-            UpdateProject();
+            UpdateFile();
         }
 
-        private void UpdateProject()
+        private void HandleStateChanged()
+        {
+            UpdateFile();
+        }
+
+        private void UpdateFile()
         {
             if (Time.unscaledTime < _nextAllowedUpdate)
             {
@@ -262,7 +383,36 @@ namespace Astrovisio
             }
 
             _nextAllowedUpdate = Time.unscaledTime + 0.05f; // 50ms
-            ProjectManager.UpdateProject(Project.Id, Project);
+
+            if (currentFile != null)
+            {
+                // Debug.Log("UpdateFile -> " + currentFile.Order);
+                currentFile.Processed = false;
+                _ = ProjectManager.UpdateFile(Project.Id, currentFile);
+            }
+
+        }
+
+        private void InitFileContainer()
+        {
+            foreach (File file in Project.Files.OrderBy(f => f.Order))
+            {
+                FileInfo fileInfo = new FileInfo(file.Path, file.Name, file.Size);
+                FileState fileState = new FileState(fileInfo, file, file.Processed);
+                projectFilesController.AddFile(fileState);
+                // Debug.Log($"File /// Name: {file.Name} - Processed: {file.Processed}");
+                // Debug.Log($"File added: {fileState.fileInfo.Name} ({fileState.fileInfo.Size} bytes) - {fileState.fileInfo.Path}");
+            }
+        }
+
+        private void InitSaveButton()
+        {
+            saveButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                ProjectManager.SaveProjectToJSON();
+                evt.StopPropagation();
+                // Debug.Log("SaveButton clicked");
+            });
         }
 
         private void InitDeleteButton()
@@ -296,36 +446,47 @@ namespace Astrovisio
             favouriteToggle.RegisterValueChangedCallback(evt =>
             {
                 Project.Favourite = evt.newValue;
-                ProjectManager.UpdateProject(Project.Id, Project);
+                _ = ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 
         private void InitCheckAllToggle()
         {
-            checkAllToggle.value = Project.ConfigProcess?.Params != null &&
-                                   Project.ConfigProcess.Params.All(kv => kv.Value.Selected);
-        }
-
-        private void ApplyScrollViewOrderType()
-        {
-            if (paramScrollView == null || Project.ConfigProcess?.Params == null)
+            if (checkAllToggle == null)
             {
                 return;
             }
 
-            IEnumerable<KeyValuePair<string, ConfigParam>> ordered = scrollViewOrderType switch
+            bool allSelected =
+                currentFile?.Variables != null &&
+                currentFile.Variables.Count > 0 &&
+                currentFile.Variables.All(v => v.Selected);
+
+            checkAllToggle.SetValueWithoutNotify(allSelected);
+        }
+
+        private void ApplyScrollViewOrderType()
+        {
+            if (paramScrollView == null || paramControllers.Count == 0)
             {
-                ScrollViewOrderType.AZ => Project.ConfigProcess.Params.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                ScrollViewOrderType.ZA => Project.ConfigProcess.Params.OrderByDescending(k => k.Key, StringComparer.OrdinalIgnoreCase),
-                _ => Project.ConfigProcess.Params
+                return;
+            }
+
+            IEnumerable<ParamRowController> ordered = scrollViewOrderType switch
+            {
+                ScrollViewOrderType.AZ => paramControllers
+                    .OrderBy(pc => pc.Variable?.Name, StringComparer.OrdinalIgnoreCase),
+                ScrollViewOrderType.ZA => paramControllers
+                    .OrderByDescending(pc => pc.Variable?.Name, StringComparer.OrdinalIgnoreCase),
+                _ => paramControllers
             };
 
             UpdateOrderTypeLabel();
 
             paramScrollView.contentContainer.Clear();
-            foreach (var kvp in ordered)
+            foreach (var pc in ordered)
             {
-                paramScrollView.Add(paramControllers[kvp.Key].Root);
+                paramScrollView.Add(pc.Root);
             }
         }
 
@@ -343,6 +504,102 @@ namespace Astrovisio
                     headerNameButton.Q<Label>().text = "Name";
                     break;
             }
+        }
+
+        private async Task UpdateFileOrderCallback()
+        {
+            // Debug.Log("UpdateFileOrderCallback");
+
+            List<FileState> uiList = projectFilesController.GetFileList();
+            if (Project.Files == null || uiList == null)
+            {
+                return;
+            }
+
+            List<File> original = Project.Files;
+
+            int limit = Math.Min(uiList.Count, original.Count);
+
+            for (int i = 0; i < limit; i++)
+            {
+                File uiFile = uiList[i].file;
+                if (uiFile == null)
+                {
+                    Debug.LogWarning($"UI slot {i} has null file; skipping.");
+                    continue;
+                }
+
+                int j = original.FindIndex(f => f.Id == uiFile.Id);
+                if (j < 0)
+                {
+                    Debug.LogWarning($"File with Id={uiFile.Id} not found in Project.Files; skipping.");
+                    continue;
+                }
+                if (j == i)
+                {
+                    continue;
+                }
+                (original[i], original[j]) = (original[j], original[i]);
+            }
+
+            int[] orderIds = new int[original.Count];
+            for (int i = 0; i < original.Count; i++)
+            {
+                // original[i].Order = i;
+                // ProjectManager.UpdateFile(Project.Id, original[i]);
+
+                orderIds[i] = original[i].Id;
+            }
+
+            await ProjectManager.UpdateFileOrder(Project.Id, orderIds);
+
+            // Check order
+            Debug.LogWarning("CHECK ORDER");
+            for (int i = 0; i < Project.Files.Count; i++)
+            {
+                Debug.Log(Project.Files[i].Order + " - " + Project.Files[i].Name);
+            }
+
+            // Debug.Log($"Project.Files reordered to match UI order (first {limit} items). Count={original.Count}");
+        }
+
+        private void OnProjectUpdated(Project project)
+        {
+            if (Project.Id != project.Id)
+            {
+                return;
+            }
+
+            projectNameLabel.text = project.Name;
+            descriptionLabel.text = project.Description;
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, processed {file.Processed}.");
+            projectFilesController.SetFileState(file, true);
+        }
+
+        private void OnFileUpdated(Project project, File file)
+        {
+            if (project == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log($"Project {project.Name}, file {file.Name}, updated.");
+            projectFilesController.SetFileState(file, false);
+
+            // Debug.LogWarning("CHECK ORDER");
+            // for (int i = 0; i < Project.Files.Count; i++)
+            // {
+            //     Debug.Log(Project.Files[i].Order + " - " + Project.Files[i].Name);
+            // }
         }
 
     }

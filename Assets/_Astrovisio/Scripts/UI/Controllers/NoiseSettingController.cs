@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,7 +26,6 @@ namespace Astrovisio
     {
         public VisualElement Root { get; }
 
-        private Toggle noiseToggle;
         private MinMaxSlider noiseSlider;
         private FloatField noiseFloatField;
 
@@ -24,31 +42,10 @@ namespace Astrovisio
 
         private void Init()
         {
-            noiseToggle = Root.Q<VisualElement>("NoiseToggle").Q<Toggle>();
             noiseSlider = Root.Q<VisualElement>("NoiseSlider").Q<MinMaxSlider>();
             noiseFloatField = Root.Q<FloatField>("NoiseInputField");
 
-            noiseSlider.SetEnabled(noiseState);
-            noiseFloatField.SetEnabled(noiseState);
             noiseFloatField.formatString = "F3";
-
-            // Debug.Log(noiseToggle);
-            // Debug.Log(noiseSlider);
-            // Debug.Log(noiseFloatField);
-
-            // Toggle
-            noiseToggle.value = noiseState;
-
-            noiseToggle.RegisterValueChangedCallback(evt =>
-            {
-                noiseState = evt.newValue;
-
-                noiseSlider.SetEnabled(noiseState);
-                noiseFloatField.SetEnabled(noiseState);
-
-                SetNoise(noiseState, noiseValue);
-            });
-
 
             bool isUpdating = false;
 
@@ -73,7 +70,7 @@ namespace Astrovisio
                 noiseValue = newValue;
                 noiseFloatField.value = newValue;
 
-                SetNoise(noiseToggle.value, newValue);
+                SetNoise(newValue);
 
                 isUpdating = false;
             });
@@ -93,7 +90,7 @@ namespace Astrovisio
                 noiseValue = newValue;
                 noiseSlider.maxValue = newValue;
 
-                SetNoise(noiseToggle.value, newValue);
+                SetNoise(newValue);
 
                 isUpdating = false;
             });
@@ -104,14 +101,13 @@ namespace Astrovisio
             return noiseState;
         }
 
-        private void SetNoise(bool state, float value)
+        private void SetNoise(float value)
         {
-            RenderManager.Instance.SetNoise(state, value);
+            RenderManager.Instance.SetNoise(value);
         }
 
         public void Reset()
         {
-            noiseToggle.value = false;
             noiseSlider.maxValue = noiseMinValue;
             noiseFloatField.value = noiseMinValue;
             // noiseSlider.SetEnabled(noiseState);

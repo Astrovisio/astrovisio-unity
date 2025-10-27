@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,8 +31,6 @@ namespace Astrovisio
         public Project Project { get; set; }
         public VisualElement Root { private set; get; }
 
-        // === Events ===
-
         // === UI ===
         private Label projectNameLabel;
         private Label filesLabel;
@@ -25,7 +42,11 @@ namespace Astrovisio
         private Button deleteButton;
 
 
-        public ProjectRowController(ProjectManager projectManager, UIManager uiManager, Project project, VisualElement root)
+        public ProjectRowController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            Project project,
+            VisualElement root)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
@@ -55,7 +76,7 @@ namespace Astrovisio
             deleteButton = Root.Q<Button>("DeleteButton");
 
             projectNameLabel.text = Project.Name;
-            filesLabel.text = Project.Paths.Length.ToString() + " files";
+            filesLabel.text = (Project.Files.Count == 1) ? "1 file" : Project.Files.Count + " files";
 
             if (Project.LastOpened is null && Project.Created is null)
             {
@@ -111,7 +132,7 @@ namespace Astrovisio
             favouriteToggle.RegisterValueChangedCallback(evt =>
             {
                 Project.Favourite = evt.newValue;
-                ProjectManager.UpdateProject(Project.Id, Project);
+                _ = ProjectManager.UpdateProject(Project.Id, Project);
             });
         }
 

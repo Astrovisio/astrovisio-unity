@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +42,12 @@ namespace Astrovisio
         private bool isSearching = false;
         private string searchValue = "";
 
-        public HomeViewController(ProjectManager projectManager, UIManager uiManager, VisualElement root, UIContextSO uiContextSO, SideController sideController)
+        public HomeViewController(
+            ProjectManager projectManager,
+            UIManager uiManager,
+            VisualElement root,
+            UIContextSO uiContextSO,
+            SideController sideController)
         {
             ProjectManager = projectManager;
             UIManager = uiManager;
@@ -111,7 +135,20 @@ namespace Astrovisio
                 ProjectRowController projectRowController = new ProjectRowController(ProjectManager, UIManager, project, projectRow);
                 projectControllers[project.Id] = projectRowController;
 
-                projectRow.RegisterCallback<ClickEvent>(_ => ProjectManager.OpenProject(project.Id));
+                projectRow.RegisterCallback<ClickEvent>(async evt =>
+                {
+                    Project projectOpened = await ProjectManager.OpenProject(project.Id);
+
+                    foreach (File file in projectOpened.Files)
+                    {
+                        if (file.Processed)
+                        {
+                            // Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
+                            ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
+                        }
+                    }
+                });
+
                 target.Add(projectRow);
             }
         }

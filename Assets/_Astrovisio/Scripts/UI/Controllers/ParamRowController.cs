@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +31,7 @@ namespace Astrovisio
     public class ParamRowController
     {
         // === Dependencies ===
+        public ProjectManager ProjectManager { get; }
         public VisualElement Root { get; }
 
         // === Events ===
@@ -23,7 +43,6 @@ namespace Astrovisio
         private Button rootButton;
         private VisualElement nameContainer;
         private Label nameLabel;
-        private Label filesLabel;
         private VisualElement xyzAxisContainer;
         private Button xChipButton;
         private Button yChipButton;
@@ -38,18 +57,19 @@ namespace Astrovisio
         private Toggle checkbox;
 
         // === Data ===
-        public string ParamName { get; set; }
-        public ConfigParam Param { get; set; }
+        public File File { get; set; }
+        public Variable Variable { get; set; }
 
         // === Local ===
         private UIDebouncer _thrDebouncer;
 
 
-        public ParamRowController(VisualElement root, string paramName, ConfigParam param)
+        public ParamRowController(ProjectManager projectManager, VisualElement root, File file, Variable variable)
         {
+            ProjectManager = projectManager;
             Root = root;
-            ParamName = paramName;
-            Param = param;
+            File = file;
+            Variable = variable;
 
             Init();
         }
@@ -57,6 +77,8 @@ namespace Astrovisio
         private void Init()
         {
             rootButton = Root.Q<Button>("RootButton");
+
+            // Debug.LogWarning($"{Variable.Name} - {Variable.ThrMin} {Variable.ThrMinSel} - {Variable.ThrMax} {Variable.ThrMaxSel}");
 
             // Name
             nameContainer = Root.Q<VisualElement>("NameContainer");
@@ -84,21 +106,23 @@ namespace Astrovisio
 
             minErrorLabel = histogramSlider.Q<Label>("MinErrorLabel");
             maxErrorLabel = histogramSlider.Q<Label>("MaxErrorLabel");
-            Param.ThrMinSel = Param.ThrMinSel ?? Param.ThrMin;
-            Param.ThrMaxSel = Param.ThrMaxSel ?? Param.ThrMax;
+            Variable.ThrMinSel = Variable.ThrMinSel ?? Variable.ThrMin;
+            Variable.ThrMaxSel = Variable.ThrMaxSel ?? Variable.ThrMax;
             minInputField.RegisterValueChangedCallback(evt =>
             {
-                Param.ThrMinSel = evt.newValue;
+                Variable.ThrMinSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Min);
+                minMaxSlider.SetValueWithoutNotify(new Vector2((float)evt.newValue, minMaxSlider.value.y));
                 OnThresholdChanged?.Invoke(Threshold.Min, this);
-                Debug.Log($"[UI] {ParamName} → ThrMin aggiornato a {evt.newValue}");
+                Debug.Log($"[UI] {Variable.Name} → ThrMin aggiornato a {evt.newValue}");
             });
             maxInputField.RegisterValueChangedCallback(evt =>
             {
-                Param.ThrMaxSel = evt.newValue;
+                Variable.ThrMaxSel = evt.newValue;
                 UpdateWarningLabel(Threshold.Max);
+                minMaxSlider.SetValueWithoutNotify(new Vector2(minMaxSlider.value.x, (float)evt.newValue));
                 OnThresholdChanged?.Invoke(Threshold.Max, this);
-                Debug.Log($"[UI] {ParamName} → ThrMax aggiornato a {evt.newValue}");
+                Debug.Log($"[UI] {Variable.Name} → ThrMax aggiornato a {evt.newValue}");
             });
             resetButton = thresholdContainer.Q<Button>("ResetButton");
             resetButton.clicked += OnResetButtonClicked;
@@ -108,26 +132,26 @@ namespace Astrovisio
             checkbox = Root.Q<Toggle>("CheckboxRoot");
             checkbox?.RegisterValueChangedCallback(evt =>
             {
-                Param.Selected = evt.newValue;
-                // Debug.Log($"Checkbox toggled for {ParamName}: {Param.Selected}");
-                SetSelected(Param.Selected);
+                Variable.Selected = evt.newValue;
+                // Debug.Log($"Checkbox toggled for {Variable.Name}: {Variable.Selected}");
+                SetSelected(Variable.Selected);
             });
-            SetSelected(Param.Selected);
+            SetSelected(Variable.Selected);
 
             _thrDebouncer = new UIDebouncer(Root, 200);
         }
 
         private void InitAxis()
         {
-            if (Param.XAxis)
+            if (Variable.XAxis)
             {
                 HandleAxisChipClick(Axis.X);
             }
-            if (Param.YAxis)
+            if (Variable.YAxis)
             {
                 HandleAxisChipClick(Axis.Y);
             }
-            if (Param.ZAxis)
+            if (Variable.ZAxis)
             {
                 HandleAxisChipClick(Axis.Z);
             }
@@ -203,15 +227,15 @@ namespace Astrovisio
             {
                 case Axis.X:
                     xChipButton.RemoveFromClassList("active");
-                    Param.XAxis = false;
+                    Variable.XAxis = false;
                     break;
                 case Axis.Y:
                     yChipButton.RemoveFromClassList("active");
-                    Param.YAxis = false;
+                    Variable.YAxis = false;
                     break;
                 case Axis.Z:
                     zChipButton.RemoveFromClassList("active");
-                    Param.ZAxis = false;
+                    Variable.ZAxis = false;
                     break;
             }
 
@@ -220,14 +244,13 @@ namespace Astrovisio
 
         private void InitThresholds()
         {
-            minInputField.value = Param.ThrMinSel ?? Param.ThrMin;
-            maxInputField.value = Param.ThrMaxSel ?? Param.ThrMax;
+            minInputField.value = Variable.ThrMinSel ?? Variable.ThrMin;
+            maxInputField.value = Variable.ThrMaxSel ?? Variable.ThrMax;
             UpdateWarningLabel(Threshold.Min);
             UpdateWarningLabel(Threshold.Max);
 
             BindSliderToFields();
         }
-
 
         private void OnResetButtonClicked()
         {
@@ -236,16 +259,17 @@ namespace Astrovisio
 
         private void ResetThresholds()
         {
-            minInputField.value = Param.ThrMin;
-            maxInputField.value = Param.ThrMax;
-            Param.ThrMinSel = Param.ThrMin;
-            Param.ThrMaxSel = Param.ThrMax;
+            ApplySliderClamped(new Vector2(
+                (float)Variable.ThrMin,
+                (float)Variable.ThrMax));
+
+            DebouncedNotifyThresholdsChanged();
         }
 
-        public void SetSelected(bool value)
+        public void SetSelected(bool value, bool silent = false)
         {
             checkbox.value = value;
-            Param.Selected = value;
+            Variable.Selected = value;
 
             if (rootButton != null)
             {
@@ -263,12 +287,12 @@ namespace Astrovisio
                 DeselectAxis(Axis.Z);
             }
 
-            OnStateChanged?.Invoke();
-            // Debug.Log(ParamName + " " + value);
+            if (!silent)
+            {
+                OnStateChanged?.Invoke();
+            }
+            // Debug.Log(Variable.Name + " " + value);
         }
-
-        private static bool LessThan(double a, double b, double eps) => a < b - eps;
-        private static bool GreaterThan(double a, double b, double eps) => a > b + eps;
 
         private double EpsilonFor(double refVal)
         {
@@ -279,15 +303,15 @@ namespace Astrovisio
         {
             if (threshold == Threshold.Min)
             {
-                double sel = Param.ThrMinSel ?? Param.ThrMin;
-                double eps = EpsilonFor(Param.ThrMin);
+                double sel = Variable.ThrMinSel ?? Variable.ThrMin;
+                double eps = EpsilonFor(Variable.ThrMin);
 
-                if (LessThan(sel, Param.ThrMin, eps))
+                if (LessThan(sel, Variable.ThrMin, eps))
                 {
                     minErrorLabel.style.visibility = Visibility.Visible;
                     minErrorLabel.text = "Value too low";
                 }
-                else if (GreaterThan(sel, Math.Min(Param.ThrMaxSel ?? Param.ThrMax, Param.ThrMax), eps))
+                else if (GreaterThan(sel, Math.Min(Variable.ThrMaxSel ?? Variable.ThrMax, Variable.ThrMax), eps))
                 {
                     minErrorLabel.style.visibility = Visibility.Visible;
                     minErrorLabel.text = "Value too high";
@@ -299,15 +323,15 @@ namespace Astrovisio
             }
             else if (threshold == Threshold.Max)
             {
-                double sel = Param.ThrMaxSel ?? Param.ThrMax;
-                double eps = EpsilonFor(Param.ThrMax);
+                double sel = Variable.ThrMaxSel ?? Variable.ThrMax;
+                double eps = EpsilonFor(Variable.ThrMax);
 
-                if (GreaterThan(sel, Param.ThrMax, eps))
+                if (GreaterThan(sel, Variable.ThrMax, eps))
                 {
                     maxErrorLabel.style.visibility = Visibility.Visible;
                     maxErrorLabel.text = "Value too high";
                 }
-                else if (LessThan(sel, Math.Max(Param.ThrMinSel ?? Param.ThrMin, Param.ThrMin), eps))
+                else if (LessThan(sel, Math.Max(Variable.ThrMinSel ?? Variable.ThrMin, Variable.ThrMin), eps))
                 {
                     maxErrorLabel.style.visibility = Visibility.Visible;
                     maxErrorLabel.text = "Value too low";
@@ -319,12 +343,11 @@ namespace Astrovisio
             }
         }
 
-
         private void ApplySliderClamped(Vector2 raw)
         {
             // Clamp within the slider’s limits
-            double loD = Math.Clamp((double)raw.x, Param.ThrMin, Param.ThrMax);
-            double hiD = Math.Clamp((double)raw.y, Param.ThrMin, Param.ThrMax);
+            double loD = Math.Clamp((double)raw.x, Variable.ThrMin, Variable.ThrMax);
+            double hiD = Math.Clamp((double)raw.y, Variable.ThrMin, Variable.ThrMax);
             if (loD > hiD) (loD, hiD) = (hiD, loD);
 
             // Reset/restore the slider if needed
@@ -335,19 +358,18 @@ namespace Astrovisio
             maxInputField.SetValueWithoutNotify(hiD);
 
             // Update model and warnings
-            Param.ThrMinSel = loD;
-            Param.ThrMaxSel = hiD;
+            Variable.ThrMinSel = loD;
+            Variable.ThrMaxSel = hiD;
             UpdateWarningLabel(Threshold.Min);
             UpdateWarningLabel(Threshold.Max);
 
             // Debug.Log($"[ApplySliderClamped] lowLimit={minMaxSlider.lowLimit}, valueMin={loD} | highLimit={minMaxSlider.highLimit}, valueMax={hiD}");
         }
 
-
         private void BindSliderToFields()
         {
-            float loLim = (float)Math.Min(Param.ThrMin, Param.ThrMax);
-            float hiLim = (float)Math.Max(Param.ThrMin, Param.ThrMax);
+            float loLim = (float)Math.Min(Variable.ThrMin, Variable.ThrMax);
+            float hiLim = (float)Math.Max(Variable.ThrMin, Variable.ThrMax);
             if (Mathf.Approximately(loLim, hiLim)) hiLim = loLim + 1e-6f;
 
             minMaxSlider.lowLimit = float.NegativeInfinity;
@@ -356,8 +378,8 @@ namespace Astrovisio
             minMaxSlider.highLimit = hiLim;
 
             // Align the slider to the current values
-            float lo = (float)(Param.ThrMinSel ?? Param.ThrMin);
-            float hi = (float)(Param.ThrMaxSel ?? Param.ThrMax);
+            float lo = (float)(Variable.ThrMinSel ?? Variable.ThrMin);
+            float hi = (float)(Variable.ThrMaxSel ?? Variable.ThrMax);
             lo = Mathf.Clamp(lo, loLim, hiLim);
             hi = Mathf.Clamp(hi, loLim, hiLim);
             if (lo > hi) (lo, hi) = (hi, lo);
@@ -381,7 +403,30 @@ namespace Astrovisio
             });
         }
 
-    }
+        private static bool LessThan(double a, double b, double eps)
+        {
+            if (a < b - eps)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
+        private static bool GreaterThan(double a, double b, double eps)
+        {
+            if (a > b + eps)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
 
 }

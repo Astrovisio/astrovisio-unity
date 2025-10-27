@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using CatalogData;
 using UnityEngine;
@@ -29,7 +48,7 @@ namespace Astrovisio
         private KDTreeComponent _subscribedKDTree;
         private bool selectionState = false;
         private SelectionMode selectionMode = SelectionMode.Sphere;
-        private float defaultSectionSize = 0.05f;
+        private float defaultSelectionSize = 0.05f;
         private float selectionSize;
         private AggregationMode aggregationMode = AggregationMode.Average;
 
@@ -38,8 +57,8 @@ namespace Astrovisio
         {
             Root = root;
 
-            RenderManager.Instance.OnProjectRenderStart += OnProjectRenderStart;
-            RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderEnd;
+            RenderManager.Instance.OnFileRenderStart += OnFileRenderStart;
+            RenderManager.Instance.OnFileRenderEnd += OnFileRenderEnd;
 
             Init();
         }
@@ -71,33 +90,11 @@ namespace Astrovisio
             isolateSelectionToggle.RegisterValueChangedCallback(evt =>
             {
                 bool value = evt.newValue;
-                DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+                DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
                 dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
             });
 
-
-            // sphereButton.parent.SetEnabled(false);
-            // sizeInputFloatField.parent.SetEnabled(false);
-            // mediaDropdownField.parent.SetEnabled(false);
-            // processButton.SetEnabled(false);
-            // isolateSelectionToggle.SetEnabled(false);
-            // inspectorInfoScrollView.parent.SetEnabled(false);
-
-            // inspectorToggle.value = selectionState;
-            // inspectorToggle.RegisterValueChangedCallback(evt =>
-            // {
-            //     selectionState = evt.newValue;
-
-            //     RenderManager.Instance.SetDataInspector(selectionState, selectionState);
-            //     sphereButton.parent.SetEnabled(selectionState);
-            //     sizeInputFloatField.parent.SetEnabled(selectionState);
-            //     mediaDropdownField.parent.SetEnabled(selectionState);
-            //     inspectorInfoScrollView.parent.SetEnabled(selectionState);
-
-            //     SetSelectionMode(selectionMode);
-            //     ShowSelectionGizmo(selectionState);
-            // });
-
+            inspectorInfoScrollView.Clear();
 
             // Shape
             SetSelectionMode(SelectionMode.Sphere);
@@ -114,7 +111,7 @@ namespace Astrovisio
                     SetSelectionSize(selectionSize);
                 });
 
-                sizeInputFloatField.value = defaultSectionSize;
+                sizeInputFloatField.value = defaultSelectionSize;
             }
 
             // Aggregation
@@ -171,7 +168,7 @@ namespace Astrovisio
             ShowSelectionGizmo(selectionState);
         }
 
-        private void OnProjectRenderStart(Project project)
+        private void OnFileRenderStart(Project project, File file)
         {
             Unhook();
 
@@ -179,19 +176,19 @@ namespace Astrovisio
             skeletonContainer.style.display = DisplayStyle.Flex;
         }
 
-        private void OnProjectRenderEnd(Project project)
+        private void OnFileRenderEnd(Project project, File file)
         {
             Reset();
             TryHookToCurrentKDTree();
 
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer.GetKDTreeComponent();
             kDTreeComponent.OnInitializationPerformed += OnInitializationPerformed;
         }
 
         private void TryHookToCurrentKDTree()
         {
-            DataRenderer dr = RenderManager.Instance?.GetCurrentDataRenderer();
+            DataRenderer dr = RenderManager.Instance.DataRenderer;
             KDTreeComponent kd = dr?.GetKDTreeComponent();
             Hook(kd);
         }
@@ -212,7 +209,7 @@ namespace Astrovisio
 
             _subscribedKDTree = kd;
             _subscribedKDTree.OnSelectionPerformed += OnSelectionPerformed;
-            // Debug.Log("Hook to " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Hook to " + RenderManager.Instance.DataRenderer.GetDataContainer().Project.Name);
         }
 
         private void Unhook()
@@ -222,15 +219,15 @@ namespace Astrovisio
                 return;
             }
             _subscribedKDTree.OnSelectionPerformed -= OnSelectionPerformed;
-            // Debug.Log("Unhook from " + RenderManager.Instance.GetCurrentDataRenderer().GetDataContainer().Project.Name);
+            // Debug.Log("Unhook from " + RenderManager.Instance.DataRenderer.GetDataContainer().Project.Name);
             _subscribedKDTree = null;
         }
 
         private void OnSelectionPerformed(float[] obj)
         {
-            Debug.Log("OnSelectionPerformed " + obj[0] + obj[1]);
+            // Debug.Log("OnSelectionPerformed " + obj[0] + obj[1]);
 
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
 
             if (dataRenderer == null)
             {
@@ -253,7 +250,7 @@ namespace Astrovisio
 
         private void ShowSelectionGizmo(bool visibility)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -266,7 +263,7 @@ namespace Astrovisio
 
         private void SetSelectionMode(SelectionMode selectionMode)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -295,23 +292,9 @@ namespace Astrovisio
             SetSelectionSize(selectionSize);
         }
 
-        private void SetAggregationMode(AggregationMode aggregationMode)
-        {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
-            KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
-
-            if (kDTreeComponent == null)
-            {
-                return;
-            }
-
-            this.aggregationMode = aggregationMode;
-            kDTreeComponent.aggregationMode = aggregationMode;
-        }
-
         private void SetSelectionSize(float selectionSize)
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
 
             if (kDTreeComponent == null)
@@ -328,6 +311,20 @@ namespace Astrovisio
                     kDTreeComponent.selectionCubeHalfSize = selectionSize;
                     break;
             }
+        }
+
+        private void SetAggregationMode(AggregationMode aggregationMode)
+        {
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
+            KDTreeComponent kDTreeComponent = dataRenderer?.GetKDTreeComponent();
+
+            if (kDTreeComponent == null)
+            {
+                return;
+            }
+
+            this.aggregationMode = aggregationMode;
+            kDTreeComponent.aggregationMode = aggregationMode;
         }
 
         private void SetSelectionFunction(string function)
@@ -356,7 +353,7 @@ namespace Astrovisio
         {
             selectionState = false;
             SetSelectionMode(SelectionMode.Sphere);
-            SetSelectionSize(defaultSectionSize);
+            SetSelectionSize(defaultSelectionSize);
             SetAggregationMode(AggregationMode.Average);
             SetIsolateSelectionMode(false);
             ShowSelectionGizmo(false);

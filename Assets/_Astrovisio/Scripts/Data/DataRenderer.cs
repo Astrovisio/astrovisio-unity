@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.IO;
 using CatalogData;
@@ -10,7 +29,7 @@ namespace Astrovisio
         [Header("Dependencies")]
         [SerializeField] private AstrovisioDataSetRenderer astrovidioDataSetRenderer;
         [SerializeField] private KDTreeComponent kdTreeComponent;
-        [SerializeField] private AxesCanvasHandler axesCanvasHandler;
+        [SerializeField] public AxesCanvasHandler axesCanvasHandler;
 
         [Header("Debug")]
         [SerializeField] private bool debugMode = false;
@@ -34,7 +53,7 @@ namespace Astrovisio
                     return;
                 }
 
-                dataContainer = new DataContainer(dataPack, null);
+                dataContainer = new DataContainer(dataPack, null, null);
                 RenderDataContainer(dataContainer);
             }
 
@@ -51,13 +70,13 @@ namespace Astrovisio
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
-            if (!File.Exists(filePath))
+            if (!System.IO.File.Exists(filePath))
             {
                 Debug.LogError("File CSV non trovato: " + filePath);
                 return null;
             }
 
-            string[] lines = File.ReadAllLines(filePath);
+            string[] lines = System.IO.File.ReadAllLines(filePath);
             if (lines.Length < 2)
             {
                 Debug.LogWarning("CSV vuoto o senza dati.");
@@ -116,7 +135,7 @@ namespace Astrovisio
             }
         }
 
-        public void SetColorMap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
+        public void SetColormap(string paramName, ColorMapEnum colorMap, float min, float max, ScalingType scalingType, bool inverseMapping)
         {
             if (astrovidioDataSetRenderer is not null)
             {
@@ -124,7 +143,7 @@ namespace Astrovisio
             }
         }
 
-        public void RemoveColorMap()
+        public void RemoveColormap()
         {
             astrovidioDataSetRenderer.RemoveColorMapAstrovisio();
         }

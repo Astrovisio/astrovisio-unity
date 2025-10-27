@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using UnityEngine;
 using System.Threading.Tasks;
 using CatalogData;
@@ -5,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
+using System.Threading;
+using Astrovisio;
 
 public readonly struct PointDistance
 {
@@ -87,6 +108,8 @@ public class KDTreeComponent : MonoBehaviour
 
     private int[] visibilityArray;
 
+    private CancellationTokenSource initializationCts;
+
 
     [ContextMenu("ComputeNearestPoint")]
     public async Task<PointDistance?> ComputeNearestPoint()
@@ -125,6 +148,16 @@ public class KDTreeComponent : MonoBehaviour
     private void Start()
     {
         selectAction.action.performed += OnSpacebarPressed;
+
+        if (XRManager.Instance.IsVRActive)
+        {
+            XRInputController xrInputController = FindFirstObjectByType<XRInputController>();
+            controllerTransform = xrInputController.rightPokePoint;
+        } else
+        {
+            CameraTarget cameraTarget = FindFirstObjectByType<CameraTarget>();
+            controllerTransform = cameraTarget.transform;
+        }
     }
 
     private void OnSpacebarPressed(InputAction.CallbackContext context)
@@ -172,13 +205,13 @@ public class KDTreeComponent : MonoBehaviour
         {
             case SelectionMode.SinglePoint:
                 nearest = await ComputeNearestPoint(controllerTransform.position);
-                List<int> indices = new List<int>(new int[1] { nearest.Value.index });
+                HashSet<int> indices = new HashSet<int>(new int[1] { nearest.Value.index });
                 selectionResult = new SelectionResult
                 {
                     SelectedIndices = indices,
                     SelectedArray = visibilityArray,
                     CenterPoint = GetNearestWorldSpaceCoordinates(nearest.Value.index),
-                    SelectionRadius = selectionMode == SelectionMode.Sphere ? selectionRadius : (selectionMode == SelectionMode.Cube ? selectionCubeHalfSize : 0),
+                    SelectionRadius = 0,
                     AggregatedValues = AggregateData(indices),
                     SelectionMode = selectionMode
                 };
@@ -248,7 +281,7 @@ public class KDTreeComponent : MonoBehaviour
         UpdateSelectionVisualizer();
     }
 
-    public void setControllerTransform(Transform controllerTransform)
+    public void SetControllerTransform(Transform controllerTransform)
     {
         this.controllerTransform = controllerTransform;
         areaSphereDataInspector.transform.position = this.controllerTransform.transform.position;
@@ -287,6 +320,13 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
+        // Cancella qualsiasi inizializzazione precedente in corso
+        CancelInitialization();
+
+        // Crea un nuovo CancellationTokenSource per questa inizializzazione
+        initializationCts = new CancellationTokenSource();
+        var token = initializationCts.Token;
+
         mapping = astrovisioDatasetRenderer.DataMapping.Mapping;
         data = pointData;
         int[] xyz = new int[] {
@@ -297,32 +337,64 @@ public class KDTreeComponent : MonoBehaviour
 
         visibilityArray = new int[data[0].Length];
 
-        _ = await Task.Run(() => manager = new KDTreeManager(data, pivot, xyz, visibilityArray));
-
-        if (!Application.isPlaying)
+        try
         {
-            return;
+            manager = await Task.Run(() =>
+            {
+
+                return new KDTreeManager(data, pivot, xyz, visibilityArray, token);
+
+            }, token);
+
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            if (pointDataInspector == null)
+            {
+                pointDataInspector = Instantiate(pointDataInspectorPrefab);
+                pointDataInspector.SetActiveState(false);
+            }
+
+            if (areaSphereDataInspector == null)
+            {
+                areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
+                areaSphereDataInspector.SetActiveState(false);
+            }
+
+            if (areaBoxDataInspector == null)
+            {
+                areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
+                areaBoxDataInspector.SetActiveState(false);
+            }
+
+            OnInitializationPerformed?.Invoke();
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.LogWarning("KDTree initialization was cancelled");
+            manager = null;
+        }
+        finally
+        {
+            if (initializationCts != null && !initializationCts.Token.IsCancellationRequested)
+            {
+                initializationCts.Dispose();
+                initializationCts = null;
+            }
         }
 
-        if (pointDataInspector == null)
-        {
-            pointDataInspector = Instantiate(pointDataInspectorPrefab);
-            pointDataInspector.SetActiveState(false);
-        }
+    }
 
-        if (areaSphereDataInspector == null)
+    public void CancelInitialization()
+    {
+        if (initializationCts != null)
         {
-            areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
-            areaSphereDataInspector.SetActiveState(false);
+            initializationCts.Cancel();
+            initializationCts.Dispose();
+            initializationCts = null;
         }
-
-        if (areaBoxDataInspector == null)
-        {
-            areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
-            areaBoxDataInspector.SetActiveState(false);
-        }
-
-        OnInitializationPerformed?.Invoke();
     }
 
     private void UpdateSelectionVisualizer()
@@ -349,14 +421,14 @@ public class KDTreeComponent : MonoBehaviour
 
         if (selectionMode == SelectionMode.Sphere && areaSphereDataInspector != null)
         {
-            areaSphereDataInspector.transform.localScale = Vector3.one * (selectionRadius * 2);
+            areaSphereDataInspector.transform.localScale = Vector3.one * selectionRadius;
             areaSphereDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaSphereDataInspector;
         }
 
         if (selectionMode == SelectionMode.Cube && areaBoxDataInspector != null)
         {
-            areaBoxDataInspector.transform.localScale = Vector3.one * (selectionCubeHalfSize * 2);
+            areaBoxDataInspector.transform.localScale = Vector3.one * selectionCubeHalfSize;
             areaBoxDataInspector.transform.rotation = transform.rotation;
             currentDataInspector = areaBoxDataInspector;
         }
@@ -414,7 +486,7 @@ public class KDTreeComponent : MonoBehaviour
         return areaSelectionResult.AggregatedValues;
     }
 
-    private float[] AggregateData(List<int> indices)
+    private float[] AggregateData(HashSet<int> indices)
     {
         if (data == null || data.Length == 0 || indices.Count == 0)
         {
@@ -623,12 +695,12 @@ public class KDTreeComponent : MonoBehaviour
             case SelectionMode.Sphere:
             case SelectionMode.Cube:
                 dataSpaceSize = TransformRadiusToDataSpace(
-                    selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize
+                    (selectionMode == SelectionMode.Sphere ? selectionRadius : selectionCubeHalfSize) / 2
                 );
                 break;
         }
 
-        List<int> indices = null;
+        HashSet<int> indices = null;
 
         // Copy values for use in async context
         var mode = selectionMode;
@@ -649,7 +721,7 @@ public class KDTreeComponent : MonoBehaviour
                     break;
 
                 default:
-                    indices = new List<int>();
+                    indices = new HashSet<int>();
                     break;
             }
 
@@ -912,6 +984,9 @@ public class KDTreeComponent : MonoBehaviour
 
         // Rimuovi il listener per evitare memory leak
         selectAction.action.performed -= OnSpacebarPressed;
+
+        // Cancella qualsiasi inizializzazione in corso
+        CancelInitialization();
     }
 
     private void OnDrawGizmosSelected()

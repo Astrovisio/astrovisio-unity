@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System;
@@ -79,18 +98,24 @@ namespace Astrovisio
             Root = root;
             UIManager = uiManager;
 
-            RenderManager.Instance.OnProjectRenderEnd += OnProjectRenderedEnd;
+            RenderManager.Instance.OnFileRenderEnd += OnFileRenderedEnd;
 
             Init();
             SetSettingsVisibility(false);
         }
 
-        private void OnProjectRenderedEnd(Project project)
+        private void OnFileRenderedEnd(Project project, File file)
         {
             inspectorSettingController.Reset();
             noiseSettingController.Reset();
             hideUIController.Reset();
-            axesGizmoController.Reset();
+
+            // axesGizmoController.Reset();
+            if (axesGizmoController.GetState() == false)
+            {
+                SceneManager.Instance.SetAxesGizmoVisibility(false);
+            }
+
             // screenrecorderSettingController.Reset();
             DeactivateAllPanels();
         }
@@ -137,9 +162,10 @@ namespace Astrovisio
             // 2. Action-only buttons
             buttonActions.Add(new ButtonAction(
                 "Screenshot", screenshotButton, null, screenshotIcon, false,
-                () =>
+                async () =>
                 {
-                    UIManager.TakeScreenshot();
+                    screenshotButton.Blur();
+                    await UIManager.TakeScreenshot();
                 }
             ));
             buttonActions.Add(new ButtonAction(
@@ -159,7 +185,7 @@ namespace Astrovisio
                     bool axesGizmoState = axesGizmoController.GetState();
                     bool newAxesGizmoState = !axesGizmoState;
                     axesGizmoController.SetState(newAxesGizmoState);
-                    RenderManager.Instance.SetAxesGizmoVisibility(newAxesGizmoState);
+                    SceneManager.Instance.SetAxesGizmoVisibility(newAxesGizmoState);
                 }
             ));
 

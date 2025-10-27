@@ -18,7 +18,7 @@
     min-height: 26px;
 }
 
-#FilesContainerRoot > #HeaderFiles > #Label {
+#FilesContainerRoot > #HeaderFiles > #FileCounterLabel {
     color: var(--grey-800);
     -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf?fileID=12800000&guid=abd0c980011414e4286a0593c97a0824&type=3#SpaceGrotesk-Bold");
     font-size: 16px;
@@ -28,6 +28,7 @@
 
 #FilesContainerRoot > #HeaderFiles > #ButtonAddFile {
     display: none;
+    margin-right: 8px;
 }
 
 #FilesContainerRoot > #HeaderFiles > #ButtonAddFile > .btn-tertiary > #Icon {
@@ -46,4 +47,13 @@
     border-bottom-left-radius: 12px;
     overflow: hidden;
     flex-grow: 1;
+}
+
+#FilesContainerRoot .unity-collection-view__item--selected{
+        border-top-right-radius: 30px;
+}
+
+#FilesContainerRoot .unity-collection-view__item--selected #RootListItemFileState {
+    border-width: 2px;
+    border-color: var(--grey-400);
 }

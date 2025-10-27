@@ -1,11 +1,80 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CatalogData;
-using TMPro;
 using UnityEngine;
 
 namespace Astrovisio
 {
+    [Serializable]
+    public readonly struct ProjectFile : IEquatable<ProjectFile>
+    {
+
+        private readonly int projectId;
+        private readonly int fileId;
+
+        public int ProjectId
+        {
+            get => projectId;
+        }
+
+        public int FileId
+        {
+            get => fileId;
+        }
+
+        public ProjectFile(int projectId, int fileId)
+        {
+            this.projectId = projectId;
+            this.fileId = fileId;
+        }
+
+        public bool Equals(ProjectFile other)
+        {
+            return ProjectId == other.ProjectId && FileId == other.FileId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ProjectFile other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + ProjectId;
+                hash = hash * 31 + FileId;
+                return hash;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"P{ProjectId}-F{FileId}";
+        }
+    }
+
     public class RenderManager : MonoBehaviour
     {
         public static RenderManager Instance { get; private set; }
@@ -14,32 +83,24 @@ namespace Astrovisio
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private UIManager uiManager;
-        [SerializeField] private Camera mainCamera;
 
         [Header("Other")]
         [SerializeField] private DataRenderer dataRendererPrefab;
 
-        // Camera
-        private Vector3 initialCameraTargetPosition;
-        private Vector3 initialCameraRotation;
-        private float initialCameraDistance;
-        private OrbitCameraController orbitController;
+        // === Events ===
+        public event Action<Project, File> OnFileRenderStart;
+        public event Action<Project, File> OnFileRenderEnd;
 
-        // Events
-        // public event Action<KDTreeComponent> OnKDTreeComponentChanged;
-        public event Action<Project> OnProjectRenderReady;
-        public event Action<Project> OnProjectRenderStart;
-        public event Action<Project> OnProjectRenderEnd;
+        // === Settings ===
+        // public RenderSettingsController RenderSettingsController { get; set; }
+        public DataRenderer DataRenderer { get; set; }
+        // private KDTreeComponent kdTreeComponent;
+        // private ParamRenderSettings paramRenderSettings;
 
-        // Settings
-        private DataRenderer dataRenderer;
-        private KDTreeComponent kdTreeComponent;
-        private ParamRenderSettings renderSettings;
-        private Dictionary<Project, DataContainer> projectDataContainers = new();
-
-        // Local
+        // === Local ===
         public bool isInspectorModeActive = false;
-
+        public Project renderedProject = null;
+        public File renderedFile = null;
 
         private void Awake()
         {
@@ -53,179 +114,298 @@ namespace Astrovisio
             Instance = this;
         }
 
-        private void Start()
+        // === DataContainer ===
+        public bool TryGetDataContainer(int projectId, int fileId, out DataContainer dc)
         {
-            projectManager.ProjectProcessed += OnProjectProcessed;
-
-            orbitController = mainCamera.GetComponent<OrbitCameraController>();
-
-            if (orbitController != null)
+            if (ReelManager.Instance == null)
             {
-                initialCameraTargetPosition = orbitController.target.position;
-                initialCameraRotation = orbitController.transform.rotation.eulerAngles;
-                initialCameraDistance = Vector3.Distance(orbitController.transform.position, orbitController.target.position);
-            }
-        }
-
-        public void SetDataInspector(bool state, bool bebugSphereVisibility)
-        {
-            // Debug.Log("UpdateDataInspector " + state);
-            kdTreeComponent = dataRenderer.GetKDTreeComponent();
-            kdTreeComponent.SetDataInspectorVisibility(bebugSphereVisibility);
-            isInspectorModeActive = state;
-
-            if (!XRManager.Instance.IsVRActive)
-            {
-                Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
-                dataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
-            }
-            else
-            {
-                // VR Controller...
-            }
-        }
-
-        private void ResetCameraTransform()
-        {
-            if (orbitController != null)
-            {
-                orbitController.ResetCameraView(initialCameraTargetPosition, initialCameraRotation, initialCameraDistance);
-            }
-        }
-
-        private void OnProjectProcessed(Project project, DataPack pack)
-        {
-            DataContainer dataContainer = new DataContainer(pack, project);
-            projectDataContainers[project] = dataContainer;
-            OnProjectRenderReady?.Invoke(project);
-            // Debug.Log("OnProjectReadyToGetRendered");
-        }
-
-        public DataRenderer GetCurrentDataRenderer()
-        {
-            return dataRenderer;
-        }
-
-        public void RenderDataContainer(Project project)
-        {
-            OnProjectRenderStart?.Invoke(project);
-
-            ResetCameraTransform();
-
-            DataContainer dataContainer = projectDataContainers[project];
-
-            renderSettings = null;
-
-            DataRenderer[] allDataRenderer = FindObjectsByType<DataRenderer>(FindObjectsSortMode.None);
-            foreach (DataRenderer dR in allDataRenderer)
-            {
-                Destroy(dR.gameObject);
+                dc = null;
+                return false;
             }
 
-            // Debug.Log("Length :" + dataContainer.DataPack.Rows.Length);
-            dataRenderer = Instantiate(dataRendererPrefab);
-            dataRenderer.RenderDataContainer(dataContainer);
+            return ReelManager.Instance.TryGetDataContainer(projectId, fileId, out dc);
+        }
 
+        public bool TryGetDataContainer(Project project, File file, out DataContainer dc)
+        {
+            if (project == null || file == null)
+            {
+                dc = null;
+                return false;
+            }
+
+            if (ReelManager.Instance == null)
+            {
+                dc = null;
+                return false;
+            }
+
+            return ReelManager.Instance.TryGetDataContainer(project.Id, file.Id, out dc);
+        }
+
+        // === Reel ===
+        public bool TryGetReel(int projectId, out ProjectReel reel)
+        {
+            if (ReelManager.Instance == null)
+            {
+                reel = null;
+                return false;
+            }
+
+            return ReelManager.Instance.TryGetReel(projectId, out reel);
+        }
+
+        public IReadOnlyList<int> GetReelOrderedIds(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return Array.Empty<int>();
+            }
+
+            return ReelManager.Instance.GetReelOrderedIds(projectId);
+        }
+
+        public void SetReelOrder(int projectId, IReadOnlyList<int> orderedIds)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            Debug.Log($"[RenderManager] SetReelOrder P{projectId} → [{(orderedIds == null ? "∅" : string.Join(",", orderedIds))}]");
+            ReelManager.Instance.SetReelOrder(projectId, orderedIds);
+        }
+
+        public bool RemoveFromReel(int projectId, int fileId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return false;
+            }
+
+            return ReelManager.Instance.RemoveFromReel(projectId, fileId);
+        }
+
+        public void ClearReel(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            ReelManager.Instance.ClearReel(projectId);
+        }
+
+        public void RemoveReel(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return;
+            }
+
+            ReelManager.Instance.RemoveReel(projectId);
+        }
+
+        public void RenderReelCurrent(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelCurrent: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            DataContainer dc = ReelManager.Instance.GetReelCurrentDataContainer(projectId);
+            if (dc == null)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelCurrent: empty or invalid reel for P{projectId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
+            // Debug.Log($"[RenderManager] RenderReelCurrent P{projectId} → {name}");
+            RenderDataContainer(dc);
+        }
+
+        public void RenderReelNext(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelNext: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            if (projectManager.GetLocalProject(projectId).Files.Count <= 1)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelNext: not many file into P{projectId}");
+                return;
+            }
+
+            int fileId = ReelManager.Instance.MoveNext(projectId);
+            if (fileId < 0)
+            {
+                return;
+            }
+
+            if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelNext: DataContainer not found for P{projectId} F{fileId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"[RenderManager] RenderReelNext P{projectId} → {name} (F{fileId})");
+            RenderDataContainer(dc);
+        }
+
+        public void RenderReelPrev(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelPrev: ReelManager missing for P{projectId}");
+                return;
+            }
+
+            if (projectManager.GetLocalProject(projectId).Files.Count <= 1)
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelPrev: not many file into P{projectId}");
+                return;
+            }
+
+            int fileId = ReelManager.Instance.MovePrev(projectId);
+            if (fileId < 0)
+            {
+                return;
+            }
+
+            if (!ReelManager.Instance.TryGetDataContainer(projectId, fileId, out var dc))
+            {
+                Debug.LogWarning($"[RenderManager] RenderReelPrev: DataContainer not found for P{projectId} F{fileId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"[RenderManager] RenderReelPrev P{projectId} → {name} (F{fileId})");
+            RenderDataContainer(dc);
+        }
+
+        public int? GetReelCurrentFileId(int projectId)
+        {
+            if (ReelManager.Instance == null)
+            {
+                return null;
+            }
+
+            return ReelManager.Instance.GetReelCurrentFileId(projectId);
+        }
+
+        // === Render ===
+        public void RenderFile(int projectId, int fileId)
+        {
+            if (!TryGetDataContainer(projectId, fileId, out var dc))
+            {
+                Debug.LogWarning($"[RenderManager] RenderDataContainer: no DataContainer for P{projectId} F{fileId}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{fileId}";
+            Debug.Log($"[RenderManager] RenderFile direct P{projectId} → {name} (F{fileId})");
+            RenderDataContainer(dc);
+        }
+
+        public void RenderFile(Project project, File file)
+        {
+            if (!TryGetDataContainer(project, file, out var dc))
+            {
+                Debug.LogWarning($"[RenderManager] RenderDataContainer: DataContainer not found for P{project?.Id} F{file?.Id}");
+                return;
+            }
+
+            string name = dc?.File?.Name ?? $"F{file?.Id}";
+            Debug.Log($"[RenderManager] RenderFile direct P{project?.Id} → {name} (F{file?.Id})");
+            RenderDataContainer(dc);
+        }
+
+        private void RenderDataContainer(DataContainer dc)
+        {
+            if (dc == null)
+            {
+                Debug.LogError("[RenderManager] RenderDataContainer: DataContainer is null.");
+                return;
+            }
+
+            Project project = dc.Project;
+            File file = dc.File;
+            OnFileRenderStart?.Invoke(project, file);
+
+            // SceneManager.Instance.ResetCameraTransform();
+            
+            // paramRenderSettings = null;
+            ClearDataContainer();
+
+            DataRenderer = Instantiate(dataRendererPrefab);
+            // RenderSettingsController.DataRenderer = DataRenderer;
+
+            string name = dc?.File?.Name ?? $"F{dc?.File?.Id}";
+            // Debug.Log($"[RenderManager] RenderDataContainer P{project?.Id} → {name}");
+
+            DataRenderer.RenderDataContainer(dc);
+
+            SetNoise(0f);
             SetDataInspector(false, true);
-
-            OnProjectRenderEnd?.Invoke(project);
+            UpdateRenderedProjectFile(project, file);
+            OnFileRenderEnd?.Invoke(project, file);
         }
 
-        public void SetAxisSettings(AxisRenderSettings axisRenderSettings)
+        public void ClearDataContainer()
         {
-
-            // Debug.Log($"SetAxisSettings: {axis} {thresholdMin} {thresholdMax} {scalingType}");
-            dataRenderer.SetAxisAstrovisio(
-                axisRenderSettings.Axis,
-                axisRenderSettings.Name,
-                axisRenderSettings.ThresholdMinSelected,
-                axisRenderSettings.ThresholdMaxSelected,
-                axisRenderSettings.ScalingType
-            );
-        }
-
-        public void SetRenderSettings(ParamRenderSettings renderSettings)
-        {
-            if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
+            if (DataRenderer != null)
             {
-                // Debug.Log("SetRenderSettings -> Opacity " + renderSettings.MappingSettings.ScalingType);
-                SetOpacity(renderSettings);
-            }
-            else if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
-            {
-                // Debug.Log("SetRenderSettings -> Colormap");
-                SetColorMap(renderSettings);
+                Destroy(DataRenderer.gameObject);
+                DataRenderer = null;
             }
         }
 
-        public void SetAxisAstrovisio(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
+        private void UpdateRenderedProjectFile(Project project, File file)
         {
-            if (dataRenderer is not null)
-            {
-                dataRenderer.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
-            }
+            renderedProject = project;
+            renderedFile = file;
         }
 
-        private void SetColorMap(ParamRenderSettings renderSettings)
+        // === Inspector ===
+        public void SetDataInspector(bool state, bool debugSphereVisibility)
         {
-            if (renderSettings.Mapping == MappingType.Colormap && renderSettings.MappingSettings is ColorMapSettings)
-            {
-                ColorMapSettings colorMapSettings = renderSettings.MappingSettings as ColorMapSettings;
+            // kdTreeComponent = DataRenderer.GetKDTreeComponent();
+            // kdTreeComponent.SetDataInspectorVisibility(debugSphereVisibility);
+            // isInspectorModeActive = state;
 
-                string name = renderSettings.Name;
-                ColorMapEnum colorMap = colorMapSettings.ColorMap;
-                float thresholdMinSelected = colorMapSettings.ThresholdMinSelected;
-                float thresholdMaxSelected = colorMapSettings.ThresholdMaxSelected;
-                ScalingType scalingType = colorMapSettings.ScalingType;
-                bool invert = colorMapSettings.Invert;
-
-                dataRenderer.SetColorMap(name, colorMap, thresholdMinSelected, thresholdMaxSelected, scalingType, invert);
-            }
-            else
-            {
-                Debug.Log("Error on renderSettings.Mapping");
-                return;
-            }
+            // if (!XRManager.Instance.IsVRActive)
+            // {
+            //     Transform cameraTarget = FindAnyObjectByType<CameraTarget>().transform;
+            //     DataRenderer.GetKDTreeComponent().controllerTransform = cameraTarget;
+            // }
+            // else
+            // {
+            //     // VR Controller...
+            // }
         }
 
-        public void RemoveColorMap()
+        // === Noise ===
+        public void SetNoise(float value = 0f)
         {
-            dataRenderer.RemoveColorMap();
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
+            astrovisioDataSetRenderer.SetNoise(value == 0f ? false : true, value);
         }
 
-        private void SetOpacity(ParamRenderSettings renderSettings)
+        public float GetNoise()
         {
-            if (renderSettings.Mapping == MappingType.Opacity && renderSettings.MappingSettings is OpacitySettings)
-            {
-                OpacitySettings opacitySettings = renderSettings.MappingSettings as OpacitySettings;
-
-                string name = renderSettings.Name;
-
-                dataRenderer.SetOpacity(name, opacitySettings.ThresholdMinSelected, opacitySettings.ThresholdMaxSelected, opacitySettings.ScalingType, opacitySettings.Invert);
-            }
-            else
-            {
-                Debug.Log("Error on renderSettings.Mapping");
-                return;
-            }
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
+            return astrovisioDataSetRenderer.GetNoiseValue();
         }
 
-        public void RemoveOpacity()
+        public bool GetNoiseState()
         {
-            dataRenderer.RemoveOpacity();
-        }
-
-        public void SetNoise(bool state, float value = 0f)
-        {
-            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
-            astrovisioDataSetRenderer.SetNoise(state, value);
-        }
-
-        public void SetAxesGizmoVisibility(bool visibility)
-        {
-            AstrovisioDataSetRenderer astrovisioDataSetRenderer = dataRenderer.GetAstrovidioDataSetRenderer();
-            AxesCanvasHandler axesCanvasHandler = astrovisioDataSetRenderer.GetComponentInChildren<AxesCanvasHandler>(true);
-            axesCanvasHandler.gameObject.SetActive(visibility);
+            AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
+            return astrovisioDataSetRenderer.GetNoiseState();
         }
 
     }

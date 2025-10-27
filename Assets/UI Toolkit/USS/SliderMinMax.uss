@@ -10,7 +10,7 @@
 }
 
 #SliderMinMaxRoot > .unity-min-max-slider > .unity-min-max-slider__input > .unity-min-max-slider__dragger > .unity-min-max-slider__min-thumb {
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=3a115059eff8c48b793bac65ee731d1c&type=3#slider-handle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=d431090265ebcb34fa7b14a04cfde810&type=3#slider-handle");
     background-color: var(--transparent);
     height: 24px;
     width: 8px;
@@ -59,7 +59,7 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=3a115059eff8c48b793bac65ee731d1c&type=3#slider-handle");
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/slider-handle.svg?fileID=7388822144124034973&guid=d431090265ebcb34fa7b14a04cfde810&type=3#slider-handle");
     background-color: var(--transparent);
     -unity-background-image-tint-color: var(--grey-800);
     margin-left: 0;
@@ -113,14 +113,10 @@
 
 #SliderMinMaxRoot > #FloatFieldsElement {
     flex-direction: row;
-    height: 24px;
-    min-height: 24px;
-    max-height: 24px;
     justify-content: space-between;
-    flex-grow: 1;
 }
 
-#SliderMinMaxRoot > #FloatFieldsElement > .min-max-slider-input {
+#SliderMinMaxRoot > #FloatFieldsElement > .min-max-container > .min-max-slider-input {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
@@ -130,6 +126,18 @@
     max-width: 118px;
 }
 
-#SliderMinMaxRoot > #FloatFieldsElement > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
+#SliderMinMaxRoot > #FloatFieldsElement > .min-max-container > .min-max-slider-input > #unity-text-input > .unity-text-element--inner-input-field-component {
     -unity-text-align: middle-center;
+}
+
+.warning-label {
+    height: 14px;
+    min-height: 14px;
+    max-height: 14px;
+    flex-direction: row;
+    justify-content: space-around;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Regular.ttf?fileID=12800000&guid=81aec7828e7531a4fa767fed2a058d81&type=3#SpaceMono-Regular");
+    font-size: 10px;
+    color: var(--red);
+    margin-top: 2px;
 }

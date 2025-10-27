@@ -18,6 +18,9 @@
  * Additional information and disclaimers regarding liability and third-party 
  * components can be found in the DISCLAIMER and NOTICE files included with this project.
  *
+ * Modifications:
+ * - Removed function to read the input file, the reading is now managed with a backend service
+ * - Modified Constructor. The Data is now provided through the constructor.
  */
 using System;
 using System.IO;

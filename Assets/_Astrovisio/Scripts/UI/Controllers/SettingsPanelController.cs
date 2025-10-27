@@ -1,17 +1,40 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using CatalogData;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
+
     public class SettingsPanelController
     {
+        public enum SettingMode { Axis, Param }
+
+        private const string NONE = "None";
+        private const string COLORMAP = "Colormap";
+        private const string OPACITY = "Opacity";
 
         // === Dependencies ===
         public Project Project { private set; get; }
@@ -19,24 +42,20 @@ namespace Astrovisio
         public UIContextSO UIContextSO { private set; get; }
 
         // === Other ===
-        public AxisRowSettingsController AxisRowSettingsController { private set; get; }
-        public AxisRowSettingsController TempAxisRowSettingsController { private set; get; }
-        public ParamRowSettingsController ParamRowSettingsController { private set; get; }
-        public ParamRowSettingsController TempParamRowSettingsController { private set; get; }
         private Label paramNameLabel;
         private DropdownField mappingDropdown;
         private MinMaxSlider thresholdSlider;
         private DoubleField thresholdSliderMinFloatField;
         private DoubleField thresholdSliderMaxFloatField;
+        private Label thresholdSliderMinWarningLabel;
+        private Label thresholdSliderMaxWarningLabel;
         private MinMaxSlider rangeSlider;
         private VisualElement colorMapVisualPreview;
-        private DropdownField colorMapDropdown;
+        private DropdownField colormapDropdown;
         private DropdownField scalingDropdown;
         private Toggle invertToggle;
         private Button applyButton;
         private Button cancelButton;
-        private EventCallback<ClickEvent> applyCallback;
-        private EventCallback<ClickEvent> cancelCallback;
         private bool isThresholdUpdating = false;
 
         // === Callbacks ===
@@ -47,19 +66,30 @@ namespace Astrovisio
         private EventCallback<ChangeEvent<Vector2>> thresholdSliderCallback;
         private EventCallback<ChangeEvent<double>> thresholdMinFloatFieldCallback;
         private EventCallback<ChangeEvent<double>> thresholdMaxFloatFieldCallback;
-        private Action applyButtonCallback;
+        private Func<Setting, Task> applyButtonCallback;
         private Action cancelButtonCallback;
 
-        // === Events ===
-        public event Action<AxisRowSettingsController> OnApplyAxisSetting;
-        public event Action<ParamRowSettingsController> OnApplyParamSetting;
-        public event Action OnCancelSetting;
+        // === Local ===
+        private File file;
+        private Axis axis;
+        private Setting originalSetting;
+        private Setting tempSetting;
+        private SettingMode settingMode;
 
-        public SettingsPanelController(Project project, VisualElement root, UIContextSO uiContextSO)
+
+        public SettingsPanelController(
+            Project project,
+            VisualElement root,
+            UIContextSO uiContextSO,
+            Func<Setting, Task> onApplySetting,
+            Action onCancelSetting)
         {
             Project = project;
             Root = root;
             UIContextSO = uiContextSO;
+
+            cancelButtonCallback = onCancelSetting;
+            applyButtonCallback = onApplySetting;
 
             Init();
         }
@@ -73,86 +103,58 @@ namespace Astrovisio
             thresholdSlider = Root.Q<VisualElement>("ThresholdSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             thresholdSliderMinFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MinFloatField");
             thresholdSliderMaxFloatField = Root.Q<VisualElement>("ThresholdSlider")?.Q<DoubleField>("MaxFloatField");
+            thresholdSliderMinWarningLabel = Root.Q<VisualElement>("ThresholdSlider")?.Q<VisualElement>("MinContainer")?.Q<Label>("MinWarningLabel");
+            thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+            thresholdSliderMaxWarningLabel = Root.Q<VisualElement>("ThresholdSlider")?.Q<VisualElement>("MaxContainer")?.Q<Label>("MaxWarningLabel");
+            thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
             rangeSlider = Root.Q<VisualElement>("RangeSlider")?.Q<MinMaxSlider>("MinMaxSlider");
             colorMapVisualPreview = Root.Q<VisualElement>("ColorMapContainer")?.Q<VisualElement>("Preview");
-            colorMapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
+            colormapDropdown = Root.Q<VisualElement>("ColorMapDropdown")?.Q<DropdownField>("DropdownField");
             scalingDropdown = Root.Q<VisualElement>("ScalingContainer")?.Q<DropdownField>("DropdownField");
             invertToggle = Root.Q<VisualElement>("InvertMappingToggleContainer")?.Q<Toggle>("CheckboxRoot");
             applyButton = Root.Q<VisualElement>("ApplyButton")?.Q<Button>();
             cancelButton = Root.Q<VisualElement>("CancelButton")?.Q<Button>();
 
-            List<string> mappingChoices = new List<string>{"None", "Opacity", "Colormap"};
+            List<string> mappingChoices = new List<string> { "None", "Opacity", "Colormap" };
             mappingDropdown.choices = mappingChoices;
 
-            // cancelButton.clicked += () =>
-            // {
-            //     // Debug.Log("CancelButton clicked");
-            //     RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.RenderSettings);
-            //     CloseSettingsPanel();
-            //     OnCancelSetting.Invoke();
-            // };
-            // applyButton.clicked += () =>
-            // {
-            //     // Debug.Log("ApplyButton clicked");
-            //     ParamRowSettingsController = TempParamRowSettingsController;
-            //     RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.RenderSettings);
-            //     CloseSettingsPanel();
-            //     OnApplySetting.Invoke(ParamRowSettingsController);
-            // };
-
+            cancelButton.clicked += () => cancelButtonCallback();
+            applyButton.clicked += () => applyButtonCallback?.Invoke(tempSetting);
         }
 
-
-        private void RegisterButtonCallbacks(EventCallback<ClickEvent> newApplyCallback, EventCallback<ClickEvent> newCancelCallback)
+        public SettingMode GetSettingMode()
         {
-            UnregisterButtonCallbacks();
-
-            cancelCallback = newCancelCallback;
-            applyCallback = newApplyCallback;
-
-            cancelButton.RegisterCallback(newCancelCallback);
-            applyButton.RegisterCallback(newApplyCallback);
+            return settingMode;
         }
 
-        private void UnregisterButtonCallbacks()
+        public void InitAxisSettingsPanel(File file, Axis axis, Setting setting)
         {
-            if (cancelCallback != null)
-            {
-                cancelButton.UnregisterCallback(cancelCallback);
-            }
+            SettingsManager.Instance.SetSettings(Project.Id, file.Id);
 
-            if (applyCallback != null)
-            {
-                applyButton.UnregisterCallback(applyCallback);
-            }
-        }
+            settingMode = SettingMode.Axis;
+            this.file = file;
+            this.axis = axis;
 
-        public void InitAxisSettingsPanel(AxisRowSettingsController axisRowSettingsController)
-        {
             UnregisterSettingPanelEvents();
-
-            AxisRowSettingsController = axisRowSettingsController;
-            TempAxisRowSettingsController = AxisRowSettingsController.Clone() as AxisRowSettingsController;
-
             SetAxisDisplayStyle();
 
-            paramNameLabel.text = TempAxisRowSettingsController.ParamName;
 
-            // Debug.Log($"Get 2: {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected} {TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected}");
+            originalSetting = setting;
+            tempSetting = originalSetting.Clone();
+            paramNameLabel.text = setting.Name;
 
             // THRESHOLD
             thresholdSlider.lowLimit = float.MinValue;
             thresholdSlider.highLimit = float.MaxValue;
-            thresholdSlider.lowLimit = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMin;
-            thresholdSlider.highLimit = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMax;
-            thresholdSlider.minValue = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected;
-            thresholdSlider.maxValue = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected;
-            thresholdSliderMinFloatField.value = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected;
-            thresholdSliderMaxFloatField.value = TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected;
+            thresholdSlider.lowLimit = (float)tempSetting.ThrMin;
+            thresholdSlider.highLimit = (float)tempSetting.ThrMax;
+            thresholdSlider.minValue = (float)(tempSetting.ThrMinSel ?? tempSetting.ThrMin);
+            thresholdSlider.maxValue = (float)(tempSetting.ThrMaxSel ?? tempSetting.ThrMax);
+            thresholdSliderMinFloatField.value = (float)(tempSetting.ThrMinSel ?? tempSetting.ThrMin);
+            thresholdSliderMaxFloatField.value = (float)(tempSetting.ThrMaxSel ?? tempSetting.ThrMax);
 
             thresholdSliderCallback = evt =>
             {
-                // Debug.Log("Changing THRESHOLD " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
@@ -160,35 +162,63 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSliderMinFloatField.value = evt.newValue.x;
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
-                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                tempSetting.ThrMinSel = thresholdSlider.minValue;
+                tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+                SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 isThresholdUpdating = false;
             };
 
             thresholdMinFloatFieldCallback = evt =>
             {
+                // Debug.Log("Changing THRESHOLD Min " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
                 }
                 isThresholdUpdating = true;
+                // Debug.Log($"{thresholdSlider.minValue} - {(float)evt.newValue}");
                 thresholdSlider.minValue = (float)evt.newValue;
-                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                tempSetting.ThrMinSel = thresholdSlider.minValue;
+                // Debug.LogWarning($"{thresholdSlider.minValue} - {tempSetting.ThrMinSel}");
+
+                // Debug.Log($"{(float)evt.newValue} et {thresholdSlider.minValue} = {(float)evt.newValue < thresholdSlider.minValue}");
+                if ((float)evt.newValue < thresholdSlider.minValue)
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
+                SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 isThresholdUpdating = false;
             };
 
             thresholdMaxFloatFieldCallback = evt =>
             {
+                // Debug.Log("Changing THRESHOLD Max " + evt.newValue);
                 if (isThresholdUpdating)
                 {
                     return;
                 }
                 isThresholdUpdating = true;
+                // Debug.Log($"{thresholdSlider.maxValue} - {(float)evt.newValue}");
                 thresholdSlider.maxValue = (float)evt.newValue;
-                TempAxisRowSettingsController.AxisRenderSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+                // Debug.LogWarning($"{thresholdSlider.maxValue} - {tempSetting.ThrMaxSel}");
+
+                // Debug.Log($"{(float)evt.newValue} et {thresholdSlider.maxValue} = {(float)evt.newValue < thresholdSlider.maxValue}");
+                if ((float)evt.newValue > thresholdSlider.maxValue)
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
+                SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 isThresholdUpdating = false;
             };
 
@@ -198,143 +228,110 @@ namespace Astrovisio
 
 
             // SCALING
-            scalingDropdown.value = TempAxisRowSettingsController.AxisRenderSettings.ScalingType.ToString();
+            List<string> scalingOptions = Enum.GetNames(typeof(ScalingType)).ToList();
+            scalingDropdown.choices = scalingOptions;
+            tempSetting.Scaling = Enum.TryParse<ScalingType>(tempSetting.Scaling, out var selectedType) ? selectedType.ToString() : ScalingType.Linear.ToString();
+            scalingDropdown.value = tempSetting.Scaling;
             scalingDropdownCallback = evt =>
             {
                 // Debug.Log("Changing SCALING " + evt.newValue);
                 if (Enum.TryParse<ScalingType>(evt.newValue, out var selectedType))
                 {
-                    TempAxisRowSettingsController.AxisRenderSettings.ScalingType = selectedType;
-
-                    RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
+                    tempSetting.Scaling = selectedType.ToString();
+                    SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
                 }
                 else
                 {
-                    Debug.LogWarning($"Not valid ScalingType: {evt.newValue}");
+                    tempSetting.Scaling = ScalingType.Linear.ToString();
                 }
             };
             scalingDropdown?.RegisterCallback(scalingDropdownCallback);
-
-
-            EventCallback<ClickEvent> onApply = evt =>
-            {
-                AxisRowSettingsController = TempAxisRowSettingsController;
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
-                CloseSettingsPanel();
-                OnApplyAxisSetting?.Invoke(AxisRowSettingsController);
-            };
-            EventCallback<ClickEvent> onCancel = evt =>
-            {
-                RenderManager.Instance.SetAxisSettings(TempAxisRowSettingsController.AxisRenderSettings);
-                CloseSettingsPanel();
-                OnCancelSetting?.Invoke();
-            };
-
-            RegisterButtonCallbacks(onApply, onCancel);
         }
 
-        public void InitParamSettingsPanel(ParamRowSettingsController paramRowSettingsController)
+        public void InitParamSettingsPanel(File file, Setting setting)
         {
+            SettingsManager.Instance.SetSettings(Project.Id, file.Id);
+
+            settingMode = SettingMode.Param;
+            this.file = file;
+
             UnregisterSettingPanelEvents();
 
-            ParamRowSettingsController = paramRowSettingsController;
-            TempParamRowSettingsController = ParamRowSettingsController.Clone() as ParamRowSettingsController;
 
-            paramNameLabel.text = TempParamRowSettingsController.ParamName;
-            SetMappingDropdown(TempParamRowSettingsController);
+            originalSetting = setting;
+            tempSetting = originalSetting.Clone();
+            paramNameLabel.text = setting.Name;
 
-            // RenderManager.Instance.SetRenderSettings(renderSettings);
-
-            MappingType mappingType = TempParamRowSettingsController.ParamRenderSettings.Mapping;
-            switch (mappingType)
+            switch (setting.Mapping)
             {
-                case MappingType.None:
-                    // Debug.Log("MappingType.None");
-                    InitNone(TempParamRowSettingsController);
+                case null:
+                    Debug.Log("InitParamSettingsPanel -> None");
+                    InitNone();
                     break;
-
-                case MappingType.Opacity:
-                    // Debug.Log("MappingType.Opacity " + TempParamRowSettingsController.RenderSettings.MappingSettings.ScalingType);
-                    InitOpacity(TempParamRowSettingsController);
+                case OPACITY:
+                    Debug.Log("InitParamSettingsPanel -> Opacity");
+                    InitOpacity();
                     break;
-
-                case MappingType.Colormap:
-                    // Debug.Log("MappingType.Colormap");
-                    InitColormap(TempParamRowSettingsController);
+                case COLORMAP:
+                    Debug.Log("InitParamSettingsPanel -> Colormap");
+                    InitColormap();
                     break;
             }
-
-            EventCallback<ClickEvent> onApply = evt =>
-            {
-                ParamRowSettingsController = TempParamRowSettingsController;
-                RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
-                CloseSettingsPanel();
-                OnApplyParamSetting?.Invoke(ParamRowSettingsController);
-            };
-            EventCallback<ClickEvent> onCancel = evt =>
-            {
-                RenderManager.Instance.SetRenderSettings(ParamRowSettingsController.ParamRenderSettings);
-                CloseSettingsPanel();
-                OnCancelSetting?.Invoke();
-            };
-
-            RegisterButtonCallbacks(onApply, onCancel);
+            SetMappingDropdown();
         }
 
-        private void InitNone(ParamRowSettingsController paramRowSettingsController)
+        private void InitNone(bool render = false)
         {
             SetNoneDisplayStyle();
 
-            // RenderSettings renderSettings = paramRowSettingsController.RenderSettings;
+            tempSetting.Mapping = null;
 
-            paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.None;
-            paramRowSettingsController.ParamRenderSettings.MappingSettings = null;
-            RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
-
-            // switch (renderSettings.Mapping)
-            // {
-            //     case MappingType.Opacity:
-            //         paramRowSettingsController.RenderSettings.Mapping = MappingType.None;
-            //         paramRowSettingsController.RenderSettings.MappingSettings = null;
-            //         RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
-            //         break;
-            //     case MappingType.Colormap:
-            //         RenderManager.Instance.re
-            //         break;
-            // }
+            if (render)
+            {
+                SettingsManager.Instance.SetParamSetting(tempSetting);
+            }
         }
 
-        private void InitOpacity(ParamRowSettingsController paramRowSettingsController)
+        private void InitOpacity(bool render = false)
         {
             SetOpacityDisplayStyle();
 
-            // RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+            SetThresholdSlider();
+            SetScalingDropdown();
+            SetInverseToggle();
 
-            SetThresholdSlider(paramRowSettingsController);
-            SetRangeSlider(paramRowSettingsController);
-            SetScalingDropdown(paramRowSettingsController);
-            SetInverseToggle(paramRowSettingsController);
+            tempSetting.Mapping = OPACITY;
+
+            if (render)
+            {
+                SettingsManager.Instance.SetParamSetting(tempSetting);
+            }
         }
 
-        private void InitColormap(ParamRowSettingsController paramRowSettingsController)
+        private void InitColormap(bool render = false)
         {
-            SetColorMapDisplayStyle();
+            SetColormapDisplayStyle();
 
-            // RenderManager.Instance.SetRenderSettings(paramRowSettingsController.RenderSettings);
+            SetThresholdSlider();
+            SetColormapDropdown();
+            SetScalingDropdown();
+            SetInverseToggle();
 
-            SetThresholdSlider(paramRowSettingsController);
-            SetColorMapDropdown(paramRowSettingsController);
-            SetScalingDropdown(paramRowSettingsController);
-            SetInverseToggle(paramRowSettingsController);
+            tempSetting.Mapping = COLORMAP;
+
+            if (render)
+            {
+                SettingsManager.Instance.SetParamSetting(tempSetting);
+            }
         }
 
-        private void SetMappingDropdown(ParamRowSettingsController paramRowSettingsController)
+        // === Setters ===
+        private void SetMappingDropdown()
         {
             if (mappingDropdown is null)
             {
                 return;
             }
-
             if (mappingDropdownCallback is not null)
             {
                 mappingDropdown?.UnregisterValueChangedCallback(mappingDropdownCallback);
@@ -342,65 +339,41 @@ namespace Astrovisio
 
             mappingDropdownCallback = evt =>
             {
-                string mappingTypeValue = evt.newValue;
-                string prevValue = evt.previousValue;
+                string prevMappingValue = evt.previousValue;
+                string newMappingValue = evt.newValue;
 
-                if (Enum.TryParse<MappingType>(prevValue, ignoreCase: true, out var prevMappingType))
+                switch (prevMappingValue)
                 {
-                    switch (prevMappingType)
-                    {
-                        case MappingType.Opacity:
-                            // Debug.Log("Removing previous opacity...");
-                            RenderManager.Instance.RemoveOpacity();
-                            break;
-                        case MappingType.Colormap:
-                            // Debug.Log("Removing previous colormap...");
-                            RenderManager.Instance.RemoveColorMap();
-                            break;
-                    }
+                    case "None":
+                        break;
+                    case "Opacity":
+                        SettingsManager.Instance.RemoveOpacity();
+                        break;
+                    case "Colormap":
+                        SettingsManager.Instance.RemoveColormap();
+                        break;
+                    default:
+                        break;
                 }
 
-                if (Enum.TryParse<MappingType>(mappingTypeValue, ignoreCase: true, out var mappingType))
+                SettingsManager.Instance.SetSettings(Project.Id, file.Id);
+
+                switch (newMappingValue)
                 {
-                    switch (mappingType)
-                    {
-                        case MappingType.None:
-                            // Debug.Log("Mapping type: None");
-                            paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.None;
-                            paramRowSettingsController.ParamRenderSettings.MappingSettings = null;
-                            InitNone(paramRowSettingsController);
-                            break;
-
-                        case MappingType.Opacity:
-                            // Debug.Log("Mapping type: Opacity");
-                            paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.Opacity;
-                            paramRowSettingsController.ParamRenderSettings.MappingSettings = new OpacitySettings(
-                                (float)paramRowSettingsController.Param.ThrMin,
-                                (float)paramRowSettingsController.Param.ThrMax,
-                                (float)paramRowSettingsController.Param.ThrMinSel,
-                                (float)paramRowSettingsController.Param.ThrMaxSel,
-                                ScalingType.Linear,
-                                false
-                            );
-                            InitOpacity(paramRowSettingsController);
-                            break;
-
-                        case MappingType.Colormap:
-                            // Debug.Log("Mapping type: ColorMap");
-                            paramRowSettingsController.ParamRenderSettings.Mapping = MappingType.Colormap;
-                            paramRowSettingsController.ParamRenderSettings.MappingSettings = new ColorMapSettings(
-                                ColorMapEnum.Autumn,
-                                (float)paramRowSettingsController.Param.ThrMin,
-                                (float)paramRowSettingsController.Param.ThrMax,
-                                (float)paramRowSettingsController.Param.ThrMinSel,
-                                (float)paramRowSettingsController.Param.ThrMaxSel,
-                                ScalingType.Linear,
-                                false
-                            );
-                            // Debug.Log("Dropdown " + paramRowSettingsController.ParamName + " " + paramRowSettingsController.RenderSettings.Mapping);
-                            InitColormap(paramRowSettingsController);
-                            break;
-                    }
+                    case "None":
+                        Debug.Log("Mapping type: None");
+                        InitNone(true);
+                        break;
+                    case "Opacity":
+                        Debug.Log("Mapping type: Opacity");
+                        InitOpacity(true);
+                        break;
+                    case "Colormap":
+                        Debug.Log("Mapping type: Colormap");
+                        InitColormap(true);
+                        break;
+                    default:
+                        break;
                 }
             };
 
@@ -414,24 +387,34 @@ namespace Astrovisio
                 mappingDropdown.UnregisterValueChangedCallback(mappingDropdownCallback);
             }
 
-            mappingDropdown.value = value;
+            // mappingDropdown.value = value;
 
-            mappingDropdown.schedule.Execute(() =>
+            mappingDropdown.SetValueWithoutNotify(value);
+
+            if (mappingDropdownCallback != null)
             {
-                if (mappingDropdownCallback != null)
-                {
-                    mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
-                }
-            }).ExecuteLater(100);
+                mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
+            }
+
+            // mappingDropdown.schedule.Execute(() =>
+            // {
+            //     if (mappingDropdownCallback != null)
+            //     {
+            //         mappingDropdown.RegisterValueChangedCallback(mappingDropdownCallback);
+            //     }
+            // }).ExecuteLater(100);
         }
 
-        private void SetThresholdSlider(ParamRowSettingsController paramRowSettingsController)
+        private void SetThresholdSlider()
         {
+            if (tempSetting is null)
+            {
+                return;
+            }
             if (thresholdSlider is null || thresholdSliderMinFloatField is null || thresholdSliderMaxFloatField is null)
             {
                 return;
             }
-
             if (thresholdSliderCallback is not null)
             {
                 thresholdSlider?.UnregisterValueChangedCallback(thresholdSliderCallback);
@@ -445,18 +428,15 @@ namespace Astrovisio
                 thresholdSliderMaxFloatField?.UnregisterValueChangedCallback(thresholdMaxFloatFieldCallback);
             }
 
-
-            IMappingSettings mappingSettings = paramRowSettingsController.ParamRenderSettings.MappingSettings;
-
+            // THRESHOLD
             thresholdSlider.lowLimit = float.MinValue;
             thresholdSlider.highLimit = float.MaxValue;
-            thresholdSlider.lowLimit = mappingSettings.ThresholdMin;
-            thresholdSlider.highLimit = mappingSettings.ThresholdMax;
-            thresholdSlider.minValue = mappingSettings.ThresholdMinSelected;
-            thresholdSlider.maxValue = mappingSettings.ThresholdMaxSelected;
-            thresholdSliderMinFloatField.value = mappingSettings.ThresholdMinSelected;
-            thresholdSliderMaxFloatField.value = mappingSettings.ThresholdMaxSelected;
-
+            thresholdSlider.lowLimit = (float)tempSetting.ThrMin;
+            thresholdSlider.highLimit = (float)tempSetting.ThrMax;
+            thresholdSlider.minValue = (float)(tempSetting.ThrMinSel ?? tempSetting.ThrMin);
+            thresholdSlider.maxValue = (float)(tempSetting.ThrMaxSel ?? tempSetting.ThrMax);
+            thresholdSliderMinFloatField.value = thresholdSlider.minValue;
+            thresholdSliderMaxFloatField.value = thresholdSlider.maxValue;
 
             thresholdSliderCallback = evt =>
             {
@@ -467,9 +447,9 @@ namespace Astrovisio
                 isThresholdUpdating = true;
                 thresholdSliderMinFloatField.value = evt.newValue.x;
                 thresholdSliderMaxFloatField.value = evt.newValue.y;
-                mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                tempSetting.ThrMinSel = thresholdSlider.minValue;
+                tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+                SettingsManager.Instance.SetParamSetting(tempSetting);
                 isThresholdUpdating = false;
             };
 
@@ -481,8 +461,18 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 thresholdSlider.minValue = (float)evt.newValue;
-                mappingSettings.ThresholdMinSelected = thresholdSlider.minValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                tempSetting.ThrMinSel = thresholdSlider.minValue;
+
+                if ((float)evt.newValue < thresholdSlider.minValue)
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMinWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
+                SettingsManager.Instance.SetParamSetting(tempSetting);
                 isThresholdUpdating = false;
             };
 
@@ -494,8 +484,18 @@ namespace Astrovisio
                 }
                 isThresholdUpdating = true;
                 thresholdSlider.maxValue = (float)evt.newValue;
-                mappingSettings.ThresholdMaxSelected = thresholdSlider.maxValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                tempSetting.ThrMaxSel = thresholdSlider.maxValue;
+
+                if ((float)evt.newValue > thresholdSlider.maxValue)
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Visible;
+                }
+                else
+                {
+                    thresholdSliderMaxWarningLabel.style.visibility = Visibility.Hidden;
+                }
+
+                SettingsManager.Instance.SetParamSetting(tempSetting);
                 isThresholdUpdating = false;
             };
 
@@ -504,49 +504,51 @@ namespace Astrovisio
             thresholdSliderMaxFloatField?.RegisterValueChangedCallback(thresholdMaxFloatFieldCallback);
         }
 
-        private void SetRangeSlider(ParamRowSettingsController paramRowSettingsController)
+        private void SetColormapDropdown()
         {
-            //
-        }
-
-        private void SetColorMapDropdown(ParamRowSettingsController paramRowSettingsController)
-        {
-            if (colorMapDropdown is null)
+            if (tempSetting is null)
             {
                 return;
             }
-
+            if (colormapDropdown is null)
+            {
+                return;
+            }
             if (colorMapDropdownCallback is not null)
             {
-                colorMapDropdown?.UnregisterValueChangedCallback(colorMapDropdownCallback);
+                colormapDropdown?.UnregisterValueChangedCallback(colorMapDropdownCallback);
             }
 
-            ColorMapSettings colorMapSettings = paramRowSettingsController.ParamRenderSettings.MappingSettings as ColorMapSettings;
-            ColorMapEnum colorMap = colorMapSettings.ColorMap;
 
-            UpdateColormapPreview(colorMap);
+            if (!Enum.TryParse<ColorMapEnum>(tempSetting.Colormap, true, out var colormap))
+            {
+                Debug.LogWarning($"[SetColormapDropdown] Invalid colormap '{tempSetting?.Colormap}'. Using default: {colormap}");
+                colormap = ColorMapEnum.Autumn;
+                tempSetting.Colormap = colormap.ToString();
+            }
 
-            colorMapDropdown.choices = Enum.GetNames(typeof(ColorMapEnum)).ToList();
-            colorMapDropdown.value = colorMap.ToString();
+            UpdateColormapPreview(colormap);
 
+            colormapDropdown.choices = Enum.GetNames(typeof(ColorMapEnum)).ToList();
+            colormapDropdown.SetValueWithoutNotify(colormap.ToString());
             colorMapDropdownCallback = evt =>
             {
-                if (Enum.TryParse<ColorMapEnum>(evt.newValue, out var selectedColorMap))
+                if (Enum.TryParse<ColorMapEnum>(evt.newValue, out var selectedColormap))
                 {
-                    UpdateColormapPreview(selectedColorMap);
-                    colorMapSettings.ColorMap = selectedColorMap;
-                    RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                    UpdateColormapPreview(selectedColormap);
+                    tempSetting.Colormap = selectedColormap.ToString();
+                    SettingsManager.Instance.SetParamSetting(tempSetting);
                 }
             };
 
-            colorMapDropdown.RegisterValueChangedCallback(colorMapDropdownCallback);
+            colormapDropdown.RegisterValueChangedCallback(colorMapDropdownCallback);
         }
 
         private void UpdateColormapPreview(ColorMapEnum colorMapEnum)
         {
             if (UIContextSO == null || UIContextSO.colorMapSO == null)
             {
-                Debug.LogWarning("[UI] UIContextSO o ColorMapSO non assegnato.");
+                Debug.LogWarning("[UI] UIContextSO or ColorMapSO not assigned.");
                 return;
             }
 
@@ -558,68 +560,80 @@ namespace Astrovisio
             }
             else
             {
-                Debug.LogWarning($"[UI] Nessuna texture trovata per la colormap: {colorMapEnum}");
+                Debug.LogWarning($"[UI] No texture found for colormap: {colorMapEnum}");
             }
         }
 
-
-
-        private void SetScalingDropdown(ParamRowSettingsController paramRowSettingsController)
+        private void SetScalingDropdown()
         {
-            if (scalingDropdown == null)
+            if (tempSetting is null)
+            {
                 return;
-
+            }
+            if (scalingDropdown == null)
+            {
+                return;
+            }
             if (scalingDropdownCallback != null)
             {
                 scalingDropdown.UnregisterValueChangedCallback(scalingDropdownCallback);
             }
 
-            IMappingSettings mappingSettings = paramRowSettingsController.ParamRenderSettings.MappingSettings;
-
             List<string> scalingOptions = Enum.GetNames(typeof(ScalingType)).ToList();
             scalingDropdown.choices = scalingOptions;
-            scalingDropdown.value = mappingSettings.ScalingType.ToString();
-
+            tempSetting.Scaling = Enum.TryParse<ScalingType>(tempSetting.Scaling, out var selectedType) ? selectedType.ToString() : ScalingType.Linear.ToString();
+            scalingDropdown.value = tempSetting.Scaling;
             scalingDropdownCallback = evt =>
             {
-                // Debug.Log($"Scaling type changed: {evt.newValue}");
-                if (Enum.TryParse<ScalingType>(evt.newValue, out var newScalingType))
+                // Debug.Log("Changing SCALING " + evt.newValue);
+                if (Enum.TryParse<ScalingType>(evt.newValue, out var selectedType))
                 {
-                    mappingSettings.ScalingType = newScalingType;
-                    RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                    tempSetting.Scaling = selectedType.ToString();
+                    if (settingMode == SettingMode.Axis)
+                    {
+                        SettingsManager.Instance.SetAxisSetting(axis, tempSetting);
+                    }
+                    else
+                    {
+                        SettingsManager.Instance.SetParamSetting(tempSetting);
+                    }
+                }
+                else
+                {
+                    tempSetting.Scaling = ScalingType.Linear.ToString();
                 }
             };
-
             scalingDropdown.RegisterValueChangedCallback(scalingDropdownCallback);
         }
 
-        private void SetInverseToggle(ParamRowSettingsController paramRowSettingsController)
+        private void SetInverseToggle()
         {
+            if (tempSetting is null)
+            {
+                return;
+            }
             if (invertToggle is null)
             {
                 return;
             }
-
             if (invertToggleCallback is not null)
             {
                 invertToggle?.UnregisterValueChangedCallback(invertToggleCallback);
             }
 
-
-            IMappingSettings mappingSettings = paramRowSettingsController.ParamRenderSettings.MappingSettings;
-
-            invertToggle.value = mappingSettings.Invert;
+            invertToggle.value = tempSetting.InvertMapping;
 
             invertToggleCallback = evt =>
             {
-                Debug.Log($"Invert toggled: {evt.newValue}");
-                mappingSettings.Invert = evt.newValue;
-                RenderManager.Instance.SetRenderSettings(paramRowSettingsController.ParamRenderSettings);
+                // Debug.Log($"Invert toggled: {evt.newValue}");
+                tempSetting.InvertMapping = evt.newValue;
+                SettingsManager.Instance.SetParamSetting(tempSetting);
             };
 
             invertToggle.RegisterValueChangedCallback(invertToggleCallback);
         }
 
+        // === Styles ===
         private void SetAxisDisplayStyle()
         {
             VisualElement mappingContainer = Root.Q<VisualElement>("MappingContainer");
@@ -638,11 +652,11 @@ namespace Astrovisio
             colorMapContainer.style.display = DisplayStyle.None;
 
             VisualElement scalingContainer = Root.Q<VisualElement>("ScalingContainer");
-            scalingContainer.style.display = DisplayStyle.None;
+            scalingContainer.style.display = DisplayStyle.Flex;
 
             VisualElement invertMappingToggleContainer = Root.Q<VisualElement>("InvertMappingToggleContainer");
             invertMappingToggleContainer.style.display = DisplayStyle.None;
-            
+
         }
 
         private void SetNoneDisplayStyle()
@@ -697,7 +711,7 @@ namespace Astrovisio
             SetMappingDropdownValue(mappingDropdown.choices[1]);
         }
 
-        private void SetColorMapDisplayStyle()
+        private void SetColormapDisplayStyle()
         {
             VisualElement mappingContainer = Root.Q<VisualElement>("MappingContainer");
             mappingContainer.style.display = DisplayStyle.Flex;
@@ -737,7 +751,7 @@ namespace Astrovisio
             }
             if (colorMapDropdownCallback is not null)
             {
-                colorMapDropdown?.UnregisterValueChangedCallback(colorMapDropdownCallback);
+                colormapDropdown?.UnregisterValueChangedCallback(colorMapDropdownCallback);
             }
             if (thresholdSliderCallback is not null)
             {
@@ -764,7 +778,7 @@ namespace Astrovisio
             }
             if (applyButtonCallback is not null)
             {
-                applyButton.clicked -= applyButtonCallback;
+                applyButton.clicked -= () => applyButtonCallback?.Invoke(tempSetting);
             }
             if (cancelButtonCallback is not null)
             {

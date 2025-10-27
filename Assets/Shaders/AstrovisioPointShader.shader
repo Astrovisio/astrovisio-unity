@@ -1,3 +1,28 @@
+//
+// Astrovisio - Astrophysical Data Visualization Tool
+// Copyright (C) 2024-2025 Metaverso SRL
+//
+// This file is part of the Astrovisio project.
+//
+// This file contains code derived from the iDaVIE project
+// (immersive Data Visualisation Interactive Explorer)
+// Original Copyright (C) 2024 IDIA, INAF-OACT
+// Original files: "CatalogPoint.shader", "CatalogPoint.cginc", "Common.cginc"
+//
+// This file is free software: you can redistribute it and/or modify it under the terms 
+// of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+// Foundation, either version 3 of the License, or (at your option) any later version.
+//
+// This file is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+// PURPOSE. See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License along with 
+// iDaVIE in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+//
+// Substantial modifications from original iDaVIE code include:
+// - Adapted to Astrovisio visualization necessities
+//
 
 Shader "Astrovisio/PointShader"
 {

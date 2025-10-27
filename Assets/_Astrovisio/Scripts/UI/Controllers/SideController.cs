@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -50,6 +69,7 @@ namespace Astrovisio
             projectManager.ProjectOpened += OnProjectOpened;
             projectManager.ProjectUnselected += OnProjectUnselected;
             projectManager.ProjectClosed += OnProjectClosed;
+            projectManager.ProjectDeleted += OnProjectDeleted;
         }
 
         private void OnDisable()
@@ -57,6 +77,7 @@ namespace Astrovisio
             projectManager.ProjectOpened -= OnProjectOpened;
             projectManager.ProjectUnselected -= OnProjectUnselected;
             projectManager.ProjectClosed -= OnProjectClosed;
+            projectManager.ProjectDeleted -= OnProjectDeleted;
         }
 
         private void EnableHomeSidebar()
@@ -87,6 +108,7 @@ namespace Astrovisio
 
             // VisualElement projectSidebarInstance = projectSidebarTemplate.CloneTree();
             VisualElement projectSidebarInstance = uiContextSO.projectSidebarTemplate.CloneTree();
+            projectSidebarInstance.name = project.Id.ToString() + "-" + project.Name.ToString();
             sideContainer.Add(projectSidebarInstance);
 
             // var newProjectViewController = new ProjectSidebarController(projectManager, sidebarParamRowTemplate, projectManager.GetFakeProject(), projectSidebarInstance);
@@ -107,13 +129,22 @@ namespace Astrovisio
 
         private void OnProjectClosed(Project project)
         {
-            foreach (var controller in projectSidebarControllerDictionary.Values)
-            {
-                controller.Root.style.display = DisplayStyle.None;
-            }
-            sidebarContainer.style.display = DisplayStyle.Flex;
+            SafeDisposeAndRemove(project);
+        }
 
-            projectSidebarControllerDictionary.Remove(project.Id);
+        private void OnProjectDeleted(Project project)
+        {
+            SafeDisposeAndRemove(project);
+        }
+
+        private void SafeDisposeAndRemove(Project project)
+        {
+            if (projectSidebarControllerDictionary.Remove(project.Id, out var controller) && controller != null)
+            {
+                if (controller.Root != null)
+                    sideContainer.Remove(controller.Root);
+                controller.Dispose();
+            }
         }
 
     }

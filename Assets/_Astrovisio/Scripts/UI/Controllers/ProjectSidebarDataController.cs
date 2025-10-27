@@ -1,8 +1,27 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System.Collections.Generic;
 using UnityEngine.UIElements;
-using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
+using System.Threading.Tasks;
 using System;
 
 namespace Astrovisio
@@ -22,13 +41,22 @@ namespace Astrovisio
         private Label warningLabel;
         private ScrollView paramsScrollView;
         private DropdownField downsamplingDropdown;
-        private Label actualSizeLabel;
+        private Label processedPointsLabel;
         private Button processDataButton;
         private int chipLabelCounter;
         private bool isReadyToProcessData;
         private Dictionary<string, VisualElement> paramRowVisualElement = new();
+        private File currentFile;
+        private EventCallback<ChangeEvent<string>> _downsamplingCallback;
 
-        public ProjectSidebarDataController(ProjectSidebarController projectSidebarController, UIManager uiManager, ProjectManager projectManager, UIContextSO uiContextSO, Project project, VisualElement root)
+
+        public ProjectSidebarDataController(
+            ProjectSidebarController projectSidebarController,
+            UIManager uiManager,
+            ProjectManager projectManager,
+            UIContextSO uiContextSO,
+            Project project,
+            VisualElement root)
         {
             ProjectSidebarController = projectSidebarController;
             UIManager = uiManager;
@@ -39,6 +67,10 @@ namespace Astrovisio
 
             ProjectManager.ProjectOpened += OnProjectOpened;
             ProjectManager.ProjectUpdated += OnProjectUpdated;
+            ProjectManager.FileSelected += OnFileSelected;
+            ProjectManager.FileUpdated += OnFileUpdated;
+            ProjectManager.FileProcessed += OnFileProcessed;
+
 
             Init();
         }
@@ -50,10 +82,22 @@ namespace Astrovisio
             processDataButton = dataSettingsContainer.Q<Button>("ProcessDataButton");
             processDataButton.clicked += OnProcessDataClicked;
 
+            currentFile = Project.Files is { Count: > 0 } list ? list[0] : null;
+
             InitWarningLabel();
             InitParamsScrollView();
-            InitActualSizeLabel();
             InitDownsamplingDropdown();
+            InitTotalPointsLabel();
+            InitProcessedPointsLabel();
+        }
+
+        public void Dispose()
+        {
+            ProjectManager.ProjectOpened -= OnProjectOpened;
+            ProjectManager.ProjectUpdated -= OnProjectUpdated;
+            ProjectManager.FileSelected -= OnFileSelected;
+            ProjectManager.FileUpdated -= OnFileUpdated;
+            ProjectManager.FileProcessed -= OnFileProcessed;
         }
 
         private void InitParamsScrollView()
@@ -67,44 +111,92 @@ namespace Astrovisio
         private void InitDownsamplingDropdown()
         {
             downsamplingDropdown = dataSettingsContainer.Q<DropdownField>("DropdownField");
-            downsamplingDropdown.choices.Clear();
-            downsamplingDropdown.choices.Add("0%");
-            downsamplingDropdown.choices.Add("25%");
-            downsamplingDropdown.choices.Add("50%");
-            downsamplingDropdown.choices.Add("75%");
-            downsamplingDropdown.value = ((1 - Project.ConfigProcess.Downsampling) * 100).ToString("0") + "%";
-            downsamplingDropdown?.RegisterValueChangedCallback(evt =>
+            if (downsamplingDropdown == null)
             {
-                string percentageText = evt.newValue.Replace("%", "");
-                if (float.TryParse(percentageText, out float percentage))
+                Debug.LogError("DropdownField not found.");
+                return;
+            }
+
+            if (_downsamplingCallback != null)
+            {
+                downsamplingDropdown.UnregisterValueChangedCallback(_downsamplingCallback);
+            }
+
+            downsamplingDropdown.choices.Clear();
+            downsamplingDropdown.choices.AddRange(new[] { "0%", "25%", "50%", "75%" });
+
+            if (currentFile == null)
+            {
+                Debug.LogWarning("No current file, downsampling dropdown disabled.");
+                downsamplingDropdown.SetEnabled(false);
+                downsamplingDropdown.SetValueWithoutNotify("0%");
+                return;
+            }
+
+            downsamplingDropdown.SetEnabled(true);
+
+            string pctText = ((1f - currentFile.Downsampling) * 100f).ToString("0") + "%";
+            downsamplingDropdown.SetValueWithoutNotify(pctText);
+
+            if (_downsamplingCallback == null)
+            {
+                _downsamplingCallback = evt =>
                 {
-                    float value = 1 - (percentage / 100f);
-                    Project.ConfigProcess.Downsampling = value;
-                    UpdateProcessDataButton();
-                }
-                else
-                {
-                    Debug.LogWarning("Invalid percentage format.");
-                }
-            });
+                    string percentageText = evt.newValue.Replace("%", "");
+                    if (float.TryParse(
+                            percentageText,
+                            System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            out float percentage))
+                    {
+                        float value = 1f - (percentage / 100f);
+                        currentFile.Downsampling = value;
+
+                        Debug.Log($"[Downsampling] Set to {percentage:0}% → value={value:0.##}");
+                        _ = ProjectManager.UpdateFile(Project.Id, currentFile);
+                        UpdateProcessDataButton();
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Invalid percentage format: '{evt.newValue}'");
+                    }
+                };
+            }
+
+            downsamplingDropdown.RegisterValueChangedCallback(_downsamplingCallback);
         }
 
-        private void InitActualSizeLabel()
+        private void InitTotalPointsLabel()
         {
-            actualSizeLabel = dataSettingsContainer.Q<Label>("ActualSize");
+            processedPointsLabel = dataSettingsContainer.Q<VisualElement>("TotalContainer").Q<Label>("PointsNumberLabel");
+            processedPointsLabel.text = currentFile.TotalPoints.ToString();
+        }
+
+        private void InitProcessedPointsLabel()
+        {
+
+            if (currentFile.Processed)
+            {
+                processedPointsLabel = dataSettingsContainer.Q<VisualElement>("ProcessedContainer").Q<Label>("PointsNumberLabel");
+                processedPointsLabel.text = currentFile.ProcessedPoints.ToString();
+            }
+            else
+            {
+                ResetProcessedPointsLabel();
+            }
+
+        }
+
+
+        private void ResetProcessedPointsLabel()
+        {
+            processedPointsLabel = dataSettingsContainer.Q<VisualElement>("ProcessedContainer").Q<Label>("PointsNumberLabel");
+            processedPointsLabel.text = "0";
         }
 
         private void InitWarningLabel()
         {
             warningLabel = dataSettingsContainer.Q<Label>("Warning");
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            // Debug.Log($"Property changed: {e.PropertyName}");
-
-            UpdateParamsScrollView();
-            UpdateChipLabel();
         }
 
         private void SetProcessDataButton(bool state)
@@ -122,17 +214,24 @@ namespace Astrovisio
             }
         }
 
-        private void HandleAxisControll()
+        private void HandleAxisControl()
         {
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
+            {
+                isReadyToProcessData = false;
+                UpdateProcessDataButton();
+                warningLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
             // 1) Count the active parameters
-            chipLabelCounter = Project.ConfigProcess.Params
-                .Values
+            chipLabelCounter = currentFile.Variables
                 .Count(p => p.XAxis || p.YAxis || p.ZAxis);
 
             // 2) Check which axes have been selected
-            bool xAxis = Project.ConfigProcess.Params.Values.Any(p => p.XAxis);
-            bool yAxis = Project.ConfigProcess.Params.Values.Any(p => p.YAxis);
-            bool zAxis = Project.ConfigProcess.Params.Values.Any(p => p.ZAxis);
+            bool xAxis = currentFile.Variables.Any(p => p.XAxis);
+            bool yAxis = currentFile.Variables.Any(p => p.YAxis);
+            bool zAxis = currentFile.Variables.Any(p => p.ZAxis);
 
             // 3) If at least 3 parameters are active → OK, otherwise show warning
             if (chipLabelCounter >= 3)
@@ -202,6 +301,7 @@ namespace Astrovisio
             if (isReadyToProcessData)
             {
                 SetProcessDataButton(true);
+                ResetProcessedPointsLabel();
             }
             else
             {
@@ -211,21 +311,31 @@ namespace Astrovisio
 
         private void OnProcessDataClicked()
         {
-            SetProcessDataButton(false);
-            ProjectManager.ProcessProject(Project.Id, Project.ConfigProcess);
+            // SetProcessDataButton(false);
+            _ = ProcessData();
             // UpdateRenderingParams();
+        }
+
+        private async Task ProcessData()
+        {
+            await ProjectManager.ProcessFile(Project.Id, currentFile.Id);
+            InitProcessedPointsLabel();
         }
 
         private void UpdateChipLabel()
         {
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
+            {
+                ClearChipLabel();
+                warningLabel.style.display = DisplayStyle.None;
+                return;
+            }
+
             ClearChipLabel();
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (Variable variable in currentFile.Variables)
             {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
-
-                if (!paramRowVisualElement.TryGetValue(paramName, out VisualElement row))
+                if (!paramRowVisualElement.TryGetValue(variable.Name, out VisualElement row))
                 {
                     // Debug.LogWarning($"Row not found for param: {paramName}");
                     continue;
@@ -234,17 +344,17 @@ namespace Astrovisio
                 VisualElement labelChip = row.Q<VisualElement>("LabelChip");
                 Label labelChipLetter = labelChip.Q<Label>("Letter");
 
-                if (param.XAxis)
+                if (variable.XAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "X";
                 }
-                else if (param.YAxis)
+                else if (variable.YAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "Y";
                 }
-                else if (param.ZAxis)
+                else if (variable.ZAxis)
                 {
                     labelChip.style.display = DisplayStyle.Flex;
                     labelChipLetter.text = "Z";
@@ -253,54 +363,41 @@ namespace Astrovisio
                 // Debug.Log($"Param: {paramName}, X: {param.XAxis}, Y: {param.YAxis}, Z: {param.ZAxis}");
             }
 
-            HandleAxisControll();
+            HandleAxisControl();
         }
 
         private void UpdateParamsScrollView()
         {
-            if (Project.ConfigProcess?.Params == null)
-            {
-                Debug.LogWarning("No variables to display.");
-                return;
-            }
-
-            foreach (var kvp in Project.ConfigProcess.Params)
-            {
-                ConfigParam param = kvp.Value;
-                param.PropertyChanged -= OnPropertyChanged;
-            }
-
             paramsScrollView.contentContainer.Clear();
             paramRowVisualElement.Clear();
 
-            if (Project.ConfigProcess?.Params == null)
+            // Guard on the CURRENT file
+            if (currentFile?.Variables == null || currentFile.Variables.Count == 0)
             {
                 Debug.LogWarning("No variables to display.");
                 return;
             }
 
-            foreach (var kvp in Project.ConfigProcess.Params)
+            foreach (Variable variable in currentFile.Variables)
             {
-                string paramName = kvp.Key;
-                ConfigParam param = kvp.Value;
-
-                param.PropertyChanged += OnPropertyChanged;
-
-                if (!param.Selected)
+                if (!variable.Selected)
                 {
                     continue;
                 }
+                // Debug.Log("Name: " + variable.Name + " - Selected: " + variable.Selected + " - X: " + variable.XAxis + " - Y: " + variable.YAxis + " - Z: " + variable.ZAxis);
 
-                TemplateContainer paramRow = UIContextSO.sidebarParamRowTemplate.CloneTree();
-
-                VisualElement nameContainer = paramRow.Q<VisualElement>("LabelContainer");
-                nameContainer.Q<Label>("LabelParam").text = paramName;
-
-                VisualElement labelChip = paramRow.Q<VisualElement>("LabelChip");
+                TemplateContainer row = UIContextSO.sidebarParamRowTemplate.CloneTree();
+                row.Q<VisualElement>("LabelContainer").Q<Label>("LabelParam").text = variable.Name;
+                VisualElement labelChip = row.Q<VisualElement>("LabelChip");
                 labelChip.style.display = DisplayStyle.None;
 
-                paramRowVisualElement.Add(paramName, paramRow);
-                paramsScrollView.Add(paramRow);
+                // Protect against duplicate keys
+                if (!paramRowVisualElement.ContainsKey(variable.Name))
+                {
+                    paramRowVisualElement.Add(variable.Name, row);
+                }
+
+                paramsScrollView.Add(row);
             }
         }
 
@@ -316,6 +413,8 @@ namespace Astrovisio
             }
         }
 
+
+        // === Events ===
         private void OnProjectOpened(Project project)
         {
             if (Project.Id != project.Id)
@@ -323,12 +422,9 @@ namespace Astrovisio
                 // Debug.Log("RETURNED");
                 return;
             }
-            else
-            {
-                // Debug.Log("OPENED");
-                // Project = project;
-                UpdateChipLabel();
-            }
+
+            UpdateParamsScrollView();
+            UpdateChipLabel();
         }
 
         private void OnProjectUpdated(Project project)
@@ -338,12 +434,58 @@ namespace Astrovisio
                 // Debug.Log("RETURNED");
                 return;
             }
-            else
+
+            UpdateParamsScrollView();
+            UpdateChipLabel();
+        }
+
+        private void OnFileSelected(Project project, File file)
+        {
+            // Debug.Log("I'm: " + Project.Name + " @ " + project.Name + " - " + file.Name);
+
+            if (project == null || file == null || project.Id != Project.Id)
             {
-                // Debug.Log("UPDATED");
-                // Project = project;
+                return;
+            }
+
+            if (ReferenceEquals(currentFile, file))
+            {
+                Debug.LogError("Return?");
+                return;
+            }
+
+            currentFile = file;
+
+            InitWarningLabel();
+            InitParamsScrollView();
+            InitDownsamplingDropdown();
+            InitTotalPointsLabel();
+            InitProcessedPointsLabel();
+        }
+
+        private void OnFileUpdated(Project project, File file)
+        {
+            if (project == null || file == null || project.Id != Project.Id)
+            {
+                return;
+            }
+
+            // Debug.Log(ReferenceEquals(Project, project));
+            currentFile = ProjectManager.GetLocalFile(Project.Id, file.Id);
+            // Debug.Log(ReferenceEquals(currentFile, file));
+
+            if (Project.Id == project.Id && currentFile.Id == file.Id)
+            {
+                Debug.Log($"Project name: {Project.Name} - File name: {currentFile.Name} updated.");
+                UpdateParamsScrollView();
                 UpdateChipLabel();
             }
+
+        }
+
+        private void OnFileProcessed(Project project, File file, DataPack pack)
+        {
+            InitProcessedPointsLabel();
         }
 
     }

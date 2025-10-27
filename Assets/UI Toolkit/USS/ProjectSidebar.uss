@@ -226,6 +226,7 @@
 
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer > #TopContainer {
     flex-direction: row;
+    align-items: center;
 }
 
 #ProjectSidebarRoot > #RenderSettingsContainer > #AccordionHeader > #LabelContainer > #TopContainer > #Icon {
@@ -671,4 +672,46 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #HeaderContainer {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding-top: 12px;
+    padding-right: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    background-color: var(--grey-200);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Medium.ttf?fileID=12800000&guid=da4bbf1ce25304b43a0cbab5791f30fe&type=3#SpaceGrotesk-Medium");
+    font-size: 12px;
+}
+
+.reel-button {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Icon-Reel-Arrow-Left.svg?fileID=7388822144124034973&guid=fa20468df21eeee43b3b2fcb908ef5e2&type=3#Icon-Reel-Arrow-Left");
+    background-color: var(--transparent);
+    -unity-background-image-tint-color: var(--grey-700);
+}
+
+#ProjectSidebarRoot > #RenderSettingsContainer > #AccordionContent > #HeaderContainer > #ReelLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-direction: row;
+    flex-shrink: 1;
+    flex-grow: 1;
+    -unity-text-align: middle-center;
 }

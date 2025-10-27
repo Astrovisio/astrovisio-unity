@@ -1,7 +1,29 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
+using System.Threading;
+using System.Collections.Concurrent;
 
 public class KDTreeManager
 {
@@ -10,24 +32,31 @@ public class KDTreeManager
     private float[][] data;
     private int[] xyz;
     private int[] visibilityArray;
+    private CancellationToken cancellationToken;
 
-    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz, int[] visibilityArray)
+    public KDTreeManager(float[][] data, Vector3 pivot, int[] xyz, int[] visibilityArray, CancellationToken token = default)
     {
         this.data = data;
         this.pivot = pivot;
         this.xyz = xyz;
         this.visibilityArray = visibilityArray;
+        this.cancellationToken = token;
         BuildTrees();
     }
 
     private void BuildTrees()
     {
-        List<int>[] buckets = new List<int>[8];
-        for (int i = 0; i < 8; i++) buckets[i] = new List<int>();
-
         int N = data[0].Length;
+
+        HashSet<int>[] buckets = new HashSet<int>[8];
+        for (int i = 0; i < 8; i++) buckets[i] = new HashSet<int>(N);
+
         for (int i = 0; i < N; i++)
         {
+            // Controlla se la cancellazione è stata richiesta ogni 1024 iterazioni
+            if ((i & 0x3FF) == 0)  // Equivale a i % 1024 == 0, ma più veloce
+                cancellationToken.ThrowIfCancellationRequested();
+
             int idx = 0;
             if (data[xyz[0]][i] < pivot.x) idx |= 1;
             if (data[xyz[1]][i] < pivot.y) idx |= 2;
@@ -37,8 +66,11 @@ public class KDTreeManager
 
         Parallel.For(0, 8, i =>
         {
-            trees[i] = new KDTree(data, buckets[i], xyz, visibilityArray);
+            int[] indices = buckets[i].ToArray();
+            buckets[i] = null;
+            trees[i] = new KDTree(data, indices, xyz, visibilityArray, cancellationToken);
         });
+        buckets = null;
     }
 
     private int GetOctant(Vector3 point)
@@ -82,44 +114,52 @@ public class KDTreeManager
         return list;
     }
 
-    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
+    public HashSet<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
-        var allResults = new HashSet<int>();
+        var localSets = new HashSet<int>[8];
 
         // Check which octants the ellipsoid intersects
-        for (int i = 0; i < 8; i++)
+        Parallel.For(0, 8, i =>
         {
             if (EllipsoidIntersectsOctant(center, radii, i))
             {
                 var results = trees[i].FindPointsInEllipsoid(center, radii);
-                foreach (var idx in results)
-                {
-                    allResults.Add(idx);
-                }
+                localSets[i] = results;
             }
-        }
+        });
 
-        return allResults.ToList();
+        // Merge finale (single-threaded)
+        var allResults = new HashSet<int>();
+        foreach (var set in localSets)
+        {
+            if (set != null)
+                allResults.UnionWith(set);
+        }
+        return allResults;
     }
 
-    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
+    public HashSet<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
-        var allResults = new HashSet<int>();
+        var localSets = new HashSet<int>[8];
 
-        // Check which octants the box intersects
-        for (int i = 0; i < 8; i++)
+        // Check which octants the ellipsoid intersects
+        Parallel.For(0, 8, i =>
         {
-            if (BoxIntersectsOctant(center, halfSizes, i))
+            if (EllipsoidIntersectsOctant(center, halfSizes, i)) //EllipsoidIntersectsOctant seems to work better than BoxIntersectsOctant even for Box Selection (???)
             {
                 var results = trees[i].FindPointsInBox(center, halfSizes);
-                foreach (var idx in results)
-                {
-                    allResults.Add(idx);
-                }
+                localSets[i] = results;
             }
-        }
+        });
 
-        return allResults.ToList();
+        // Merge finale (single-threaded)
+        var allResults = new HashSet<int>();
+        foreach (var set in localSets)
+        {
+            if (set != null)
+                allResults.UnionWith(set);
+        }
+        return allResults;
     }
 
     private bool EllipsoidIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)

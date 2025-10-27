@@ -1,3 +1,22 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Collections;
 using UnityEngine;
@@ -45,7 +64,7 @@ namespace Astrovisio
         {
             if (beginOnPlay)
             {
-                EnterVR(() => {});
+                EnterVR(() => { });
             }
 
             xrOriginOriginalPosition = xrOrigin.transform.position;
@@ -82,7 +101,7 @@ namespace Astrovisio
 
         public void ResetDataRendererTransform()
         {
-            DataRenderer dataRenderer = RenderManager.Instance.GetCurrentDataRenderer();
+            DataRenderer dataRenderer = RenderManager.Instance.DataRenderer;
             dataRenderer.ResetDatasetTransform();
         }
 
@@ -193,7 +212,6 @@ namespace Astrovisio
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 
-
         private void OnXRFailed()
         {
             VRActive = false;
@@ -205,7 +223,6 @@ namespace Astrovisio
             mainCamera.gameObject.SetActive(true);
         }
 
-
         private void InitVRSettings()
         {
             KDTreeComponent kdTreeComponent = FindAnyObjectByType<KDTreeComponent>();
@@ -215,7 +232,7 @@ namespace Astrovisio
             if (kdTreeComponent != null && xrController != null)
             {
                 //kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
-                kdTreeComponent.setControllerTransform(xrController.GetRightPokePoint());
+                kdTreeComponent.SetControllerTransform(xrController.GetRightPokePoint());
                 transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
             }
             if (transformManipulator != null && xrController != null)
@@ -234,7 +251,7 @@ namespace Astrovisio
             if (kdTreeComponent != null)
             {
                 // kdTreeComponent.controllerTransform = cameraTarget.gameObject.transform;
-                kdTreeComponent.setControllerTransform(cameraTarget.gameObject.transform);
+                kdTreeComponent.SetControllerTransform(cameraTarget.gameObject.transform);
             }
         }
 
@@ -246,6 +263,67 @@ namespace Astrovisio
                 XRGeneralSettings.Instance.Manager.DeinitializeLoader();
             }
         }
+
+        /// <summary>
+        /// Instantiates a UI panel in front of the user's view (XR or desktop mode),
+        /// placing it at ~1.5 meters from the camera and facing toward the user.
+        /// </summary>
+        public void InstantiatePanel(GameObject panelGO)
+        {
+            if (panelGO == null)
+            {
+                Debug.LogWarning("[XRManager] InstantiatePanel: panelGO is null.");
+                return;
+            }
+
+            // Target distance from the user's view
+            const float targetDistance = 1.5f;
+
+            // Get the user view transform (XR camera if in VR, otherwise mainCamera)
+            Transform viewTf = GetUserViewTransform();
+            if (viewTf == null)
+            {
+                Debug.LogWarning("[XRManager] InstantiatePanel: could not determine user view transform.");
+                return;
+            }
+
+            // Compute position and rotation in front of the user
+            Vector3 spawnPos = viewTf.position + viewTf.forward * targetDistance;
+            Quaternion spawnRot = Quaternion.LookRotation(viewTf.forward, Vector3.up);
+
+            // Instantiate panel
+            GameObject instance = Instantiate(panelGO);
+            instance.transform.SetPositionAndRotation(spawnPos, spawnRot);
+        }
+
+        /// <summary>
+        /// Returns the transform representing the user's view:
+        /// - In VR: XR camera under xrOrigin (active or inactive)
+        /// - Otherwise: mainCamera
+        /// - Fallback: xrOrigin or any available Camera in scene
+        /// </summary>
+        private Transform GetUserViewTransform()
+        {
+            if (VRActive && xrOrigin != null)
+            {
+                // Try to find the XR camera under the origin
+                Camera xrCamera = xrOrigin.GetComponentInChildren<Camera>(true);
+                if (xrCamera != null)
+                    return xrCamera.transform;
+            }
+
+            // Desktop mode or fallback
+            if (mainCamera != null)
+                return mainCamera.transform;
+
+            if (xrOrigin != null)
+                return xrOrigin.transform;
+
+            // Final fallback: search for any camera
+            Camera anyCamera = FindAnyObjectByType<Camera>();
+            return anyCamera != null ? anyCamera.transform : null;
+        }
+
 
     }
 

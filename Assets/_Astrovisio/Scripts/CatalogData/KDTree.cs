@@ -1,5 +1,25 @@
+/*
+ * Astrovisio - Astrophysical Data Visualization Tool
+ * Copyright (C) 2024-2025 Metaverso SRL
+ *
+ * This file is part of the Astrovisio project.
+ *
+ * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with 
+ * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class KDTree
@@ -9,6 +29,7 @@ public class KDTree
     private KDTreeNode root;
     private int[] xyz;
     private int[] visibilityArray;
+    private CancellationToken cancellationToken;
 
     private class KDTreeNode
     {
@@ -18,18 +39,22 @@ public class KDTree
         public KDTreeNode right;
     }
 
-    public KDTree(float[][] data, List<int> pointIndices, int[] xyz, int[] visibilityArray)
+    public KDTree(float[][] data, int[] pointIndices, int[] xyz, int[] visibilityArray, CancellationToken token = default)
     {
         this.data = data;
         this.xyz = xyz;
         this.visibilityArray = visibilityArray;
-        indices = pointIndices.ToArray();
+        this.cancellationToken = token;
+        indices = pointIndices;
         root = BuildTree(0, indices.Length, 0);
     }
 
     private KDTreeNode BuildTree(int start, int end, int depth)
     {
         if (start >= end) return null;
+
+        if (((start + depth) & 0x3FF) == 0)
+            cancellationToken.ThrowIfCancellationRequested();
 
         int axis = this.xyz[depth % 3];
         Array.Sort(indices, start, end - start, Comparer<int>.Create((a, b) =>
@@ -117,15 +142,15 @@ public class KDTree
     }
 
 
-    public List<int> FindPointsInSphere(Vector3 center, float radius)
+    public HashSet<int> FindPointsInSphere(Vector3 center, float radius)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         float radiusSq = radius * radius;
         SearchSphere(root, center, radiusSq, 0, result);
         return result;
     }
 
-    private void SearchSphere(KDTreeNode node, Vector3 center, float radiusSq, int depth, List<int> result)
+    private void SearchSphere(KDTreeNode node, Vector3 center, float radiusSq, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -157,16 +182,16 @@ public class KDTree
         }
     }
 
-    public List<int> FindPointsInCube(Vector3 center, float halfSize)
+    public HashSet<int> FindPointsInCube(Vector3 center, float halfSize)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         Vector3 min = center - Vector3.one * halfSize;
         Vector3 max = center + Vector3.one * halfSize;
         SearchCube(root, min, max, 0, result);
         return result;
     }
 
-    private void SearchCube(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    private void SearchCube(KDTreeNode node, Vector3 min, Vector3 max, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -193,14 +218,14 @@ public class KDTree
             SearchCube(node.right, min, max, depth + 1, result);
     }
 
-    public List<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
+    public HashSet<int> FindPointsInEllipsoid(Vector3 center, Vector3 radii)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         SearchEllipsoid(root, center, radii, 0, result);
         return result;
     }
 
-    private void SearchEllipsoid(KDTreeNode node, Vector3 center, Vector3 radii, int depth, List<int> result)
+    private void SearchEllipsoid(KDTreeNode node, Vector3 center, Vector3 radii, int depth, HashSet<int> result)
     {
         if (node == null) return;
 
@@ -237,16 +262,16 @@ public class KDTree
         }
     }
 
-    public List<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
+    public HashSet<int> FindPointsInBox(Vector3 center, Vector3 halfSizes)
     {
-        var result = new List<int>();
+        var result = new HashSet<int>();
         Vector3 min = center - halfSizes;
         Vector3 max = center + halfSizes;
         SearchBox(root, min, max, 0, result);
         return result;
     }
 
-    private void SearchBox(KDTreeNode node, Vector3 min, Vector3 max, int depth, List<int> result)
+    private void SearchBox(KDTreeNode node, Vector3 min, Vector3 max, int depth, HashSet<int> result)
     {
         if (node == null) return;
 

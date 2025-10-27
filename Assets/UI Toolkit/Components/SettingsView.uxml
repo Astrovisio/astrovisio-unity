@@ -10,7 +10,7 @@
                     <engine:Button name="InspectorButton" class="button" style="overflow: visible;">
                         <engine:VisualElement name="Icon" class="button-icon" style="flex-grow: 1;" />
                     </engine:Button>
-                    <engine:Instance template="InspectorPanel" name="InspectorPanel" />
+                    <engine:Instance template="InspectorPanel" name="InspectorPanel" style="width: 300px; min-width: 300px; max-width: 300px; top: -200px;" />
                 </engine:VisualElement>
                 <engine:VisualElement name="NoiseContainer" style="flex-grow: 1;">
                     <engine:Button name="NoiseButton" class="button" style="overflow: visible;">
