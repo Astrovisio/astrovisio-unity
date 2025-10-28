@@ -40,10 +40,8 @@ namespace Astrovisio
         {
             _pending = action;
 
-            // Cancella eventuale esecuzione pianificata
             _scheduled?.Pause();
 
-            // Pianifica sul main thread tra _delayMs ms
             _scheduled = _owner.schedule
                 .Execute(() => { _pending?.Invoke(); })
                 .StartingIn(_delayMs);

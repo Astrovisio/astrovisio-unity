@@ -55,6 +55,7 @@ namespace Astrovisio.XR
 
         [Header("Recorder")]
         [SerializeField] private Button screenRecorderButton;
+        [SerializeField] private Image screenRecorderIcon;
 
         [Header("Screenshot")]
         [SerializeField] private Button screenshotButton;
@@ -152,14 +153,27 @@ namespace Astrovisio.XR
             OpenOrReplacePanel<XRReelPanel>(reelsCanvas);
         }
 
+
+
         private void HandleScreenRecorderButtonClick()
         {
-            Debug.Log("HandleScreenRecorderButtonClick");
+            // Debug.Log("HandleScreenRecorderButtonClick");
+
+            if (RecorderManager.Instance.IsRecording == false)
+            {
+                screenRecorderIcon.color = activeNoiseIconColor;
+                RecorderManager.Instance.StartRecording();
+            }
+            else
+            {
+                RecorderManager.Instance.StopRecording();
+                screenRecorderIcon.color = Color.white;
+            }
         }
 
         private void HandleScreenshotButtonClick()
         {
-            Debug.Log("HandleScreenshotButtonClick");
+            // Debug.Log("HandleScreenshotButtonClick");
             _ = TakeScreenshot();
         }
 

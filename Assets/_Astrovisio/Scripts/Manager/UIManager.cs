@@ -313,6 +313,16 @@ namespace Astrovisio
             toastMessageController.SetToastErrorMessage($"{message}");
         }
 
+        public void SetToastSuccessMessage(string message)
+        {
+            toastMessageController.SetToastSuccessMessage(message);
+        }
+
+        public void SetToastErrorMessage(string message)
+        {
+            toastMessageController.SetToastErrorMessage(message);
+        }
+
         public void SetEditProject(Project project)
         {
             // Debug.Log("SetEditProject");

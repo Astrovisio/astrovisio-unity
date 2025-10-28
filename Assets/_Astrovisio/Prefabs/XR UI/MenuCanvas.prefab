@@ -440,6 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81757d53f64cbf642bf2113db2c291b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xrScreenshotUIController: {fileID: 0}
   infoTMP: {fileID: 2960746499606707742}
   exitVRButton: {fileID: 8471133805632909789}
   visual: {fileID: 2394420927256222226}
@@ -458,6 +459,7 @@ MonoBehaviour:
   reelsCanvas: {fileID: 1993306911488680473, guid: dd61107fca1379a459d73898c67a74cb,
     type: 3}
   screenRecorderButton: {fileID: 8647642852318857283}
+  screenRecorderIcon: {fileID: 6042032463634069430}
   screenshotButton: {fileID: 1090884434129863702}
   axisButton: {fileID: 4089085365499775504}
   axisIcon: {fileID: 6013152798935126036}
@@ -2322,7 +2324,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4600075183177092717
 MonoBehaviour:
   m_ObjectHideFlags: 0

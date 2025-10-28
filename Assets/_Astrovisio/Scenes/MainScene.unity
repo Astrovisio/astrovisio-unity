@@ -572,6 +572,112 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1.6538}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &281591915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 281591916}
+  - component: {fileID: 281591918}
+  - component: {fileID: 281591917}
+  m_Layer: 0
+  m_Name: RecorderManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &281591916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281591915}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &281591917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281591915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68412cfbabde84cc1a79bb46c00a8ec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 794102724}
+  cameras: []
+  useRenderTexture: 0
+  targetRenderTexture: {fileID: 0}
+  videoResolution: 32
+  useCustomVideoResolution: 0
+  customVideoResolution: {x: 1920, y: 1080}
+  useScreenDivide: 0
+  screenDivide: 2
+  frameRate: 30
+  useFrameSkip: 0
+  frameSkip: 0
+  encodeTo: 0
+  HDR: 0
+  advancedVideoSettings: 0
+  videoBitRate: 10000000
+  advancedAudioSettings: 0
+  sampleRate: 48000
+  channelCount: 2
+  audioBitRate: 96000
+  recordSeparateAudioFile: 0
+  separateAudioFileFormat: 0
+  recordMicrophone: 0
+  recordAllAudioSources: 0
+  audioListener: {fileID: 0}
+  recordOnlyOneAudioSource: 0
+  targetAudioSource: {fileID: 0}
+  audioReceiverMixer: 0
+  audioReceivers: []
+  autoPauseResumeRecorder: 1
+  verifyingBeforeInitialization: 0
+  inputUILayer: 0
+  frameDescriptorColorFormat: 0
+  useFrameDescriptorSrgb: 1
+  frameDescriptorMsaaSamples: 1
+  _cameraSettingExpand: 1
+  _videoSettingExpand: 1
+  _audioSettingExpand: 0
+  _timeSettingExpand: 0
+  _advancedSettingExpand: 0
+  _editorSettingExpand: 0
+  _infoResolution: 0
+  _infoInputUILayer: 0
+  editorEncoder: 1
+  videoBitrateMode: 1
+  h264VideoEncodingProfile: 1
+  editorIncludeAlpha: 0
+--- !u!114 &281591918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281591915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcac42512ff142744bd936b9e1f6da37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiManager: {fileID: 1869469690}
+  universalVideoRecorder: {fileID: 281591917}
 --- !u!1 &339852497
 GameObject:
   m_ObjectHideFlags: 0
@@ -4689,6 +4795,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 50350395075195834, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 99685157b02e4d446bbecb015645e5e8, type: 2}
     - target: {fileID: 108927652557265459, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
         type: 3}
       propertyPath: m_Color.b
@@ -5710,6 +5821,7 @@ SceneRoots:
   - {fileID: 917013865}
   - {fileID: 1399382620}
   - {fileID: 208230781}
+  - {fileID: 281591916}
   - {fileID: 1103413909}
   - {fileID: 5616298439508998508}
   - {fileID: 1674207320}
