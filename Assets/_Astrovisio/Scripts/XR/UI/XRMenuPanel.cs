@@ -195,6 +195,33 @@ namespace Astrovisio.XR
         }
 
         // === Utils ===
+        public void DestroyAllPanels()
+        {
+            XRDataInspectorPanel xrDataInspectorPanel = FindAnyObjectByType<XRDataInspectorPanel>();
+            if (xrDataInspectorPanel != null)
+            {
+                Destroy(xrDataInspectorPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
+            }
+
+            XRNoisePanel xrNoisePanel = FindAnyObjectByType<XRNoisePanel>();
+            if (xrNoisePanel != null)
+            {
+                Destroy(xrNoisePanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
+            }
+
+            XRReelPanel xrReelPanel = FindAnyObjectByType<XRReelPanel>();
+            if (xrReelPanel != null)
+            {
+                Destroy(xrReelPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
+            }
+
+            XRSettingsPanel xrSettingsPanel = FindAnyObjectByType<XRSettingsPanel>();
+            if (xrSettingsPanel != null)
+            {
+                Destroy(xrSettingsPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
+            }
+        }
+
         private async Task RunTimerAsync(float duration)
         {
             xrScreenshotUIController.SetLoaderImage(true, 1f);

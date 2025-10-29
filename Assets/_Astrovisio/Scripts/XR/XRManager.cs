@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using Astrovisio.XR;
 using UnityEngine;
 using UnityEngine.XR.Management;
 
@@ -44,10 +45,15 @@ namespace Astrovisio
         [Header("Others")]
         [SerializeField] private bool beginOnPlay = false;
 
+        // === Events ===
+        public event Action OnVRStart;
+        public event Action OnVREnd;
 
+        // === Local ===
         private Vector3 xrOriginOriginalPosition;
         private Quaternion xrOriginOriginalRotation;
         private Vector3 xrOriginOriginalScale;
+        private bool isStopping;
 
 
         private void Awake()
@@ -71,6 +77,30 @@ namespace Astrovisio
             xrOriginOriginalRotation = xrOrigin.transform.rotation;
             xrOriginOriginalScale = xrOrigin.transform.localScale;
         }
+
+        private void OnDestroy()
+        {
+            try
+            {
+                if (VRActive)
+                {
+                    XRManagerSettings mgr = XRGeneralSettings.Instance?.Manager;
+                    if (mgr != null)
+                    {
+                        if (mgr.isInitializationComplete)
+                        {
+                            mgr.StopSubsystems();
+                        }
+                        mgr?.DeinitializeLoader();
+                    }
+                }
+            }
+            catch
+            {
+                Debug.LogWarning("XRManager Destroyed");
+            }
+        }
+
 
         [ContextMenu("Enter VR")]
         public void EnterDebugVR()
@@ -108,10 +138,8 @@ namespace Astrovisio
         [ContextMenu("Exit VR")]
         public void ExitVR()
         {
-            if (!VRActive)
-            {
-                return;
-            }
+            if (!VRActive || isStopping) return;
+            isStopping = true;
 
             if (startXRCoroutine != null)
             {
@@ -120,7 +148,6 @@ namespace Astrovisio
             }
 
             StartCoroutine(StopXRAndReturnToDesktop());
-
             ResetDataRendererTransform();
         }
 
@@ -138,6 +165,7 @@ namespace Astrovisio
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
                 InitVRSettings(); // uncomment!
                 VRActive = true;
+                OnVRStart?.Invoke();
             }
         }
 
@@ -175,6 +203,8 @@ namespace Astrovisio
                 }
 
                 Debug.Log("[XRManager] XR successfully initialized.");
+                OnVRStart?.Invoke();
+
             }
             catch (Exception ex)
             {
@@ -208,7 +238,10 @@ namespace Astrovisio
             RenderManager.Instance.SetDataInspector(false, false);
             uiManager.SetDataInspectorVisibility(false);
 
+            RemoveXRUserInterface();
             VRActive = false;
+            isStopping = false;
+            OnVREnd?.Invoke();
             Debug.Log("[XRManager] XR stopped and returned to desktop mode.");
         }
 
@@ -231,9 +264,11 @@ namespace Astrovisio
 
             if (kdTreeComponent != null && xrController != null)
             {
-                //kdTreeComponent.controllerTransform = xrController.GetRightPokePoint();
                 kdTreeComponent.SetControllerTransform(xrController.GetRightPokePoint());
-                transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
+                if (transformManipulator != null)
+                {
+                    transformManipulator.targetObject = kdTreeComponent.gameObject.transform;
+                }
             }
             if (transformManipulator != null && xrController != null)
             {
@@ -255,19 +290,6 @@ namespace Astrovisio
             }
         }
 
-        private void OnDestroy()
-        {
-            if (VRActive)
-            {
-                XRGeneralSettings.Instance.Manager.StopSubsystems();
-                XRGeneralSettings.Instance.Manager.DeinitializeLoader();
-            }
-        }
-
-        /// <summary>
-        /// Instantiates a UI panel in front of the user's view (XR or desktop mode),
-        /// placing it at ~1.5 meters from the camera and facing toward the user.
-        /// </summary>
         public void InstantiatePanel(GameObject panelGO)
         {
             if (panelGO == null)
@@ -296,12 +318,6 @@ namespace Astrovisio
             instance.transform.SetPositionAndRotation(spawnPos, spawnRot);
         }
 
-        /// <summary>
-        /// Returns the transform representing the user's view:
-        /// - In VR: XR camera under xrOrigin (active or inactive)
-        /// - Otherwise: mainCamera
-        /// - Fallback: xrOrigin or any available Camera in scene
-        /// </summary>
         private Transform GetUserViewTransform()
         {
             if (VRActive && xrOrigin != null)
@@ -324,6 +340,14 @@ namespace Astrovisio
             return anyCamera != null ? anyCamera.transform : null;
         }
 
+        private void RemoveXRUserInterface()
+        {
+            XRMenuPanel xrMenuPanel = FindAnyObjectByType<XRMenuPanel>();
+            if (xrMenuPanel != null)
+            {
+                xrMenuPanel.DestroyAllPanels();
+            }
+        }
 
     }
 
