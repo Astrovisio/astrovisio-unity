@@ -220,7 +220,7 @@ namespace Astrovisio
                 Debug.LogWarning($"[Sidebar] No processed file found and no DataContainer registered for Project id={Project.Id}, name='{Project.Name}'. See log above.");
             }
 
-            UpdateSidebar();
+            // UpdateSidebar();
         }
 
         private void UpdateCurrentFile()

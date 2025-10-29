@@ -261,6 +261,7 @@ namespace Astrovisio
 
         private void InitSelectedAxes()
         {
+            selectedAxis.Clear();
             foreach (ParamRowController paramController in paramControllers)
             {
                 if (paramController.Variable.XAxis)
@@ -320,7 +321,7 @@ namespace Astrovisio
             if (selectedAxis.TryGetValue(axis.Value, out var previous) && previous != paramRowController)
             {
                 previous.DeselectAxis(axis.Value);
-                Debug.LogWarning(axis.Value);
+                // Debug.LogWarning(axis.Value);
                 switch (axis.Value)
                 {
                     case Axis.X:
