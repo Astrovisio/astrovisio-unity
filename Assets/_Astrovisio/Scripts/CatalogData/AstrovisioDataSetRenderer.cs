@@ -29,7 +29,6 @@
 using System;
 using Astrovisio;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace CatalogData
 {
@@ -66,7 +65,6 @@ namespace CatalogData
 
         private KDTreeComponent kdTreeComponent;
         private DataContainer dataContainer;
-        private AxesCanvasHandler axesCanvasHandler;
 
         private void Awake()
         {
@@ -231,7 +229,6 @@ namespace CatalogData
 
         public void SetAxisAstrovisio(Astrovisio.Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
         {
-            // Applica trasformazione se necessario
             var targetAxis = TransformAxis(axis);
 
             var entry = new MapFloatEntry
@@ -264,20 +261,19 @@ namespace CatalogData
             UpdateMappingValues();
         }
 
-        private Astrovisio.Axis TransformAxis(Astrovisio.Axis inputAxis)
+        private Axis TransformAxis(Axis inputAxis)
         {
             if (DataMapping.CoordinateSystem == CoordinateSystem.Astrophysics)
             {
-                // Trasforma l'asse dal sistema astrofisico a Unity
                 switch (inputAxis)
                 {
-                    case Astrovisio.Axis.X: return Astrovisio.Axis.X; // X rimane X
-                    case Astrovisio.Axis.Y: return Astrovisio.Axis.Z; // Y astro → Z Unity
-                    case Astrovisio.Axis.Z: return Astrovisio.Axis.Y; // Z astro → Y Unity
+                    case Axis.X: return Axis.X; // X rimane X
+                    case Axis.Y: return Axis.Z; // Y astro → Z Unity
+                    case Axis.Z: return Axis.Y; // Z astro → Y Unity
                     default: return inputAxis;
                 }
             }
-            return inputAxis; // Nessuna trasformazione per sistema Unity
+            return inputAxis;
         }
 
         public Material GetMaterial()
@@ -534,7 +530,6 @@ namespace CatalogData
                 {
                     _appliedColorMap = DataMapping.ColorMap;
                     int colorMapIndex = _appliedColorMap.GetHashCode();
-                    //OnColorMapChanged?.Invoke(_appliedColorMap);
                     _catalogMaterial.SetFloat(_idColorMapIndex, colorMapIndex);
                     _catalogMaterial.SetInt(_idNumColorMaps, ColorMapUtils.NumColorMaps);
                 }
@@ -584,17 +579,6 @@ namespace CatalogData
         public void SetColorMap(ColorMapEnum newColorMap)
         {
             DataMapping.ColorMap = newColorMap;
-            //            int numColorMaps = ColorMapUtils.NumColorMaps;
-            //            float colorMapPixelDeltaX = (float) (ColorMapTexture.width) / NumColorMapStops;
-            //            float colorMapPixelDeltaY = (float) (ColorMapTexture.height) / numColorMaps;
-            //            int colorMapIndex = newColorMap.GetHashCode();
-            //
-            //            for (var i = 0; i < NumColorMapStops; i++)
-            //            {
-            //                _colorMapData[i] = ColorMapTexture.GetPixel((int) (i * colorMapPixelDeltaX), (int) (colorMapIndex * colorMapPixelDeltaY));
-            //            }
-            //
-            //            _catalogMaterial.SetColorArray(_idColorMapData, _colorMapData);
         }
 
         public void ShiftColorMap(int delta)
@@ -603,47 +587,13 @@ namespace CatalogData
             int currentIndex = DataMapping.ColorMap.GetHashCode();
             int newIndex = (currentIndex + delta + numColorMaps) % numColorMaps;
             SetColorMap(ColorMapUtils.FromHashCode(newIndex));
-            //OnColorMapChanged?.Invoke(DataMapping.ColorMap);
         }
 
         private void Update()
         {
-            // HandleNoizeCheck();
             UpdateMappingValues();
             GetDataInfo();
         }
-
-        // private void HandleNoizeCheck()
-        // {
-        //     if (Input.GetKeyDown(KeyCode.Alpha0))
-        //     {
-        //         SetNoise(false, 0f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha1))
-        //     {
-        //         SetNoise(true, 0.005f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha2))
-        //     {
-        //         SetNoise(true, 0.010f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha3))
-        //     {
-        //         SetNoise(true, 0.015f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha4))
-        //     {
-        //         SetNoise(true, 0.020f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha5))
-        //     {
-        //         SetNoise(true, 0.025f);
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Alpha6))
-        //     {
-        //         SetNoise(true, 0.030f);
-        //     }
-        // }
 
         public void SetNoise(bool state, float value)
         {
