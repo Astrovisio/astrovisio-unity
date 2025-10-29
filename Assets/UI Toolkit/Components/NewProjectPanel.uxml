@@ -30,10 +30,10 @@
                         </engine:VisualElement>
                     </engine:VisualElement>
                     <engine:Instance template="TertiaryButton" name="AddFileButton">
-                        <AttributeOverrides element-name="Label" text="Upload files" />
+                        <AttributeOverrides element-name="Label" text="Add files" />
                     </engine:Instance>
                 </engine:VisualElement>
-                <engine:Label text="Uploaded files&#10;" name="LabelUploadedFiles" />
+                <engine:Label text="Added files&#10;" name="LabelUploadedFiles" />
                 <engine:ListView name="ViewFilesContainer" reorderable="true" reorder-mode="Animated" binding-source-selection-mode="Manual" fixed-item-height="41" />
             </engine:VisualElement>
         </engine:VisualElement>
