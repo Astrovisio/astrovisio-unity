@@ -35,6 +35,9 @@ namespace Astrovisio
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
 
+        // === Events ===
+        public event Action<ProjectFile> OnSettingsAdd;
+
         private readonly Dictionary<ProjectFile, Settings> settingsDictionary = new();
 
         private void Awake()
@@ -331,6 +334,7 @@ namespace Astrovisio
 
             int count = settingsDictionary[key]?.Variables?.Count ?? 0;
             Debug.Log($"[SettingsManager] Inserted settings entry for {key} (var count: {count}).");
+            OnSettingsAdd?.Invoke(key);
         }
 
         public bool RemoveSettings(int projectId, int fileId)
@@ -435,7 +439,6 @@ namespace Astrovisio
             string xAxisName = file.Variables.FirstOrDefault(v => v.XAxis)?.Name;
             string yAxisName = file.Variables.FirstOrDefault(v => v.YAxis)?.Name;
             string zAxisName = file.Variables.FirstOrDefault(v => v.ZAxis)?.Name;
-
 
             RemoveOpacity();
             RemoveColormap();
@@ -570,12 +573,18 @@ namespace Astrovisio
 
         public void RemoveOpacity()
         {
-            RenderManager.Instance.DataRenderer.RemoveOpacity();
+            if (RenderManager.Instance.DataRenderer)
+            {
+                RenderManager.Instance.DataRenderer.RemoveOpacity();
+            }
         }
 
         public void RemoveColormap()
         {
-            RenderManager.Instance.DataRenderer.RemoveColormap();
+            if (RenderManager.Instance.DataRenderer)
+            {
+                RenderManager.Instance.DataRenderer.RemoveColormap();
+            }
         }
 
         public void SetAxis(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
@@ -629,7 +638,8 @@ namespace Astrovisio
 
             UpdateSettingsRequest req = new UpdateSettingsRequest
             {
-                Variables = settings.Variables ?? new List<Setting>()
+                Variables = settings.Variables ?? new List<Setting>(),
+                Noise = settings.Noise
             };
 
             Debug.Log(JsonConvert.SerializeObject(req));

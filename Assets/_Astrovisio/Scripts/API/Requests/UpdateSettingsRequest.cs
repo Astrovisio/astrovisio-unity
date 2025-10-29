@@ -28,6 +28,9 @@ namespace Astrovisio
         [JsonProperty("variables", NullValueHandling = NullValueHandling.Ignore)]
         public List<Setting> Variables { get; set; } = new();
 
+        [JsonProperty("noise")]
+        public float Noise { get; set; } = 0.0f;
+
     }
 
 }
