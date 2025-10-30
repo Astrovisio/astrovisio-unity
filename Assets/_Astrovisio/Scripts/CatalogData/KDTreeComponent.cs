@@ -185,10 +185,8 @@ public class KDTreeComponent : MonoBehaviour
             return null;
         }
 
-        // Clona l'oggetto
         GameObject cloned = Instantiate(original);
 
-        // Imposta il parent
         cloned.transform.SetParent(newParent, true);
 
         currentDataSelectionGameObject = cloned;
@@ -239,17 +237,14 @@ public class KDTreeComponent : MonoBehaviour
             case SelectionMode.SinglePoint:
                 cloned = CloneAndAttach(pointDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = areaSelectionResult.CenterPoint;
-                //cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Sphere:
                 cloned = CloneAndAttach(areaSphereDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = positionAtAction + Vector3.zero;
-                //cloned.transform.rotation = rotationAtAction;
                 break;
             case SelectionMode.Cube:
                 cloned = CloneAndAttach(areaBoxDataInspector.gameObject, gameObject.transform);
                 cloned.transform.position = positionAtAction + Vector3.zero;
-                //cloned.transform.rotation = rotationAtAction;
                 break;
         }
 
@@ -320,10 +315,10 @@ public class KDTreeComponent : MonoBehaviour
 
     public async Task Initialize(float[][] pointData, Vector3 pivot)
     {
-        // Cancella qualsiasi inizializzazione precedente in corso
+        // Abort any previous initialization
         CancelInitialization();
 
-        // Crea un nuovo CancellationTokenSource per questa inizializzazione
+        // Create a new CancelationToken for this initialization
         initializationCts = new CancellationTokenSource();
         var token = initializationCts.Token;
 
@@ -475,17 +470,6 @@ public class KDTreeComponent : MonoBehaviour
         return result;
     }
 
-    // NEW: Get aggregated data for area selection
-    public float[] GetAreaSelectionDataInfo()
-    {
-        if (areaSelectionResult == null || areaSelectionResult.Count == 0)
-        {
-            return null;
-        }
-
-        return areaSelectionResult.AggregatedValues;
-    }
-
     private float[] AggregateData(HashSet<int> indices)
     {
         if (data == null || data.Length == 0 || indices.Count == 0)
@@ -581,32 +565,6 @@ public class KDTreeComponent : MonoBehaviour
         }
 
         return new Vector3();
-    }
-
-    private Vector3 GetAreaCenterWorldSpace()
-    {
-        if (areaSelectionResult == null || areaSelectionResult.Count == 0 || pointCloudTransform == null)
-        {
-            return Vector3.zero;
-        }
-
-        // Calculate center of mass
-        Vector3 centerOfMass = Vector3.zero;
-        foreach (int idx in areaSelectionResult.SelectedIndices)
-        {
-            Vector3 point = new Vector3(
-                data[mapping.X.SourceIndex][idx],
-                data[mapping.Y.SourceIndex][idx],
-                data[mapping.Z.SourceIndex][idx]
-            );
-            centerOfMass += point;
-        }
-        centerOfMass /= areaSelectionResult.Count;
-
-        centerOfMass = ApplyScaling(centerOfMass);
-        centerOfMass = RemapPoint(centerOfMass);
-
-        return pointCloudTransform.TransformPoint(centerOfMass);
     }
 
     private Vector3 ApplyScaling(Vector3 point)
@@ -762,7 +720,7 @@ public class KDTreeComponent : MonoBehaviour
         return result;
     }
 
-    // New helper method to handle axis transformation with zero-crossing ranges
+    // Helper method to handle axis transformation with zero-crossing ranges
     private float TransformAxisToDataSpace(float localValue, MapFloatEntry entry)
     {
 
@@ -819,12 +777,10 @@ public class KDTreeComponent : MonoBehaviour
     {
         Vector3 center = TransformWorldToDataSpace(controllerTransform.position);
 
-        // Genera punti uniformemente distribuiti su una sfera nel world space
         Vector3[] spherePoints = GenerateSphereSamplePoints(controllerTransform.position, worldRadius);
 
         float maxRadiusX = 0, maxRadiusY = 0, maxRadiusZ = 0;
 
-        // Trasforma ogni punto della sfera e calcola il bounding ellipsoid nel data space
         foreach (var worldPoint in spherePoints)
         {
             Vector3 transformedPoint = TransformWorldToDataSpace(worldPoint);
@@ -842,16 +798,14 @@ public class KDTreeComponent : MonoBehaviour
     {
         var points = new List<Vector3>();
 
-        // Aumentato significativamente il numero di campioni per maggiore precisione
         int fibonacciSamples = 64;
 
-        // Genera punti uniformemente distribuiti su una sfera usando la spirale di Fibonacci
         for (int i = 0; i < fibonacciSamples; i++)
         {
-            float y = 1 - 2f * i / (fibonacciSamples - 1f); // y va da 1 a -1
+            float y = 1 - 2f * i / (fibonacciSamples - 1f);
             float radiusAtY = Mathf.Sqrt(1 - y * y);
 
-            float theta = Mathf.PI * (1 + Mathf.Sqrt(5)) * i; // Angolo dorato
+            float theta = Mathf.PI * (1 + Mathf.Sqrt(5)) * i;
 
             float x = Mathf.Cos(theta) * radiusAtY;
             float z = Mathf.Sin(theta) * radiusAtY;
@@ -860,22 +814,17 @@ public class KDTreeComponent : MonoBehaviour
             points.Add(center + direction * radius);
         }
 
-        // Aggiungi punti cardinali primari
         points.Add(center + Vector3.right * radius);
         points.Add(center - Vector3.right * radius);
         points.Add(center + Vector3.up * radius);
         points.Add(center - Vector3.up * radius);
         points.Add(center + Vector3.forward * radius);
         points.Add(center - Vector3.forward * radius);
-
-        // Aggiungi punti diagonali critici (questi sono importanti per rotazioni a 30°, 45°, 60°)
-        // Diagonali principali sul piano XZ (critiche per rotazioni Y)
         points.Add(center + new Vector3(1, 0, 1).normalized * radius);    // 45°
         points.Add(center + new Vector3(1, 0, -1).normalized * radius);   // -45°
         points.Add(center + new Vector3(-1, 0, 1).normalized * radius);   // 135°
         points.Add(center + new Vector3(-1, 0, -1).normalized * radius);  // -135°
 
-        // Aggiungi punti a 30° e 60° sul piano XZ (critici per l'errore residuo)
         for (int i = 0; i < 12; i++) // Ogni 30°
         {
             float angle = i * 30f * Mathf.Deg2Rad;
@@ -883,7 +832,6 @@ public class KDTreeComponent : MonoBehaviour
             points.Add(center + direction * radius);
         }
 
-        // Aggiungi punti a elevazioni intermedie (15°, 30°, 45°, 60°, 75°)
         float[] elevations = { 15f, 30f, 45f, 60f, 75f };
         foreach (float elevation in elevations)
         {
@@ -891,7 +839,6 @@ public class KDTreeComponent : MonoBehaviour
             float y = Mathf.Sin(elevRad);
             float radiusAtElev = Mathf.Cos(elevRad);
 
-            // 8 direzioni azimutali per ogni elevazione
             for (int i = 0; i < 8; i++)
             {
                 float azimuth = i * 45f * Mathf.Deg2Rad;
@@ -901,8 +848,6 @@ public class KDTreeComponent : MonoBehaviour
                     Mathf.Sin(azimuth) * radiusAtElev
                 );
                 points.Add(center + direction * radius);
-
-                // Aggiungi anche l'elevazione negativa
                 direction.y = -y;
                 points.Add(center + direction * radius);
             }
@@ -913,10 +858,9 @@ public class KDTreeComponent : MonoBehaviour
 
     public float InverseLerpUnclamped(float a, float b, float value)
     {
-        // Gestione del caso degenere dove a == b
         if (Mathf.Approximately(a, b))
         {
-            return 0f; // Oppure potresti voler restituire float.NaN o gestire diversamente
+            return 0f;
         }
 
         return (value - a) / (b - a);
@@ -936,7 +880,6 @@ public class KDTreeComponent : MonoBehaviour
 
     private float RemapUnclamped(float value, Vector2 fromRange, Vector2 toRange)
     {
-        // Evita divisione per zero
         if (Mathf.Approximately(fromRange.y, fromRange.x))
         {
             return toRange.x;
@@ -968,7 +911,6 @@ public class KDTreeComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Debug.Log("OnDestroy");
         if (pointDataInspector != null)
         {
             Destroy(pointDataInspector.gameObject);
@@ -982,10 +924,9 @@ public class KDTreeComponent : MonoBehaviour
             Destroy(areaBoxDataInspector.gameObject);
         }
 
-        // Rimuovi il listener per evitare memory leak
         selectAction.action.performed -= OnSpacebarPressed;
 
-        // Cancella qualsiasi inizializzazione in corso
+        // Abort any KDTree initialization in progress
         CancelInitialization();
     }
 

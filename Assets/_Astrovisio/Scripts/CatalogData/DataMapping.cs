@@ -41,32 +41,6 @@ namespace CatalogData
 
         public Mapping Mapping;
 
-        // public static DataMapping CreateFromJson(string jsonString)
-        // {
-        //     DataMapping dataMapping = JsonConvert.DeserializeObject<DataMapping>(jsonString);
-        //     if (!string.IsNullOrEmpty(dataMapping.Uniforms.ColorString))
-        //     {
-        //         Color parsedColor;
-        //         if (ColorUtility.TryParseHtmlString(dataMapping.Uniforms.ColorString, out parsedColor))
-        //         {
-        //             dataMapping.Uniforms.Color = parsedColor;
-        //         }
-        //     }
-
-        //     return dataMapping;
-        // }
-
-        // public static DataMapping CreateFromFile(string fileName)
-        // {
-        //     string mappingJson = File.ReadAllText(fileName);
-        //     return CreateFromJson(mappingJson);
-        // }
-
-        // public string ToJson()
-        // {
-        //     return JsonConvert.SerializeObject(this);
-        // }
-
         public static DataMapping DefaultXyzMapping
         {
             get

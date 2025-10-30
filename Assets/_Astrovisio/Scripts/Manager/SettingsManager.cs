@@ -35,6 +35,9 @@ namespace Astrovisio
         [SerializeField] private APIManager apiManager;
         [SerializeField] private ProjectManager projectManager;
 
+        // === Events ===
+        public event Action<ProjectFile> OnSettingsAdd;
+
         private readonly Dictionary<ProjectFile, Settings> settingsDictionary = new();
 
         private void Awake()
@@ -331,6 +334,7 @@ namespace Astrovisio
 
             int count = settingsDictionary[key]?.Variables?.Count ?? 0;
             Debug.Log($"[SettingsManager] Inserted settings entry for {key} (var count: {count}).");
+            OnSettingsAdd?.Invoke(key);
         }
 
         public bool RemoveSettings(int projectId, int fileId)
@@ -436,7 +440,6 @@ namespace Astrovisio
             string yAxisName = file.Variables.FirstOrDefault(v => v.YAxis)?.Name;
             string zAxisName = file.Variables.FirstOrDefault(v => v.ZAxis)?.Name;
 
-
             RemoveOpacity();
             RemoveColormap();
             foreach (Setting setting in settings.Variables)
@@ -492,13 +495,21 @@ namespace Astrovisio
                         break;
                 }
             }
+
+            SetNoise(settings.Noise);
         }
 
         private void SetOpacity(Setting setting)
         {
             if (setting == null)
             {
-                Debug.LogError("[SetOpacity] 'setting' is null.");
+                Debug.Log("[SetOpacity] 'setting' is null.");
+                return;
+            }
+
+            if (RenderManager.Instance.DataRenderer == null)
+            {
+                Debug.Log("[SetOpacity] DataRenderer is null.");
                 return;
             }
 
@@ -531,7 +542,13 @@ namespace Astrovisio
         {
             if (setting == null)
             {
-                Debug.LogError("[SetColormap] Setting is null.");
+                Debug.Log("[SetColormap] Setting is null.");
+                return;
+            }
+
+            if (RenderManager.Instance.DataRenderer == null)
+            {
+                Debug.Log("[SetColormap] DataRenderer is null.");
                 return;
             }
 
@@ -570,18 +587,29 @@ namespace Astrovisio
 
         public void RemoveOpacity()
         {
-            RenderManager.Instance.DataRenderer.RemoveOpacity();
+            if (RenderManager.Instance.DataRenderer)
+            {
+                RenderManager.Instance.DataRenderer.RemoveOpacity();
+            }
         }
 
         public void RemoveColormap()
         {
-            RenderManager.Instance.DataRenderer.RemoveColormap();
+            if (RenderManager.Instance.DataRenderer)
+            {
+                RenderManager.Instance.DataRenderer.RemoveColormap();
+            }
         }
 
         public void SetAxis(Axis axis, string paramName, float thresholdMin, float thresholdMax, ScalingType scalingType)
         {
             // Debug.Log($"{paramName}, {thresholdMin}, {thresholdMax}, {scalingType}");
             RenderManager.Instance.DataRenderer?.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+        }
+
+        public void SetNoise(float value)
+        {
+            RenderManager.Instance.SetNoise(value);
         }
 
         // === API ===
@@ -629,7 +657,8 @@ namespace Astrovisio
 
             UpdateSettingsRequest req = new UpdateSettingsRequest
             {
-                Variables = settings.Variables ?? new List<Setting>()
+                Variables = settings.Variables ?? new List<Setting>(),
+                Noise = settings.Noise
             };
 
             Debug.Log(JsonConvert.SerializeObject(req));

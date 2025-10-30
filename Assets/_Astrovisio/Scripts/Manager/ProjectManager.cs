@@ -355,7 +355,7 @@ namespace Astrovisio
 				catch (Exception ex)
 				{
 					Debug.LogError($"[ProjectManager] Process failed: {ex.Message}");
-					ApiError?.Invoke("Errore nel processamento: " + ex.Message);
+					ApiError?.Invoke("Processing error: " + ex.Message);
 					uiManager.SetLoadingView(false);
 				}
 

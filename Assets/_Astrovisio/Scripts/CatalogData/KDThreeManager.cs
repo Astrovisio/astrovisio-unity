@@ -53,8 +53,8 @@ public class KDTreeManager
 
         for (int i = 0; i < N; i++)
         {
-            // Controlla se la cancellazione è stata richiesta ogni 1024 iterazioni
-            if ((i & 0x3FF) == 0)  // Equivale a i % 1024 == 0, ma più veloce
+            // Check if the operation should be aboreted
+            if ((i & 0x3FF) == 0)  // i % 1024 == 0, but faster
                 cancellationToken.ThrowIfCancellationRequested();
 
             int idx = 0;
@@ -121,7 +121,7 @@ public class KDTreeManager
         // Check which octants the ellipsoid intersects
         Parallel.For(0, 8, i =>
         {
-            if (EllipsoidIntersectsOctant(center, radii, i))
+            if (AreaIntersectsOctant(center, radii, i))
             {
                 var results = trees[i].FindPointsInEllipsoid(center, radii);
                 localSets[i] = results;
@@ -145,7 +145,7 @@ public class KDTreeManager
         // Check which octants the ellipsoid intersects
         Parallel.For(0, 8, i =>
         {
-            if (EllipsoidIntersectsOctant(center, halfSizes, i)) //EllipsoidIntersectsOctant seems to work better than BoxIntersectsOctant even for Box Selection (???)
+            if (AreaIntersectsOctant(center, halfSizes, i))
             {
                 var results = trees[i].FindPointsInBox(center, halfSizes);
                 localSets[i] = results;
@@ -162,7 +162,7 @@ public class KDTreeManager
         return allResults;
     }
 
-    private bool EllipsoidIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)
+    private bool AreaIntersectsOctant(Vector3 center, Vector3 radii, int octantIndex)
     {
         // Calculate octant bounds based on pivot
         Vector3 octantMin = new Vector3(
@@ -187,74 +187,6 @@ public class KDTreeManager
                                 (distance.z * distance.z) / (radii.z * radii.z);
 
         return normalizedDistSq <= 1.0f;
-    }
-
-    private bool BoxIntersectsOctant(Vector3 center, Vector3 halfSizes, int octantIndex)
-    {
-        Vector3 boxMin = center - halfSizes;
-        Vector3 boxMax = center + halfSizes;
-
-        // Calculate octant bounds
-        Vector3 octantMin = new Vector3(
-            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
-            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
-            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
-        );
-
-        Vector3 octantMax = new Vector3(
-            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
-            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
-            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
-        );
-
-        // Check AABB-AABB intersection
-        return boxMin.x <= octantMax.x && boxMax.x >= octantMin.x &&
-               boxMin.y <= octantMax.y && boxMax.y >= octantMin.y &&
-               boxMin.z <= octantMax.z && boxMax.z >= octantMin.z;
-    }
-
-    private bool SphereIntersectsOctant(Vector3 center, float radius, int octantIndex)
-    {
-        // Calculate octant bounds based on pivot
-        Vector3 octantMin = new Vector3(
-            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
-            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
-            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
-        );
-
-        Vector3 octantMax = new Vector3(
-            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
-            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
-            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
-        );
-
-        // Check sphere-AABB intersection
-        Vector3 closest = Vector3.Max(octantMin, Vector3.Min(center, octantMax));
-        return (closest - center).sqrMagnitude <= radius * radius;
-    }
-
-    private bool CubeIntersectsOctant(Vector3 center, float halfSize, int octantIndex)
-    {
-        Vector3 cubeMin = center - Vector3.one * halfSize;
-        Vector3 cubeMax = center + Vector3.one * halfSize;
-
-        // Calculate octant bounds
-        Vector3 octantMin = new Vector3(
-            (octantIndex & 1) != 0 ? float.MinValue : pivot.x,
-            (octantIndex & 2) != 0 ? float.MinValue : pivot.y,
-            (octantIndex & 4) != 0 ? float.MinValue : pivot.z
-        );
-
-        Vector3 octantMax = new Vector3(
-            (octantIndex & 1) != 0 ? pivot.x : float.MaxValue,
-            (octantIndex & 2) != 0 ? pivot.y : float.MaxValue,
-            (octantIndex & 4) != 0 ? pivot.z : float.MaxValue
-        );
-
-        // Check AABB-AABB intersection
-        return cubeMin.x <= octantMax.x && cubeMax.x >= octantMin.x &&
-               cubeMin.y <= octantMax.y && cubeMax.y >= octantMin.y &&
-               cubeMin.z <= octantMax.z && cubeMax.z >= octantMin.z;
     }
 
 }

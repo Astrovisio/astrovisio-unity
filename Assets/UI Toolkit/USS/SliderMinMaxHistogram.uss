@@ -81,6 +81,7 @@
     max-width: 100%;
     flex-direction: row;
     align-items: flex-end;
+    justify-content: space-between;
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphic > .line {
@@ -89,7 +90,29 @@
     background-color: var(--accent-200);
     min-width: 1px;
     max-width: 1px;
-    margin-right: 1px;
+    margin-right: 2px;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphicBg2 {
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
+    position: absolute;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+#SliderMinMaxHistogramRoot > #HistogramContainer > #HistogramGraphicBg2 > .line-background {
+    height: 100%;
+    width: 1px;
+    background-color: var(--grey-150);
+    min-width: 1px;
+    max-width: 1px;
+    margin-right: 2px;
 }
 
 #SliderMinMaxHistogramRoot > #HistogramContainer > #MinMaxHistogramSlider {

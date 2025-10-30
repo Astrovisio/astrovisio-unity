@@ -17,6 +17,8 @@
  *
  */
 
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,28 +28,67 @@ namespace Astrovisio
     {
         public VisualElement Root { get; }
 
+        // === Project  ===
+        private Project project;
+        private File file;
+        private Settings settings;
+
+        // === UI ===
         private MinMaxSlider noiseSlider;
         private FloatField noiseFloatField;
 
+        // === Local ===
         private bool noiseState = false;
         private float noiseMinValue = 0.0f;
         private float noiseMaxValue = 0.1f;
         private float noiseValue = 0.0f;
+        private bool isUpdating = false;
 
         public NoiseSettingController(VisualElement root)
         {
             Root = root;
+
+            RenderManager.Instance.OnFileRenderEnd += OnFileRenderEnd;
+            SettingsManager.Instance.OnSettingsAdd += OnSettingsAdd;
+
             Init();
+        }
+
+        private void OnFileRenderEnd(Project project, File file)
+        {
+            this.project = project;
+            this.file = file;
+
+            if (SettingsManager.Instance.TryGetSettings(project.Id, file.Id, out settings))
+            {
+                SetNoise(settings.Noise);
+                noiseSlider.maxValue = settings.Noise;
+                noiseFloatField.SetValueWithoutNotify(settings.Noise);
+            }
+        }
+
+        private void OnSettingsAdd(ProjectFile projectFile)
+        {
+            if (project != null && file != null && project.Id == projectFile.ProjectId && file.Id == projectFile.FileId)
+            {
+                SettingsManager.Instance.TryGetSettings(projectFile.ProjectId, projectFile.FileId, out settings);
+
+                SetNoise(settings.Noise);
+                noiseSlider.SetValueWithoutNotify(new Vector2(0f, settings.Noise));
+                noiseFloatField.SetValueWithoutNotify(settings.Noise);
+            }
         }
 
         private void Init()
         {
             noiseSlider = Root.Q<VisualElement>("NoiseSlider").Q<MinMaxSlider>();
             noiseFloatField = Root.Q<FloatField>("NoiseInputField");
-
             noiseFloatField.formatString = "F3";
 
-            bool isUpdating = false;
+            // // Unregistering
+            // noiseSlider.UnregisterValueChangedCallback(HandleOnSliderValueChanged);
+            // noiseSlider.UnregisterCallback<PointerCaptureOutEvent>(HandleOnPointerUp);
+            // noiseFloatField.UnregisterValueChangedCallback(HandleFloatFieldValueChanged);
 
             // Slider
             noiseSlider[0].pickingMode = PickingMode.Ignore;
@@ -57,43 +98,62 @@ namespace Astrovisio
             noiseSlider.highLimit = noiseMaxValue;
             noiseSlider.minValue = noiseMinValue;
             noiseSlider.maxValue = noiseValue;
-
-            noiseSlider.RegisterValueChangedCallback(evt =>
-            {
-                if (isUpdating)
-                {
-                    return;
-                }
-                isUpdating = true;
-
-                float newValue = Mathf.Clamp(noiseSlider.maxValue, noiseMinValue, noiseMaxValue);
-                noiseValue = newValue;
-                noiseFloatField.value = newValue;
-
-                SetNoise(newValue);
-
-                isUpdating = false;
-            });
+            noiseSlider.RegisterValueChangedCallback(HandleOnSliderValueChanged);
+            noiseSlider.RegisterCallback<PointerCaptureOutEvent>(HandleOnPointerUp);
 
             // FloatField
             noiseFloatField.value = noiseValue;
+            noiseFloatField.RegisterValueChangedCallback(HandleFloatFieldValueChanged);
+        }
 
-            noiseFloatField.RegisterValueChangedCallback(evt =>
+        private void HandleOnSliderValueChanged(ChangeEvent<Vector2> evt)
+        {
+            if (isUpdating)
             {
-                if (isUpdating)
-                {
-                    return;
-                }
-                isUpdating = true;
+                return;
+            }
+            isUpdating = true;
 
-                float newValue = Mathf.Clamp(evt.newValue, noiseMinValue, noiseMaxValue);
-                noiseValue = newValue;
-                noiseSlider.maxValue = newValue;
+            float newValue = Mathf.Clamp(noiseSlider.maxValue, noiseMinValue, noiseMaxValue);
+            noiseValue = newValue;
+            noiseFloatField.SetValueWithoutNotify(newValue);
+            SetNoise(newValue);
 
-                SetNoise(newValue);
+            isUpdating = false;
+        }
 
-                isUpdating = false;
-            });
+        private void HandleOnPointerUp(PointerCaptureOutEvent evt)
+        {
+            // Debug.Log("HandleOnPointerUp");
+            UpdateSettings();
+        }
+
+        private void HandleFloatFieldValueChanged(ChangeEvent<float> evt)
+        {
+
+            if (isUpdating)
+            {
+                return;
+            }
+            isUpdating = true;
+
+            float newValue = Mathf.Clamp(evt.newValue, noiseMinValue, noiseMaxValue);
+            noiseValue = newValue;
+            noiseSlider.maxValue = newValue;
+
+            SetNoise(newValue);
+            UpdateSettings();
+
+            isUpdating = false;
+        }
+
+        private async void UpdateSettings()
+        {
+            if (SettingsManager.Instance.TryGetSettings(project.Id, file.Id, out settings))
+            {
+                settings.Noise = noiseValue;
+                await SettingsManager.Instance.UpdateSettings(project.Id, file.Id, settings);
+            }
         }
 
         public bool GetState()
@@ -103,17 +163,10 @@ namespace Astrovisio
 
         private void SetNoise(float value)
         {
+            noiseValue = value;
             RenderManager.Instance.SetNoise(value);
         }
 
-        public void Reset()
-        {
-            noiseSlider.maxValue = noiseMinValue;
-            noiseFloatField.value = noiseMinValue;
-            // noiseSlider.SetEnabled(noiseState);
-            // noiseFloatField.SetEnabled(noiseState);
-        }
-
     }
-    
+
 }

@@ -114,6 +114,29 @@ namespace Astrovisio
             Instance = this;
         }
 
+        private void Start()
+        {
+            SettingsManager.Instance.OnSettingsAdd += OnSettingsAdd;
+        }
+
+        private void OnDestroy()
+        {
+            SettingsManager.Instance.OnSettingsAdd -= OnSettingsAdd;
+        }
+
+        private void OnSettingsAdd(ProjectFile projectFile)
+        {
+            if (renderedProject == null || renderedFile == null)
+            {
+                return;
+            }
+
+            if (renderedProject.Id == projectFile.ProjectId && renderedFile.Id == projectFile.FileId)
+            {
+                SettingsManager.Instance.SetSettings(renderedProject.Id, renderedFile.Id);
+            }
+        }
+
         // === DataContainer ===
         public bool TryGetDataContainer(int projectId, int fileId, out DataContainer dc)
         {
@@ -338,7 +361,7 @@ namespace Astrovisio
             OnFileRenderStart?.Invoke(project, file);
 
             // SceneManager.Instance.ResetCameraTransform();
-            
+
             // paramRenderSettings = null;
             ClearDataContainer();
 
@@ -392,6 +415,11 @@ namespace Astrovisio
         // === Noise ===
         public void SetNoise(float value = 0f)
         {
+            if (DataRenderer == null)
+            {
+                return;
+            }
+
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
             astrovisioDataSetRenderer.SetNoise(value == 0f ? false : true, value);
         }

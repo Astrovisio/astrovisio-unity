@@ -81,9 +81,10 @@ ProjectSettings/PackageManagerSettings.asset
 BuildTest
 Recordings
 Assets/StreamingAssets
-Assets/VRMPAssets
+# Assets/VRMPAssets
 Assets/_Astrovisio/ToDelete
 Assets/_Astrovisio/Data
 _git
 Assets/Silver Tau
 Screenshots
+Assets/Silver Tau

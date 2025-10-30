@@ -128,7 +128,7 @@ namespace Astrovisio
 
             listView.itemIndexChanged += (oldIndex, newIndex) =>
             {
-                Debug.Log("itemIndexChanged");
+                // Debug.Log("itemIndexChanged");
                 onUpdateAction?.Invoke();
                 listView.RefreshItems();
                 // PrintListView();
