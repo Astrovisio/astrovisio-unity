@@ -20,7 +20,7 @@
 using SilverTau.NSR.Recorders.Video;
 using UnityEngine;
 using System;
-using System.IO;
+using SFB;
 
 namespace Astrovisio
 {
@@ -32,7 +32,6 @@ namespace Astrovisio
         [SerializeField] private UniversalVideoRecorder universalVideoRecorder;
 
         private string outputDir = "";
-        private string currentFilePath = "";
         private float recordingTime = 0f;
 
         public bool IsRecording { get; private set; }
@@ -46,8 +45,6 @@ namespace Astrovisio
                 return;
             }
             Instance = this;
-
-            outputDir = Path.Combine(Application.dataPath, "Recordings");
         }
 
         private void Update()
@@ -66,15 +63,15 @@ namespace Astrovisio
                 return;
             }
 
-            if (!Directory.Exists(outputDir))
+            string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            outputDir = StandaloneFileBrowser.SaveFilePanel("Save Recording", "", $"{timestamp}.mp4", "mp4");
+
+            if (string.IsNullOrEmpty(outputDir))
             {
-                Directory.CreateDirectory(outputDir);
+                return;
             }
 
-            string fileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            currentFilePath = Path.Combine(outputDir, fileName);
-
-            universalVideoRecorder.StartRecorder(currentFilePath);
+            universalVideoRecorder.StartRecorder(outputDir);
 
             recordingTime = 0f;
             IsRecording = true;
@@ -119,7 +116,6 @@ namespace Astrovisio
 
             IsRecording = false;
             IsPaused = false;
-            currentFilePath = "";
         }
 
         public string GetRecordingTime()
