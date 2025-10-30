@@ -130,7 +130,7 @@ namespace Astrovisio
             {
                 return;
             }
-            
+
             if (renderedProject.Id == projectFile.ProjectId && renderedFile.Id == projectFile.FileId)
             {
                 SettingsManager.Instance.SetSettings(renderedProject.Id, renderedFile.Id);
@@ -361,7 +361,7 @@ namespace Astrovisio
             OnFileRenderStart?.Invoke(project, file);
 
             // SceneManager.Instance.ResetCameraTransform();
-            
+
             // paramRenderSettings = null;
             ClearDataContainer();
 
@@ -415,6 +415,11 @@ namespace Astrovisio
         // === Noise ===
         public void SetNoise(float value = 0f)
         {
+            if (DataRenderer == null)
+            {
+                return;
+            }
+
             AstrovisioDataSetRenderer astrovisioDataSetRenderer = DataRenderer.GetAstrovidioDataSetRenderer();
             astrovisioDataSetRenderer.SetNoise(value == 0f ? false : true, value);
         }

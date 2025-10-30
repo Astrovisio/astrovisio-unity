@@ -495,6 +495,8 @@ namespace Astrovisio
                         break;
                 }
             }
+
+            SetNoise(settings.Noise);
         }
 
         private void SetOpacity(Setting setting)
@@ -502,6 +504,12 @@ namespace Astrovisio
             if (setting == null)
             {
                 Debug.LogError("[SetOpacity] 'setting' is null.");
+                return;
+            }
+
+            if (RenderManager.Instance.DataRenderer == null)
+            {
+                Debug.LogError("[SetOpacity] DataRenderer is null.");
                 return;
             }
 
@@ -534,7 +542,13 @@ namespace Astrovisio
         {
             if (setting == null)
             {
-                Debug.LogError("[SetColormap] Setting is null.");
+                Debug.Log("[SetColormap] Setting is null.");
+                return;
+            }
+
+            if (RenderManager.Instance.DataRenderer == null)
+            {
+                Debug.Log("[SetColormap] DataRenderer is null.");
                 return;
             }
 
@@ -591,6 +605,11 @@ namespace Astrovisio
         {
             // Debug.Log($"{paramName}, {thresholdMin}, {thresholdMax}, {scalingType}");
             RenderManager.Instance.DataRenderer?.SetAxisAstrovisio(axis, paramName, thresholdMin, thresholdMax, scalingType);
+        }
+
+        public void SetNoise(float value)
+        {
+            RenderManager.Instance.SetNoise(value);
         }
 
         // === API ===

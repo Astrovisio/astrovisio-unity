@@ -59,16 +59,24 @@ namespace Astrovisio
             this.project = project;
             this.file = file;
 
-            // Init();
+            if (SettingsManager.Instance.TryGetSettings(project.Id, file.Id, out settings))
+            {
+                SetNoise(settings.Noise);
+                noiseSlider.maxValue = settings.Noise;
+                noiseFloatField.SetValueWithoutNotify(settings.Noise);
+            }
         }
 
         private void OnSettingsAdd(ProjectFile projectFile)
         {
-            SettingsManager.Instance.TryGetSettings(project.Id, file.Id, out settings);
+            if (project != null && file != null && project.Id == projectFile.ProjectId && file.Id == projectFile.FileId)
+            {
+                SettingsManager.Instance.TryGetSettings(projectFile.ProjectId, projectFile.FileId, out settings);
 
-            SetNoise(settings.Noise);
-            noiseSlider.maxValue = settings.Noise;
-            noiseFloatField.SetValueWithoutNotify(settings.Noise);
+                SetNoise(settings.Noise);
+                noiseSlider.SetValueWithoutNotify(new Vector2(0f, settings.Noise));
+                noiseFloatField.SetValueWithoutNotify(settings.Noise);
+            }
         }
 
         private void Init()
@@ -155,13 +163,8 @@ namespace Astrovisio
 
         private void SetNoise(float value)
         {
+            noiseValue = value;
             RenderManager.Instance.SetNoise(value);
-        }
-
-        public void Reset()
-        {
-            noiseSlider.maxValue = noiseMinValue;
-            noiseFloatField.value = noiseMinValue;
         }
 
     }

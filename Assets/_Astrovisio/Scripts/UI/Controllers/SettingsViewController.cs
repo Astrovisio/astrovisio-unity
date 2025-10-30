@@ -107,7 +107,7 @@ namespace Astrovisio
         private void OnFileRenderedEnd(Project project, File file)
         {
             inspectorSettingController.Reset();
-            noiseSettingController.Reset();
+            // noiseSettingController.Reset();
             hideUIController.Reset();
 
             // axesGizmoController.Reset();
