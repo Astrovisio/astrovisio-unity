@@ -503,13 +503,13 @@ namespace Astrovisio
         {
             if (setting == null)
             {
-                Debug.LogError("[SetOpacity] 'setting' is null.");
+                Debug.Log("[SetOpacity] 'setting' is null.");
                 return;
             }
 
             if (RenderManager.Instance.DataRenderer == null)
             {
-                Debug.LogError("[SetOpacity] DataRenderer is null.");
+                Debug.Log("[SetOpacity] DataRenderer is null.");
                 return;
             }
 

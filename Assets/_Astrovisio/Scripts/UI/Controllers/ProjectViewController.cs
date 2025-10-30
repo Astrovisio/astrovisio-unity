@@ -151,7 +151,7 @@ namespace Astrovisio
             InitDeleteButton();
             InitEditButton();
             InitFavouriteToggle();
-            InitScrollView();
+            _ = InitScrollView();
             InitCheckAllToggle();
             UpdateConfigurationFileLabel();
         }
@@ -184,7 +184,7 @@ namespace Astrovisio
             //     }
             // }
 
-            InitScrollView();
+            _ = InitScrollView();
             InitCheckAllToggle();
             UpdateConfigurationFileLabel();
 
@@ -211,7 +211,7 @@ namespace Astrovisio
             _ = ProjectManager.UpdateFile(Project.Id, currentFile);
         }
 
-        private void InitScrollView()
+        private async Task InitScrollView()
         {
             if (currentFile == null)
             {
@@ -234,6 +234,9 @@ namespace Astrovisio
                 return;
             }
 
+
+            FileHistogram fileHistogram = await APIManager.Instance.GetHistogram(Project.Id, currentFile.Id);
+
             foreach (Variable variable in currentFile.Variables)
             {
                 // Fix to avoid breaking the double slider component
@@ -246,7 +249,15 @@ namespace Astrovisio
                 VisualElement nameContainer = paramRow.Q<VisualElement>("NameContainer");
                 nameContainer.Q<Label>("Label").text = variable.Name;
 
-                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, currentFile, variable);
+
+                // Histogram
+                List<BinHistogram> binHistogramList;
+                if (fileHistogram.TryGet(variable.Name, out binHistogramList))
+                {
+                    
+                }
+
+                ParamRowController paramRowController = new ParamRowController(ProjectManager, paramRow, currentFile, variable, binHistogramList);
                 paramControllers.Add(paramRowController);
 
                 paramRowController.OnAxisChanged += HandleOnAxisChanged;

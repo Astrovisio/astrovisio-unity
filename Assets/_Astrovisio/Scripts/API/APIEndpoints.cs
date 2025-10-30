@@ -41,6 +41,7 @@ namespace Astrovisio
         public static string UpdateFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}";
         public static string ProcessFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/process";
         public static string GetProcessedFile(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/process";
+        public static string GetHistogram(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/histos";
 
         // Renderer
         public static string GetSettings(int projectId, int fileId) => $"{BaseUrl}/api/projects/{projectId}/file/{fileId}/render";

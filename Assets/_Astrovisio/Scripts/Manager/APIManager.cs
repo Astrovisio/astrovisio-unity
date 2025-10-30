@@ -521,6 +521,44 @@ namespace Astrovisio
         }
 
 
+        public async Task<FileHistogram> GetHistogram(
+            int projectId,
+            int fileId)
+        {
+            string url = APIEndpoints.GetHistogram(projectId, fileId);
+
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Accept", "application/json");
+
+                await SendWebRequestAsync(request);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"[APIManager] Error GET Histogram: {request.error}");
+                    return null;
+                }
+
+                try
+                {
+                    string json = request.downloadHandler.text;
+                    if (string.IsNullOrWhiteSpace(json))
+                    {
+                        Debug.LogError("[APIManager] Empty JSON for Histogram.");
+                        return null;
+                    }
+
+                    FileHistogram fileHistogram = JsonConvert.DeserializeObject<FileHistogram>(json);
+                    return fileHistogram;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[APIManager] Deserialization failed (Histogram): {ex.Message}\nJSON: {request.downloadHandler.text}");
+                    return null;
+                }
+            }
+        }
 
 
 

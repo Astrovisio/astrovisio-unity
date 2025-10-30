@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -59,17 +60,19 @@ namespace Astrovisio
         // === Data ===
         public File File { get; set; }
         public Variable Variable { get; set; }
+        public List<BinHistogram> BinHistogramList { get; set; }
 
         // === Local ===
         private UIDebouncer _thrDebouncer;
 
 
-        public ParamRowController(ProjectManager projectManager, VisualElement root, File file, Variable variable)
+        public ParamRowController(ProjectManager projectManager, VisualElement root, File file, Variable variable, List<BinHistogram> binHistogramList)
         {
             ProjectManager = projectManager;
             Root = root;
             File = file;
             Variable = variable;
+            BinHistogramList = binHistogramList;
 
             Init();
         }
@@ -97,7 +100,7 @@ namespace Astrovisio
             // Threshold
             thresholdContainer = Root.Q<VisualElement>("ThresholdContainer");
             VisualElement histogramSlider = thresholdContainer.Q<VisualElement>("HistogramSlider");
-            HistogramController histogramController = new HistogramController(histogramSlider);
+            HistogramController histogramController = new HistogramController(histogramSlider, BinHistogramList);
             minMaxSlider = histogramSlider.Q<MinMaxSlider>("MinMaxHistogramSlider");
             minInputField = histogramSlider.Q<DoubleField>("MinFloatField");
             maxInputField = histogramSlider.Q<DoubleField>("MaxFloatField");

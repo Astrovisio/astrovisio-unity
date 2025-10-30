@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -26,21 +27,22 @@ namespace Astrovisio
 {
     public class HistogramController
     {
-        // === Dependencies ===
         public VisualElement Root { get; }
+        public List<BinHistogram> BinHistogramList { get; private set; }
 
-        // === Local ===
         private VisualElement histogramGraphicBackground;
         private VisualElement histogramGraphic;
+        private int maxCount;
 
-        public HistogramController(VisualElement root, int[] values = null)
+        public HistogramController(VisualElement root, List<BinHistogram> binHistogramList)
         {
             Root = root;
-
-            Init(values);
+            BinHistogramList = binHistogramList ?? new List<BinHistogram>();
+            maxCount = GetMax(BinHistogramList);
+            InitFromBins();
         }
 
-        private void Init(int[] values)
+        private void InitFromBins()
         {
             histogramGraphicBackground = Root.Q<VisualElement>("HistogramGraphicBg");
             histogramGraphic = Root.Q<VisualElement>("HistogramGraphic");
@@ -51,83 +53,92 @@ namespace Astrovisio
                 return;
             }
 
-            int childCount = histogramGraphic.childCount;
-            if (childCount <= 0)
+            int targetBars = BinHistogramList != null ? BinHistogramList.Count : 0;
+            if (targetBars <= 0)
             {
-                Debug.LogWarning("HistogramGraphic has no children to update.");
+                ClearBars();
                 return;
             }
 
-            if (values == null || values.Length != childCount)
-            {
-                // values = GenerateGaussianLikeArray(childCount, 100);
-                // values = GenerateRandomArray(childCount, 100);
-                values = GeneratePerlinNoiseArray(childCount, 100);
-            }
-
-            int len = Mathf.Min(childCount, values.Length);
+            EnsureBars(targetBars);
 
             float containerHeight = 26f;
-            int maxValue = values.Max();
+            if (histogramGraphicBackground != null)
+            {
+                float resolved = histogramGraphicBackground.resolvedStyle.height;
+                if (!float.IsNaN(resolved) && resolved > 0f)
+                {
+                    containerHeight = resolved;
+                }
+            }
 
-            for (int i = 0; i < len; i++)
+            int maxValue = maxCount > 0 ? maxCount : 1;
+
+            for (int i = 0; i < targetBars; i++)
             {
                 VisualElement bar = histogramGraphic.ElementAt(i);
-                int v = Mathf.Max(0, values[i]);
-                float h = (maxValue > 0) ? v / (float)maxValue * containerHeight : 0f;
+                int v = Mathf.Max(0, BinHistogramList[i].Count);
+                float h = (float)v / (float)maxValue * containerHeight;
                 bar.style.height = h;
             }
         }
 
-        private int[] GenerateGaussianLikeArray(int length, int peak)
+        public void UpdateFromBins(List<BinHistogram> binHistogramList)
         {
-            var result = new int[length];
-            if (length <= 0) return result;
-
-            double mid = (length - 1) / 2.0;
-            double sigma = Math.Max(1.0, length / 6.0);
-
-            for (int i = 0; i < length; i++)
-            {
-                double x = (i - mid) / sigma;
-                double g = Math.Exp(-0.5 * x * x);
-                result[i] = Math.Max(1, (int)(g * peak));
-            }
-            return result;
+            BinHistogramList = binHistogramList ?? new List<BinHistogram>();
+            maxCount = GetMax(BinHistogramList);
+            InitFromBins();
         }
 
-        private int[] GenerateRandomArray(int length, int peak)
+        private void EnsureBars(int target)
         {
-            var result = new int[length];
-            if (length <= 0) return result;
+            int current = histogramGraphic.childCount;
 
-            for (int i = 0; i < length; i++)
+            if (current < target)
             {
-                // genera un numero intero tra 1 e peak (inclusi)
-                result[i] = UnityEngine.Random.Range(1, peak + 1);
+                int toAdd = target - current;
+                for (int i = 0; i < toAdd; i++)
+                {
+                    VisualElement bar = new VisualElement();
+                    bar.AddToClassList("histogram-bar");
+                    histogramGraphic.Add(bar);
+                }
+            }
+            else if (current > target)
+            {
+                int toRemove = current - target;
+                for (int i = 0; i < toRemove; i++)
+                {
+                    VisualElement child = histogramGraphic.ElementAt(target);
+                    child.RemoveFromHierarchy();
+                }
+            }
+        }
+
+        private void ClearBars()
+        {
+            if (histogramGraphic == null) return;
+
+            int current = histogramGraphic.childCount;
+            for (int i = current - 1; i >= 0; i--)
+            {
+                VisualElement child = histogramGraphic.ElementAt(i);
+                child.RemoveFromHierarchy();
+            }
+        }
+
+        public int GetMax(List<BinHistogram> binHistogramList)
+        {
+            int result = 0;
+            if (binHistogramList == null || binHistogramList.Count == 0) return result;
+
+            for (int i = 0; i < binHistogramList.Count; i++)
+            {
+                int c = binHistogramList[i].Count;
+                if (c > result) result = c;
             }
 
             return result;
         }
-
-        private int[] GeneratePerlinNoiseArray(int length, int peak, float scale = 0.1f)
-        {
-            var result = new int[length];
-            if (length <= 0) return result;
-
-            float offsetX = UnityEngine.Random.Range(0f, 10000f);
-            float offsetY = UnityEngine.Random.Range(0f, 10000f);
-
-            for (int i = 0; i < length; i++)
-            {
-                float noise = Mathf.PerlinNoise(i * scale + offsetX, offsetY);
-                int value = Mathf.Clamp(Mathf.RoundToInt(noise * peak), 1, peak);
-                result[i] = value;
-            }
-
-            return result;
-        }
-
     }
-
 }
