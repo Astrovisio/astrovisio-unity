@@ -1,6 +1,6 @@
 ﻿/*
  * Astrovisio - Astrophysical Data Visualization Tool
- * Copyright (C) 2024-2025 Metaverso SRL
+ * Copyright (C) 2024-2025 Alkemy, Metaverso
  *
  * This file is part of the Astrovisio project.
  *
