@@ -297,6 +297,10 @@ namespace Astrovisio.XR
 
                 if (topCanvas != null)
                 {
+                    if (existing is XRDataInspectorPanel)
+                    {
+                        (existing as XRDataInspectorPanel).ShowSelectionGizmo(false);
+                    }
                     Destroy(topCanvas.transform.parent.gameObject);
                 }
             }
