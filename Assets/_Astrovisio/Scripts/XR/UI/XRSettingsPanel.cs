@@ -66,6 +66,11 @@ namespace Astrovisio
         {
             currentProject = project;
             currentFile = file;
+
+            Debug.Log("OnFileRenderEnd");
+            Debug.Log(currentProject);
+            Debug.Log(currentFile);
+
             UpdateUI();
         }
 
@@ -86,6 +91,8 @@ namespace Astrovisio
                 return;
             }
 
+            currentProject = RenderManager.Instance.renderedProject;
+            currentFile = RenderManager.Instance.renderedFile;
 
             string xAxisVarName = file.GetAxisVariable(Axis.X).Name;
             string yAxisVarName = file.GetAxisVariable(Axis.Y).Name;
@@ -161,6 +168,10 @@ namespace Astrovisio
                             UnselectAllButtons();
                             SetSettingPanelVisibility(true);
                             paramButton.SetButtonState(true);
+                            Debug.Log("UpdateUI");
+                            Debug.Log(currentProject);
+                            Debug.Log(currentFile);
+                            Debug.Log(setting);
                             Setting extractedSetting = SettingsManager.Instance.GetSetting(currentProject.Id, currentFile.Id, setting.Name);
                             xrSettingPanel.InitParamSettingsPanel(project, file, extractedSetting);
                             xrSettingPanel?.SetOnApplyAction(OnApplySetting());

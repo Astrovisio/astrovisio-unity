@@ -72,6 +72,9 @@ namespace Astrovisio
             ProjectManager.FileProcessed += OnFileProcessed;
             ProjectManager.FileUpdated += OnFileUpdated;
 
+            XRManager.Instance.OnVRStart += HandleOnVRStart;
+            XRManager.Instance.OnVREnd += HandleOnVREnd;
+
             Init();
             SetActiveStep(ProjectSidebarStep.Data);
 
@@ -111,6 +114,9 @@ namespace Astrovisio
             ProjectManager.FileProcessed -= OnFileProcessed;
             ProjectManager.FileUpdated -= OnFileUpdated;
 
+            XRManager.Instance.OnVRStart -= HandleOnVRStart;
+            XRManager.Instance.OnVREnd -= HandleOnVREnd;
+
             projectSidebarDataController.Dispose();
             projectSidebarRenderController.Dispose();
         }
@@ -138,12 +144,11 @@ namespace Astrovisio
             {
                 OnRenderSettingsButtonClicked();
                 await Task.Delay(3000);
-                XRManager.Instance.EnterVR(() => SetGoToVRButtonState(true));
+                XRManager.Instance.EnterVR();
             }
             else
             {
                 XRManager.Instance.ExitVR();
-                SetGoToVRButtonState(false);
             }
             // UIManager.SetErrorVR(true);
 
@@ -190,6 +195,16 @@ namespace Astrovisio
             Label label = goToVRButton.Q<Label>("Label");
             label.text = active ? "Exit VR" : "Go To VR";
             goToVRButton.Blur();
+        }
+
+        private void HandleOnVRStart()
+        {
+            SetGoToVRButtonState(true);
+        }
+
+        private void HandleOnVREnd()
+        {
+            SetGoToVRButtonState(false);
         }
 
         private void OnProjectOpened(Project project)

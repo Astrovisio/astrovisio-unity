@@ -5574,6 +5574,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8152baecb9e471f4fb3eb5b74d52a8f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!20 &5061524304675062946 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7353215253890024331, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+    type: 3}
+  m_PrefabInstance: {fileID: 5061524304675062943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5061524304675062951 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 365629816261047350, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
@@ -5672,9 +5678,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
         type: 3}
+      propertyPath: xrMenuPanel
+      value: 
+      objectReference: {fileID: 873535526}
+    - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
+        type: 3}
       propertyPath: worldCanvasGO
       value: 
       objectReference: {fileID: 674078457}
+    - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
+        type: 3}
+      propertyPath: xrOriginCamera
+      value: 
+      objectReference: {fileID: 5061524304675062946}
     - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
         type: 3}
       propertyPath: xrInputController
