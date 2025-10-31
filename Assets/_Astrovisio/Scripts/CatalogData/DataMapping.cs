@@ -16,7 +16,7 @@
  * iDaVIE in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
  *
  * Additional information and disclaimers regarding liability and third-party 
- * components can be found in the DISCLAIMER and NOTICE files included with this project.
+ * components can be found in the DISCLAIMER and IDAVIE_NOTICE files included with this project.
  *
  * Modifications:
  * - Data Structure adapted to Astrovisio visualization necessities.

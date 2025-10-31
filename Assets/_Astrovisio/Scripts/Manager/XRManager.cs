@@ -38,9 +38,11 @@ namespace Astrovisio
         [SerializeField] private XRUIManager xrUIManager;
         [SerializeField] private XRInputController xrInputController;
         [SerializeField] private UIManager uiManager;
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private GameObject xrOrigin;
+        [SerializeField] public Camera mainCamera;
+        [SerializeField] public GameObject xrOrigin;
+        [SerializeField] public Camera xrOriginCamera;
         [SerializeField] private GameObject worldCanvasGO;
+        [SerializeField] private XRMenuPanel xrMenuPanel;
 
         [Header("Others")]
         [SerializeField] private bool beginOnPlay = false;
@@ -70,7 +72,7 @@ namespace Astrovisio
         {
             if (beginOnPlay)
             {
-                EnterVR(() => { });
+                EnterVR();
             }
 
             xrOriginOriginalPosition = xrOrigin.transform.position;
@@ -110,7 +112,7 @@ namespace Astrovisio
             StartCoroutine(StartDebugXR());
         }
 
-        public void EnterVR(Action OnSuccess)
+        public void EnterVR()
         {
             if (VRActive)
             {
@@ -119,7 +121,7 @@ namespace Astrovisio
 
             mainCamera.gameObject.SetActive(false);
             xrOrigin.SetActive(true);
-            startXRCoroutine = StartCoroutine(StartXR(OnSuccess));
+            startXRCoroutine = StartCoroutine(StartXR());
         }
 
         public void ResetXROriginTransform()
@@ -169,7 +171,7 @@ namespace Astrovisio
             }
         }
 
-        private IEnumerator StartXR(Action OnSuccess)
+        private IEnumerator StartXR()
         {
             Debug.Log("[XRManager] Initializing XR...");
             uiManager.SetLoadingView(true);
@@ -214,7 +216,6 @@ namespace Astrovisio
             finally
             {
                 uiManager.SetLoadingView(false);
-                OnSuccess();
             }
         }
 
@@ -342,7 +343,6 @@ namespace Astrovisio
 
         private void RemoveXRUserInterface()
         {
-            XRMenuPanel xrMenuPanel = FindAnyObjectByType<XRMenuPanel>();
             if (xrMenuPanel != null)
             {
                 xrMenuPanel.DestroyAllPanels();

@@ -150,62 +150,62 @@ namespace Astrovisio
 
         private void OnLeftPrimaryButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftPrimaryButtonStarted");
+            // Debug.Log("OnLeftPrimaryButtonStarted");
             OnLeftPrimaryButtonPressed?.Invoke();
         }
 
         private void OnLeftSecondaryButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftSecondaryButtonStarted");
+            // Debug.Log("OnLeftSecondaryButtonStarted");
             OnLeftSecondaryButtonPressed?.Invoke();
         }
 
         private void OnLeftMenuButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftMenuButtonStarted");
+            // Debug.Log("OnLeftMenuButtonStarted");
             OnLeftMenuButtonPressed?.Invoke();
             // menuPanelUI.TogglePanel();
         }
 
         private void OnLeftTriggerStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftTriggerStarted");
+            // Debug.Log("OnLeftTriggerStarted");
             OnLeftTriggerPressed?.Invoke();
         }
 
         private void OnLeftGripStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftGripStarted");
+            // Debug.Log("OnLeftGripStarted");
             OnLeftGripPressed?.Invoke();
         }
 
         private void OnRightPrimaryButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightPrimaryButtonStarted");
+            // Debug.Log("OnRightPrimaryButtonStarted");
             OnRightPrimaryButtonPressed?.Invoke();
         }
 
         private void OnRightSecondaryButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightSecondaryButtonStarted");
+            // Debug.Log("OnRightSecondaryButtonStarted");
             OnRightSecondaryButtonPressed?.Invoke();
         }
 
         private void OnRightMenuButtonStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightMenuButtonStarted");
+            // Debug.Log("OnRightMenuButtonStarted");
             OnRightMenuButtonPressed?.Invoke();
         }
 
         private void OnRightTriggerStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightTriggerStarted");
+            // Debug.Log("OnRightTriggerStarted");
             OnRightTriggerPressed?.Invoke();
         }
 
         private void OnRightGripStarted(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightGripStarted");
+            // Debug.Log("OnRightGripStarted");
             OnRightGripPressed?.Invoke();
         }
 
@@ -213,13 +213,13 @@ namespace Astrovisio
 
         private void OnLeftSecondaryButtonCancelled(InputAction.CallbackContext context)
         {
-            Debug.Log("OnLeftSecondaryButtonCancelled");
+            // Debug.Log("OnLeftSecondaryButtonCancelled");
             OnLeftSecondaryButtonReleased?.Invoke();
         }
 
         private void OnRightSecondaryButtonCancelled(InputAction.CallbackContext context)
         {
-            Debug.Log("OnRightSecondaryButtonCancelled");
+            // Debug.Log("OnRightSecondaryButtonCancelled");
             OnRightSecondaryButtonReleased?.Invoke();
         }
 

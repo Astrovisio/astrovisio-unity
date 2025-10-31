@@ -258,13 +258,11 @@ namespace Astrovisio
         public static string GetBuildLikeFolder()
         {
 #if UNITY_EDITOR
-            // <Project>/Assets  ->  <Project>
             return Directory.GetParent(Application.dataPath)!.FullName;
 #elif UNITY_STANDALONE_WIN
-        // <...>/YourApp_Data  ->  <...>/ (cartella con YourApp.exe)
-        return Directory.GetParent(Application.dataPath)!.FullName;
+            return Directory.GetParent(Application.dataPath)!.FullName;
 #else
-        return Application.persistentDataPath; // fallback per altre piattaforme
+            return Application.persistentDataPath;
 #endif
         }
 
