@@ -4,15 +4,9 @@
 
 **Astrovisio** is a Unity-based VR application for immersive visualization of astrophysical datasets. It provides interactive tools to explore scientific data using colormaps and advanced data mapping techniques.
 
-## System Requirements
-
-- Windows 10/11 (64-bit)
-- GPU with VR support and updated drivers
-- VR headset compatible with OpenXR (e.g., Meta Quest 2 or 3 via Link – _optional, see below_)
-
 ## Prerequisites
 
-Before launching Astrovisio Client, make sure the following components are installed:
+Before launching Astrovisio, make sure the following components are installed:
 
 - **Docker Desktop**  
     The application relies on a backend API server for data access and processing.  
