@@ -118,15 +118,21 @@ namespace Astrovisio
             {
                 return;
             }
-            kDTreeComponent.showSelectionGizmo = false;
+            // kDTreeComponent.showSelectionGizmo = false;
 
             closeButton.onClick.RemoveListener(HandleCloseButton);
             processButton.onClick.RemoveListener(OnProcessClicked);
             isolateToggle.onValueChanged.RemoveListener(SetIsolateToggle);
         }
 
+        public void ShowSelectionGizmo(bool value)
+        {
+            kDTreeComponent.showSelectionGizmo = value;
+        }
+
         private void HandleCloseButton()
         {
+            kDTreeComponent.showSelectionGizmo = false;
             Destroy(transform.parent.parent.gameObject, 0.1f);
         }
 

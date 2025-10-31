@@ -73,6 +73,13 @@ The [User Manual](./UserManual/). can be found in the ./UserManual folder in thi
 Astrovisio uses and adapts some code from [iDaVIE](https://github.com/idia-astro/iDaVIE).
 Details are provided in the headers of the involved source files.
 
+## Acknowledgements
+- Dr. Andrea Pallottini for his careful and valuable scientific supervision and for the strategic guidance provided throughout the entire project development.
+
+- The SNS Cosmology Group of the Scuola Normale Superiore di Pisa for their fundamental technical contribution, generous sharing of materials, and crucial support offered during the testing phase.
+
+- The IDIA Visualisation Laboratory and the Istituto Nazionale di Astrofisica (INAF) for their support and fruitful collaboration.
+
 ## Copyright and Licence
 
-Copyright (C) 2024-2025 Alkemy, Metaverso. This program is free software; you can redistribute it and/or modify it under the terms of the [GNU Lesser General Public License (LGPL) version 3](https://github.com/idia-astro/iDaVIE/blob/main/LICENSE.md) as published by the Free Software Foundation.
+Copyright (C) 2024-2025 Alkemy, Metaverso. This program is free software; you can redistribute it and/or modify it under the terms of the [GNU Lesser General Public License (LGPL) version 3](./LICENSE.md) as published by the Free Software Foundation.
