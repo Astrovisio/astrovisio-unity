@@ -162,7 +162,7 @@ namespace Astrovisio.XR
             if (RecorderManager.Instance.IsRecording == false)
             {
                 screenRecorderIcon.color = activeNoiseIconColor;
-                RecorderManager.Instance.StartRecording();
+                RecorderManager.Instance.StartRecording(false);
             }
             else
             {
@@ -214,24 +214,28 @@ namespace Astrovisio.XR
             XRDataInspectorPanel xrDataInspectorPanel = FindAnyObjectByType<XRDataInspectorPanel>();
             if (xrDataInspectorPanel != null)
             {
+                // Debug.LogWarning("xrDataInspectorPanel");
                 Destroy(xrDataInspectorPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
             }
 
             XRNoisePanel xrNoisePanel = FindAnyObjectByType<XRNoisePanel>();
             if (xrNoisePanel != null)
             {
+                // Debug.LogWarning("xrNoisePanel");
                 Destroy(xrNoisePanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
             }
 
             XRReelPanel xrReelPanel = FindAnyObjectByType<XRReelPanel>();
             if (xrReelPanel != null)
             {
+                // Debug.LogWarning("xrReelPanel");
                 Destroy(xrReelPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
             }
 
             XRSettingsPanel xrSettingsPanel = FindAnyObjectByType<XRSettingsPanel>();
             if (xrSettingsPanel != null)
             {
+                // Debug.LogWarning("xrSettingsPanel");
                 Destroy(xrSettingsPanel.GetComponentInParent<Canvas>().transform.parent.gameObject);
             }
         }
