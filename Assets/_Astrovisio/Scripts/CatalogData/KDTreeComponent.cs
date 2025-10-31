@@ -143,6 +143,24 @@ public class KDTreeComponent : MonoBehaviour
     private void Awake()
     {
         astrovisioDatasetRenderer = GetComponent<AstrovisioDataSetRenderer>();
+
+        if (pointDataInspector == null)
+        {
+            pointDataInspector = Instantiate(pointDataInspectorPrefab);
+            pointDataInspector.SetActiveState(false);
+        }
+
+        if (areaSphereDataInspector == null)
+        {
+            areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
+            areaSphereDataInspector.SetActiveState(false);
+        }
+
+        if (areaBoxDataInspector == null)
+        {
+            areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
+            areaBoxDataInspector.SetActiveState(false);
+        }
     }
 
     private void Start()
@@ -279,10 +297,6 @@ public class KDTreeComponent : MonoBehaviour
     public void SetControllerTransform(Transform controllerTransform)
     {
         this.controllerTransform = controllerTransform;
-        areaSphereDataInspector.transform.position = this.controllerTransform.transform.position;
-        areaSphereDataInspector.transform.rotation = this.controllerTransform.transform.rotation;
-        areaBoxDataInspector.transform.position = this.controllerTransform.transform.position;
-        areaBoxDataInspector.transform.rotation = this.controllerTransform.transform.rotation;
     }
 
     private void HandleDataInspectorPosition()
@@ -344,24 +358,6 @@ public class KDTreeComponent : MonoBehaviour
             if (!Application.isPlaying)
             {
                 return;
-            }
-
-            if (pointDataInspector == null)
-            {
-                pointDataInspector = Instantiate(pointDataInspectorPrefab);
-                pointDataInspector.SetActiveState(false);
-            }
-
-            if (areaSphereDataInspector == null)
-            {
-                areaSphereDataInspector = Instantiate(areaSphereDataInspectorPrefab);
-                areaSphereDataInspector.SetActiveState(false);
-            }
-
-            if (areaBoxDataInspector == null)
-            {
-                areaBoxDataInspector = Instantiate(areaBoxDataInspectorPrefab);
-                areaBoxDataInspector.SetActiveState(false);
             }
 
             OnInitializationPerformed?.Invoke();
