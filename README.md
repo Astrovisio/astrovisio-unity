@@ -72,6 +72,8 @@ The **video_recording** branch includes all the code that connects *NSR - Screen
 > ⚠️ Ensure that Docker + AstroAPI are running before launching.  
 > 🎮 VR headset is optional – required only for immersive data visualization.
 
+The user manual can be found in the ./UserManual folder in this repository.
+
 ## Notice
 
 Astrovisio uses and adapts some code from [iDaVIE](https://github.com/idia-astro/iDaVIE).
