@@ -4288,6 +4288,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d74a52074eeabb4e8c1d65702a53354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!20 &1924719374 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7353215253890024331, guid: d8f7b5e6dd745d643ab627cdaf21bc32,
+    type: 3}
+  m_PrefabInstance: {fileID: 5061524304675062943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1951313511
 GameObject:
   m_ObjectHideFlags: 0
@@ -5783,9 +5789,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
         type: 3}
+      propertyPath: xrMenuPanel
+      value: 
+      objectReference: {fileID: 873535526}
+    - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
+        type: 3}
       propertyPath: worldCanvasGO
       value: 
       objectReference: {fileID: 674078457}
+    - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
+        type: 3}
+      propertyPath: xrOriginCamera
+      value: 
+      objectReference: {fileID: 1924719374}
     - target: {fileID: 1251935156685586737, guid: 2e5cd8937d823aa4990c123a4eae1c23,
         type: 3}
       propertyPath: xrInputController

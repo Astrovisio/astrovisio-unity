@@ -21,6 +21,8 @@ using SilverTau.NSR.Recorders.Video;
 using UnityEngine;
 using System;
 using SFB;
+using System.IO;
+using Unity.XR.CoreUtils;
 
 namespace Astrovisio
 {
@@ -56,15 +58,34 @@ namespace Astrovisio
         }
 
         [ContextMenu("Start Recording")]
-        public void StartRecording()
+        public void StartRecording(bool askForPath = true)
         {
             if (IsRecording)
             {
                 return;
             }
 
+            if (XRManager.Instance.IsVRActive)
+            {
+                universalVideoRecorder.mainCamera = XRManager.Instance.xrOriginCamera;
+            }
+            else
+            {
+                universalVideoRecorder.mainCamera = XRManager.Instance.mainCamera;
+            }
+            Debug.LogWarning(universalVideoRecorder.mainCamera.name);
+
             string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-            outputDir = StandaloneFileBrowser.SaveFilePanel("Save Recording", "", $"{timestamp}.mp4", "mp4");
+            if (askForPath)
+            {
+                outputDir = StandaloneFileBrowser.SaveFilePanel("Save Recording", "", $"{timestamp}.mp4", "mp4");
+            }
+            else
+            {
+                string dir = GetRecordingFolder();
+                string fname = $"{timestamp}.mp4";
+                outputDir = Path.Combine(dir, fname);
+            }
 
             if (string.IsNullOrEmpty(outputDir))
             {
@@ -121,6 +142,24 @@ namespace Astrovisio
         public string GetRecordingTime()
         {
             return TimeSpan.FromSeconds(recordingTime).ToString(@"hh\:mm\:ss");
+        }
+
+        public static string GetBuildLikeFolder()
+        {
+#if UNITY_EDITOR
+            return Directory.GetParent(Application.dataPath)!.FullName;
+#elif UNITY_STANDALONE_WIN
+            return Directory.GetParent(Application.dataPath)!.FullName;
+#else
+            return Application.persistentDataPath;
+#endif
+        }
+
+        public static string GetRecordingFolder()
+        {
+            var dir = Path.Combine(GetBuildLikeFolder(), "Recordings");
+            Directory.CreateDirectory(dir);
+            return dir;
         }
 
     }
