@@ -53,6 +53,8 @@ Since *NSR - Screen Recorder* is a payed plugin, it is not included in this repo
 
 The **video_recording** branch includes all the code that connects *NSR - Screen Recorder* to Astrovisio, but not the plugin itself.
 
+>**KNOWN ISSUE**: The *NSR - Screen Recorder* version used is 1.8.2. Due to compatibility issues with some iOS specific includes we had to remove the following .cs file: .\Assets\Silver Tau\NSR\Editor\IOSBitcodePostprocessor.cs
+
 >**IMPORTANT**: The provided packaged Release includes all features including Video Recording.
 
 ## Release
