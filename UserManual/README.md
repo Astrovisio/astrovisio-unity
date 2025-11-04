@@ -248,9 +248,12 @@ The result of the selection is displayed in the **Data info** section.
 It allows you to add a visual noise to the visualization. It only affects the visualization, not the data.
 This can be useful to remove annoying pattern repetition or moirés effects when data is disposed in a homogenous grid.
 
-**Show/Hide UI**: Toggle the user interface
-**Show/Hide Axis**: Toggle the axis
+**Show/Hide UI**: Toggle the user interface.
+
+**Show/Hide Axis**: Toggle the axis.
+
 **Capture Screenshot**: Save an image of the current visualization along with a JSON containing the various settings details.
+
 **Screen Recorder**: Allows you to start and stop a screen recording.
 
 ---
