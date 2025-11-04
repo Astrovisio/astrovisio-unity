@@ -322,14 +322,18 @@ Forward and inverse data scaling allows to transform the points coordinates from
 Forward scaling is applied by the shader code, the original data is not modified. This allows to show the Data in the normalized World Space.
 
 **Linear**: x
+
 **Log**: sign(x) × log₁₀(1 + |x|)
+
 **Sqrt**: sign(x) × √|x|
 
 #### Inverse Scaling
 Inverse scaling is applied for the selection, when it's necessary to go back from World Space to Data Space in order to correctly query the KDTree(s).
 
 **Linear**: y
+
 **Log**: sign(y) × (10^|y| - 1)
+
 **Sqrt**: sign(y) × y²
 
 ### Known Issue(s)
