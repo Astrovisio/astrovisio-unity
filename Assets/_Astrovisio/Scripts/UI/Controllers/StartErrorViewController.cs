@@ -17,33 +17,36 @@
  *
  */
 
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Astrovisio
 {
 
-    public class CloseViewController
+    public class StartErrorViewController
     {
         public VisualElement Root { get; }
+        public ProjectManager ProjectManager { get; }
 
         private Button exitButton;
-        private Button cancelButton;
+        private Button retryButton;
 
-        public CloseViewController(VisualElement root)
+        public StartErrorViewController(ProjectManager projectManager, VisualElement root)
         {
+            ProjectManager = projectManager;
             Root = root;
 
             exitButton = root.Q<VisualElement>("ExitButton").Q<Button>();
-            cancelButton = root.Q<VisualElement>("CancelButton").Q<Button>();
+            retryButton = root.Q<VisualElement>("RetryButton").Q<Button>();
 
             if (exitButton != null)
             {
                 exitButton.clicked += OnExitClicked;
             }
 
-            if (cancelButton != null)
+            if (retryButton != null)
             {
-                cancelButton.clicked += OnCancelClicked;
+                retryButton.clicked += OnRetryClicked;
             }
         }
 
@@ -67,10 +70,11 @@ namespace Astrovisio
 #endif
         }
 
-        private void OnCancelClicked()
+        private void OnRetryClicked()
         {
-            // Debug.Log("OnCancelClicked");
+            Debug.Log("OnRetryClicked");
             Root.RemoveFromClassList("active");
+            ProjectManager.FetchAllProjects();
         }
 
     }

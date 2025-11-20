@@ -11,6 +11,7 @@
     <engine:Template name="AboutView" src="project://database/Assets/UI%20Toolkit/Components/AboutView.uxml?fileID=9197481963319205126&amp;guid=5e21571f140441e43922ee7e35c99ff4&amp;type=3#AboutView" />
     <engine:Template name="ReadMoreView" src="project://database/Assets/UI%20Toolkit/Components/ReadMoreView.uxml?fileID=9197481963319205126&amp;guid=2669851c6cdff1e43ab8d25150233e61&amp;type=3#ReadMoreView" />
     <engine:Template name="CloseView" src="project://database/Assets/UI%20Toolkit/Components/CloseView.uxml?fileID=9197481963319205126&amp;guid=c89617f873f2ac84c8a4c57b5a830af3&amp;type=3#CloseView" />
+    <engine:Template name="StartErrorView" src="project://database/Assets/UI%20Toolkit/Components/StartErrorView.uxml?fileID=9197481963319205126&amp;guid=daf5e05d442eb0d478ae967e0d15d2cd&amp;type=3#StartErrorView" />
     <Style src="project://database/Assets/UI%20Toolkit/USS/Main.uss?fileID=7433441132597879392&amp;guid=49037bf78035c6543944fe6235bf4690&amp;type=3" />
     <engine:Instance template="MainView" name="MainView" />
     <engine:Instance template="NewProjectView" name="NewProjectView" />
@@ -24,4 +25,5 @@
     <engine:Instance template="AboutView" name="AboutView" />
     <engine:Instance template="ReadMoreView" name="ReadMoreView" />
     <engine:Instance template="CloseView" name="CloseView" />
+    <engine:Instance template="StartErrorView" name="StartErrorView" />
 </engine:UXML>

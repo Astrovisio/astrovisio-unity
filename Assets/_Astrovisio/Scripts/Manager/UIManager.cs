@@ -55,6 +55,7 @@ namespace Astrovisio
         private AboutViewController aboutViewController;
         private ReadMoreViewController readMoreViewController;
         private CloseViewController closeViewController;
+        private StartErrorViewController startErrorViewController;
 
         // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -117,6 +118,9 @@ namespace Astrovisio
 
             VisualElement closeView = uiDocument.rootVisualElement.Q<VisualElement>("CloseView");
             closeViewController = new CloseViewController(closeView);
+
+            VisualElement startErrorView = uiDocument.rootVisualElement.Q<VisualElement>("StartErrorView");
+            startErrorViewController = new StartErrorViewController(projectManager, startErrorView);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -397,6 +401,18 @@ namespace Astrovisio
             else
             {
                 closeViewController.Close();
+            }
+        }
+
+        public void SetStartErrorViewVisibility(bool state)
+        {
+            if (state)
+            {
+                startErrorViewController.Open();
+            }
+            else
+            {
+                startErrorViewController.Close();
             }
         }
 
