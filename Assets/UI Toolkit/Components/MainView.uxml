@@ -1,15 +1,17 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Template name="Navbar" src="project://database/Assets/UI%20Toolkit/Components/Navbar.uxml?fileID=9197481963319205126&amp;guid=7bb125ee270bca141be6679de4957541&amp;type=3#Navbar" />
+    <engine:Template name="AppControls" src="project://database/Assets/UI%20Toolkit/Components/AppControls.uxml?fileID=9197481963319205126&amp;guid=d3b3376f3e132d142a98cff211e1bfd3&amp;type=3#AppControls" />
     <engine:Template name="Home" src="project://database/Assets/UI%20Toolkit/Components/HomeView.uxml?fileID=9197481963319205126&amp;guid=085c37c519bac4a4bbcca89b8ed17b03&amp;type=3#HomeView" />
     <engine:Template name="ProjectView" src="project://database/Assets/UI%20Toolkit/Components/ProjectView.uxml?fileID=9197481963319205126&amp;guid=5d8609a87d4f32b4186bfff69ad0a849&amp;type=3#ProjectView" />
     <engine:Template name="DataInspector" src="project://database/Assets/UI%20Toolkit/Components/DataInspector.uxml?fileID=9197481963319205126&amp;guid=94128d5cd3cec2b4abee0d3ff2c8184a&amp;type=3#DataInspector" />
     <engine:Template name="GizmoTransform" src="project://database/Assets/UI%20Toolkit/Components/GizmoTransform.uxml?fileID=9197481963319205126&amp;guid=6f91fec5a0aba364abc9ac14d291ff04&amp;type=3#GizmoTransform" />
     <engine:Template name="SettingsView" src="project://database/Assets/UI%20Toolkit/Components/SettingsView.uxml?fileID=9197481963319205126&amp;guid=e38c4b8eb6b0afc49b33e7f9bd6e8c5d&amp;type=3#SettingsView" />
     <engine:Template name="Sidebar" src="project://database/Assets/UI%20Toolkit/Components/Sidebar.uxml?fileID=9197481963319205126&amp;guid=be7a59423a7e0cd41ad0133f66c01576&amp;type=3#Sidebar" />
-    <Style src="project://database/Assets/UI%20Toolkit/USS/MainView.uss?fileID=7433441132597879392&amp;guid=f459acdc270be664693f813c03150c26&amp;type=3#MainView" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/MainView.uss?fileID=7433441132597879392&amp;guid=f459acdc270be664693f813c03150c26&amp;type=3" />
     <engine:VisualElement name="MainViewRoot" class="active">
         <engine:VisualElement name="Header" style="flex-grow: 1; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; height: 96px; min-height: 96px; max-height: 96px; justify-content: space-between; align-self: stretch; align-items: stretch;">
             <engine:Instance template="Navbar" name="Navbar" style="align-self: stretch; flex-grow: 1;" />
+            <engine:Instance template="AppControls" name="AppControls" />
         </engine:VisualElement>
         <engine:VisualElement name="Body" style="flex-grow: 1; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; flex-direction: row-reverse;">
             <engine:VisualElement name="Content" style="flex-grow: 1; justify-content: space-between; align-self: stretch;">

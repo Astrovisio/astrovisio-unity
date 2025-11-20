@@ -54,3 +54,11 @@
     display: none;
     visibility: visible;
 }
+
+#MainViewRoot > #Header {
+    flex-direction: row;
+}
+
+#MainViewRoot > #Header > #Navbar {
+    margin-right: 10px;
+}

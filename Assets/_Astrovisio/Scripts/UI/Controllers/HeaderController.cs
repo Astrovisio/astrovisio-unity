@@ -17,8 +17,6 @@
  *
  */
 
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -36,6 +34,7 @@ namespace Astrovisio
 
         // === Controllers ===
         private NavbarController navbarController;
+        private AppControlController appControlController;
 
         private void Awake()
         {
@@ -48,16 +47,18 @@ namespace Astrovisio
         private void OnEnable()
         {
             EnableNavbar();
+            EnableAppControl();
         }
 
         private void OnDisable()
         {
             DisableNavbar();
+            DisableAppControl();
         }
 
         private void EnableNavbar()
         {
-            var navbarRoot = uiDocument.rootVisualElement.Q<VisualElement>("NavbarRoot");
+            VisualElement navbarRoot = uiDocument.rootVisualElement.Q<VisualElement>("NavbarRoot");
             navbarController = new NavbarController(projectManager, uiManager, navbarRoot);
         }
 
@@ -66,6 +67,20 @@ namespace Astrovisio
             if (navbarController != null)
             {
                 navbarController.Dispose();
+            }
+        }
+
+        private void EnableAppControl()
+        {
+            VisualElement appControlRoot = uiDocument.rootVisualElement.Q<VisualElement>("AppControls");
+            appControlController = new AppControlController(appControlRoot);
+        }
+
+        private void DisableAppControl()
+        {
+            if (appControlController != null)
+            {
+                appControlController.Dispose();
             }
         }
 

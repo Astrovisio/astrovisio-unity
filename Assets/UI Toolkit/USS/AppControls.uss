@@ -1,0 +1,60 @@
+#Root {
+    background-color: var(--grey-200);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    flex-grow: 1;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-button {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--transparent);
+}
+
+.app-button > #Icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    min-height: 16px;
+}
+
+.app-button:hover {
+    background-color: var(--grey-300);
+}
+
+.app-button:active {
+    background-color: var(--grey-400);
+}
+
+#Root > #FullscreenButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Open-Fullscreen-Icon.svg?fileID=7388822144124034973&guid=c6e5680893c9f2041bc3b5a8281b62b2&type=3#Open-Fullscreen-Icon");
+}
+
+#Root > #FullscreenButton.active > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Close-Fullscreen-Icon.svg?fileID=7388822144124034973&guid=a01b01feed63f704cb40428f1237f231&type=3#Close-Fullscreen-Icon");
+}
+
+#Root > #CloseButton > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/Close.svg?fileID=7388822144124034973&guid=8edc35042da8fba46be3b10c3f76bb6a&type=3#Close");
+}
