@@ -38,16 +38,16 @@ namespace Astrovisio
 
             if (fullscreenButton != null)
             {
-                fullscreenButton.clicked += HandleFullscreenButton;
+                fullscreenButton.clicked += OnFullscreenClicked;
             }
 
             if (closeButton != null)
             {
-                closeButton.clicked += HandleCloseButton;
+                closeButton.clicked += OnCloseClicked;
             }
         }
 
-        private void HandleFullscreenButton()
+        private void OnFullscreenClicked()
         {
             // Debug.Log("HandleFullscreenButton");
 #if UNITY_EDITOR
@@ -68,20 +68,16 @@ namespace Astrovisio
 #endif
         }
 
-        private void HandleCloseButton()
+        private void OnCloseClicked()
         {
             // Debug.Log("HandleCloseButton");
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            UIManager.Instance.SetCloseViewVisibility(true);
         }
 
         public void Dispose()
         {
-            fullscreenButton.clicked -= HandleFullscreenButton;
-            closeButton.clicked -= HandleCloseButton;
+            fullscreenButton.clicked -= OnFullscreenClicked;
+            closeButton.clicked -= OnCloseClicked;
         }
 
     }

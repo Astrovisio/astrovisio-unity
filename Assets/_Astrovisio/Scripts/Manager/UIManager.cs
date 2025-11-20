@@ -33,7 +33,8 @@ namespace Astrovisio
 {
     public class UIManager : MonoBehaviour
     {
-        private static UIManager Instance { get; set; }
+        public static UIManager Instance { get; set; }
+        
         [Header("Dependencies")]
         [SerializeField] private ProjectManager projectManager;
         [SerializeField] private RenderManager renderManager;
@@ -53,6 +54,7 @@ namespace Astrovisio
         private LoaderController loaderController;
         private AboutViewController aboutViewController;
         private ReadMoreViewController readMoreViewController;
+        private CloseViewController closeViewController;
 
         // === Event System ===
         [SerializeField] private InputSystemUIInputModule desktopInputModule;
@@ -112,6 +114,9 @@ namespace Astrovisio
 
             VisualElement readMoreView = uiDocument.rootVisualElement.Q<VisualElement>("ReadMoreView");
             readMoreViewController = new ReadMoreViewController(readMoreView, this);
+
+            VisualElement closeView = uiDocument.rootVisualElement.Q<VisualElement>("CloseView");
+            closeViewController = new CloseViewController(closeView);
 
             projectManager.ProjectCreated += OnProjectCreated;
             projectManager.ProjectDeleted += OnProjectDeleted;
@@ -380,6 +385,18 @@ namespace Astrovisio
             else
             {
                 readMoreViewController.Close();
+            }
+        }
+
+        public void SetCloseViewVisibility(bool state)
+        {
+            if (state)
+            {
+                closeViewController.Open();
+            }
+            else
+            {
+                closeViewController.Close();
             }
         }
 

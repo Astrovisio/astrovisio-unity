@@ -1,0 +1,71 @@
+#Root {
+    background-color: var(--bg-50-black);
+    justify-content: center;
+    align-items: center;
+}
+
+#Root > #ClosePanel {
+    width: 320px;
+    height: 202px;
+    min-width: 320px;
+    max-width: 320px;
+    min-height: 202px;
+    max-height: 202px;
+    background-color: var(--grey-100);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    padding-top: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    padding-left: 24px;
+}
+
+#Root > #ClosePanel > #TextContainer {
+    flex-shrink: 0;
+}
+
+#Root > #ClosePanel > #TextContainer > #Title {
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Mono/SpaceMono-Bold.ttf?fileID=12800000&guid=98c36e2b9365b974e845c4058050e5fc&type=3#SpaceMono-Bold");
+    font-size: 20px;
+    margin-bottom: 24px;
+    height: 14px;
+    min-height: 14px;
+    max-height: 14px;
+}
+
+#Root > #ClosePanel > #TextContainer > #Description {
+    color: var(--grey-800);
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/Fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf?fileID=12800000&guid=b29888e73935b11449868e7cb5f7ae4f&type=3#SpaceGrotesk-Regular");
+    font-size: 14px;
+    white-space: pre-wrap;
+    margin-bottom: 24px;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+}
+
+#Root > #ClosePanel > #Line {
+    height: 1px;
+    min-height: 1px;
+    max-height: 1px;
+    background-color: var(--grey-200);
+    margin-bottom: 24px;
+}
+
+#Root > #ClosePanel > #ButtonContainer {
+    flex-direction: row-reverse;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+}
+
+#Root > #ClosePanel > #ButtonContainer > #CancelButton {
+    margin-right: 8px;
+}
+
+#Root > #ClosePanel > #ButtonContainer > #ExitButton > .btn-primary > #Icon {
+    background-image: url("project://database/Assets/UI%20Toolkit/Icons/exit_to_app_16dp_00000_FILL0_wght400_GRAD0_opsz20%201.svg?fileID=7388822144124034973&guid=05437f75e9e9c4b478854d185741029d&type=3#exit_to_app_16dp_00000_FILL0_wght400_GRAD0_opsz20 1");
+}
