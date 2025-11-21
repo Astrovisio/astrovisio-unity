@@ -130,6 +130,7 @@ namespace Astrovisio
 
         private void OnRenderSettingsButtonClicked()
         {
+            SceneManager.Instance.ResetCameraTransform();
             SetActiveStep(ProjectSidebarStep.Render);
             projectSidebarRenderController.Render();
             UIManager.SetGizmoTransformVisibility(true);
