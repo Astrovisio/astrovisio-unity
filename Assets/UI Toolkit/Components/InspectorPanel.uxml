@@ -42,13 +42,12 @@
             </engine:VisualElement>
             <engine:VisualElement name="DataInspectorContainer" style="flex-grow: 1; height: 250px; min-height: 250px; max-height: 250px;">
                 <engine:Label text="Data info" name="DataInpectorTitle" class="title" />
-                <engine:ScrollView name="DataInspectorScollView" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" touch-scroll-type="Clamped">
-                    <engine:Label text="Brightness: -231" />
-                    <engine:Label text="X: -231" />
-                    <engine:Label text="Y: -231" />
-                    <engine:Label text="Z: -231" />
-                    <engine:Label text="A: -231" />
+                <engine:ScrollView name="DataInspectorScollView" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Auto" touch-scroll-type="Clamped" mode="VerticalAndHorizontal">
+                    <engine:TextField readonly="true" value="Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345&#10;Brightness: -2345435231.5435342642562345324534252345345" name="DataInfoTextField" select-all-on-mouse-up="true" select-all-on-focus="true" multiline="true" />
                 </engine:ScrollView>
+                <engine:Button name="CopyButton">
+                    <engine:VisualElement name="Icon" />
+                </engine:Button>
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="SkeletonContainer" style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">

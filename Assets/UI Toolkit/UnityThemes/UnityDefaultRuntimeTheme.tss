@@ -203,7 +203,17 @@
   min-width: 4px;
 }
 
-.unity-scroller.unity-scroller--vertical, .unity-scroller.unity-scroller--vertical .unity-base-slider--vertical{
+.unity-scroller.unity-scroller--horizontal .unity-base-slider--horizontal, .unity-scroller.unity-scroller--horizontal .unity-base-slider--horizontal .unity-base-slider__dragger{ 
+  height: 4px;
+  min-height: 4px;
+}
+
+.unity-scroller.unity-scroller--horizontal .unity-base-slider--horizontal{
+  margin-left:0px; margin-right:0px 
+}
+
+.unity-scroller.unity-scroller--vertical, .unity-scroller.unity-scroller--vertical .unity-base-slider--vertical,
+.unity-scroller.unity-scroller--horizontal, .unity-scroller.unity-scroller--horizontal .unity-base-slider--horizontal {
   margin-top: 0px;
   margin-bottom: 0px;
 }
@@ -212,8 +222,18 @@
   width: 6px;
   min-width: 6px;
 }
+
+.unity-scroller.unity-scroller--horizontal{
+  height: 6px;
+  min-height: 6px;
+}
+
 .unity-scroller.unity-scroller--vertical .unity-base-slider--vertical{
   margin-left: 2px;
+}
+
+.unity-scroller.unity-scroller--horizontal .unity-base-slider--horizontal{
+  margin-top: 2px;
 }
 
 .unity-scroller .unity-base-slider .unity-slider__input .unity-base-slider__drag-container .unity-base-slider__tracker{
@@ -226,6 +246,7 @@
   border-radius: 2px;
   border-width: 0px;
   left: 0px;
+  top:0px;
 }
 
 .unity-scroller .unity-base-slider__drag-container:hover .unity-base-slider__dragger:hover {
