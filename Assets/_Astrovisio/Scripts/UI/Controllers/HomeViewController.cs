@@ -141,11 +141,21 @@ namespace Astrovisio
 
                     foreach (File file in projectOpened.Files)
                     {
-                        if (file.Processed)
+                        if (!file.Processed)
                         {
-                            // Debug.Log($"Already processed: {file.Name} - {file.Processed} - {file.ProcessedPath}");
-                            ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
+                            continue;
                         }
+
+                        bool alreadyCached = RenderManager.Instance.TryGetDataContainer(projectOpened.Id, file.Id, out _);
+
+                        if (alreadyCached)
+                        {
+                            // Debug.Log($"[HomeView] Skip GetProcessedFile - cached: {file.Name} (P{projectOpened.Id}, F{file.Id})");
+                            continue;
+                        }
+
+                        // Debug.Log($"[HomeView] Cache miss, calling GetProcessedFile: {file.Name} (P{projectOpened.Id}, F{file.Id})");
+                        ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
                     }
                 });
 
