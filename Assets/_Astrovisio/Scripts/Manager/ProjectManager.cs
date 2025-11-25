@@ -112,8 +112,9 @@ namespace Astrovisio
 				},
 				error =>
 				{
-					ApiError?.Invoke(error);
+					// ApiError?.Invoke(error);
 					uiManager.SetLoadingView(false);
+					uiManager.SetStartErrorViewVisibility(true);
 				});
 		}
 

@@ -1,0 +1,22 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/CloseView.uss?fileID=7433441132597879392&amp;guid=e15d2147433b5a445b5fc320b41e9c93&amp;type=3#CloseView" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:VisualElement name="ClosePanel" style="flex-grow: 1;">
+            <engine:VisualElement name="TextContainer" style="flex-grow: 1;">
+                <engine:Label text="Leaving Astrovisio" name="Title" />
+                <engine:Label text="Ready to exit Astrovisio and return to Earth?" name="Description" />
+            </engine:VisualElement>
+            <engine:VisualElement name="Line" style="flex-grow: 1; height: 1px; min-height: 1px; max-height: 1px;" />
+            <engine:VisualElement name="ButtonContainer" style="flex-grow: 1;">
+                <engine:Instance template="PrimaryButton" name="ExitButton">
+                    <AttributeOverrides element-name="Label" text="Exit" />
+                </engine:Instance>
+                <engine:Instance template="SecondaryButton" name="CancelButton">
+                    <AttributeOverrides element-name="Label" text="Cancel" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

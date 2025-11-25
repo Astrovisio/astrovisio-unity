@@ -1,0 +1,22 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="PrimaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/PrimaryButton.uxml?fileID=9197481963319205126&amp;guid=3c5fce1bb7858c94192eb1b740824d2a&amp;type=3#PrimaryButton" />
+    <engine:Template name="SecondaryButton" src="project://database/Assets/UI%20Toolkit/Components/Shared/SecondaryButton.uxml?fileID=9197481963319205126&amp;guid=ed7f7f56364aa8e4abb13cb4c47c20a3&amp;type=3#SecondaryButton" />
+    <Style src="project://database/Assets/UI%20Toolkit/USS/StartErrorView.uss?fileID=7433441132597879392&amp;guid=f756b14b9ee68744ba40c1c9d32a5f62&amp;type=3#StartErrorView" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:VisualElement name="StartErrorPanel" style="flex-grow: 1;">
+            <engine:VisualElement name="TextContainer" style="flex-grow: 1;">
+                <engine:Label text="Unable to Load Projects" name="Title" />
+                <engine:Label text="The application could not retrieve the project list. This may happen if the server is not available or the connection failed. Please try again." name="Description" />
+            </engine:VisualElement>
+            <engine:VisualElement name="Line" style="flex-grow: 1; height: 1px; min-height: 1px; max-height: 1px;" />
+            <engine:VisualElement name="ButtonContainer" style="flex-grow: 1;">
+                <engine:Instance template="PrimaryButton" name="RetryButton">
+                    <AttributeOverrides element-name="Label" text="Retry" />
+                </engine:Instance>
+                <engine:Instance template="SecondaryButton" name="ExitButton">
+                    <AttributeOverrides element-name="Label" text="Exit" />
+                </engine:Instance>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

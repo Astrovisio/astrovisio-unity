@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.Text;
 using CatalogData;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -43,6 +44,8 @@ namespace Astrovisio
         private Button processButton;
         private Toggle isolateSelectionToggle;
         private ScrollView inspectorInfoScrollView;
+        private TextField dataInfoTextField;
+        private Button copyButton;
 
         // === Local ===
         private KDTreeComponent _subscribedKDTree;
@@ -82,7 +85,8 @@ namespace Astrovisio
             processButton = Root.Q<Button>("ProcessButton");
             isolateSelectionToggle = Root.Q<VisualElement>("IsolateContainer")?.Q<Toggle>();
             inspectorInfoScrollView = Root.Q<ScrollView>("DataInspectorScollView");
-
+            dataInfoTextField = inspectorInfoScrollView.Q<TextField>("DataInfoTextField");
+            copyButton = Root.Q<Button>("CopyButton");
 
             processButton.clicked += () => _subscribedKDTree?.PerformSelection();
 
@@ -94,7 +98,7 @@ namespace Astrovisio
                 dataRenderer.GetAstrovidioDataSetRenderer().DataMapping.isolateSelection = value;
             });
 
-            inspectorInfoScrollView.Clear();
+            dataInfoTextField.value = string.Empty;
 
             // Shape
             SetSelectionMode(SelectionMode.Sphere);
@@ -130,6 +134,19 @@ namespace Astrovisio
                         SetAggregationMode(newAggregationMode);
                     }
                 });
+            }
+
+            // Copy
+            if (copyButton != null)
+            {
+                copyButton.clicked += () =>
+                {
+                    if (dataInfoTextField != null)
+                    {
+                        GUIUtility.systemCopyBuffer = dataInfoTextField.value;
+                        Debug.Log("Inspector data copied to clipboard.");
+                    }
+                };
             }
 
             ShowSelectionGizmo(false);
@@ -339,14 +356,19 @@ namespace Astrovisio
 
         private void SetInspectorInfo(string[] data)
         {
-            inspectorInfoScrollView.Clear();
+            dataInfoTextField.value = string.Empty;
 
-            foreach (string row in data)
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
             {
-                Label label = new Label();
-                label.text = row;
-                inspectorInfoScrollView.Add(label);
+                if (i > 0)
+                {
+                    stringBuilder.AppendLine();
+                }
+                stringBuilder.Append(data[i]);
             }
+
+            dataInfoTextField.value = stringBuilder.ToString();
         }
 
         public void Reset()

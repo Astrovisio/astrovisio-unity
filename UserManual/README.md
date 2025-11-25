@@ -248,9 +248,12 @@ The result of the selection is displayed in the **Data info** section.
 It allows you to add a visual noise to the visualization. It only affects the visualization, not the data.
 This can be useful to remove annoying pattern repetition or moirés effects when data is disposed in a homogenous grid.
 
-**Show/Hide UI**: Toggle the user interface
-**Show/Hide Axis**: Toggle the axis
+**Show/Hide UI**: Toggle the user interface.
+
+**Show/Hide Axis**: Toggle the axis.
+
 **Capture Screenshot**: Save an image of the current visualization along with a JSON containing the various settings details.
+
 **Screen Recorder**: Allows you to start and stop a screen recording.
 
 ---
@@ -319,14 +322,18 @@ Forward and inverse data scaling allows to transform the points coordinates from
 Forward scaling is applied by the shader code, the original data is not modified. This allows to show the Data in the normalized World Space.
 
 **Linear**: x
+
 **Log**: sign(x) × log₁₀(1 + |x|)
+
 **Sqrt**: sign(x) × √|x|
 
 #### Inverse Scaling
 Inverse scaling is applied for the selection, when it's necessary to go back from World Space to Data Space in order to correctly query the KDTree(s).
 
 **Linear**: y
+
 **Log**: sign(y) × (10^|y| - 1)
+
 **Sqrt**: sign(y) × y²
 
 ### Known Issue(s)
