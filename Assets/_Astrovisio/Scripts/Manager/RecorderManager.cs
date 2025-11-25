@@ -76,15 +76,22 @@ namespace Astrovisio
             Debug.LogWarning(universalVideoRecorder.mainCamera.name);
 
             string timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+
+            string directory;
+            string fileName;
+
             if (askForPath)
             {
-                outputDir = StandaloneFileBrowser.SaveFilePanel("Save Recording", "", $"{timestamp}.mp4", "mp4");
+                string selectedPath = StandaloneFileBrowser.SaveFilePanel("Save Recording", "", $"{timestamp}.mp4", "mp4");
+                directory = Path.GetDirectoryName(selectedPath);
+                fileName = Path.GetFileName(selectedPath);
+                outputDir = directory;
             }
             else
             {
-                string dir = GetRecordingFolder();
-                string fname = $"{timestamp}.mp4";
-                outputDir = Path.Combine(dir, fname);
+                directory = GetRecordingFolder();
+                fileName = $"{timestamp}.mp4";
+                outputDir = directory;
             }
 
             if (string.IsNullOrEmpty(outputDir))
@@ -92,7 +99,7 @@ namespace Astrovisio
                 return;
             }
 
-            universalVideoRecorder.StartRecorder(outputDir);
+            universalVideoRecorder.StartRecorder(outputDir, fileName);
 
             recordingTime = 0f;
             IsRecording = true;
@@ -157,7 +164,7 @@ namespace Astrovisio
 
         public static string GetRecordingFolder()
         {
-            var dir = Path.Combine(GetBuildLikeFolder(), "Recordings");
+            string dir = Path.Combine(GetBuildLikeFolder(), "Recordings");
             Directory.CreateDirectory(dir);
             return dir;
         }
