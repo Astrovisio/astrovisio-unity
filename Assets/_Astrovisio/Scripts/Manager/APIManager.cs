@@ -25,6 +25,7 @@ using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Text;
 using MessagePack;
+using System.IO;
 
 namespace Astrovisio
 {
@@ -297,60 +298,53 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProcessedFile(projectId, fileId);
-            // Debug.Log($"[APIManager] GET {url}");
+            string tempFile = Path.Combine(Path.GetTempPath(), $"processed_{projectId}_{fileId}.bin");
 
-            const int maxRetries = 3;
-            const int retryDelayMs = 2000;
-
-            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            try
             {
                 using (UnityWebRequest request = UnityWebRequest.Get(url))
                 {
-
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                    request.timeout = 10;
+                    request.downloadHandler = new DownloadHandlerFile(tempFile);
+                    request.timeout = 30;
                     request.SetRequestHeader("Accept", "application/x-msgpack");
 
                     await SendWebRequestAsync(request);
 
-                    // Debug.Log($"Attempt {attempt}");
-
-                    if (request.result == UnityWebRequest.Result.Success)
+                    if (request.result != UnityWebRequest.Result.Success)
                     {
-                        try
-                        {
-                            byte[] rawBytes = request.downloadHandler.data;
-                            DataPack dataPack = MessagePackSerializer.Deserialize<DataPack>(rawBytes);
-                            onSuccess?.Invoke(dataPack);
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.LogError($"[APIManager] Deserialization failed (MessagePack): {ex.Message}");
-                            onError?.Invoke("Deserialization failed: " + ex.Message);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError($"[APIManager] Error GET ProcessedFile (attempt {attempt}): {request.error}");
-                        Debug.LogError($"[APIManager] Error Text: {request.downloadHandler.text}");
-
-                        if (attempt == maxRetries)
-                        {
-                            onError?.Invoke(string.IsNullOrEmpty(request.downloadHandler.text)
-                                ? request.error
-                                : request.downloadHandler.text);
-                            return;
-                        }
-
-                        await Task.Delay(retryDelayMs);
+                        onError?.Invoke(request.error);
+                        return;
                     }
                 }
-            }
 
-            onError?.Invoke("Unknown error");
+                DataPack dataPack = await Task.Run(() =>
+                {
+                    byte[] raw = System.IO.File.ReadAllBytes(tempFile);
+                    return MessagePackSerializer.Deserialize<DataPack>(raw);
+                });
+
+                onSuccess?.Invoke(dataPack);
+            }
+            catch (Exception ex)
+            {
+                onError?.Invoke(ex.Message);
+            }
+            finally
+            {
+                try
+                {
+                    if (System.IO.File.Exists(tempFile))
+                    {
+                        System.IO.File.Delete(tempFile);
+                    }
+                }
+                catch
+                {
+                    Debug.Log("Error trying delete temp file.");
+                }
+            }
         }
+
 
         public async Task UpdateFile(
             int projectId,
