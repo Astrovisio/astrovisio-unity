@@ -298,40 +298,51 @@ namespace Astrovisio
             Action<string> onError = null)
         {
             string url = APIEndpoints.GetProcessedFile(projectId, fileId);
-
             string tempFile = Path.Combine(Path.GetTempPath(), $"processed_{projectId}_{fileId}.bin");
 
-            using (UnityWebRequest request = UnityWebRequest.Get(url))
-            {
-                request.downloadHandler = new DownloadHandlerFile(tempFile);
-                request.timeout = 30;
-                request.SetRequestHeader("Accept", "application/x-msgpack");
-
-                await SendWebRequestAsync(request);
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    onError?.Invoke(request.error);
-                    return;
-                }
-            }
-
-            DataPack dataPack = null;
             try
             {
-                dataPack = await Task.Run(() =>
+                using (UnityWebRequest request = UnityWebRequest.Get(url))
+                {
+                    request.downloadHandler = new DownloadHandlerFile(tempFile);
+                    request.timeout = 30;
+                    request.SetRequestHeader("Accept", "application/x-msgpack");
+
+                    await SendWebRequestAsync(request);
+
+                    if (request.result != UnityWebRequest.Result.Success)
+                    {
+                        onError?.Invoke(request.error);
+                        return;
+                    }
+                }
+
+                DataPack dataPack = await Task.Run(() =>
                 {
                     byte[] raw = System.IO.File.ReadAllBytes(tempFile);
                     return MessagePackSerializer.Deserialize<DataPack>(raw);
                 });
+
+                onSuccess?.Invoke(dataPack);
             }
             catch (Exception ex)
             {
-                onError?.Invoke($"Deserialization failed: {ex.Message}");
-                return;
+                onError?.Invoke(ex.Message);
             }
-
-            onSuccess?.Invoke(dataPack);
+            finally
+            {
+                try
+                {
+                    if (System.IO.File.Exists(tempFile))
+                    {
+                        System.IO.File.Delete(tempFile);
+                    }
+                }
+                catch
+                {
+                    Debug.Log("Error trying delete temp file.");
+                }
+            }
         }
 
 
