@@ -1,22 +1,3 @@
-/*
- * Astrovisio - Astrophysical Data Visualization Tool
- * Copyright (C) 2024-2025 Alkemy, Metaverso
- *
- * This file is part of the Astrovisio project.
- *
- * Astrovisio is free software: you can redistribute it and/or modify it under the terms 
- * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
- * Foundation, either version 3 of the License, or (at your option) any later version.
- *
- * Astrovisio is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with 
- * Astrovisio in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
- *
- */
-
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -28,6 +9,10 @@ namespace Astrovisio
 
         private Button fullscreenButton;
         private Button closeButton;
+
+        private int windowedWidth;
+        private int windowedHeight;
+        private bool windowedSizeStored = false;
 
         public AppControlController(VisualElement root)
         {
@@ -45,15 +30,45 @@ namespace Astrovisio
             {
                 closeButton.clicked += OnCloseClicked;
             }
+
+            if (!Screen.fullScreen)
+            {
+                windowedWidth = Screen.width;
+                windowedHeight = Screen.height;
+                windowedSizeStored = true;
+            }
         }
 
         private void OnFullscreenClicked()
         {
-            // Debug.Log("HandleFullscreenButton");
 #if UNITY_EDITOR
             Debug.Log("Fullscreen toggle is only active in build.");
 #else
-            Screen.fullScreen = !Screen.fullScreen;
+            if (!Screen.fullScreen)
+            {
+                windowedWidth = Screen.width;
+                windowedHeight = Screen.height;
+                windowedSizeStored = true;
+
+                int width = Display.main.systemWidth;
+                int height = Display.main.systemHeight;
+
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                Screen.SetResolution(width, height, FullScreenMode.ExclusiveFullScreen);
+                Screen.fullScreen = true;
+            }
+            else
+            {
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+
+                if (windowedSizeStored && windowedWidth > 0 && windowedHeight > 0)
+                {
+                    Screen.SetResolution(windowedWidth, windowedHeight, FullScreenMode.Windowed);
+                }
+
+                Screen.fullScreen = false;
+            }
+
             if (fullscreenButton != null)
             {
                 if (Screen.fullScreen)
@@ -70,15 +85,21 @@ namespace Astrovisio
 
         private void OnCloseClicked()
         {
-            // Debug.Log("HandleCloseButton");
             UIManager.Instance.SetCloseViewVisibility(true);
         }
 
         public void Dispose()
         {
-            fullscreenButton.clicked -= OnFullscreenClicked;
-            closeButton.clicked -= OnCloseClicked;
-        }
+            if (fullscreenButton != null)
+            {
+                fullscreenButton.clicked -= OnFullscreenClicked;
+            }
 
+            if (closeButton != null)
+            {
+                closeButton.clicked -= OnCloseClicked;
+            }
+        }
     }
+    
 }
