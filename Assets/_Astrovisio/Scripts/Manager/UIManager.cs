@@ -283,6 +283,8 @@ namespace Astrovisio
             {
                 loaderView.RemoveFromClassList("active");
             }
+
+            // Debug.Log("SetLoadingView: " + state);
         }
 
         public static void SetLoadingView(bool active)

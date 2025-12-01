@@ -291,14 +291,13 @@ namespace Astrovisio
             }
         }
 
-        public async Task GetProcessedFile(
-            int projectId,
-            int fileId,
-            Action<DataPack> onSuccess,
-            Action<string> onError = null)
+        public async Task<DataPack> GetProcessedFile(int projectId, int fileId)
         {
             string url = APIEndpoints.GetProcessedFile(projectId, fileId);
-            string tempFile = Path.Combine(Path.GetTempPath(), $"processed_{projectId}_{fileId}.bin");
+            string tempFile = Path.Combine(
+                Path.GetTempPath(),
+                $"processed_{projectId}_{fileId}_{Guid.NewGuid():N}.bin"
+            );
 
             try
             {
@@ -312,8 +311,7 @@ namespace Astrovisio
 
                     if (request.result != UnityWebRequest.Result.Success)
                     {
-                        onError?.Invoke(request.error);
-                        return;
+                        throw new Exception(request.error);
                     }
                 }
 
@@ -323,11 +321,7 @@ namespace Astrovisio
                     return MessagePackSerializer.Deserialize<DataPack>(raw);
                 });
 
-                onSuccess?.Invoke(dataPack);
-            }
-            catch (Exception ex)
-            {
-                onError?.Invoke(ex.Message);
+                return dataPack;
             }
             finally
             {

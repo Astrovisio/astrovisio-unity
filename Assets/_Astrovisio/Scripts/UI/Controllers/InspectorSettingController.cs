@@ -88,8 +88,12 @@ namespace Astrovisio
             dataInfoTextField = inspectorInfoScrollView.Q<TextField>("DataInfoTextField");
             copyButton = Root.Q<Button>("CopyButton");
 
-            processButton.clicked += () => _subscribedKDTree?.PerformSelection();
-
+            processButton.clicked += () =>
+            {
+                processButton.SetEnabled(false);
+                processButton.text = "Processing...";
+                _subscribedKDTree?.PerformSelection();
+            };
 
             isolateSelectionToggle.RegisterValueChangedCallback(evt =>
             {
@@ -143,7 +147,8 @@ namespace Astrovisio
                 {
                     if (dataInfoTextField != null)
                     {
-                        GUIUtility.systemCopyBuffer = dataInfoTextField.value;
+                        string valueToCopy = $"Aggregation mode: {aggregationMode}\n\n" + dataInfoTextField.value;
+                        GUIUtility.systemCopyBuffer = valueToCopy;
                         Debug.Log("Inspector data copied to clipboard.");
                     }
                 };
@@ -259,10 +264,18 @@ namespace Astrovisio
                 data[i] = headers[i] + ": " + info[i];
             }
 
-            if (selectionState)
-            {
-                SetInspectorInfo(data);
-            }
+            processButton.schedule
+                .Execute(() =>
+                {
+                    if (selectionState)
+                    {
+                        SetInspectorInfo(data);
+                    }
+
+                    processButton.text = "Process";
+                    processButton.SetEnabled(true);
+                })
+                .StartingIn(500);
         }
 
         private void ShowSelectionGizmo(bool visibility)

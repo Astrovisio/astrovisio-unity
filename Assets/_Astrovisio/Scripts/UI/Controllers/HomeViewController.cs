@@ -139,6 +139,8 @@ namespace Astrovisio
                 {
                     Project projectOpened = await ProjectManager.OpenProject(project.Id);
 
+                    UIManager.SetLoadingView(true);
+
                     foreach (File file in projectOpened.Files)
                     {
                         if (!file.Processed)
@@ -155,8 +157,10 @@ namespace Astrovisio
                         }
 
                         // Debug.Log($"[HomeView] Cache miss, calling GetProcessedFile: {file.Name} (P{projectOpened.Id}, F{file.Id})");
-                        ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
+                        await ProjectManager.GetProcessedFile(projectOpened.Id, file.Id);
                     }
+
+                    UIManager.SetLoadingView(false);
                 });
 
                 target.Add(projectRow);
