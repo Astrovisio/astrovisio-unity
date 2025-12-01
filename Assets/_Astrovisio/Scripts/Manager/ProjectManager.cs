@@ -166,8 +166,8 @@ namespace Astrovisio
 		}
 
 		public async Task<Project> GetProject(int id)
-        {
-            Project projectResult = null;
+		{
+			Project projectResult = null;
 
 			await apiManager.ReadProject(
 				id,
@@ -200,7 +200,7 @@ namespace Astrovisio
 			);
 
 			return projectResult;
-        }
+		}
 
 		public async Task<Project> CreateProject(string name, string description, string[] paths, bool clearLoader = true)
 		{
@@ -477,67 +477,56 @@ namespace Astrovisio
 				});
 		}
 
-		public async void GetProcessedFile(int projectId, int fileId)
+		public async Task GetProcessedFile(int projectId, int fileId)
 		{
-			uiManager.SetLoadingView(true);
+			try
+			{
+				DataPack dataPack = await apiManager.GetProcessedFile(projectId, fileId);
 
-			await apiManager.GetProcessedFile(
-				projectId,
-				fileId,
-				dataPack =>
+				int rows = dataPack?.Rows?.Length ?? 0;
+				int cols = dataPack?.Columns?.Length ?? 0;
+				// Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
+
+				Project project = GetLocalProject(projectId);
+				if (project == null)
 				{
-					try
-					{
-						int rows = dataPack?.Rows?.Length ?? 0;
-						int cols = dataPack?.Columns?.Length ?? 0;
-						// Debug.Log($"[GetProcessedFile] RECEIVED DataPack -> rows={rows}, cols={cols}");
-
-						Project project = GetLocalProject(projectId);
-						if (project == null)
-						{
-							Debug.LogWarning($"[GetProcessedFile] Project {projectId} not found.");
-							return;
-						}
-
-						if (project.Files == null)
-						{
-							Debug.LogWarning($"[GetProcessedFile] Project {projectId} has no file list.");
-							return;
-						}
-
-						File file = project.Files.FirstOrDefault(f => f.Id == fileId);
-						if (file == null)
-						{
-							Debug.LogWarning($"[GetProcessedFile] File {fileId} not found in project {projectId}.");
-							return;
-						}
-
-						if (!file.Processed)
-						{
-							file.Processed = true;
-							ProjectUpdated?.Invoke(project);
-							Debug.Log($"[GetProcessedFile] File {fileId} marked as processed.");
-						}
-
-						FileProcessed?.Invoke(project, file, dataPack);
-						// Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
-
-						bool hasDC = RenderManager.Instance.TryGetDataContainer(projectId, fileId, out var _);
-						// Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
-					}
-					finally
-					{
-						uiManager.SetLoadingView(false);
-					}
-				},
-				error =>
-				{
-					ApiError?.Invoke(error);
-					Debug.LogError($"[GetProcessedFile] API error: {error}");
-					uiManager.SetLoadingView(false);
+					Debug.LogWarning($"[GetProcessedFile] Project {projectId} not found.");
+					return;
 				}
-			);
+
+				if (project.Files == null)
+				{
+					Debug.LogWarning($"[GetProcessedFile] Project {projectId} has no file list.");
+					return;
+				}
+
+				File file = project.Files.FirstOrDefault(f => f.Id == fileId);
+				if (file == null)
+				{
+					Debug.LogWarning($"[GetProcessedFile] File {fileId} not found in project {projectId}.");
+					return;
+				}
+
+				if (!file.Processed)
+				{
+					file.Processed = true;
+					ProjectUpdated?.Invoke(project);
+					Debug.Log($"[GetProcessedFile] File {fileId} marked as processed.");
+				}
+
+				FileProcessed?.Invoke(project, file, dataPack);
+				// Debug.Log($"[GetProcessedFile] FileProcessed event invoked for file {fileId} in project {projectId}.");
+
+				bool hasDC = RenderManager.Instance.TryGetDataContainer(projectId, fileId, out var _);
+				// Debug.Log($"[GetProcessedFile] DataContainer exists after event? {hasDC}");
+			}
+			catch (Exception ex)
+			{
+				ApiError?.Invoke(ex.Message);
+				Debug.LogError($"[GetProcessedFile] API error: {ex.Message}");
+			}
 		}
+
 
 		public async Task<File> AddFile(int projectId, string path)
 		{
