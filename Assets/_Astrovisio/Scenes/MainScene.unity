@@ -1448,6 +1448,57 @@ MonoBehaviour:
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
   m_CancelButton: Cancel
+--- !u!1 &901520898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 901520899}
+  - component: {fileID: 901520900}
+  m_Layer: 0
+  m_Name: BotManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &901520899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901520898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &901520900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901520898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e6360d914e8dc54c92ac7c973cd9eb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectManager: {fileID: 545608354}
+  removeUploadFileLimit: 0
+  isAutoNextReelEnabled: 0
+  interval: 1.5
+  xParamName: x
+  yParamName: y
+  zParamName: z
 --- !u!1 &903638232
 GameObject:
   m_ObjectHideFlags: 0
@@ -5700,6 +5751,7 @@ SceneRoots:
   - {fileID: 1399382620}
   - {fileID: 208230781}
   - {fileID: 1103413909}
+  - {fileID: 901520899}
   - {fileID: 5616298439508998508}
   - {fileID: 1674207320}
   - {fileID: 1422685453}

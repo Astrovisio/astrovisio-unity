@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using CatalogData;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Astrovisio
 {
@@ -74,11 +75,24 @@ namespace Astrovisio
                     ThrMaxSel = variable.ThrMax,
                     Scaling = ScalingType.Linear.ToString(),
                     Colormap = ColorMapEnum.Autumn.ToString(),
+                    Opacity = null,
                     InvertMapping = false,
                 };
 
+                // Debug.Log(setting.ToString());
+
                 variables.Add(setting);
             }
+        }
+
+        public override string ToString()
+        {
+            string response = "";
+            foreach (Setting setting in variables)
+            {
+                response += "\n\n" + setting.ToString();
+            }
+            return response;
         }
 
     }

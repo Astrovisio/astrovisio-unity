@@ -443,6 +443,24 @@ namespace Astrovisio
                 try
                 {
                     string json = request.downloadHandler.text;
+
+                    // // Debug Json
+                    // string filePath = Path.Combine(
+                    //     Application.persistentDataPath,
+                    //     $"GET_settings_project_{projectId}_file_{fileId}.json"
+                    // );
+                    // Debug.Log($"Settings file path: {filePath}");
+
+                    // try
+                    // {
+                    //     System.IO.File.WriteAllText(filePath, json);
+                    //     Debug.Log($"[APIManager] Settings JSON written to file: {filePath}");
+                    // }
+                    // catch (Exception ex)
+                    // {
+                    //     Debug.LogError($"[APIManager] Failed to write Settings JSON to file: {ex.Message}");
+                    // }
+
                     Settings settings = JsonConvert.DeserializeObject<Settings>(json);
                     onSuccess?.Invoke(settings);
                 }
@@ -472,7 +490,22 @@ namespace Astrovisio
                 NullValueHandling = NullValueHandling.Ignore
             });
 
-            // Debug.Log($"[APIManager] PUT {url} - Payload: {json}");
+            // // Debug Json
+            // string filePath = Path.Combine(
+            //     Application.persistentDataPath,
+            //     $"UPDATE_settings_project_{projectId}_file_{fileId}.json"
+            // );
+            // Debug.Log($"Settings file path: {filePath}");
+
+            // try
+            // {
+            //     System.IO.File.WriteAllText(filePath, json);
+            //     Debug.Log($"[APIManager] Settings JSON written to file: {filePath}");
+            // }
+            // catch (Exception ex)
+            // {
+            //     Debug.LogError($"[APIManager] Failed to write Settings JSON to file: {ex.Message}");
+            // }
 
             using (UnityWebRequest request = UnityWebRequest.Put(url, json))
             {
