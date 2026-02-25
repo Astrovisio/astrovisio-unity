@@ -449,6 +449,11 @@ namespace Astrovisio
                 if (setting.Name == xAxisName)
                 {
                     ScalingType scalingType = Enum.TryParse<ScalingType>(setting.Scaling, true, out var parsed) ? parsed : ScalingType.Linear;
+                    // Debug.Log(xAxisName);
+                    // Debug.Log(setting.ThrMinSel);
+                    // Debug.Log(setting.ThrMin);
+                    // Debug.Log(setting.ThrMaxSel);
+                    // Debug.Log(setting.ThrMax);
                     SetAxis(
                         Axis.X,
                         xAxisName,

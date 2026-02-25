@@ -26,8 +26,8 @@ namespace Astrovisio
     {
 
         private string name;
-        private double thrMin;
-        private double thrMax;
+        private double? thrMin;
+        private double? thrMax;
         private double? thrMinSel;
         private double? thrMaxSel;
         private string scaling;
@@ -45,7 +45,7 @@ namespace Astrovisio
         }
 
         [JsonProperty("vis_thr_min")]
-        public double ThrMin
+        public double? ThrMin
         {
             get => thrMin;
             set => thrMin = value;
@@ -59,7 +59,7 @@ namespace Astrovisio
         }
 
         [JsonProperty("vis_thr_max")]
-        public double ThrMax
+        public double? ThrMax
         {
             get => thrMax;
             set => thrMax = value;
@@ -136,6 +136,23 @@ namespace Astrovisio
             Colormap = setting.Colormap;
             Opacity = setting.Opacity;
             InvertMapping = setting.InvertMapping;
+        }
+
+        public override string ToString()
+        {
+            string response = "";
+
+            response += "@ name: " + name + "\n";
+            response += "@ thrMin: " + (thrMin != null ? thrMin : "null") + "\n";
+            response += "@ thrMax: " + (thrMax != null ? thrMax : "null") + "\n";
+            response += "@ thrMinSel: " + (thrMinSel != null ? thrMinSel : "null") + "\n";
+            response += "@ thrMaxSel: " + (thrMaxSel != null ? thrMaxSel : "null") + "\n";
+            response += "@ scaling: " + (scaling != null ? scaling : "null") + "\n";
+            response += "@ colormap: " + (colormap != null ? colormap : "null") + "\n";
+            response += "@ opacity: " + (opacity != null ? opacity : "null") + "\n";
+            response += "@ invertMapping: " + invertMapping + "\n";
+
+            return response;
         }
 
 

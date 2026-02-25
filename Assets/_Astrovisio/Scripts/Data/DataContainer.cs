@@ -83,18 +83,27 @@ namespace Astrovisio
                     {
                         if (variable.XAxis)
                         {
-                            XMinThreshold = (float)variable.ThrMinSel;
-                            XMaxThreshold = (float)variable.ThrMaxSel;
+                            // Debug.LogError("@@@ X");
+                            // Debug.LogError(variable.ThrMinSel);
+                            // Debug.LogError(variable.ThrMaxSel);
+                            XMinThreshold = (float)(variable.ThrMinSel ?? variable.ThrMin);
+                            XMaxThreshold = (float)(variable.ThrMaxSel ?? variable.ThrMax);
                         }
                         else if (variable.YAxis)
                         {
-                            YMinThreshold = (float)variable.ThrMinSel;
-                            YMaxThreshold = (float)variable.ThrMaxSel;
+                            // Debug.LogError("@@@ Y");
+                            // Debug.LogError(variable.ThrMinSel);
+                            // Debug.LogError(variable.ThrMaxSel);
+                            YMinThreshold = (float)(variable.ThrMinSel ?? variable.ThrMin);
+                            YMaxThreshold = (float)(variable.ThrMaxSel ?? variable.ThrMax);
                         }
                         else if (variable.ZAxis)
                         {
-                            ZMinThreshold = (float)variable.ThrMinSel;
-                            ZMaxThreshold = (float)variable.ThrMaxSel;
+                            // Debug.LogError("@@@ Z");
+                            // Debug.LogError(variable.ThrMinSel);
+                            // Debug.LogError(variable.ThrMaxSel);
+                            ZMinThreshold = (float)(variable.ThrMinSel ?? variable.ThrMin);
+                            ZMaxThreshold = (float)(variable.ThrMaxSel ?? variable.ThrMax);
                         }
                     }
                 }

@@ -24,6 +24,10 @@ public class OrbitCameraController : MonoBehaviour
 {
     [SerializeField] private UIManager uiManager;
 
+    [Header("Auto Rotation")]
+    public bool autoRotate = false;
+    public float autoRotateSpeed = 2.0f;
+
     [Header("Target & Distance")]
     public Transform target;
     public float minDistance = 2.0f;
@@ -88,13 +92,25 @@ public class OrbitCameraController : MonoBehaviour
         }
         currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime / zoomDamping);
 
-        // Orbit
-        if (Input.GetMouseButton(0))
+        // Orbit Interaction
+        bool isUserInteracting = Input.GetMouseButton(0);
+
+        if (isUserInteracting)
         {
+            // Input Utente
             desiredRotation.y += Input.GetAxis("Mouse X") * rotationSpeed;
             desiredRotation.x -= Input.GetAxis("Mouse Y") * rotationSpeed;
             desiredRotation.x = Mathf.Clamp(desiredRotation.x, -90f, 90f);
         }
+        else if (autoRotate)
+        {
+            // Auto Rotation (Solo se l'utente non sta interagendo)
+            // Moltiplichiamo per Time.deltaTime per renderlo indipendente dal frame rate
+            // Usiamo autoRotateSpeed * una costante per renderlo simile a Three.js
+            desiredRotation.y += autoRotateSpeed * Time.deltaTime * 10f;
+        }
+
+        // Apply Smoothing
         currentRotation = Vector3.SmoothDamp(currentRotation, desiredRotation, ref rotationVelocity, rotationDamping);
         Quaternion rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, 0);
 
@@ -131,5 +147,4 @@ public class OrbitCameraController : MonoBehaviour
         transform.position = cameraPosition;
         transform.rotation = rotation;
     }
-
 }
